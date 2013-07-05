@@ -1,0 +1,52 @@
+<?php echo $this->doctype(); ?>
+
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <?php echo $this->headTitle('' . $this->translate('Allcastle AQ System'))->setSeparator(' - ')->setAutoEscape(false) ?>
+
+        <!-- Le styles -->
+        <?php $this->headLink(array('rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/img/favicon.ico'))
+            ->appendStylesheet($this->basePath() . '/less/bootstrap.less')
+            ->appendStylesheet($this->basePath() . '/css/smoothness/jquery-ui-1.10.2.custom.css')
+            ->appendStylesheet($this->basePath() . '/css/style.less')
+
+
+        ?>
+
+        <!-- Scripts -->
+        <?php echo $this->headScript()
+            ->appendFile($this->basePath() . '/js/html5.js', 'text/javascript', array('conditional' => 'lt IE 9',))
+            ->appendFile($this->basePath() . '/js/jquery.min.js')
+            ->appendFile($this->basePath() . '/js/bootstrap.min.js')
+            ->appendFile($this->basePath() . '/js/jquery-ui-1.10.2.custom.min.js')
+            ->appendFile($this->basePath() . '/js/aqsystem.js') ?>
+
+
+    </head>
+    <body>
+        <div class="header container">
+            <div class="span12 text-center user_logo">
+                <img src="/img/logo_allcastle.png">
+            </div>
+        </div>
+
+        <div class="aq_outer container">
+            <div class="row">
+                <div class="span12 text-center login_logo">
+                    <img src="/img/logo_AQ.png"  class="aq_logo">
+                </div>
+            </div>
+
+            <?php echo $this->content;?>
+        </div>
+
+        <div class="footer container">
+
+        </div>
+
+        <!-- /container -->
+        <?php echo $this->inlineScript() ?>
+
+    </body>
+</html>

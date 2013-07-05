@@ -1,0 +1,46 @@
+<?php
+$form = $this->loginForm;
+$form->prepare();
+$form->setAttribute('action', $this->url('zfcuser/login'));
+$form->setAttribute('method', 'post');
+?>
+
+<?php echo $this->form()->openTag($form) ?>
+
+
+<div class="row">
+
+    <div class="span6 offset2 form-horizontal login-form">
+        <?php if ($this->formElementErrors($form->get('identity'))):?>
+            <div class="alert alert-danger span5 offset1">
+                <button type="button" class="close" data-dismiss="alert">×</button>
+                <?php echo $this->formElementErrors($form->get('identity')) ?>
+            </div>
+        <?php endif;?>
+            <div class="control-group">
+                <label class="control-label" for="inputEmail">Email</label>
+                <div class="controls">
+                    <input class="input-xlarge" type="text" id="inputEmail" name="identity">
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="inputPassword">Password</label>
+                <div class="controls">
+                    <input class="input-xlarge" type="password" id="inputPassword" name="credential">
+                </div>
+            </div>
+            <div class="control-group">
+                <div class="controls pull-right">
+                    <?php if ($this->redirect): ?>
+                        <input type="hidden" name="redirect" value="<?php echo $this->escapeHtml($this->redirect) ?>" />
+                    <?php endif ?>
+
+                    <a href="<?php echo $this->url('zfcuser/lost-password');?>" class="aq_login_lostpassword">Lost your password?</a>
+                    <button type="submit" class="btn-primary btn-large aq_btn_signin" name="submit">Sign in</button>
+                </div>
+            </div>
+    </div>
+
+</div>
+
+<?php echo $this->form()->closeTag() ?>
