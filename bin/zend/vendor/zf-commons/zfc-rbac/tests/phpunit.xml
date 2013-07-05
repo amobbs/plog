@@ -1,0 +1,10 @@
+<phpunit bootstrap="bootstrap.php" colors="true">
+
+    <testsuite name="ZfcRbac Test Suite">
+
+        <directory>./ZfcRbacTest</directory>
+
+    </testsuite>
+
+</phpunit>
+

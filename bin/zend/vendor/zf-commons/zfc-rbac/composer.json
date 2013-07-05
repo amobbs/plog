@@ -1,0 +1,32 @@
+{
+    "name": "zf-commons/zfc-rbac",
+    "description": "Zend Framework 2 Module that provides a layer of features of Zend\\Permissions\\Rbac",
+    "type": "library",
+    "keywords": [
+        "module",
+        "zf2"
+    ],
+    "homepage": "http://www.github.com/ZF-Commons/ZfcRbac/",
+    "authors": [
+        {
+            "name": "Kyle Spraggs",
+            "email": "theman@spiffyjr.me",
+            "homepage": "http://www.spiffyjr.me/"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.3",
+        "zendframework/zend-mvc": ">=2.1",
+        "zendframework/zend-permissions-rbac": ">=2.1",
+        "zendframework/zend-servicemanager": ">=2.1",
+        "zendframework/zend-view": ">=2.1"
+    },
+    "suggests": {
+        "zendframework/zend-developer-tools": "zend-developer-tools if you want to show informations about the roles"
+    },
+    "autoload": {
+        "psr-0": {
+            "ZfcRbac\\": "src/"
+        }
+    }
+}
