@@ -31,7 +31,6 @@ angular.module('Preslog.pages', [])
         ;
     })
     .controller('PagesCtrl', function ($scope, $stateParams, $templateCache) {
-        console.log($stateParams);
         // Build the uri structure based on the 3 slugs, if they exist.
         var uri = $stateParams.slug1;
         if (typeof $stateParams.slug2 !== 'undefined') {
