@@ -7,7 +7,7 @@ module.exports = {
      * development and the `compile_dir` folder is where our app resides once it's
      * completely built.
      */
-    build_dir: 'build',
+    build_dir: 'build/webroot',
     compile_dir: 'bin/webroot',
 
     /**
@@ -51,7 +51,7 @@ module.exports = {
         js: [
             'vendor/angular/angular.js',
             'vendor/angular-bootstrap/ui-bootstrap-tpls.min.js',
-            'vendor/placeholders/angular-placeholders-0.0.1-SNAPSHOT.min.js',
+            'vendor/angular-placeholders/dist/placeholders-0.0.1-SNAPSHOT.js',
             'vendor/angular-ui-router/release/angular-ui-router.js',
             'vendor/angular-ui-utils/modules/route/route.js',
             'vendor/angular/angular-resource.js',

@@ -10,9 +10,18 @@ Install Node.js and then:
 
 ```sh
 $ npm install -g grunt-cli bower karma
+$ npm install
 $ bower install
 $ grunt watch
 ```
+
+Depending on the version of angular-placeholders downloaded, you may need to:
+```sh
+$ cd vendor/angular-placeholders
+$ npm install
+$grunt
+```
+
 
 Set up the following vhost rule:
 ```
@@ -26,7 +35,7 @@ Set up the following vhost rule:
 </VirtualHost>
 ```
 
-Restart apache, and go to "http://preslog.local" in your browser.
+Restart apache, and go to "http://local.preslog" in your browser.
 
 ## Deployment Notes
 

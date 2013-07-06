@@ -3,8 +3,8 @@
 
 // Build webroot
 // Only track API
-build/*
-!build/api
+build/webroot/*
+!build/webroot/api
 
 
 // Bin webroot
