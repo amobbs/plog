@@ -1,0 +1,166 @@
+
+// Config vars: These need moving elsewhere
+@log-list-outer-border: 1px solid #bbb;
+@log-list-inner-border: 1px solid #eee;
+@log-list-highlight: #ffffdd;
+@log-list-label-color: #ccc;
+
+.log-list
+{
+    border-collapse: collapse;
+
+    tbody
+    {
+        // tbody as added spacing thanks to :before rule
+        border: none 0px !important;
+
+        // Adds spacing between tbody elements
+        &:before
+        {
+            content: '';
+            display: block;
+            height: 10px;
+        }
+
+        tr
+        {
+            // outer border
+            border-bottom: @log-list-outer-border;
+            border-right: @log-list-outer-border;
+
+            &:first-child
+            {
+                border-top: @log-list-outer-border;
+                td
+                {
+                    border-top :0px;
+                }
+            }
+
+            td
+            {
+                // Always a link
+                cursor: pointer;
+
+                // Outer border
+                &:first-child
+                {
+                    border-left: @log-list-outer-border;
+                }
+
+                // Inner borders
+                border-top: @log-list-inner-border;
+                border-left: @log-list-inner-border;
+
+                // General padding
+                padding: 2px 2px 2px 10px;
+
+                // Label padding
+                padding-bottom: 1em;
+
+                // Cell label
+                label
+                {
+                    display: block;
+                    font-size: 0.8em;
+                    color: @log-list-label-color;
+                    margin: 1.25em 0px 0px 0px;
+                    position: absolute;
+                }
+
+                // truncate long text: force one line, fit to cell.
+                div
+                {
+                    overflow: hidden;
+                    with: 100%;
+                    height: 1.25em;
+                    white-space: nowrap;
+                }
+
+            }
+        }
+
+        // Hover group
+        &:hover
+        {
+            tr
+            {
+                background: @log-list-highlight;
+            }
+        }
+    }
+}
+
+
+@media only screen and (max-width: 979px)
+{
+    .log-list
+    {
+        tbody
+        {
+            tr
+            {
+                display: block;
+                .clearfix;      // Solve issue with floating labels
+
+                // Borders
+                border: none 0px;
+
+                td
+                {
+                    border-top: @log-list-inner-border;
+                    border-left: @log-list-outer-border;
+                    border-right: @log-list-outer-border;
+                }
+
+                // First element border
+                &:first-child
+                {
+                    border: none 0px;
+
+                    td:first-child
+                    {
+                        border-top: @log-list-outer-border;
+                    }
+                }
+
+                // Last element border
+                &:last-child
+                {
+                    td:last-child
+                    {
+                        border-bottom: @log-list-outer-border;
+                    }
+                }
+
+                td
+                {
+                    display:block;
+                    padding: 0px;
+                    height: 24px;
+
+                    label
+                    {
+                        display: block;
+                        float: left;
+                        clear: left;
+                        margin: 0px;
+                        position: relative;
+                        color: #000;
+                        font-size: 1em;
+                        font-weight: bold;
+                        width: 120px;
+                        border-right: @log-list-inner-border;
+                        padding: 2px;
+                    }
+
+                    div
+                    {
+                        padding: 2px;
+                        display:block;
+                    }
+                }
+            }
+        }
+    }
+}
