@@ -19,7 +19,7 @@ Depending on the version of angular-placeholders downloaded, you may need to:
 ```sh
 $ cd vendor/angular-placeholders
 $ npm install
-$grunt
+$ grunt (or "grunt build")
 ```
 
 
