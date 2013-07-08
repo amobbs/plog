@@ -143,7 +143,30 @@ module.exports = function (grunt) {
                         expand: true
                     }
                 ]
+            },
+            build_files: {
+                files: [{
+                    expand: true,
+                    dot: true,
+                    cwd: 'src',
+                    dest: '<%= build_dir %>',
+                    src: [
+                        '**/.htaccess'
+                    ]
+                }]
+            },
+            compile_files: {
+                files: [{
+                    expand: true,
+                    dot: true,
+                    cwd: '<%= build_dir %>',
+                    dest: '<%= compile_dir %>',
+                    src: [
+                        '.htaccess'
+                    ]
+                }]
             }
+
         },
 
         /**
@@ -442,7 +465,7 @@ module.exports = function (grunt) {
                 files: [
                     '<%= app_files.js %>'
                 ],
-                tasks: [ 'jshint:src', 'karma:unit:run', 'copy:build_appjs' ]
+                tasks: [ 'jshint:src', 'karma:unit:run', 'copy:build_appjs', 'copy:build_files' ]
             },
 
             /**
@@ -546,7 +569,7 @@ module.exports = function (grunt) {
      */
     grunt.registerTask('build', [
         'clean', 'html2js', 'jshint', 'coffeelint', 'coffee', 'recess:build',
-        'copy:build_assets', 'copy:build_appjs', 'copy:build_vendorjs',
+        'copy:build_assets', 'copy:build_appjs', 'copy:build_vendorjs', 'copy:build_files',
         'index:build', 'karmaconfig', 'karma:continuous'
     ]);
 
@@ -555,7 +578,7 @@ module.exports = function (grunt) {
      * minifying your code.
      */
     grunt.registerTask('compile', [
-        'recess:compile', 'copy:compile_assets', 'ngmin', 'concat', 'uglify', 'index:compile'
+        'recess:compile', 'copy:compile_assets', 'copy:compile_files', 'ngmin', 'concat', 'uglify', 'index:compile'
     ]);
 
     /**
