@@ -1,1 +1,68 @@
-<h1>Admin: Users</h1>
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span8">
+            <h1>Admin: Users</h1>
+
+            <p>The below table shows all users currently available in the Preslog system.</p>
+        </div>
+        <div class="span4">
+            <div class="btn-group pull-right">
+                <button class="btn">Show Deleted</button>
+            </div>
+        </div>
+    </div>
+    <div class="row-fluid">
+        <div class="span12">
+            <table class="table table-bordered table-condensed table-row-select">
+                <tr>
+                    <th>First name</th>
+                    <th>Last name</th>
+                    <th>Client</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                </tr>
+                <tr onclick="parent.location='/admin/users/edit'">
+                    <td>Dave</td>
+                    <td>Newson </td>
+                    <td>4mation Technologies</td>
+                    <td>dave@4mation.com.au</td>
+                    <td>Administrator</td>
+                </tr>
+                <tr onclick="parent.location='/admin/users/edit'">
+                    <td>Dave</td>
+                    <td>Newson </td>
+                    <td>4mation Technologies</td>
+                    <td>dave@4mation.com.au</td>
+                    <td>Administrator</td>
+                </tr>
+                <tr onclick="parent.location='/admin/users/edit'">
+                    <td>Dave</td>
+                    <td>Newson </td>
+                    <td>4mation Technologies</td>
+                    <td>dave@4mation.com.au</td>
+                    <td>Administrator</td>
+                </tr>
+                <tr onclick="parent.location='/admin/users/edit'">
+                    <td>Dave</td>
+                    <td>Newson </td>
+                    <td>4mation Technologies</td>
+                    <td>dave@4mation.com.au</td>
+                    <td>Administrator</td>
+                </tr>
+            </table>
+
+            <div class="pagination pagination-centered">
+                <ul>
+                    <li class="disabled"><a href="#">&laquo;</a></li>
+                    <li class="active"><a href="#">1</a></li>
+                    <li><a href="#">2</a></li>
+                    <li><a href="#">3</a></li>
+                    <li><a href="#">4</a></li>
+                    <li><a href="#">&raquo;</a></li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+</div>
+

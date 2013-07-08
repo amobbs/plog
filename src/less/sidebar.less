@@ -1,0 +1,70 @@
+
+@sidebar-background: #444;
+@sidebar-button-border-inset: #333;
+@sidebar-button-border-outset: #555;
+@sidebar-button-active-bg: #222;
+
+body
+{
+    background: #eee;
+}
+
+
+#content
+{
+    background: #eee;
+    margin-left: 220px;
+}
+
+
+#sidebar
+{
+    width: 220px;
+    height: 100px;
+    position: absolute;
+
+    .nav
+    {
+        width: 200px;
+        margin: 20px;
+        background: #fff;
+
+        li
+        {
+            a
+            {
+                padding-right: 0px;
+
+                i
+                {
+                    float: right;
+                    margin: 4px 4px 0px 0px;
+                }
+            }
+
+            &.active
+            {
+                a
+                {
+                    font-weight: bold;
+                }
+            }
+
+        }
+    }
+
+}
+
+
+@media only screen and (max-width: 979px)
+{
+    #sidebar
+    {
+        display: none;
+    }
+
+    #content
+    {
+        margin-left: 0px;
+    }
+}

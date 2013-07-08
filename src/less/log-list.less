@@ -3,7 +3,8 @@
 @log-list-outer-border: 1px solid #bbb;
 @log-list-inner-border: 1px solid #eee;
 @log-list-highlight: #ffffdd;
-@log-list-label-color: #ccc;
+@log-list-label-color: #bbb;
+@log-list-background: #fff;
 
 .log-list
 {
@@ -24,6 +25,8 @@
 
         tr
         {
+            background: @log-list-background;
+
             // outer border
             border-bottom: @log-list-outer-border;
             border-right: @log-list-outer-border;
