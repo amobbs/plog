@@ -1,22 +1,29 @@
 <div id="sidebar">
+
     <ul class="nav nav-tabs nav-stacked">
-        <li class="active"><a href="/dashboard/my-dashboard">My Dashboard<i class="icon-chevron-right"></i></a></li>
-        <li><a href="/dashboard/unqualified-logs">Unqualified Logs<i class="icon-chevron-right"></i></a></li>
-        <li><a href="#">Another Dashboard<i class="icon-chevron-right"></i></a></li>
-        <li><a href="#">Last Dashboard<i class="icon-chevron-right"></i></a></li>
+        <li><a href="/dashboard/log-list">List Report<i class="icon-chevron-right"></i></a></li>
+        <li><a href="/dashboard/log-list">Daily Logs<i class="icon-chevron-right"></i></a></li>
+        <li><a href="/dashboard/log-list">Weekly Logs<i class="icon-chevron-right"></i></a></li>
+        <li><a href="/dashboard/log-list">Unqualified Logs<i class="icon-chevron-right"></i></a></li>
+    </ul>
+
+    <ul class="nav nav-tabs nav-stacked">
+        <li class="active"><a href="/dashboard/dashboard">My Dashboard<i class="icon-chevron-right"></i></a></li>
+        <li><a href="/dashboard/dashboard">Another Dashboard<i class="icon-chevron-right"></i></a></li>
+        <li><a href="/dashboard/dashboard">Last Dashboard<i class="icon-chevron-right"></i></a></li>
     </ul>
 </div>
 
 <div class="container-fluid" id="content">
     <div class="row-fluid">
         <div class="span8 dash-title">
-            <h1>My Dashboard</h1>
+            <h1>Dashboard Example</h1>
             </div>
         <div class="span4">
             <div class="btn-group dash-controls pull-right">
                 <button class="btn">Add Widget</button>
-                <button class="btn">Move Widgets</button>
                 <button class="btn">Create New Dashboard</button>
+                <button class="btn" onclick="reportExport()">Export as Report</button>
             </div>
         </div>
     </div>
@@ -46,6 +53,10 @@
                 <div class="widget-content">
                     <p><img src="/assets/img/placeholder/graph1.png" /></p>
                 </div>
+                <div class="widget-footnote report-export-only">
+                    <h4>Report Footnote</h4>
+                    <textarea></textarea>
+                </div>
             </div>
         </div>
 
@@ -72,6 +83,10 @@
                 <div class="widget-content">
                     <p><img src="/assets/img/placeholder/graph2.png" /></p>
                 </div>
+                <div class="widget-footnote report-export-only">
+                    <h4>Report Footnote</h4>
+                    <textarea></textarea>
+                </div>
             </div>
         </div>
 
@@ -97,6 +112,10 @@
                 </div>
                 <div class="widget-content">
                     <p><img src="/assets/img/placeholder/graph3.png" /></p>
+                </div>
+                <div class="widget-footnote report-export-only">
+                    <h4>Report Footnote</h4>
+                    <textarea></textarea>
                 </div>
             </div>
         </div>
