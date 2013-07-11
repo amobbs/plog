@@ -1,20 +1,18 @@
 
-
 // Top navbar
-#log_nav
-{
+#log_nav {
+
     // Show under top nav bar
     top: 42px;
+    z-index: 1020;
 
-    .navbar-inner
-    {
+    .navbar-inner {
         // Appears as part of the page
         background: #eee;
         border: none 0px;
 
         // Smaller heading
-        h2
-        {
+        h2 {
             float: left;
             font-size: 1.5em;
             margin: 0px 20px 0px 0px;
@@ -22,8 +20,154 @@
     }
 }
 
+// Log screen
+#log_entry {
 
-#log_entry
-{
-    padding-top: 60px;
+    // Minimum width for standard res
+    min-width: 900px;
+
+    // nav padding
+    padding-top: 40px;
+
+    // default field wdths
+    input, textarea, select
+    {
+        width: 100%;
+    }
+
+    input, textarea, select, label
+    {
+        font-size: 0.85em;
+    }
+
+    // Vertical spacing
+    .row-fluid
+    {
+        padding-top: 8px;
+    }
+
+    // Log fields - left hand column
+    .log-fields
+    {
+    }
+
+    .form-horizontal
+    {
+
+        // Horizontal spacing - span to width of responsive divs
+        .span6
+        {
+            .control-label
+            {
+                width: 31%;
+            }
+            .controls
+            {
+                margin-left: 37%;
+            }
+        }
+        .span12
+        {
+            .control-label
+            {
+                width: 16%;
+            }
+            .controls
+            {
+                margin-left: 18%;
+            }
+        }
+
+        // time fields
+        input.input-time
+        {
+            width: 20px;
+        }
+
+        // Date input group
+        .group-date
+        {
+            // date block
+            label.label-date
+            {
+            }
+            div.controls-date
+            {
+                width: 100px;
+                margin-left: 6%;
+                float: left;
+
+                input
+                {
+                    width: 70px;
+                }
+            }
+
+            // time block
+            label.label-time
+            {
+                width: 40px !important;
+            }
+            div.controls-time
+            {
+                margin-left: 10px;
+                width: 1px;
+                float: left;
+
+                input
+                {
+                    width: 50px;
+                }
+            }
+        }
+    }
+
+    // Hierarchial Fields
+    .hierarchy-fields
+    {
+        border-left: 2px solid #ccc;
+        min-height: 600px;
+        margin-top: 10px;
+
+        // Padding
+        > .row-fluid
+        {
+            padding: 10px 0px 0px 10px;
+        }
+
+        // Grouping
+        .hierarchy-group
+        {
+            margin-bottom: 20px;
+            text-align: left;
+
+            button
+            {
+                margin-bottom: 5px;
+            }
+        }
+    }
+
+    // Comment fields
+    .comments
+    {
+        // Author
+        .author
+        {
+            width: 150px;
+
+            // date
+            span
+            {
+                font-size: 0.8em;
+            }
+        }
+
+        // entry box
+        textarea
+        {
+            width: 98%;
+        }
+    }
+
 }
