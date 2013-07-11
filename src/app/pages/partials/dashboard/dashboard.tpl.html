@@ -1,16 +1,16 @@
 <div id="sidebar">
 
     <ul class="nav nav-tabs nav-stacked">
-        <li><a href="/dashboard/log-list">List Report<i class="icon-chevron-right"></i></a></li>
+        <li><a href="/dashboard/log-list">Live Report<i class="icon-chevron-right"></i></a></li>
         <li><a href="/dashboard/log-list">Daily Logs<i class="icon-chevron-right"></i></a></li>
         <li><a href="/dashboard/log-list">Weekly Logs<i class="icon-chevron-right"></i></a></li>
         <li><a href="/dashboard/log-list">Unqualified Logs<i class="icon-chevron-right"></i></a></li>
     </ul>
 
     <ul class="nav nav-tabs nav-stacked">
-        <li class="active"><a href="/dashboard/dashboard">My Dashboard<i class="icon-chevron-right"></i></a></li>
-        <li><a href="/dashboard/dashboard">Another Dashboard<i class="icon-chevron-right"></i></a></li>
-        <li><a href="/dashboard/dashboard">Last Dashboard<i class="icon-chevron-right"></i></a></li>
+        <li class="active"><a href="/dashboard/dashboard">Dashboard Example<i class="icon-chevron-right"></i></a></li>
+        <li><a href="/dashboard/dashboard">Name of another custom dashboard<i class="icon-chevron-right"></i></a></li>
+        <li><a href="/dashboard/dashboard">Dashboard galore<i class="icon-chevron-right"></i></a></li>
     </ul>
 </div>
 
@@ -144,24 +144,105 @@
                 </div>
                 <div class="widget-content">
 
-                    <table class="table table-bordered table-condensed">
+                    <p>Showing <strong>3</strong> of <strong>16</strong> logs</p>
+
+                    <table class="table table-condensed log-list">
+                        <tbody onclick="parent.location='/log'">
                         <tr>
-                            <th>Log ID</th>
-                            <th>Date</th>
-                            <th>Program Name</th>
-                            <th>Severity</th>
-                            <th>Effect</th>
-                            <th>Cause</th>
+                            <td><label>Log ID</label><div>1234</div></td>
+                            <td><label>Program</label><div>My Show Name Here</div></td>
+                            <td><label>Networks</label><div>Network List Goes here</div></td>
                         </tr>
                         <tr>
-                            <td>134</td>
-                            <td>88-88-8888 88:88:88</td>
-                            <td>My long program name</td>
-                            <td>SEVEIRTY 1 OUTAGE</td>
-                            <td>OFF AIR</td>
-                            <td>Technical</td>
+                            <td><label>Date</label><div>88-88-8888 88:88:88</div></td>
+                            <td><label>Description</label><div class="truncate">This is a long description This is a long description <br/> This is a long description This is a long description</div></td>
+                            <td><label>Details</label><div>This is a long details item</div></td>
                         </tr>
+                        <tr>
+                            <td><label>Duration</label><div>1h 57m 3s</div></td>
+                            <td><label>Asset ID</label><div>ABC23456789</div></td>
+                            <td><label>Logged By</label><div>Dave Newson</div></td>
+                        </tr>
+                        <tr>
+                            <td><label>Effect</label><div>Commercial Hotlist (CHL)</div></td>
+                            <td><label>Cause</label><div>Asset Failed to Arrive</div></td>
+                            <td><label>Accountability</label><div>Unresolved</div></td>
+                        </tr>
+                        <tr>
+                            <td><label>Severity</label><div>Level 1</div></td>
+                            <td><label>Impact</label><div>NEGATIVE (OUTAGE)</div></td>
+                            <td><label>Status</label><div>Unresolved</div></td>
+                        </tr>
+                        </tbody>
+
+                        <tbody onclick="parent.location='/log'">
+                        <tr>
+                            <td><label>Log ID</label><div>1234</div></td>
+                            <td><label>Program</label><div>My Show Name Here</div></td>
+                            <td><label>Networks</label><div>Network List Goes here</div></td>
+                        </tr>
+                        <tr>
+                            <td><label>Date</label><div>88-88-8888 88:88:88</div></td>
+                            <td><label>Description</label><div class="truncate">This is a long description This is a long description <br/> This is a long description This is a long description</div></td>
+                            <td><label>Details</label><div>This is a long details item</div></td>
+                        </tr>
+                        <tr>
+                            <td><label>Duration</label><div>1h 57m 3s</div></td>
+                            <td><label>Asset ID</label><div>ABC23456789</div></td>
+                            <td><label>Logged By</label><div>Dave Newson</div></td>
+                        </tr>
+                        <tr>
+                            <td><label>Effect</label><div>Commercial Hotlist (CHL)</div></td>
+                            <td><label>Cause</label><div>Asset Failed to Arrive</div></td>
+                            <td><label>Accountability</label><div>Unresolved</div></td>
+                        </tr>
+                        <tr>
+                            <td><label>Severity</label><div>Level 1</div></td>
+                            <td><label>Impact</label><div>NEGATIVE (OUTAGE)</div></td>
+                            <td><label>Status</label><div>Unresolved</div></td>
+                        </tr>
+                        </tbody>
+
+                        <tbody onclick="parent.location='/log'">
+                        <tr>
+                            <td><label>Log ID</label><div>1234</div></td>
+                            <td><label>Program</label><div>My Show Name Here</div></td>
+                            <td><label>Networks</label><div>Network List Goes here</div></td>
+                        </tr>
+                        <tr>
+                            <td><label>Date</label><div>88-88-8888 88:88:88</div></td>
+                            <td><label>Description</label><div class="truncate">This is a long description This is a long description <br/> This is a long description This is a long description</div></td>
+                            <td><label>Details</label><div>This is a long details item</div></td>
+                        </tr>
+                        <tr>
+                            <td><label>Duration</label><div>1h 57m 3s</div></td>
+                            <td><label>Asset ID</label><div>ABC23456789</div></td>
+                            <td><label>Logged By</label><div>Dave Newson</div></td>
+                        </tr>
+                        <tr>
+                            <td><label>Effect</label><div>Commercial Hotlist (CHL)</div></td>
+                            <td><label>Cause</label><div>Asset Failed to Arrive</div></td>
+                            <td><label>Accountability</label><div>Unresolved</div></td>
+                        </tr>
+                        <tr>
+                            <td><label>Severity</label><div>Level 1</div></td>
+                            <td><label>Impact</label><div>NEGATIVE (OUTAGE)</div></td>
+                            <td><label>Status</label><div>Unresolved</div></td>
+                        </tr>
+                        </tbody>
                     </table>
+
+
+                    <div class="pagination pagination-centered">
+                        <ul>
+                            <li class="disabled"><a href="#">&laquo;</a></li>
+                            <li class="active"><a href="#">1</a></li>
+                            <li><a href="#">2</a></li>
+                            <li><a href="#">3</a></li>
+                            <li><a href="#">4</a></li>
+                            <li><a href="#">&raquo;</a></li>
+                        </ul>
+                    </div>
 
                 </div>
             </div>

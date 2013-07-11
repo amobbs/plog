@@ -7,12 +7,14 @@
     border: 1px solid #ccc;
     position: relative;
     clear: both;
+    border-radius: 4px;
 
     // widget title bar
     .widget-title
     {
         height: 36px;
         border-bottom: 1px solid #ccc;
+        cursor: move;
 
         // Headings in title locked to size
         h1,h2,h3,h4,h5,h6
@@ -52,15 +54,16 @@
             visibility:hidden;
         }
 
-        &:hover
-        {
-            .hover-show
-            {
-                visibility: visible;
-            }
-        }
-
     }
+
+    &:hover
+    {
+        .hover-show
+        {
+            visibility: visible;
+        }
+    }
+
 
     // widget content
     .widget-content
