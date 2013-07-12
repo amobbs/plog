@@ -12,9 +12,11 @@
     // widget title bar
     .widget-title
     {
-        height: 36px;
+        min-height: 36px;
         border-bottom: 1px solid #ccc;
         cursor: move;
+        background: url('/assets/img/layout/widget-title.png') repeat-x bottom;
+        position: relative;
 
         // Headings in title locked to size
         h1,h2,h3,h4,h5,h6
@@ -22,16 +24,16 @@
             font-size: 1em;
             font-weight: bold;
             margin: 0px;
-            float:left;
-            padding: 0px 0px 0px 10px;
-            line-height: 36px;
+            margin: 0px 40px 0px 32px;
+            padding: 8px 0px 8px 10px;
+            line-height: 1.5em;
+            border-left: 1px solid #ccc;
         }
 
         // Widget icon on the left hand side
         .widget-icon
         {
             height: 36px;
-            border-right: 1px solid #ccc;
             float: left;
 
             i
@@ -43,8 +45,17 @@
         // Align right buttons
         .widget-buttons
         {
-            float: right;
             padding: 7px 7px 0px 0px;
+            position: absolute;
+            top: 0px;
+            right: 0px;
+
+            .dropdown-menu
+            {
+                right: 0px;
+                left: auto;
+            }
+
         }
 
 
