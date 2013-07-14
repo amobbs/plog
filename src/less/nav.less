@@ -2,14 +2,15 @@
  * Nav Styles
  */
 
-// 40px Padding to top
+// Add spacing so content isn't hidden behind the nav
 body { padding-top: 40px; }
 
+// For mobiles, remove the padding as the bar is no longer fixed.
 @media screen and (max-width: 979px) {
   body { padding-top: 0px; }
 }
 
-#header_nav
+#preslog_nav
 {
     // Brand Logo should have no padding
     .brand
@@ -19,22 +20,34 @@ body { padding-top: 40px; }
         padding-right: 0px;
     }
 
-    // Search field fix
+    // Search field text fix
     .search-query
     {
         line-height: 1.5em;
     }
 
+    // Fixed width for dropdown menus
     .dropdown-dashboard
     {
         width: 200px;
     }
 
+    // dropdown sub-nav titles shouldn't wrap
     .dropdown-menu .nav-header
     {
         white-space: nowrap;
     }
 
-
+    // Active and Hover have BG color.
+    .nav
+    {
+        li.active, li:hover
+        {
+            > a
+            {
+                background: #333 !important;
+            }
+        }
+    }
 }
 

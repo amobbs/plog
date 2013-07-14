@@ -1,3 +1,6 @@
+/**
+ * Widget Styles
+ */
 
 // Widget box
 .widget-box
@@ -9,12 +12,20 @@
     clear: both;
     border-radius: 4px;
 
+    // Also movable?
+    &.widget-movable
+    {
+        .widget-title
+        {
+            cursor: move;
+        }
+    }
+
     // widget title bar
     .widget-title
     {
         min-height: 36px;
         border-bottom: 1px solid #ccc;
-        cursor: move;
         background: url('/assets/img/layout/widget-title.png') repeat-x bottom;
         position: relative;
 

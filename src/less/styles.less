@@ -1,8 +1,10 @@
 
 body
 {
+    // subtle gradient
     background: url('/assets/img/layout/background.png') repeat-x top #eee;
 }
+
 
 /**
  * Typography
@@ -41,7 +43,7 @@ pre {
 }
 
 
-// Table row selector
+// Table row selector; highlight and cursor for TRs
 table.table-row-select
 {
     tr:hover
@@ -52,5 +54,50 @@ table.table-row-select
             color: #0088cc;
             cursor: pointer;
         }
+    }
+}
+
+
+// textarea fit-to-div
+// padding and margin should match
+.textarea-fill
+{
+    padding: 6px;
+
+    textarea
+    {
+        width: 100%;
+        margin: -6px;
+        padding: 5px; // 1px less, to account for surrounding borders
+    }
+}
+
+// input fill-to-div
+// padding and mergins should match
+.input-fill
+{
+    padding: 6px;
+
+    input
+    {
+        width: 100%;
+        margin: -6px;
+        padding: 5px;
+    }
+}
+
+
+// For making Label and Select/Input items flow on the same line
+.control-horizontal
+{
+    .control-label
+    {
+        display: inline;
+        margin: 0px 10px 0px 10px;
+    }
+
+    select,input
+    {
+        margin: 0px;
     }
 }

@@ -1,248 +1,345 @@
-<div id="sidebar">
+<div id="preslog_dashboard">
 
-    <ul class="nav nav-tabs nav-stacked">
-        <li><a href="/dashboard/log-list">Live Report<i class="icon-chevron-right"></i></a></li>
-        <li><a href="/dashboard/log-list">Daily Logs<i class="icon-chevron-right"></i></a></li>
-        <li><a href="/dashboard/log-list">Weekly Logs<i class="icon-chevron-right"></i></a></li>
-        <li><a href="/dashboard/log-list">Unqualified Logs<i class="icon-chevron-right"></i></a></li>
-    </ul>
+    <div id="preslog_sidebar">
 
-    <ul class="nav nav-tabs nav-stacked">
-        <li class="active"><a href="/dashboard/dashboard">Dashboard Example<i class="icon-chevron-right"></i></a></li>
-        <li><a href="/dashboard/dashboard">Name of another custom dashboard<i class="icon-chevron-right"></i></a></li>
-        <li><a href="/dashboard/dashboard">Dashboard galore<i class="icon-chevron-right"></i></a></li>
-    </ul>
+        <ul class="nav nav-tabs nav-stacked">
+            <li><a href="/dashboard/log-list">Live Report<i class="icon-chevron-right"></i></a></li>
+            <li><a href="/dashboard/log-list">Daily Logs<i class="icon-chevron-right"></i></a></li>
+            <li><a href="/dashboard/log-list">Weekly Logs<i class="icon-chevron-right"></i></a></li>
+            <li><a href="/dashboard/log-list">Unqualified Logs<i class="icon-chevron-right"></i></a></li>
+        </ul>
+
+        <ul class="nav nav-tabs nav-stacked">
+            <li class="active"><a href="/dashboard/dashboard">Dashboard Example<i class="icon-chevron-right"></i></a></li>
+            <li><a href="/dashboard/dashboard">Name of another custom dashboard<i class="icon-chevron-right"></i></a></li>
+            <li><a href="/dashboard/dashboard">Dashboard galore<i class="icon-chevron-right"></i></a></li>
+        </ul>
+    </div>
+
+    <div class="container-fluid" id="preslog_content">
+        <div class="row-fluid">
+            <div class="span8 dash-title">
+                <h1>Dashboard Example</h1>
+                </div>
+            <div class="span4">
+                <div class="btn-group dash-controls pull-right">
+                    <button class="btn" ng-click="dashboardAddWidget = true"><i class="icon icon-plus"></i> Add Widget</button>
+                    <button class="btn" ng-click="dashboardCreate = true"><i class="icon icon-list-alt"></i> Create New Dashboard</button>
+                    <button class="btn" ng-click="dashboardExport = true"><i class="icon icon-download"></i> Export as Report</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="row-fluid">
+
+            <div class="span4">
+                <div class="widget-box widget-movable">
+                    <div class="widget-title">
+                        <span class="widget-icon">
+                            <i class="icon-signal"></i>
+                        </span>
+                        <h3>This is a widget</h3>
+                        <div class="widget-buttons">
+                            <div class="btn-group hover-show">
+                                <a class="btn btn-mini dropdown-toggle" data-toggle="dropdown" href="#">
+                                    <span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a tabindex="-1" href="#"><i class="icon icon-refresh"></i> Refresh</a></li>
+                                    <li><a tabindex="-1" ng-click="dashboardWidgetEdit = true"><i class="icon icon-pencil"></i> Edit</a></li>
+                                    <li><a><i class="icon icon-trash"></i> Delete</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="widget-content">
+                        <p><img src="/assets/img/placeholder/graph1.png" /></p>
+                    </div>
+                    <div class="widget-footnote report-export-only" ng-show="dashboardExport">
+                        <h4>Report Footnote</h4>
+                        <textarea></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="span4">
+                <div class="widget-box widget-movable">
+                    <div class="widget-title">
+                        <span class="widget-icon">
+                            <i class="icon-signal"></i>
+                        </span>
+                        <h3>Custom title</h3>
+                        <div class="widget-buttons">
+                            <div class="btn-group hover-show">
+                                <a class="btn btn-mini dropdown-toggle" data-toggle="dropdown" href="#">
+                                    <span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a tabindex="-1" href="#"><i class="icon icon-refresh"></i> Refresh</a></li>
+                                    <li><a tabindex="-1" ng-click="dashboardWidgetEdit = true"><i class="icon icon-pencil"></i> Edit</a></li>
+                                    <li><a><i class="icon icon-trash"></i> Delete</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="widget-content">
+                        <p><img src="/assets/img/placeholder/graph2.png" /></p>
+                    </div>
+                    <div class="widget-footnote report-export-only" ng-show="dashboardExport">
+                        <h4>Report Footnote</h4>
+                        <textarea></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="span4">
+                <div class="widget-box widget-movable">
+                    <div class="widget-title">
+                        <span class="widget-icon">
+                            <i class="icon-signal"></i>
+                        </span>
+                        <h3>Really rather long custom title which should wrap onto a new line just because we need to see it</h3>
+                        <div class="widget-buttons">
+                            <div class="btn-group hover-show">
+                                <a class="btn btn-mini dropdown-toggle" data-toggle="dropdown" href="#">
+                                    <span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a tabindex="-1" href="#"><i class="icon icon-refresh"></i> Refresh</a></li>
+                                    <li><a tabindex="-1" ng-click="dashboardWidgetEdit = true"><i class="icon icon-pencil"></i> Edit</a></li>
+                                    <li><a><i class="icon icon-trash"></i> Delete</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="widget-content">
+                        <p><img src="/assets/img/placeholder/graph3.png" /></p>
+                    </div>
+                    <div class="widget-footnote report-export-only" ng-show="dashboardExport">
+                        <h4>Report Footnote</h4>
+                        <textarea></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="widget-box widget-movable">
+                    <div class="widget-title">
+                        <span class="widget-icon">
+                            <i class="icon-signal"></i>
+                        </span>
+                        <h3>Widget for Logs</h3>
+                        <div class="widget-buttons">
+                            <div class="btn-group hover-show">
+                                <a class="btn btn-mini dropdown-toggle" data-toggle="dropdown" href="#">
+                                    <span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a tabindex="-1" href="#"><i class="icon icon-refresh"></i> Refresh</a></li>
+                                    <li><a tabindex="-1" ng-click="dashboardWidgetEdit = true"><i class="icon icon-pencil"></i> Edit</a></li>
+                                    <li><a><i class="icon icon-trash"></i> Delete</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="widget-content">
+
+                        <div class="row-fluid">
+                            <div class="span6">
+                                <p>Showing <strong>3</strong> of <strong>3</strong> logs</p>
+                            </div>
+                            <div class="span6 text-right">
+                                <div class="control-group control-horizontal">
+                                    <label class="control-label">Order By</label>
+                                    <select>
+                                        <option>Created</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <table class="table table-condensed log-list">
+                            <tbody onclick="parent.location='/log'">
+                            <tr>
+                                <td><label>Log ID</label><div>1234</div></td>
+                                <td><label>Program</label><div>My Show Name Here</div></td>
+                                <td><label>Networks</label><div>Network List Goes here</div></td>
+                            </tr>
+                            <tr>
+                                <td><label>Date</label><div>88-88-8888 88:88:88</div></td>
+                                <td><label>Description</label><div class="truncate">This is a long description This is a long description <br/> This is a long description This is a long description</div></td>
+                                <td><label>Details</label><div>This is a long details item</div></td>
+                            </tr>
+                            <tr>
+                                <td><label>Duration</label><div>1h 57m 3s</div></td>
+                                <td><label>Asset ID</label><div>ABC23456789</div></td>
+                                <td><label>Logged By</label><div>Dave Newson</div></td>
+                            </tr>
+                            <tr>
+                                <td><label>Effect</label><div>Commercial Hotlist (CHL)</div></td>
+                                <td><label>Cause</label><div>Asset Failed to Arrive</div></td>
+                                <td><label>Accountability</label><div>Unresolved</div></td>
+                            </tr>
+                            <tr>
+                                <td><label>Severity</label><div>Level 1</div></td>
+                                <td><label>Impact</label><div>NEGATIVE (OUTAGE)</div></td>
+                                <td><label>Status</label><div>Unresolved</div></td>
+                            </tr>
+                            </tbody>
+
+                            <tbody onclick="parent.location='/log'">
+                            <tr>
+                                <td><label>Log ID</label><div>1234</div></td>
+                                <td><label>Program</label><div>My Show Name Here</div></td>
+                                <td><label>Networks</label><div>Network List Goes here</div></td>
+                            </tr>
+                            <tr>
+                                <td><label>Date</label><div>88-88-8888 88:88:88</div></td>
+                                <td><label>Description</label><div class="truncate">This is a long description This is a long description <br/> This is a long description This is a long description</div></td>
+                                <td><label>Details</label><div>This is a long details item</div></td>
+                            </tr>
+                            <tr>
+                                <td><label>Duration</label><div>1h 57m 3s</div></td>
+                                <td><label>Asset ID</label><div>ABC23456789</div></td>
+                                <td><label>Logged By</label><div>Dave Newson</div></td>
+                            </tr>
+                            <tr>
+                                <td><label>Effect</label><div>Commercial Hotlist (CHL)</div></td>
+                                <td><label>Cause</label><div>Asset Failed to Arrive</div></td>
+                                <td><label>Accountability</label><div>Unresolved</div></td>
+                            </tr>
+                            <tr>
+                                <td><label>Severity</label><div>Level 1</div></td>
+                                <td><label>Impact</label><div>NEGATIVE (OUTAGE)</div></td>
+                                <td><label>Status</label><div>Unresolved</div></td>
+                            </tr>
+                            </tbody>
+
+                            <tbody onclick="parent.location='/log'">
+                            <tr>
+                                <td><label>Log ID</label><div>1234</div></td>
+                                <td><label>Program</label><div>My Show Name Here</div></td>
+                                <td><label>Networks</label><div>Network List Goes here</div></td>
+                            </tr>
+                            <tr>
+                                <td><label>Date</label><div>88-88-8888 88:88:88</div></td>
+                                <td><label>Description</label><div class="truncate">This is a long description This is a long description <br/> This is a long description This is a long description</div></td>
+                                <td><label>Details</label><div>This is a long details item</div></td>
+                            </tr>
+                            <tr>
+                                <td><label>Duration</label><div>1h 57m 3s</div></td>
+                                <td><label>Asset ID</label><div>ABC23456789</div></td>
+                                <td><label>Logged By</label><div>Dave Newson</div></td>
+                            </tr>
+                            <tr>
+                                <td><label>Effect</label><div>Commercial Hotlist (CHL)</div></td>
+                                <td><label>Cause</label><div>Asset Failed to Arrive</div></td>
+                                <td><label>Accountability</label><div>Unresolved</div></td>
+                            </tr>
+                            <tr>
+                                <td><label>Severity</label><div>Level 1</div></td>
+                                <td><label>Impact</label><div>NEGATIVE (OUTAGE)</div></td>
+                                <td><label>Status</label><div>Unresolved</div></td>
+                            </tr>
+                            </tbody>
+                        </table>
+
+
+                        <div class="pagination pagination-centered">
+                            <ul>
+                                <li class="disabled"><a href="#">&laquo;</a></li>
+                                <li class="active"><a href="#">1</a></li>
+                                <li><a href="#">2</a></li>
+                                <li><a href="#">3</a></li>
+                                <li><a href="#">4</a></li>
+                                <li><a href="#">&raquo;</a></li>
+                            </ul>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
 </div>
 
-<div class="container-fluid" id="content">
-    <div class="row-fluid">
-        <div class="span8 dash-title">
-            <h1>Dashboard Example</h1>
-            </div>
-        <div class="span4">
-            <div class="btn-group dash-controls pull-right">
-                <button class="btn">Add Widget</button>
-                <button class="btn">Create New Dashboard</button>
-                <button class="btn" onclick="reportExport()">Export as Report</button>
+
+<!-- Add Dashboard Modal -->
+<div id="dashboard_create" modal="dashboardCreate" options="{backdropFade: true}" close="dashboardCreate = false" tabindex="-1" role="dialog">
+    <div class="modal-header">
+        <button type="button" class="close" ng-click="dashboardCreate = false" aria-hidden="true"><i class="icon icon-remove"></i></button>
+        <h3 id="myModalLabel">Create Dashboard</h3>
+    </div>
+    <div class="modal-body">
+        <p>Create New Dashboard</p>
+        <div class="control-group">
+            <label class="control-label">Dashboard Name</label>
+            <div class="control">
+                <input type="text" value="My Dashboard Name" />
             </div>
         </div>
     </div>
-
-    <div class="row-fluid">
-
-        <div class="span4">
-            <div class="widget-box">
-                <div class="widget-title">
-                    <span class="widget-icon">
-                        <i class="icon-signal"></i>
-                    </span>
-                    <h3>This is a widget</h3>
-                    <div class="widget-buttons">
-                        <div class="btn-group hover-show">
-                            <a class="btn btn-mini dropdown-toggle" data-toggle="dropdown" href="#">
-                                <span class="caret"></span>
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li><a tabindex="-1" href="#">Refresh</a></li>
-                                <li class="disabled"><a tabindex="-1" href="#">Edit</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <div class="widget-content">
-                    <p><img src="/assets/img/placeholder/graph1.png" /></p>
-                </div>
-                <div class="widget-footnote report-export-only">
-                    <h4>Report Footnote</h4>
-                    <textarea></textarea>
-                </div>
-            </div>
-        </div>
-
-        <div class="span4">
-            <div class="widget-box">
-                <div class="widget-title">
-                    <span class="widget-icon">
-                        <i class="icon-signal"></i>
-                    </span>
-                    <h3>Custom title</h3>
-                    <div class="widget-buttons">
-                        <div class="btn-group hover-show">
-                            <a class="btn btn-mini dropdown-toggle" data-toggle="dropdown" href="#">
-                                <span class="caret"></span>
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li><a tabindex="-1" href="#">Refresh</a></li>
-                                <li class="disabled"><a tabindex="-1" href="#">Edit</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <div class="widget-content">
-                    <p><img src="/assets/img/placeholder/graph2.png" /></p>
-                </div>
-                <div class="widget-footnote report-export-only">
-                    <h4> Footnote</h4>
-                    <textarea></textarea>
-                </div>
-            </div>
-        </div>
-
-        <div class="span4">
-            <div class="widget-box">
-                <div class="widget-title">
-                    <span class="widget-icon">
-                        <i class="icon-signal"></i>
-                    </span>
-                    <h3>Really rather long custom title which should wrap onto a new line just because we need to see it</h3>
-                    <div class="widget-buttons">
-                        <div class="btn-group hover-show">
-                            <a class="btn btn-mini dropdown-toggle" data-toggle="dropdown" href="#">
-                                <span class="caret"></span>
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li><a tabindex="-1" href="#">Refresh</a></li>
-                                <li class="disabled"><a tabindex="-1" href="#">Edit</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <div class="widget-content">
-                    <p><img src="/assets/img/placeholder/graph3.png" /></p>
-                </div>
-                <div class="widget-footnote report-export-only">
-                    <h4>Report Footnote</h4>
-                    <textarea></textarea>
-                </div>
-            </div>
-        </div>
+    <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true" ng-click="dashboardCreate = false">Cancel</button>
+        <button class="btn btn-primary" ng-click="dashboardCreate = false">Create</button>
     </div>
-
-    <div class="row-fluid">
-        <div class="span12">
-            <div class="widget-box">
-                <div class="widget-title">
-                    <span class="widget-icon">
-                        <i class="icon-signal"></i>
-                    </span>
-                    <h3>Widget for Logs</h3>
-                    <div class="widget-buttons">
-                        <div class="btn-group hover-show">
-                            <a class="btn btn-mini dropdown-toggle" data-toggle="dropdown" href="#">
-                                <span class="caret"></span>
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li><a tabindex="-1" href="#">Refresh</a></li>
-                                <li class="disabled"><a tabindex="-1" href="#">Edit</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <div class="widget-content">
-
-                    <p>Showing <strong>3</strong> of <strong>16</strong> logs</p>
-
-                    <table class="table table-condensed log-list">
-                        <tbody onclick="parent.location='/log'">
-                        <tr>
-                            <td><label>Log ID</label><div>1234</div></td>
-                            <td><label>Program</label><div>My Show Name Here</div></td>
-                            <td><label>Networks</label><div>Network List Goes here</div></td>
-                        </tr>
-                        <tr>
-                            <td><label>Date</label><div>88-88-8888 88:88:88</div></td>
-                            <td><label>Description</label><div class="truncate">This is a long description This is a long description <br/> This is a long description This is a long description</div></td>
-                            <td><label>Details</label><div>This is a long details item</div></td>
-                        </tr>
-                        <tr>
-                            <td><label>Duration</label><div>1h 57m 3s</div></td>
-                            <td><label>Asset ID</label><div>ABC23456789</div></td>
-                            <td><label>Logged By</label><div>Dave Newson</div></td>
-                        </tr>
-                        <tr>
-                            <td><label>Effect</label><div>Commercial Hotlist (CHL)</div></td>
-                            <td><label>Cause</label><div>Asset Failed to Arrive</div></td>
-                            <td><label>Accountability</label><div>Unresolved</div></td>
-                        </tr>
-                        <tr>
-                            <td><label>Severity</label><div>Level 1</div></td>
-                            <td><label>Impact</label><div>NEGATIVE (OUTAGE)</div></td>
-                            <td><label>Status</label><div>Unresolved</div></td>
-                        </tr>
-                        </tbody>
-
-                        <tbody onclick="parent.location='/log'">
-                        <tr>
-                            <td><label>Log ID</label><div>1234</div></td>
-                            <td><label>Program</label><div>My Show Name Here</div></td>
-                            <td><label>Networks</label><div>Network List Goes here</div></td>
-                        </tr>
-                        <tr>
-                            <td><label>Date</label><div>88-88-8888 88:88:88</div></td>
-                            <td><label>Description</label><div class="truncate">This is a long description This is a long description <br/> This is a long description This is a long description</div></td>
-                            <td><label>Details</label><div>This is a long details item</div></td>
-                        </tr>
-                        <tr>
-                            <td><label>Duration</label><div>1h 57m 3s</div></td>
-                            <td><label>Asset ID</label><div>ABC23456789</div></td>
-                            <td><label>Logged By</label><div>Dave Newson</div></td>
-                        </tr>
-                        <tr>
-                            <td><label>Effect</label><div>Commercial Hotlist (CHL)</div></td>
-                            <td><label>Cause</label><div>Asset Failed to Arrive</div></td>
-                            <td><label>Accountability</label><div>Unresolved</div></td>
-                        </tr>
-                        <tr>
-                            <td><label>Severity</label><div>Level 1</div></td>
-                            <td><label>Impact</label><div>NEGATIVE (OUTAGE)</div></td>
-                            <td><label>Status</label><div>Unresolved</div></td>
-                        </tr>
-                        </tbody>
-
-                        <tbody onclick="parent.location='/log'">
-                        <tr>
-                            <td><label>Log ID</label><div>1234</div></td>
-                            <td><label>Program</label><div>My Show Name Here</div></td>
-                            <td><label>Networks</label><div>Network List Goes here</div></td>
-                        </tr>
-                        <tr>
-                            <td><label>Date</label><div>88-88-8888 88:88:88</div></td>
-                            <td><label>Description</label><div class="truncate">This is a long description This is a long description <br/> This is a long description This is a long description</div></td>
-                            <td><label>Details</label><div>This is a long details item</div></td>
-                        </tr>
-                        <tr>
-                            <td><label>Duration</label><div>1h 57m 3s</div></td>
-                            <td><label>Asset ID</label><div>ABC23456789</div></td>
-                            <td><label>Logged By</label><div>Dave Newson</div></td>
-                        </tr>
-                        <tr>
-                            <td><label>Effect</label><div>Commercial Hotlist (CHL)</div></td>
-                            <td><label>Cause</label><div>Asset Failed to Arrive</div></td>
-                            <td><label>Accountability</label><div>Unresolved</div></td>
-                        </tr>
-                        <tr>
-                            <td><label>Severity</label><div>Level 1</div></td>
-                            <td><label>Impact</label><div>NEGATIVE (OUTAGE)</div></td>
-                            <td><label>Status</label><div>Unresolved</div></td>
-                        </tr>
-                        </tbody>
-                    </table>
+</div>
 
 
-                    <div class="pagination pagination-centered">
-                        <ul>
-                            <li class="disabled"><a href="#">&laquo;</a></li>
-                            <li class="active"><a href="#">1</a></li>
-                            <li><a href="#">2</a></li>
-                            <li><a href="#">3</a></li>
-                            <li><a href="#">4</a></li>
-                            <li><a href="#">&raquo;</a></li>
-                        </ul>
-                    </div>
-
-                </div>
-            </div>
-        </div>
+<!-- Add Widget Modal -->
+<div id="dashboard_add_widget" modal="dashboardAddWidget" options="{backdropFade: true}" close="dashboardAddWidget = false" tabindex="-1" role="dialog">
+    <div class="modal-header">
+        <button type="button" class="close" ng-click="dashboardAddWidget = false" aria-hidden="true"><i class="icon icon-remove"></i></button>
+        <h3 id="myModalLabel">Add Widget</h3>
     </div>
+    <div class="modal-body">
+        <p>Select a widget</p>
 
+        <table class="table-row-select" ng-click="dashboardWidgetEdit = true; dashboardAddWidget = false">
+            <tr>
+                <td>
+                    <strong>Pie Chart</strong>
+                    <p>Useful for showing quantities comparing two attributes</p>
+                </td>
+                <td>
+                    <img src="/assets/img/placeholder/graph2.png" width="150">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <strong>Line Graph</strong>
+                    <p>Blah blah helpful text here</p>
+                </td>
+                <td>
+                    <img src="/assets/img/placeholder/graph1.png" width="150">
+                </td>
+            </tr>
+        </table>
+
+    </div>
+    <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true" ng-click="dashboardAddWidget = false">Cancel</button>
+    </div>
+</div>
+
+
+<!-- Edit Widget -->
+<div id="dashboard_edit_widget" modal="dashboardWidgetEdit" options="{backdropFade: true}" close="dashboardWidgetEdit = false" tabindex="-1" role="dialog">
+    <div class="modal-header">
+        <button type="button" class="close" ng-click="dashboardWidgetEdit = false" aria-hidden="true"><i class="icon icon-remove"></i></button>
+        <h3 id="myModalLabel">Edit Widget</h3>
+    </div>
+    <div class="modal-body">
+        <p>Specify Title</p>
+        <p>Filter Query</p>
+        <p>X Axis</p>
+        <p>Y Axis</p>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-danger" data-dismiss="modal" aria-hidden="true" ng-click="dashboardWidgetEdit = false">Cancel</button>
+        <button class="btn btn-success" ng-click="dashboardWidgetEdit = false">Save</button>
+    </div>
 </div>

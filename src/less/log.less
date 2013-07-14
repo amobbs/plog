@@ -1,6 +1,6 @@
 
 // Top navbar
-#log_nav {
+#preslog_log_nav {
 
     // Show under top nav bar
     top: 42px;
@@ -21,7 +21,7 @@
 }
 
 // Log screen
-#log_entry {
+#preslog_log_entry {
 
     // Minimum width for standard res
     min-width: 900px;
@@ -120,6 +120,21 @@
                 }
             }
         }
+
+        .controls-modified
+        {
+            input.input-date
+            {
+                width: 120px;
+            }
+
+            input.input-version
+            {
+                width: 15px;
+            }
+        }
+
+
     }
 
     // Hierarchial Fields
@@ -128,6 +143,11 @@
         border-left: 2px solid #ccc;
         min-height: 600px;
         margin-top: 10px;
+
+        legend
+        {
+            margin: 0px;
+        }
 
         // Padding
         > .row-fluid
@@ -161,12 +181,6 @@
             {
                 font-size: 0.8em;
             }
-        }
-
-        // entry box
-        textarea
-        {
-            width: 98%;
         }
     }
 

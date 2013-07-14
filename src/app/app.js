@@ -5,6 +5,7 @@ angular.module('Preslog', [
         // Vendor Modules
         'ui.state',
         'ui.route',
+        'ui.bootstrap',
         'restangular',
         'placeholders',
         // Site Modules

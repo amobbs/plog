@@ -2,7 +2,7 @@
 *~
 
 // Build webroot
-// Only track API
+// - Only track API
 build/webroot/*
 !build/webroot/api
 
@@ -15,6 +15,11 @@ bin/webroot/*
 // Package Managed directories ignored
 node_modules/
 vendor/*
+
+// packages which are static and must NOT be ignored
+// - php-sel-parser (google code)
+!vendor/php-sql-parser
+
 
 // Project Files ignored
 .idea

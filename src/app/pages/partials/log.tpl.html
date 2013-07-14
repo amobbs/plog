@@ -1,4 +1,4 @@
-<nav class="navbar navbar-fixed-top" id="log_nav">
+<nav class="navbar navbar-fixed-top" id="preslog_log_nav">
     <div class="navbar-inner">
         <div class="container-fluid">
             <a class="btn btn-navbar" data-toggle="collapse" data-target=".navbar-responsive-collapse">
@@ -7,7 +7,7 @@
                 <span class="icon-bar"></span>
             </a>
 
-            <h2>Create Log / Log # P00001234</h2>
+            <h2>Log # P00001234</h2>
 
             <div class="nav-collapse collapse navbar-responsive-collapse">
                 <ul class="nav pull-right">
@@ -21,23 +21,37 @@
 </nav>
 
 
-<div class="container-fluid" id="log_entry">
-    <div class="row-fluid">
-        <div class="span3">
-            Created: 88-88-8888 88:88:88
-        </div>
-        <div class="span3">
-            Modified: 88-88-8888 88-88-88
-        </div>
-        <div class="span3">
-            Version: 2
-        </div>
-        <div class="span3">
-            Last Edited by: Dave Newson
-        </div>
-    </div>
+<div class="container-fluid" id="preslog_log_entry">
     <div class="row-fluid">
         <div class="span8 form-horizontal log-fields">
+
+            <div class="row-fluid">
+                <div class="span6">
+                    <label class="control-label">Created</label>
+                    <div class="controls">
+                        <input type="text" disabled value="88-88-8888 88:88:88" />
+                    </div>
+                    <br />
+                    <label class="control-label">Created by</label>
+                    <div class="controls">
+                        <input type="text" disabled value="Dave Newson" />
+                    </div>
+
+                </div>
+                <div class="span6">
+                    <label class="control-label">Modified</label>
+                    <div class="controls controls-modified">
+                        <input class="input-date" type="text" disabled value="88-88-8888 88:88:88" />
+                        V <input class="input-version" type="text" disabled value="3" />
+                    </div>
+                    <br />
+                    <label class="control-label">Modified by</label>
+                    <div class="controls">
+                        <input type="text" disabled value="Dave Newson" />
+                    </div>
+                </div>
+            </div>
+
             <div class="row-fluid">
                 <div class="span6 group-date">
                     <label class="control-label label-date">Date</label>
@@ -61,13 +75,13 @@
             <div class="row-fluid">
                 <div class="span6">
                     <label class="control-label">Program</label>
-                    <div class="controls">
+                    <div class="controls input-fill">
                         <input type="text" value="My Program Name" />
                     </div>
                 </div>
                 <div class="span6">
                     <label class="control-label">Asset ID</label>
-                    <div class="controls">
+                    <div class="controls input-fill">
                         <input type="text" value="ABC123456" />
                     </div>
                 </div>
@@ -112,7 +126,7 @@
             <div class="row-fluid">
                 <div class="span12">
                     <label class="control-label">Description </label>
-                    <div class="controls">
+                    <div class="controls input-fill">
                         <input type="text" value="Short description of fault" />
                     </div>
                 </div>
@@ -121,7 +135,7 @@
             <div class="row-fluid">
                 <div class="span12">
                     <label class="control-label">Details of what happened </label>
-                    <div class="controls">
+                    <div class="controls textarea-fill">
                         <textarea rows="3">Long description of fault that occurred</textarea>
                     </div>
                 </div>
@@ -130,7 +144,7 @@
             <div class="row-fluid">
                 <div class="span12">
                     <label class="control-label">What Action Taken </label>
-                    <div class="controls">
+                    <div class="controls textarea-fill">
                         <textarea rows="3">Long description of fix</textarea>
                     </div>
                 </div>
@@ -156,7 +170,7 @@
                                 <td>My comment</td>
                             </tr>
                             <tr>
-                                <td colspan="2">
+                                <td colspan="2" class="textarea-fill">
                                     <textarea rows="3">Description of follow-up tasks required</textarea>
                                 </td>
                             </tr>
@@ -178,7 +192,7 @@
                 </div>
                 <div class="span6">
                     <label class="control-label">Logged By</label>
-                    <div class="controls">
+                    <div class="controls input-fill">
                         <input type="text" value="Logged By" />
                     </div>
                 </div>
@@ -204,33 +218,57 @@
             </div>
         </div>
 
-        <div class="span4 hierarchy-fields text-right">
+        <div class="span4 hierarchy-fields">
+
             <div class="row-fluid">
-                <div class="span12 text-center">
+                <div class="span12">
+                    <legend>Networks</legend>
+                </div>
+            </div>
+            <div class="row-fluid">
+                <div class="span6">
 
-                    <div class="hierarchy-group">
-                        <button class="btn btn-inverse btn-block">Networks</button>
-                        <span class="label">WIN AMA - QLD</span>
-                        <span class="label">Sunshine Coast (SSC)</span>
-                        <span class="label">Cairns (CNS)</span>
-                        <span class="label">Townsville (TSV)</span>
+                    <img src="/assets/img/placeholder/ntree_single.png" />
+                    <br/><img src="/assets/img/placeholder/ntree_closed.png" />
+                    <br/><img src="/assets/img/placeholder/ntree_closed.png" />
+                    <br/><img src="/assets/img/placeholder/ntree_closed.png" />
+                    <br/><img src="/assets/img/placeholder/ntree_open.png" />
 
-                        <span class="label">Townsville (TSV)</span>
-                        <span class="label">Mt Gambier 7 (MGB_SSD1)</span>
-                        <span class="label">Griffith (GFH_SSD1)</span>
-                        <span class="label">Loxton 7 (LOX_SSD1)</span>
-                        <span class="label">Griffith 7 Two (GFH_SSD2)</span>
-                    </div>
+                </div>
+                <div class="span6">
 
-                    <div class="hierarchy-group">
-                        <button class="btn btn-inverse btn-block">States</button>
-                    </div>
-                    <div class="hierarchy-group">
-                        <button class="btn btn-inverse btn-block">City / State</button>
-                    </div>
-                    <div class="hierarchy-group">
-                        <button class="btn btn-inverse btn-block">States</button>
-                    </div>
+                    <img src="/assets/img/placeholder/ntree_single.png" />
+                    <br/><img src="/assets/img/placeholder/ntree_open.png" />
+                    <br/><img src="/assets/img/placeholder/ntree_closed.png" />
+                    <br/><img src="/assets/img/placeholder/ntree_closed.png" />
+                    <br/><img src="/assets/img/placeholder/ntree_closed.png" />
+
+                </div>
+            </div>
+
+
+            <div class="row-fluid">
+                <div class="span12">
+                    <legend>States</legend>
+                </div>
+            </div>
+
+            <div class="row-fluid">
+                <div class="span6">
+
+                    <img src="/assets/img/placeholder/ntree_single.png" />
+                    <br/><img src="/assets/img/placeholder/ntree_single.png" />
+                    <br/><img src="/assets/img/placeholder/ntree_single.png" />
+                    <br/><img src="/assets/img/placeholder/ntree_single.png" />
+
+                </div>
+                <div class="span6">
+
+                    <img src="/assets/img/placeholder/ntree_single.png" />
+                    <br/><img src="/assets/img/placeholder/ntree_single.png" />
+                    <br/><img src="/assets/img/placeholder/ntree_single.png" />
+                    <br/><img src="/assets/img/placeholder/ntree_single.png" />
+
                 </div>
             </div>
 
@@ -240,7 +278,16 @@
         <div class="span12 text-center">
             <button class="btn btn-success">Save Changes</button>
             &nbsp;
-            <button class="btn btn-danger">Delete</button>
+            <div class="btn-group">
+                <a class="btn btn-info dropdown-toggle" data-toggle="dropdown" href="#">
+                    Admin Actions
+                    <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a href="#">Delete Log</a></li>
+                </ul>
+            </div>
+
         </div>
     </div>
 </div>
