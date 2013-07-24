@@ -1,13 +1,22 @@
-<div class="container-fluid" id="preslog_admin_users">
+<div class="container-fluid" id="preslog_admin_users_index">
     <div class="row-fluid">
         <div class="span8">
-            <h1>Admin: Users</h1>
-
-            <p>The below table shows all users currently available in the Preslog system.</p>
+            <h1>User Administration</h1>
+            <p>
+                The below table shows all users currently registered in the Preslog system.
+                <br/>User accounts represent individual logins on a per-person basis. Each person using Preslog should have their own unique login.
+            </p>
         </div>
-        <div class="span4">
+        <div class="span4 controls">
             <div class="btn-group pull-right">
-                <button class="btn">Show Deleted</button>
+                <a class="btn btn-info dropdown-toggle" data-toggle="dropdown" href="#">
+                    Actions
+                    <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a href="/admin/users/edit"><i class="icon icon-plus"></i> Add New User </a></li>
+                    <li><a href=""><i class="icon icon-eye-open"></i> Show Deleted USers </a></li>
+                </ul>
             </div>
         </div>
     </div>
@@ -53,16 +62,17 @@
 
             <div class="pagination pagination-centered">
                 <ul>
-                    <li class="disabled"><a href="#">&laquo;</a></li>
-                    <li class="active"><a href="#">1</a></li>
-                    <li><a href="#">2</a></li>
-                    <li><a href="#">3</a></li>
-                    <li><a href="#">4</a></li>
-                    <li><a href="#">&raquo;</a></li>
+                    <li class="disabled"><a href="">&laquo;</a></li>
+                    <li class="active"><a href="">1</a></li>
+                    <li><a href="">2</a></li>
+                    <li><a href="">3</a></li>
+                    <li><a href="">4</a></li>
+                    <li><a href="">&raquo;</a></li>
                 </ul>
             </div>
 
         </div>
     </div>
+
 </div>
 

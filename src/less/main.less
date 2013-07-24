@@ -26,16 +26,27 @@
  * System-wide styles
  */
 
-@import 'styles.less';      // defaults
+@import 'styles.less';          // default styles
 
-@import 'nav.less';         // navigation
-@import 'sidebar.less';     // sidebar
-@import 'log-list.less';    // log-lists
-@import 'widget.less';      // widgets
+@import 'layout-main.less';     // main layout
+@import 'layout-modal.less';    // modal layout
+@import 'layout-public.less';   // public layout
 
-@import 'dashboard.less';   // dashboard page
-@import 'search.less';      // search page
-@import 'log.less';         // log edit page
+// elements
+@import 'nav.less';             // navigation
+@import 'sidebar.less';         // sidebar
+@import 'log-list.less';        // log-lists
+@import 'widget.less';          // widgets
+
+// specific pages
+@import 'login.less';           // login page
+@import 'dashboard.less';       // dashboard page
+@import 'search.less';          // search page
+@import 'log.less';             // log edit page
+@import 'user_profile.less';    // User Profiles
+
+// admin
+@import 'admin_users.less';     // Admin: Users
 
 
 /**
@@ -45,5 +56,5 @@
  * TODO: In a later version of this boilerplate, I'd like to automate this.
  */
 
-@import '../app/home/home.less';
+@import '../app/modules/home/home.less';
 

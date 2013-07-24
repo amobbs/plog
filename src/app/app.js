@@ -2,16 +2,10 @@ angular.module('Preslog', [
         // Template Modules
         'templates-app',
         'templates-common',
-        // Vendor Modules
-        'ui.state',
-        'ui.route',
-        'ui.bootstrap',
-        'restangular',
-        'placeholders',
-        // Site Modules
-        'Preslog.home',
-        'Preslog.about',
-        'Preslog.pages'
+
+        // Modules and configs
+        'moduleManager',
+        'stateManager'
     ])
 
     .config(function myAppConfig($stateProvider, $urlRouterProvider, $locationProvider, RestangularProvider) {

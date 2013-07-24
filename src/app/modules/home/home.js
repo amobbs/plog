@@ -13,9 +13,21 @@
  * specified, as shown below.
  */
 angular.module( 'Preslog.home', [
-  'ui.state',
-  'titleService'
-])
+        'titleService'
+    ])
+    .constant('statesHome', [{
+        name: 'mainLayout.home',
+        options: {
+            url: '/',
+            views: {
+                "main@mainLayout": {
+                    controller: 'HomeCtrl',
+                    templateUrl: 'modules/home/home.tpl.html'
+                }
+            }
+        }
+    }])
+
 
 /**
  * Each section or module of the site can also have its own routes. AngularJS
@@ -23,16 +35,8 @@ angular.module( 'Preslog.home', [
  * this way makes each module more "self-contained".
  */
 .config(function config( $stateProvider ) {
-  $stateProvider.state( 'home', {
-    url: '/',
-    views: {
-      "main": {
-        controller: 'HomeCtrl',
-        templateUrl: 'home/home.tpl.html'
-      }
-    }
-  });
 })
+
 
 /**
  * And of course we define a controller for our route.
