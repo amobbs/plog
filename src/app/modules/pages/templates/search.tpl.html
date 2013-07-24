@@ -101,7 +101,29 @@
         <h3 id="myModalLabel">Query Wizard</h3>
     </div>
     <div class="modal-body">
-        <p>RedQueryBuilder goes here</p>
+        <div query-builder
+             config='meta: {
+        tables : [ {
+            "name" : "PERSON",
+            "columns" : [ {
+                "name" : "NAME",
+                "label" : "Name",
+                "type" : "STRING",
+                "size" : 10
+            }],
+            fks : []
+        } ],
+        types : [ {
+            "name" : "STRING",
+            "editor" : "TEXT",
+            "operators" : [ {
+                "name" : "=",
+                "label" : "is",
+                "cardinality" : "ONE"
+            }]
+        }]
+    }'
+                ></div>
     </div>
     <div class="modal-footer">
         <button class="btn" data-dismiss="modal" aria-hidden="true" ng-click="queryWizardModal = false">Cancel</button>

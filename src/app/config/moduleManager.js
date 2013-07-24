@@ -8,6 +8,7 @@ angular.module('moduleManager', [
     'ui.route',
     'ui.bootstrap',
     'restangular',
+    'queryBuilder',
 
     // Site Modules
     'Preslog.home',

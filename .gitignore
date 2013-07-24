@@ -18,7 +18,9 @@ vendor/*
 
 // packages which are static and must NOT be ignored
 // - php-sel-parser (google code)
+// - RedQueryBuilder
 !vendor/php-sql-parser
+!vendor/RedQueryBuilder
 
 
 // Project Files ignored

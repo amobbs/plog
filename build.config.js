@@ -49,9 +49,12 @@ module.exports = {
      */
     vendor_files: {
         js: [
+            'vendor/jquery/jquery.min.js',
+            'vendor/jquery-ui/ui/minified/jquery-ui.min.js',
+            'vendor/RedQueryBuilder/RedQueryBuilderFactory.nocache.js',
+            'vendor/RedQueryBuilder/RedQueryBuilder.nocache.js',
             'vendor/angular-unstable/angular.js',
             'vendor/angular-bootstrap/ui-bootstrap-tpls.min.js',
-            'vendor/angular-placeholders/dist/placeholders-0.0.1-SNAPSHOT.js',
             'vendor/angular-ui-router/release/angular-ui-router.js',
             'vendor/angular-ui-utils/modules/route/route.js',
             'vendor/angular-resource-unstable/angular-resource.js',
