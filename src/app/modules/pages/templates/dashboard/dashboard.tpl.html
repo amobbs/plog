@@ -163,29 +163,33 @@
                         <table class="table table-condensed log-list">
                             <tbody onclick="parent.location='/log'">
                             <tr>
-                                <td><label>Log ID</label><div>1234</div></td>
-                                <td><label>Program</label><div>My Show Name Here</div></td>
-                                <td><label>Networks</label><div>Network List Goes here</div></td>
+                                <td><label>Log ID</label><div class="truncate">1234</div></td>
+                                <td><label>Program</label><div class="truncate">My Show Name Here</div></td>
+                                <td><label>Networks</label><div class="truncate">Network List Goes here</div></td>
                             </tr>
                             <tr>
-                                <td><label>Date</label><div>88-88-8888 88:88:88</div></td>
-                                <td><label>Description</label><div class="truncate">This is a long description This is a long description <br/> This is a long description This is a long description</div></td>
-                                <td><label>Details</label><div>This is a long details item</div></td>
+                                <td><label>Date</label><div class="truncate">88-88-8888 88:88:88</div></td>
+                                <td>
+                                    <div popover-trigger="mouseenter" popover="This will show the long descripton which is otherwise unavailable in the truncated version below.">
+                                        <label>Description</label><div class="truncate">This is a long description This is a long description <br/> This is a long description This is a long description</div>
+                                    </div>
+                                </td>
+                                <td><label>Details</label><div class="truncate">This is a long details item</div></td>
                             </tr>
                             <tr>
-                                <td><label>Duration</label><div>1h 57m 3s</div></td>
-                                <td><label>Asset ID</label><div>ABC23456789</div></td>
-                                <td><label>Logged By</label><div>Dave Newson</div></td>
+                                <td><label>Duration</label><div class="truncate">1h 57m 3s</div></td>
+                                <td><label>Asset ID</label><div class="truncate">ABC23456789</div></td>
+                                <td><label>Logged By</label><div class="truncate">Dave Newson</div></td>
                             </tr>
                             <tr>
-                                <td><label>Effect</label><div>Commercial Hotlist (CHL)</div></td>
-                                <td><label>Cause</label><div>Asset Failed to Arrive</div></td>
-                                <td><label>Accountability</label><div>Unresolved</div></td>
+                                <td><label>Effect</label><div class="truncate">Commercial Hotlist (CHL)</div></td>
+                                <td><label>Cause</label><div class="truncate">Asset Failed to Arrive</div></td>
+                                <td><label>Accountability</label><div class="truncate">Unresolved</div></td>
                             </tr>
                             <tr>
-                                <td><label>Severity</label><div>Level 1</div></td>
-                                <td><label>Impact</label><div>NEGATIVE (OUTAGE)</div></td>
-                                <td><label>Status</label><div>Unresolved</div></td>
+                                <td><label>Severity</label><div class="truncate">Level 1</div></td>
+                                <td><label>Impact</label><div class="truncate">NEGATIVE (OUTAGE)</div></td>
+                                <td><label>Status</label><div class="truncate">Unresolved</div></td>
                             </tr>
                             </tbody>
 

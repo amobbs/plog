@@ -28,12 +28,12 @@
             <div class="row-fluid">
                 <div class="span6">
                     <label class="control-label">Created</label>
-                    <div class="controls">
+                    <div class="controls input-fill">
                         <input type="text" disabled value="88-88-8888 88:88:88" />
                     </div>
                     <br />
                     <label class="control-label">Created by</label>
-                    <div class="controls">
+                    <div class="controls input-fill">
                         <input type="text" disabled value="Dave Newson" />
                     </div>
 
@@ -46,7 +46,7 @@
                     </div>
                     <br />
                     <label class="control-label">Modified by</label>
-                    <div class="controls">
+                    <div class="controls input-fill">
                         <input type="text" disabled value="Dave Newson" />
                     </div>
                 </div>
@@ -152,7 +152,7 @@
 
             <div class="row-fluid">
                 <div class="span12">
-                    <label class="control-label">Follow up / Resolution </label>
+                    <label class="control-label">Follow up / Resolution Comments</label>
                     <div class="controls">
                         <table class="table table-bordered table-condensed comments">
                             <tr>
@@ -167,14 +167,19 @@
                                     <strong>Dave Newson</strong>
                                     <br/><span>88-88-8888 88:88:88</span>
                                 </td>
-                                <td>My comment</td>
-                            </tr>
-                            <tr>
-                                <td colspan="2" class="textarea-fill">
-                                    <textarea placeholder="Enter comment..." rows="3"></textarea>
+                                <td>
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce auctor, ipsum vel euismod rhoncus, urna turpis gravida sem, in venenatis ante dui nec ligula. Morbi id hendrerit odio. Etiam viverra placerat sapien eget dictum. Maecenas non lacus sodales, suscipit nisi sed, mattis justo. Proin semper eu dolor id dictum. Vivamus mollis vel augue quis adipiscing. Etiam cursus diam sit amet tincidunt luctus. Donec ut interdum sapien. Phasellus in neque molestie, semper nibh ut, facilisis tortor.
+                                    <br/>
+                                    <br/>Maecenas non consequat mauris. Proin vestibulum metus quis velit porttitor gravida. Aliquam elementum mauris nec porttitor tempus. Etiam ornare libero tellus, ut semper lacus pulvinar eget. Quisque et ligula erat. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Aenean ornare laoreet hendrerit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam dictum leo nec mollis luctus. Integer vel sodales nisl. Aliquam erat volutpat. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla vestibulum risus eu nunc tempus, a sollicitudin mauris vehicula.
+                                    <br/>
+                                    <br/>Sed ac ligula odio. Maecenas neque mauris, ullamcorper eget dignissim ut, elementum eget leo. Nullam congue elementum lacus eget ornare. Nunc posuere volutpat odio non luctus. Morbi accumsan augue nec feugiat tincidunt. Nunc eget tristique libero. Integer a consequat massa, sit amet adipiscing lorem. Suspendisse potenti.
                                 </td>
                             </tr>
                         </table>
+
+                        <div class="textarea-fill">
+                            <textarea placeholder="Enter comment..." rows="3"></textarea>
+                        </div>
 
                     </div>
                 </div>
@@ -216,8 +221,21 @@
                     </div>
                 </div>
             </div>
+
+            <div class="row-fluid">
+                <div class="span6">
+                    <div class="controls">
+                        <label class="checkbox">
+                            <input type="checkbox"> Important Log - include in reports
+                        </label>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
+
+        <!-- Hierarchy Fields -->
         <div class="span4 hierarchy-fields">
 
             <div class="row-fluid">
@@ -271,9 +289,10 @@
 
                 </div>
             </div>
-
         </div>
     </div>
+
+    <!-- Controls -->
     <div class="row-fluid">
         <div class="span12 text-center">
             <button class="btn btn-success"><i class="icon icon-ok"></i> Save Changes</button>

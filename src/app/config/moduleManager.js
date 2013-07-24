@@ -8,7 +8,6 @@ angular.module('moduleManager', [
     'ui.route',
     'ui.bootstrap',
     'restangular',
-    'placeholders',
 
     // Site Modules
     'Preslog.home',
