@@ -106,10 +106,38 @@ module.exports = function (grunt) {
         copy: {
             build_assets: {
                 files: [
+                    // General assets
                     {
                         src: [ '**' ],
                         dest: '<%= build_dir %>/assets/',
                         cwd: 'src/assets',
+                        expand: true
+                    }
+                ]
+            },
+            build_files: {
+                files: [
+                    {
+                        expand: true,
+                        dot: true,
+                        cwd: 'src',
+                        dest: '<%= build_dir %>',
+                        src: [
+                            '**/.htaccess'
+                        ]
+                    },
+                    // Import RedQueryBuilder files
+                    {
+                        src: ['*.cache.html', 'gwt/**', 'clear.cache.gif'],
+                        dest: '<%= build_dir %>/vendor/RedQueryBuilder/',
+                        cwd: 'vendor/RedQueryBuilder',
+                        expand: true
+                    },
+                    // Import jQuery UI
+                    {
+                        src: ['ui-darkness/**'],
+                        dest: '<%= build_dir %>/assets/jquery-ui/themes',
+                        cwd: 'vendor/jquery-ui/themes',
                         expand: true
                     }
                 ]
@@ -143,17 +171,6 @@ module.exports = function (grunt) {
                         expand: true
                     }
                 ]
-            },
-            build_files: {
-                files: [{
-                    expand: true,
-                    dot: true,
-                    cwd: 'src',
-                    dest: '<%= build_dir %>',
-                    src: [
-                        '**/.htaccess'
-                    ]
-                }]
             },
             compile_files: {
                 files: [{

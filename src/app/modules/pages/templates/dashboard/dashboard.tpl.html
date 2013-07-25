@@ -55,7 +55,7 @@
                     <div class="widget-content">
                         <p><img src="/assets/img/placeholder/graph1.png" /></p>
                     </div>
-                    <div class="widget-footnote report-export-only" ng-show="dashboardExport">
+                    <div class="widget-footnote" ng-show="dashboardExport">
                         <h4>Report Footnote</h4>
                         <textarea></textarea>
                     </div>
@@ -85,7 +85,7 @@
                     <div class="widget-content">
                         <p><img src="/assets/img/placeholder/graph2.png" /></p>
                     </div>
-                    <div class="widget-footnote report-export-only" ng-show="dashboardExport">
+                    <div class="widget-footnote" ng-show="dashboardExport">
                         <h4>Report Footnote</h4>
                         <textarea></textarea>
                     </div>
@@ -115,7 +115,7 @@
                     <div class="widget-content">
                         <p><img src="/assets/img/placeholder/graph3.png" /></p>
                     </div>
-                    <div class="widget-footnote report-export-only" ng-show="dashboardExport">
+                    <div class="widget-footnote" ng-show="dashboardExport">
                         <h4>Report Footnote</h4>
                         <textarea></textarea>
                     </div>
@@ -167,8 +167,9 @@
                                 <td><label>Program</label><div class="truncate">My Show Name Here</div></td>
                                 <td>
                                     <div popover-trigger="mouseenter" popover="12: ABC, DEF, GHI, JKL, MNO, PQR, STU, VWX, YZ">
-                                    <label>Networks</label><div class="truncate">12: Network List Goes here</div></td>
-                                </div>
+                                    <label>Networks</label><div class="truncate">12: Network List Goes here</div>
+                                    </div>
+                                </td>
                             </tr>
                             <tr>
                                 <td><label>Date</label><div class="truncate">88-88-8888 88:88:88</div></td>
@@ -280,12 +281,11 @@
         <button type="button" class="close" ng-click="dashboardCreate = false" aria-hidden="true"><i class="icon icon-remove"></i></button>
         <h3 id="myModalLabel">Create Dashboard</h3>
     </div>
-    <div class="modal-body">
-        <p>Create New Dashboard</p>
+    <div class="modal-body form-horizontal">
         <div class="control-group">
-            <label class="control-label">Dashboard Name</label>
+            <label class="control-label">Dashboard Name </label>
             <div class="control">
-                <input type="text" value="My Dashboard Name" />
+                <input type="text" placeholder="Dashboard Name..." value="" />
             </div>
         </div>
     </div>
@@ -305,23 +305,41 @@
     <div class="modal-body">
         <p>Select a widget</p>
 
-        <table class="table-row-select" ng-click="dashboardWidgetEdit = true; dashboardAddWidget = false">
+        <table class="table table-widget-select" ng-click="dashboardAddWidget = false">
             <tr>
+                <td>
+                    <img src="/assets/img/placeholder/graph2.png" width="150">
+                </td>
                 <td>
                     <strong>Pie Chart</strong>
                     <p>Useful for showing quantities comparing two attributes</p>
                 </td>
-                <td>
-                    <img src="/assets/img/placeholder/graph2.png" width="150">
-                </td>
             </tr>
             <tr>
+                <td>
+                    <img src="/assets/img/placeholder/graph1.png" width="150">
+                </td>
                 <td>
                     <strong>Line Graph</strong>
                     <p>Blah blah helpful text here</p>
                 </td>
+            </tr>
+            <tr>
                 <td>
                     <img src="/assets/img/placeholder/graph1.png" width="150">
+                </td>
+                <td>
+                    <strong>Line Graph</strong>
+                    <p>Blah blah helpful text here</p>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <img src="/assets/img/placeholder/graph1.png" width="150">
+                </td>
+                <td>
+                    <strong>Line Graph</strong>
+                    <p>Blah blah helpful text here</p>
                 </td>
             </tr>
         </table>
@@ -339,11 +357,33 @@
         <button type="button" class="close" ng-click="dashboardWidgetEdit = false" aria-hidden="true"><i class="icon icon-remove"></i></button>
         <h3 id="myModalLabel">Edit Widget</h3>
     </div>
-    <div class="modal-body">
-        <p>Specify Title</p>
-        <p>Filter Query</p>
-        <p>X Axis</p>
-        <p>Y Axis</p>
+    <div class="modal-body form-horizontal">
+        <div class="control-group">
+            <label class="control-label">Title </label>
+            <div class="control">
+                <input type="text" placeholder="Title..." value="" />
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">Search Query</label>
+            <div class="control">
+                <textarea placeholder="Filter...">
+                </textarea>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label">X Axis </label>
+            <div class="control">
+                <select></select>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">Y Axis </label>
+            <div class="control">
+                <select></select>
+            </div>
+        </div>
     </div>
     <div class="modal-footer">
         <button class="btn btn-danger" data-dismiss="modal" aria-hidden="true" ng-click="dashboardWidgetEdit = false">Cancel</button>

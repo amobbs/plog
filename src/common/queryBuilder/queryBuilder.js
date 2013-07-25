@@ -53,12 +53,10 @@ angular.module('queryBuilder', [])
 
             return {
                 scope: {
-                    config: '=config',
-                    sql: '=sql',
-                    args: '=args'
+
                 },
                 template: '<div class="queryBuilderContainer" id="rqb"></div>',
-                controller: function($scope, $element) {
+                controller: function($scope, $element, $timeout) {
                     if (typeof $scope.sql === 'undefined') {
                         $scope.sql = '';
                     }
@@ -67,7 +65,108 @@ angular.module('queryBuilder', [])
                         $scope.args = [];
                     }
 
-                    createQueryBuilder($scope, $element);
+                    // :DEBUG:
+                    $scope.config = {};
+                    $scope.config.meta = {
+                            tables : [ {
+                                "name" : "PERSON",
+                                "label" : "Person",
+                                "columns" : [ {
+                                    "name" : "NAME",
+                                    "label" : "Name",
+                                    "type" : "STRING",
+                                    "size" : 10
+                                }, {
+                                    "name" : "DOB",
+                                    "label" : "Date of birth",
+                                    "type" : "DATE"
+                                }, {
+                                    "name" : "SEX",
+                                    "label" : "Sex",
+                                    "type" : "STRING",
+                                    "editor" : "SELECT"
+                                }, {
+                                    "name" : "CATEGORY",
+                                    "label" : "Category",
+                                    "type" : "REF"
+                                }  ],
+                                fks : []
+                            } ],
+
+                            types : [ {
+                                "name" : "STRING",
+                                "editor" : "TEXT",
+                                "operators" : [ {
+                                    "name" : "=",
+                                    "label" : "is",
+                                    "cardinality" : "ONE"
+                                }, {
+                                    "name" : "<>",
+                                    "label" : "is not",
+                                    "cardinality" : "ONE"
+                                }, {
+                                    "name" : "LIKE",
+                                    "label" : "like",
+                                    "cardinality" : "ONE"
+                                }, {
+                                    "name" : "<",
+                                    "label" : "less than",
+                                    "cardinality" : "ONE"
+                                }, {
+                                    "name" : ">",
+                                    "label" : "greater than",
+                                    "cardinality" : "ONE"
+                                } ]
+                            }, {
+                                "name" : "DATE",
+                                "editor" : "DATE",
+                                "operators" : [ {
+                                    "name" : "=",
+                                    "label" : "is",
+                                    "cardinality" : "ONE"
+                                }, {
+                                    "name" : "<>",
+                                    "label" : "is not",
+                                    "cardinality" : "ONE"
+                                }, {
+                                    "name" : "<",
+                                    "label" : "before",
+                                    "cardinality" : "ONE"
+                                }, {
+                                    "name" : ">",
+                                    "label" : "after",
+                                    "cardinality" : "ONE"
+                                } ]
+                            }, {
+                                "name" : "REF",
+                                "editor" : "SELECT",
+                                "operators" : [ {
+                                    "name" : "IN",
+                                    "label" : "any of",
+                                    "cardinality" : "MULTI"
+                                }]
+                            }  ]
+                        };
+
+                    $scope.config.enumerate = function(request, response) {
+                        if (request.columnName == 'CATEGORY') {
+                            response([{value:'A', label:'Small'}, {value:'B', label:'Medium'}]);
+                        } else {
+                            response([{value:'M', label:'Male'}, {value:'F', label:'Female'}]);
+                        }
+                    };
+
+                    $scope.config.editors = [ {
+                        name : 'DATE',
+                        format : 'dd.MM.yyyy'
+                    } ];
+
+                    // :HACK: T:DEBUG: this si but debugging only. Scrap this.
+                    $scope.delay = $timeout(function()
+                    {
+                        createQueryBuilder($scope, $element);
+                    }, 100);
+
                 }
             };
         }

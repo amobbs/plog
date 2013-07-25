@@ -23,3 +23,42 @@
     }
 
 }
+
+
+/**
+ * Query Wizard
+ */
+
+.query-builder
+{
+    min-height: 600px;
+    min-width: 800px;
+}
+
+
+.queryBuilderContainer
+{
+    // inputs fix
+    select,input
+    {
+        margin: 0px;
+        width: auto;
+        height: auto;
+    }
+
+    // zindex fix
+    .rqbAndOrOpUpper
+    {
+        z-index: 180;
+    }
+
+    .rqbAndOrOp
+    {
+        z-index: 200;
+    }
+
+    .rqbComparison
+    {
+        z-index: 200;
+    }
+}
