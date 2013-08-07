@@ -117,19 +117,26 @@ return array(
             'User\Form\LostPasswordFilter' => 'User\Form\LostPasswordFilter',
             'User\Form\ResetPassword' => 'User\Form\resetPassword',
             'User\Form\ResetPasswordFilter' => 'User\Form\ResetPasswordFilter',
-            'User\Mapper\User' => 'User\Mapper\User',
             'User\Entity\User' => 'User\Entity\User',
         ),
         'factories' => array(
             'lost_password_form' => 'User\Service\LostPasswordFormServiceFactory',
             'reset_password_form' => 'User\Service\ResetPasswordFormServiceFactory',
-            'zfcuser_user_mapper' => 'User\Service\UserMapperServiceFactory',
             'user_role' => function ($sm) {
                 if ($sm->get('zfcuser_auth_service')->hasIdentity()) {
                     return $sm->get('zfcuser_auth_service')->getIdentity()->getRoles();
                 } else {
                     return 'guest';
                 }
+            },
+            'zfcuser_user_mapper' => function ($sm) {
+                $mapper = new User\Mapper\User();
+                $mapper->setConfig($sm->get('config'));
+
+                $mapper->setEntityPrototype(new User\Entity\User);
+                $mapper->setHydrator(new \MongoUser\Mapper\UserHydrator(false));
+
+                return $mapper;
             },
         ),
     ),

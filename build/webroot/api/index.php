@@ -3,7 +3,7 @@
  * This makes our life easier when dealing with paths. Everything is relative
  * to the application root now.
  */
-chdir(dirname(dirname(__DIR__)).DIRECTORY_SEPARATOR.'bin'.DIRECTORY_SEPARATOR.'zend');
+chdir(dirname(dirname(dirname(__DIR__))).DIRECTORY_SEPARATOR.'bin'.DIRECTORY_SEPARATOR.'zend');
 
 // Decline static file requests back to the PHP built-in webserver
 if (php_sapi_name() === 'cli-server' && is_file(__DIR__ . parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH))) {

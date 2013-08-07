@@ -4,8 +4,10 @@ return array(
     'modules' => array(
 
         // Vendor
+        'Mongo',
         'ZfcBase',
         'ZfcUser',
+        'MongoUser',
         'ZfcRbac',
 
         // App

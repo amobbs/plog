@@ -2,7 +2,7 @@
 
 namespace User\Entity;
 use ZfcRbac\Identity\IdentityInterface;
-use ZfcUser\Entity\User as ZfcUser;
+use MongoUser\Entity\User as ZfcUser;
 
 class User extends ZfcUser implements IdentityInterface
 {

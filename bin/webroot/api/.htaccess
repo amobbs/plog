@@ -1,3 +1,0 @@
-RewriteEngine On
-
-RewriteRule ^(.*)$ %{ENV:BASE}index.php [NC,L]

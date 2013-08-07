@@ -62,12 +62,12 @@ $settings = array(
 
             // ZfcUser
             array('route' => 'zfcuser/login', 'roles' => 'guest'),
-            array('route' => 'zfcuser/logout', 'roles' => 'salesperson'),
+            array('route' => 'zfcuser/logout', 'roles' => 'guest'),
             array('route' => 'zfcuser/lost-password', 'roles' => 'guest'),
             array('route' => 'zfcuser/reset-password', 'roles' => 'guest'),
             array('route' => 'zfcuser/invalid', 'roles' => 'guest'),
             array('route' => 'login', 'roles' => 'guest'),
-            array('route' => 'logout', 'roles' => 'salesperson'),
+            array('route' => 'logout', 'roles' => 'guest'),
 //
 //            // Home
             array('route' => 'home', 'roles' => 'guest'),

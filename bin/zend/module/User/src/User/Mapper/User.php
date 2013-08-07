@@ -1,7 +1,7 @@
 <?php
 namespace User\Mapper;
 
-use ZfcUser\Mapper\User as ZfcUser;
+use MongoUser\Mapper\User as ZfcUser;
 use Zend\Crypt\Password\Bcrypt;
 
 class User extends ZfcUser
