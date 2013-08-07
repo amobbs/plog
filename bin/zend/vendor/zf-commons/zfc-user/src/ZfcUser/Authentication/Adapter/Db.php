@@ -114,7 +114,10 @@ class Db extends AbstractAdapter implements ServiceManagerAwareInterface
         $this->getStorage()->write($storage);
         $e->setCode(AuthenticationResult::SUCCESS)
           ->setMessages(array('Authentication successful.'));
+
+
     }
+
 
     protected function updateUserPasswordHash($userObject, $password, $bcrypt)
     {
