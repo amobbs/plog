@@ -1,7 +1,6 @@
 angular.module('pages', ['ui.bootstrap'])
-    .constant('statesPages', [{
-        name: 'mainLayout.pages',
-        options: {
+    .config(function(stateHelperProvider) {
+        stateHelperProvider.addState('mainLayout.pages', {
             url: '/{uri:.*}',
             views: {
                 "main@mainLayout": {
@@ -18,12 +17,11 @@ angular.module('pages', ['ui.bootstrap'])
 
                             if (typeof $templateCache.get(template) !== 'undefined') {
                                 $scope.template = template;
-                                console.log(template);
                             }
                         }
                     ]
                 }
             }
-        }
-    }])
+        });
+    })
 ;

@@ -9,11 +9,11 @@ angular.module('moduleManager', [
     'ui.bootstrap',
     'restangular',
     'queryBuilder',
+    'stateHelper',
 
     // Site Modules
-    'Preslog.home',
     'pages',
-    'Preslog.auth'
-
+    'Preslog.auth',
+    'Preslog.home'
 ]);
 

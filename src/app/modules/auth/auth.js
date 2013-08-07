@@ -9,9 +9,8 @@ angular.module( 'Preslog.auth', [
     /**
      * Login Route
      */
-    .constant('statesLogin', [{
-        name: 'publicLayout.login',
-        options: {
+    .config(function(stateHelperProvider) {
+        stateHelperProvider.addState('publicLayout.login', {
             url: '/login',
             views: {
                 "main@publicLayout": {
@@ -19,8 +18,8 @@ angular.module( 'Preslog.auth', [
                     templateUrl: 'modules/auth/login.tpl.html'
                 }
             }
-        }
-    }])
+        });
+    })
 
 
     /**

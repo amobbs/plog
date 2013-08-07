@@ -15,9 +15,9 @@
 angular.module( 'Preslog.home', [
         'titleService'
     ])
-    .constant('statesHome', [{
-        name: 'mainLayout.home',
-        options: {
+
+    .config(function(stateHelperProvider) {
+        stateHelperProvider.addState('mainLayout.home', {
             url: '/',
             views: {
                 "main@mainLayout": {
@@ -25,25 +25,17 @@ angular.module( 'Preslog.home', [
                     templateUrl: 'modules/home/home.tpl.html'
                 }
             }
-        }
-    }])
+        });
+    })
 
 
-/**
- * Each section or module of the site can also have its own routes. AngularJS
- * will handle ensuring they are all available at run-time, but splitting it
- * this way makes each module more "self-contained".
- */
-.config(function config( $stateProvider ) {
-})
-
-
-/**
- * And of course we define a controller for our route.
- */
-.controller( 'HomeCtrl', function HomeController( $scope, titleService ) {
-  titleService.setTitle( 'Home' );
-})
+    /**
+     * And of course we define a controller for our route.
+     */
+    .controller( 'HomeCtrl', function HomeController( $scope, titleService ) {
+        console.log('home');
+      titleService.setTitle( 'Home' );
+    })
 
 ;
 

@@ -1,10 +1,18 @@
-angular.module('stateManager', ['moduleManager'])
+angular.module('stateManager', ['moduleManager', 'stateHelper'])
     .config(function(
         $stateProvider,
-        statesHome,
-        statesLogin,
-        statesPages
+        stateHelperProvider,
+        $urlRouterProvider,
+        $locationProvider
         ) {
+
+        // HTML Templates
+        $locationProvider.html5Mode(true);
+
+        // Homepage (?)
+        $urlRouterProvider.otherwise('/');
+
+        // Layouts
         $stateProvider
             .state('publicLayout', {
                 abstract: true,
@@ -32,12 +40,8 @@ angular.module('stateManager', ['moduleManager'])
             })
         ;
 
-        var states = [].concat(
-            statesHome,
-            statesLogin,
-            statesPages
-        );
-        angular.forEach(states, function(state) {
+        // Inject States
+        angular.forEach(stateHelperProvider.getStates(), function(state) {
             $stateProvider.state(state.name, state.options);
         });
     })
