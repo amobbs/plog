@@ -70,16 +70,16 @@
                 </div>
 
                 <div class="control-group">
-                    <label class="control-label" for="inputLastname">Company</label>
+                    <label class="control-label" for="inputCompany">Company</label>
                     <div class="controls">
-                        <input type="text" id="inputLastname" placeholder="Company.." value="4mation Technologies" />
+                        <input type="text" id="inputCompany" placeholder="Company.." value="4mation Technologies" />
                     </div>
                 </div>
 
                 <div class="control-group">
-                    <label class="control-label" for="inputPhone">SMS Number</label>
+                    <label class="control-label" for="inputPhone">Phone Number</label>
                     <div class="controls">
-                        <input type="text" id="inputPhone" placeholder="eg. 04 1234 5678.." tooltip-placement="right" tooltip="SMS Numbers are used to send instant noticiations." />
+                        <input type="text" id="inputPhone" placeholder="eg. 04 1234 5678.." tooltip-placement="right" tooltip="Phone Numbers can be used to send instant notifications." />
                     </div>
                 </div>
 
@@ -112,6 +112,24 @@
         </div>
 
         <h2>User Notifications</h2>
+
+        <div class="row-fluid">
+            <div class="span12 form-horizontal">
+                <p>Select the types of instant notifications this user will receive</p>
+                <div class="control-group">
+                    <label class="control-label" for="inputEmail">Email Notifications</label>
+                    <div class="controls">
+                        <input type="checkbox" id="inputEmail" />
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="inputPhone">SMS Notifications</label>
+                    <div class="controls">
+                        <input type="checkbox" id="inputPhone" tooltip-placement="right" tooltip="SMS Notifications can issued for high severity events." />
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <!-- Notify -->
         <div class="alert alert-info">
