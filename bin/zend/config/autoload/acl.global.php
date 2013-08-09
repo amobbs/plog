@@ -33,7 +33,22 @@ $settings = array(
     'enableLazyProviders' => true,
 
     'firewalls' => array(
+
+        /**
+         * Route-based access restrictions
+         */
         'ZfcRbac\Firewall\Route' => array(
+
+            array('route' => 'home', 'permissions' => 'guest'),
+            //array('route' => 'login', 'roles' => 'guest'),
+            //array('route' => 'logout', 'roles' => 'guest'),
+            //array('route' => 'user/register', 'roles' => 'guest'),
+            //array('route' => 'admin/*', 'roles' => 'admin'),
+
+            // Block everything
+            array('route' => '/*', 'roles' => 'admin'),
+
+            /*
 
             // Pdf
             array('route' => 'pdf/*', 'roles' => 'salesperson'),
@@ -73,30 +88,49 @@ $settings = array(
             array('route' => 'home', 'roles' => 'guest'),
             array('route' => 'dashboard', 'roles' => 'salesperson'),
             array('route' => '/*', 'roles' => 'admin'),
+*/
         ),
+
+        /**
+         * Controller-based access restrictions
+         *
+        'ZfcRbac\Firewall\Controller' => array(
+            array('controller' => 'Preslog/Controller/Index', 'roles' => 'guest'),
+            array('controller' => 'User/Controller/User'),
+        ),*/
     ),
 
     'providers' => array(
-        // These
+
+        /**
+         * Rule permissions inheritance
+         * Each role specified below can specify a Parent Role.  Parents will inherit permissions from their subordinates.
+         */
         'ZfcRbac\Provider\Generic\Role\InMemory' => array(
             'roles' => array(
-                'admin',
-                'salesperson' => array('admin', 'office_admin', 'estimator', 'approver'),
-                'office_admin' => array('admin'),
-                'estimator' => array('office_admin', 'admin'),
-                'approver' => array('admin'),
-                'guest' => array('salesperson', 'office_admin', 'estimator', 'approver', 'admin'),
+                'super-admin'   => array(),
+                'admin'         => array('super-admin'),
+                'supervisor'    => array('admin'),
+                'operator'      => array('supervisor'),
+                'engineer'      => array(),
+                'client'        => array(),
+                'guest'         => array('client', 'operator', 'engineer', 'supervisor', 'admin'),
             ),
         ),
 
-        // Generic rules go here
+        /**
+         * Permissions can be assigned to roles. Permissions will be checked in code.
+         * Permissions are inherited (see above).
+         */
         'ZfcRbac\Provider\Generic\Permission\InMemory' => array(
             'permissions' => array(
-                'admin' => array('admin', 'tender-create', 'store-version', 'edit-version', 'generate-version', 'delete-version', 'delete-deleted-items'),
-                'salesperson' => array('tender-create'),
-                'office_admin' => array('tender-create', 'edit-version', 'generate-version'),
-                'estimator' => array('tender-create', 'generate-version', 'edit-version'),
-                'approver' => array('store-version', 'generate-version', 'edit-version'),
+                'super-admin'   => array('manage-preset-dashboards'),
+                'admin'         => array('admin'),
+                'supervisor'    => array('dashboards', 'dashboard-export-reports', 'accountability-fields', 'log-delete'),
+                'operator'      => array(),
+                'engineer'      => array('dashboards', 'single-client', 'comment-only'),
+                'client'        => array('dashboards', 'single-client', 'dashboard-export-reports', 'comment-only'),
+                'guest'         => array('guest'),
             )
         ),
     ),

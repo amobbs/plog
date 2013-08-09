@@ -4,15 +4,15 @@ return array(
     'modules' => array(
 
         // Vendor
-        'Mongo',
-        'ZfcBase',
-        'ZfcUser',
-        'MongoUser',
-        'ZfcRbac',
+        'Mongo',        // Mongo DB interface
+        'ZfcBase',      // ZFC-Base
+        'ZfcUser',      // ZFC-Users
+        'MongoUser',    // Mongo Users
+        'ZfcRbac',      // ZFC-Role-based-access-control
 
         // App
-        'Application',
-        'User',
+        'Preslog',      // Preslog Application
+        'User',         // User management
     ),
 
     // These are various options for the listeners attached to the ModuleManager
