@@ -15,12 +15,12 @@ $settings = array(
     /**
      * Flag: enable or disable the routing firewall.
      */
-    'firewallRoute' => true,
+    'firewallRoute' => false,
 
     /**
      * Flag: enable or disable the controller firewall.
      */
-    'firewallController' => true,
+    'firewallController' => false,
 
     /**
      * Set the view template to use on a 403 error.
