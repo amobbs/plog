@@ -129,7 +129,6 @@ class UserController extends AbstractActionController
      */
     public function authenticateAction()
     {
-
         if ($this->zfcUserAuthentication()->getAuthService()->hasIdentity()) {
             return $this->redirect()->toRoute($this->getOptions()->getLoginRedirectRoute());
         }
@@ -139,15 +138,12 @@ class UserController extends AbstractActionController
 
         $result = $adapter->prepareForAuthentication($this->getRequest());
 
-
         // Return early if an adapter returned a response
         if ($result instanceof Response) {
             return $result;
         }
 
-
         $auth = $this->zfcUserAuthentication()->getAuthService()->authenticate($adapter);
-
 
         if (!$auth->isValid()) {
             $this->flashMessenger()->setNamespace('zfcuser-login-form')->addMessage($this->failedLoginMessage);
