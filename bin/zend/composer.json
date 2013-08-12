@@ -11,6 +11,9 @@
         "php": ">=5.3.3",
         "zendframework/zendframework": ">2.2.0rc1",
         "zf-commons/zfc-user": "dev-master",
-        "zf-commons/zfc-rbac": "dev-master"
+        "zf-commons/zfc-rbac": "dev-master",
+        "zircote/swagger-php": "dev-master",
+        "outeredge/swagger-module": "dev-master",
+        "phpword/phpword": "dev-master"
     }
 }

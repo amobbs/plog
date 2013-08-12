@@ -16,13 +16,28 @@ namespace Preslog\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\JsonModel;
+use Swagger\Annotations as SWG;
 
 class SearchController extends AbstractActionController
 {
 
+
     /**
      * Search using the given query string
      * @return JsonModel
+     *
+     * @SWG\Resource(
+     *      resourcePath="/",
+     *      @SWG\Api(
+     *          path="/search",
+     *          @SWG\Operation(
+     *              nickname="index",
+     *              summary="Search using a given query string",
+     *              httpMethod="GET",
+     *              responseClass="User"
+     *          )
+     *      )
+     * )
      */
     public function searchAction()
     {
@@ -35,6 +50,19 @@ class SearchController extends AbstractActionController
     /**
      * Search using the given query string and export as an XLS
      * @return ViewModel
+     *
+     * @SWG\Resource(
+     *      resourcePath="/",
+     *      @SWG\Api(
+     *          path="/search/export-xls",
+     *          @SWG\Operation(
+     *              nickname="index",
+     *              summary="Search and Export to XLS using a given query string",
+     *              httpMethod="GET",
+     *              responseClass="User"
+     *          )
+     *      )
+     * )
      */
     public function searchExportAsXlsAction()
     {
@@ -47,11 +75,24 @@ class SearchController extends AbstractActionController
     /**
      * Fetch params for the Search Query Builder Wizard
      * @return JsonModel
+     *
+     * @SWG\Resource(
+     *      resourcePath="/",
+     *      @SWG\Api(
+     *          path="/search/params",
+     *          @SWG\Operation(
+     *              nickname="index",
+     *              summary="Fetch params for Query Builder Wizard",
+     *              httpMethod="GET",
+     *              responseClass="User"
+     *          )
+     *      )
+     * )
      */
     public function searchWizardParamsAction()
     {
         return new JsonModel(array(
-            'todo' => 'TODO - Search Query Builder Wizard prams',
+            'todo' => 'TODO - Search Query Builder Wizard params',
         ));
     }
 
@@ -59,11 +100,24 @@ class SearchController extends AbstractActionController
     /**
      * Translate between QueryBuilder SQL and JQL
      * @return JsonModel
+     *
+     * @SWG\Resource(
+     *      resourcePath="/",
+     *      @SWG\Api(
+     *          path="/search/translate",
+     *          @SWG\Operation(
+     *              nickname="index",
+     *              summary="Translate between an SQL and JQL statement",
+     *              httpMethod="GET",
+     *              responseClass="User"
+     *          )
+     *      )
+     * )
      */
     public function searchWizardTranslateAction()
     {
         return new JsonModel(array(
-            'todo' => 'TODO - Search Query Builder Wizard prams',
+            'todo' => 'TODO - Search Query Builder Wizard params',
         ));
     }
 }

@@ -4,11 +4,12 @@ return array(
     'modules' => array(
 
         // Vendor
-        'Mongo',        // Mongo DB interface
-        'ZfcBase',      // ZFC-Base
-        'ZfcUser',      // ZFC-Users
-        'MongoUser',    // Mongo Users
-        'ZfcRbac',      // ZFC-Role-based-access-control
+        'Mongo',            // Mongo DB interface
+        'ZfcBase',          // ZFC-Base
+        'ZfcUser',          // ZFC-Users
+        'MongoUser',        // Mongo Users
+        'ZfcRbac',          // ZFC-Role-based-access-control
+        'SwaggerModule',    // Swagger API Documentor
 
         // App
         'Preslog',      // Preslog Application

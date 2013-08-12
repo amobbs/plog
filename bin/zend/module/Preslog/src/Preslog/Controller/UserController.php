@@ -14,12 +14,26 @@ namespace Preslog\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\JsonModel;
+use Swagger\Annotations as SWG;
 
 class UserController extends AbstractActionController
 {
+
     /**
      * Read data for My-Profile
      * @return JsonModel
+     *
+     * @SWG\Resource(
+     *      resourcePath="/",
+     *      @SWG\Api(
+     *          path="/users/my-profile",
+     *          @SWG\Operation(
+     *              nickname="index",
+     *              summary="Fetch My Profile data",
+     *              httpMethod="GET"
+     *          )
+     *      )
+     * )
      */
     public function readMyProfileAction()
     {
@@ -32,6 +46,20 @@ class UserController extends AbstractActionController
     /**
      * Update data for My-Profile
      * @return JsonModel
+     *
+     * @SWG\Resource(
+     *      resourcePath="/",
+     *      @SWG\Api(
+     *          path="/users/my-notifications",
+     *          @SWG\Operation(
+     *              nickname="index",
+     *              summary="Update My Profile data",
+     *              httpMethod="POST",
+     *              responseClass="User",
+     *              @SWG\Parameter(name="email",dataType="string")
+     *          )
+     *      )
+     * )
      */
     public function updateMyProfileAction()
     {
@@ -44,6 +72,19 @@ class UserController extends AbstractActionController
     /**
      * Read data for My-Notifications
      * @return JsonModel
+     *
+     * @SWG\Resource(
+     *      resourcePath="/",
+     *      @SWG\Api(
+     *          path="/users/my-notifications",
+     *          @SWG\Operation(
+     *              nickname="index",
+     *              summary="Fetch My Notifications data",
+     *              httpMethod="GET",
+     *              responseClass="User"
+     *          )
+     *      )
+     * )
      */
     public function readMyNotificationsAction()
     {
@@ -56,6 +97,19 @@ class UserController extends AbstractActionController
     /**
      * Update data for My-Notifications
      * @return JsonModel
+     *
+     * @SWG\Resource(
+     *      resourcePath="/",
+     *      @SWG\Api(
+     *          path="/users/my-notifications",
+     *          @SWG\Operation(
+     *              nickname="index",
+     *              summary="Update My Notifications data",
+     *              httpMethod="POST",
+     *              responseClass="User"
+     *          )
+     *      )
+     * )
      */
     public function updateMyNotificationsAction()
     {

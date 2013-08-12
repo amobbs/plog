@@ -17,7 +17,10 @@ return array(
 
     /**
      * Routes
+     * WARNING: If you update the routes below, update the documentation in the attached controllers!
+     * Documentation follows formatting of swagger-php (http://zircote.com/swagger-php/)
      */
+
     'router' => array(
         'routes' => array(
 
@@ -47,7 +50,7 @@ return array(
                 ),
             ),
 
-            // Users.My-Profile
+            // Users: My-Profile
             'users.my-profile' => array(
                 'type' => 'Zend\Mvc\Router\Http\Literal',
                 'options' => array(
@@ -672,13 +675,11 @@ return array(
      * Services manager
      */
     'service_manager' => array(
-        'abstract_factories' => array(
-            'Zend\Cache\Service\StorageCacheAbstractServiceFactory',
-            'Zend\Log\LoggerAbstractServiceFactory',
-        ),
-        'aliases' => array(
-            'translator' => 'MvcTranslator',
-        ),
+
+        'invokables' => array(
+
+            //'Preslog\Service\ApiDocs' => 'Preslog\Service\ApiDocs'
+        )
     ),
 
 

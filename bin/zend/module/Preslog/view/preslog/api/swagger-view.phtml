@@ -14,15 +14,15 @@
 
 <div id='header'>
     <div class="swagger-ui-wrap">
-        <h1>
+        <h1 style="float: left; margin-top: 0px;">
             MediaHub Presentation Log API
         </h1>
         <form id='api_selector'>
             <div class='input' readonly><input placeholder="http://example.com/api" id="input_baseUrl" name="baseUrl" type="text"/></div>
             <!-- <div class='input'><input placeholder="api_key" id="input_apiKey" name="apiKey" type="text"/></div> -->
             <div class='input'><a id="explore" href="#">Explore</a></div>
-        </form>thrbber
-        &nbsp;
+        </form>
+        <br/><br/>
     </div>
 </div>
 
@@ -36,7 +36,7 @@
 <script type="text/javascript">
     $(function () {
         window.swaggerUi = new SwaggerUi({
-            discoveryUrl:"<?php echo $this->url('api.docs'); ?>",
+            discoveryUrl:"<?php echo $this->serverUrl().$this->url('api.docs'); ?>",
             apiKey:"",
             dom_id:"swagger-ui-container",
             supportHeaderParams: false,

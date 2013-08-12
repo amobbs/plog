@@ -14,6 +14,7 @@ namespace Preslog\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\JsonModel;
+use Swagger\Annotations as SWG;
 
 class LogController extends AbstractActionController
 {
@@ -21,6 +22,19 @@ class LogController extends AbstractActionController
      * Prepare fields are data for Log Crate/Edit page
      * Load log from URL param "id" where specified
      * @return JsonModel
+     *
+     * @SWG\Resource(
+     *      resourcePath="/",
+     *      @SWG\Api(
+     *          path="/logs",
+     *          @SWG\Operation(
+     *              nickname="index",
+     *              summary="Read fields and log where specified",
+     *              httpMethod="GET",
+     *              responseClass="User"
+     *          )
+     *      )
+     * )
      */
     public function readAction()
     {
@@ -36,6 +50,19 @@ class LogController extends AbstractActionController
      * Create/Update log
      * Update log by URL param "id" where specified.
      * @return JsonModel
+     *
+     * @SWG\Resource(
+     *      resourcePath="/",
+     *      @SWG\Api(
+     *          path="/logs",
+     *          @SWG\Operation(
+     *              nickname="index",
+     *              summary="Update or create a log",
+     *              httpMethod="POST",
+     *              responseClass="User"
+     *          )
+     *      )
+     * )
      */
     public function updateAction()
     {
@@ -50,6 +77,19 @@ class LogController extends AbstractActionController
     /**
      * Delete log by URL param "id"
      * @return JsonModel
+     *
+     * @SWG\Resource(
+     *      resourcePath="/",
+     *      @SWG\Api(
+     *          path="/logs",
+     *          @SWG\Operation(
+     *              nickname="index",
+     *              summary="Remove a log",
+     *              httpMethod="DELETE",
+     *              responseClass="User"
+     *          )
+     *      )
+     * )
      */
     public function deleteAction()
     {

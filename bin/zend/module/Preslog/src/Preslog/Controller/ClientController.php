@@ -14,9 +14,13 @@ namespace Preslog\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\JsonModel;
+use Swagger\Annotations as SWG;
+
 
 class ClientController extends AbstractActionController
 {
+
+
     public function indexAction()
     {
         return new JsonModel(array(
