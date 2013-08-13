@@ -16,6 +16,8 @@ use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Zend\View\Model\JsonModel;
 use Zend\Json\Json;
+use Swagger\Annotations as SWG;
+
 
 class ApiController extends AbstractActionController
 {
@@ -32,6 +34,18 @@ class ApiController extends AbstractActionController
     /**
      * Output the API Documentation JSON for Swagger API Documentor
      * @return JsonModel
+
+     * @SWG\Resource(
+     *      resourcePath="/",
+     *      @SWG\Api(
+     *          path="/docs",
+     *          @SWG\Operation(
+     *              nickname="api/docs",
+     *              summary="Provides this JSON API Documentation",
+     *              httpMethod="GET"
+     *          )
+     *      )
+     * )
      */
     public function swaggerDocsAction()
     {

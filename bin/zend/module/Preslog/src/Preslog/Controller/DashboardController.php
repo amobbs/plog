@@ -23,6 +23,19 @@ class DashboardController extends AbstractActionController
     /**
      * Fetch the list of dashboards for this users menu
      * @return JsonModel
+     *
+     * @SWG\Resource(
+     *      resourcePath="/",
+     *      @SWG\Api(
+     *          path="/dashboards",
+     *          @SWG\Operation(
+     *              nickname="index",
+     *              summary="Search using a given query string",
+     *              httpMethod="GET",
+     *              responseClass="User"
+     *          )
+     *      )
+     * )
      */
     public function getDashboardListAction()
     {
@@ -34,6 +47,19 @@ class DashboardController extends AbstractActionController
     /**
      * Create a new dashboard
      * @return JsonModel
+     *
+     * @SWG\Resource(
+     *      resourcePath="/dashboards",
+     *      @SWG\Api(
+     *          path="/dash",
+     *          @SWG\Operation(
+     *              nickname="index",
+     *              summary="Search using a given query string",
+     *              httpMethod="GET",
+     *              responseClass="User"
+     *          )
+     *      )
+     * )
      */
     public function createDashboardAction()
     {
