@@ -12,11 +12,11 @@
 
 namespace Preslog\Controller;
 
-use Zend\Mvc\Controller\AbstractActionController;
+use Preslog\Controller\AbstractRestfulController;
 use Zend\View\Model\JsonModel;
 use Swagger\Annotations as SWG;
 
-class LogController extends AbstractActionController
+class LogController extends AbstractRestfulController
 {
     /**
      * Prepare fields are data for Log Crate/Edit page
@@ -39,6 +39,16 @@ class LogController extends AbstractActionController
     public function readAction()
     {
         $id = $this->params('id', 'none specified');
+
+        // :DEBUG: Must be ADMIN for record #1
+        if ($id == 401 && !$this->getServiceLocator()->get('rbac')->isGranted('admin'))
+        {
+            return $this->errorForbidden();
+        }
+        elseif ($id == 500 && !$this->getServiceLocator()->get('rbac')->isGranted('admin'))
+        {
+            return $this->errorGeneric(array('message'=>'uh oh'));
+        }
 
         return new JsonModel(array(
             'todo' => 'TODO: Read Log ('.$id.')',

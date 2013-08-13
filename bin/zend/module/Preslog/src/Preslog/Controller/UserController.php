@@ -12,11 +12,11 @@
 
 namespace Preslog\Controller;
 
-use Zend\Mvc\Controller\AbstractActionController;
+use Preslog\Controller\AbstractRestfulController;
 use Zend\View\Model\JsonModel;
 use Swagger\Annotations as SWG;
 
-class UserController extends AbstractActionController
+class UserController extends AbstractRestfulController
 {
 
     /**

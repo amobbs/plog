@@ -14,11 +14,11 @@
 
 namespace Preslog\Controller;
 
-use Zend\Mvc\Controller\AbstractActionController;
+use Preslog\Controller\AbstractRestfulController;
 use Zend\View\Model\JsonModel;
 use Swagger\Annotations as SWG;
 
-class DashboardController extends AbstractActionController
+class DashboardController extends AbstractRestfulController
 {
     /**
      * Fetch the list of dashboards for this users menu

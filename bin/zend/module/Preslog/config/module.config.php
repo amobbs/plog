@@ -677,9 +677,9 @@ return array(
     'service_manager' => array(
 
         'invokables' => array(
-
+            'Rbac' => 'ZfcRbac\Service\Rbac',
             //'Preslog\Service\ApiDocs' => 'Preslog\Service\ApiDocs'
-        )
+        ),
     ),
 
 
