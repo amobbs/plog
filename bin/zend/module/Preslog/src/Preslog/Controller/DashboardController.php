@@ -24,20 +24,12 @@ class DashboardController extends AbstractRestfulController
      * Fetch the list of dashboards for this users menu
      * @return JsonModel
      *
-     * @SWG\Resource(
-     *      resourcePath="/",
-     *      @SWG\Api(
-     *          path="/dashboards",
-     *          @SWG\Operation(
-     *              nickname="index",
-     *              summary="Search using a given query string",
-     *              httpMethod="GET",
-     *              responseClass="User"
-     *          )
-     *      )
+     * @SWG\Operation(
+     *      nickname="dashboards.list",
+     *      summary="List available dashboards"
      * )
      */
-    public function getDashboardListAction()
+    public function readListAction()
     {
         return new JsonModel(array(
             'todo' => 'TODO - get dashboard list',
@@ -48,20 +40,12 @@ class DashboardController extends AbstractRestfulController
      * Create a new dashboard
      * @return JsonModel
      *
-     * @SWG\Resource(
-     *      resourcePath="/dashboards",
-     *      @SWG\Api(
-     *          path="/dash",
-     *          @SWG\Operation(
-     *              nickname="index",
-     *              summary="Search using a given query string",
-     *              httpMethod="GET",
-     *              responseClass="User"
-     *          )
-     *      )
+     * @SWG\Operation(
+     *      nickname="dashboards.create",
+     *      summary="Create a new dashboard"
      * )
      */
-    public function createDashboardAction()
+    public function createAction()
     {
         return new JsonModel(array(
             'todo' => 'TODO - create new dashboard',
@@ -72,8 +56,13 @@ class DashboardController extends AbstractRestfulController
     /**
      * Fetch the specific dashboard by ID
      * @return JsonModel
+     *
+     * @SWG\Operation(
+     *      nickname="dashboards.specific.read",
+     *      summary="Return data for a specific dashboard arrangement"
+     * )
      */
-    public function readDashboardAction()
+    public function readAction()
     {
         $id = $this->params('dashboard_id');
 
@@ -86,8 +75,13 @@ class DashboardController extends AbstractRestfulController
     /**
      * Update specific dashboard by specified ID
      * @return JsonModel
+     *
+     * @SWG\Operation(
+     *      nickname="dashboards.specific.update",
+     *      summary="Update the specified dashboard"
+     * )
      */
-    public function updateDashboardAction()
+    public function updateAction()
     {
         $id = $this->params('dashboard_id');
 
@@ -100,8 +94,13 @@ class DashboardController extends AbstractRestfulController
     /**
      * Delete the specific dashboard by ID
      * @return JsonModel
+     *
+     * @SWG\Operation(
+     *      nickname="dashboards.specific.delete",
+     *      summary="Delete the specified dashboard"
+     * )
      */
-    public function deleteDashboardAction()
+    public function deleteAction()
     {
         $id = $this->params('dashboard_id');
 
@@ -114,6 +113,11 @@ class DashboardController extends AbstractRestfulController
     /**
      * Fetch the list of available dashboard widgets
      * @return JsonModel
+     *
+     * @SWG\Operation(
+     *      nickname="widgets.list",
+     *      summary="List all available widgets"
+     * )
      */
     public function readWidgetListAction()
     {
@@ -126,6 +130,11 @@ class DashboardController extends AbstractRestfulController
     /**
      * Fetch options for this particular widget type
      * @return JsonModel
+     *
+     * @SWG\Operation(
+     *      nickname="widgets.options",
+     *      summary="Fetch options for the specified widget type"
+     * )
      */
     public function readWidgetOptionsAction()
     {
@@ -140,6 +149,11 @@ class DashboardController extends AbstractRestfulController
     /**
      * Fetch a specific dashboard widget (construct and/or data) for display
      * @return JsonModel
+     *
+     * @SWG\Operation(
+     *      nickname="dashboards.specific.widgets.specific.read",
+     *      summary="Fetch data for a specified widget"
+     * )
      */
     public function readDashboardWidgetAction()
     {
@@ -155,6 +169,11 @@ class DashboardController extends AbstractRestfulController
     /**
      * Create a widget on a dashboard
      * @return JsonModel
+     *
+     * @SWG\Operation(
+     *      nickname="dashboards.specific.widgets.create",
+     *      summary="Create a new widget on the specified dashboard"
+     * )
      */
     public function createDashboardWidgetAction()
     {
@@ -169,6 +188,11 @@ class DashboardController extends AbstractRestfulController
     /**
      * Update/edit a widget on a dashboard
      * @return JsonModel
+     *
+     * @SWG\Operation(
+     *      nickname="dashboards.specific.widgets.specific.update",
+     *      summary="Update the specified widget"
+     * )
      */
     public function updateDashboardWidgetAction()
     {
@@ -184,6 +208,11 @@ class DashboardController extends AbstractRestfulController
     /**
      * Delete a widget on a dashboard
      * @return JsonModel
+     *
+     * @SWG\Operation(
+     *      nickname="dashboards.specific.widgets.specific.delete",
+     *      summary="Deletes the specified widget"
+     * )
      */
     public function deleteDashboardWidgetAction()
     {
@@ -199,6 +228,11 @@ class DashboardController extends AbstractRestfulController
     /**
      * Export the given dashboard widgets source data as an XLS file
      * @return ViewModel
+     *
+     * @SWG\Operation(
+     *      nickname="dashboards.specific.widgets.specific.export",
+     *      summary="Instigate download of XLS containing logs used to compile specified widget"
+     * )
      */
     public function exportDashboardWidgetDataAsXlsAction()
     {
@@ -212,6 +246,11 @@ class DashboardController extends AbstractRestfulController
     /**
      * Export the given dashboard as a Word Document report
      * @return ViewModel
+     *
+     * @SWG\Operation(
+     *      nickname="dashboards.specific.export",
+     *      summary="Instigate download of DOCX containing data from the specified dashboard"
+     * )
      */
     public function exportDashboardAsReportAction()
     {

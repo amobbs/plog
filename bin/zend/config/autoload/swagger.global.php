@@ -8,7 +8,8 @@ return array(
          * Generates API documentation for Swagger
          */
         'paths' => array(
-            __DIR__ . '/../../module/Preslog/src/Preslog/Controller',
+             __DIR__ . '/../../module/Preslog/config',
+             __DIR__ . '/../../module/Preslog/src/Preslog/Controller',
         ),
 
     )

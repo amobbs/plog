@@ -36,7 +36,7 @@
 <script type="text/javascript">
     $(function () {
         window.swaggerUi = new SwaggerUi({
-            discoveryUrl:"<?php echo $this->serverUrl().$this->url('api.docs'); ?>",
+            discoveryUrl:"<?php echo $this->serverUrl().$this->url('api.docs', array('resource'=>'')); ?>",
             apiKey:"",
             dom_id:"swagger-ui-container",
             supportHeaderParams: false,

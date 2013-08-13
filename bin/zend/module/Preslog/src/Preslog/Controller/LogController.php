@@ -23,17 +23,9 @@ class LogController extends AbstractRestfulController
      * Load log from URL param "id" where specified
      * @return JsonModel
      *
-     * @SWG\Resource(
-     *      resourcePath="/",
-     *      @SWG\Api(
-     *          path="/logs",
-     *          @SWG\Operation(
-     *              nickname="index",
-     *              summary="Read fields and log where specified",
-     *              httpMethod="GET",
-     *              responseClass="User"
-     *          )
-     *      )
+     * @SWG\Operation(
+     *      nickname="logs.read",
+     *      summary="Returns a log where requested, and loggable field criteria"
      * )
      */
     public function readAction()
@@ -61,17 +53,9 @@ class LogController extends AbstractRestfulController
      * Update log by URL param "id" where specified.
      * @return JsonModel
      *
-     * @SWG\Resource(
-     *      resourcePath="/",
-     *      @SWG\Api(
-     *          path="/logs",
-     *          @SWG\Operation(
-     *              nickname="index",
-     *              summary="Update or create a log",
-     *              httpMethod="POST",
-     *              responseClass="User"
-     *          )
-     *      )
+     * @SWG\Operation(
+     *      nickname="logs.update",
+     *      summary="Updates the specified log using POST data"
      * )
      */
     public function updateAction()
@@ -88,17 +72,9 @@ class LogController extends AbstractRestfulController
      * Delete log by URL param "id"
      * @return JsonModel
      *
-     * @SWG\Resource(
-     *      resourcePath="/",
-     *      @SWG\Api(
-     *          path="/logs",
-     *          @SWG\Operation(
-     *              nickname="index",
-     *              summary="Remove a log",
-     *              httpMethod="DELETE",
-     *              responseClass="User"
-     *          )
-     *      )
+     * @SWG\Operation(
+     *      nickname="logs.delete",
+     *      summary="Deletes the specified log"
      * )
      */
     public function deleteAction()

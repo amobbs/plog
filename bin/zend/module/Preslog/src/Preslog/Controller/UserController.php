@@ -23,16 +23,9 @@ class UserController extends AbstractRestfulController
      * Read data for My-Profile
      * @return JsonModel
      *
-     * @SWG\Resource(
-     *      resourcePath="/",
-     *      @SWG\Api(
-     *          path="/users/my-profile",
-     *          @SWG\Operation(
-     *              nickname="index",
-     *              summary="Fetch My Profile data",
-     *              httpMethod="GET"
-     *          )
-     *      )
+     * @SWG\Operation(
+     *      nickname="users.my-profile.read",
+     *      summary="Fetch My Profile data"
      * )
      */
     public function readMyProfileAction()
@@ -47,18 +40,9 @@ class UserController extends AbstractRestfulController
      * Update data for My-Profile
      * @return JsonModel
      *
-     * @SWG\Resource(
-     *      resourcePath="/",
-     *      @SWG\Api(
-     *          path="/users/my-notifications",
-     *          @SWG\Operation(
-     *              nickname="index",
-     *              summary="Update My Profile data",
-     *              httpMethod="POST",
-     *              responseClass="User",
-     *              @SWG\Parameter(name="email",dataType="string")
-     *          )
-     *      )
+     * @SWG\Operation(
+     *      nickname="users.my-profile.update",
+     *      summary="Update My Profile data"
      * )
      */
     public function updateMyProfileAction()
@@ -73,17 +57,9 @@ class UserController extends AbstractRestfulController
      * Read data for My-Notifications
      * @return JsonModel
      *
-     * @SWG\Resource(
-     *      resourcePath="/",
-     *      @SWG\Api(
-     *          path="/users/my-notifications",
-     *          @SWG\Operation(
-     *              nickname="index",
-     *              summary="Fetch My Notifications data",
-     *              httpMethod="GET",
-     *              responseClass="User"
-     *          )
-     *      )
+     * @SWG\Operation(
+     *      nickname="users.my-notifications.read",
+     *      summary="Read My Notifications data"
      * )
      */
     public function readMyNotificationsAction()
@@ -98,17 +74,9 @@ class UserController extends AbstractRestfulController
      * Update data for My-Notifications
      * @return JsonModel
      *
-     * @SWG\Resource(
-     *      resourcePath="/",
-     *      @SWG\Api(
-     *          path="/users/my-notifications",
-     *          @SWG\Operation(
-     *              nickname="index",
-     *              summary="Update My Notifications data",
-     *              httpMethod="POST",
-     *              responseClass="User"
-     *          )
-     *      )
+     * @SWG\Operation(
+     *      nickname="users.my-notifications.update",
+     *      summary="Update My Notifications data"
      * )
      */
     public function updateMyNotificationsAction()
@@ -117,4 +85,96 @@ class UserController extends AbstractRestfulController
             'todo' => 'TODO - Update My Notifications',
         ));
     }
+
+
+    /**
+     * List users
+     * @return JsonModel
+     *
+     * @SWG\Operation(
+     *      nickname="admin.users.read",
+     *      summary="List users"
+     * )
+     */
+    public function readListAction()
+    {
+        return new JsonModel(array(
+            'todo' => 'TODO: Admin list users',
+        ));
+    }
+
+
+    /**
+     * Create a user
+     * @return JsonModel
+     *
+     * @SWG\Operation(
+     *      nickname="admin.users.create",
+     *      summary="Create a new user"
+     * )
+     */
+    public function createAction()
+    {
+        return new JsonModel(array(
+            'todo' => 'TODO: Admin create user',
+        ));
+    }
+
+
+    /**
+     * Read a given user
+     * @return JsonModel
+     *
+     * @SWG\Operation(
+     *      nickname="admin.users.specific.read",
+     *      summary="Fetch data for a specific user"
+     * )
+     */
+    public function readAction()
+    {
+        $id = $this->params('id', 'none specified');
+
+        return new JsonModel(array(
+            'todo' => 'TODO: Admin read specific user ('.$id.')',
+        ));
+    }
+
+
+    /**
+     * Update a given user
+     * @return JsonModel
+     *
+     * @SWG\Operation(
+     *      nickname="admin.users.specific.update",
+     *      summary="Update a specific user"
+     * )
+     */
+    public function updateAction()
+    {
+        $id = $this->params('id', 'none specified');
+
+        return new JsonModel(array(
+            'todo' => 'TODO: Admin update specific user ('.$id.')',
+        ));
+    }
+
+
+    /**
+     * Delete a given user
+     * @return JsonModel
+     *
+     * @SWG\Operation(
+     *      nickname="admin.users.specific.delete",
+     *      summary="Delete a specific user"
+     * )
+     */
+    public function deleteAction()
+    {
+        $id = $this->params('id', 'none specified');
+
+        return new JsonModel(array(
+            'todo' => 'TODO: Admin delete specific user ('.$id.')',
+        ));
+    }
+
 }

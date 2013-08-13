@@ -26,17 +26,9 @@ class SearchController extends AbstractRestfulController
      * Search using the given query string
      * @return JsonModel
      *
-     * @SWG\Resource(
-     *      resourcePath="/",
-     *      @SWG\Api(
-     *          path="/search",
-     *          @SWG\Operation(
-     *              nickname="index",
-     *              summary="Search using a given query string",
-     *              httpMethod="GET",
-     *              responseClass="User"
-     *          )
-     *      )
+     * @SWG\Operation(
+     *      nickname="search",
+     *      summary="Return log list based on POST JQL search criteria"
      * )
      */
     public function searchAction()
@@ -51,23 +43,15 @@ class SearchController extends AbstractRestfulController
      * Search using the given query string and export as an XLS
      * @return ViewModel
      *
-     * @SWG\Resource(
-     *      resourcePath="/",
-     *      @SWG\Api(
-     *          path="/search/export-xls",
-     *          @SWG\Operation(
-     *              nickname="index",
-     *              summary="Search and Export to XLS using a given query string",
-     *              httpMethod="GET",
-     *              responseClass="User"
-     *          )
-     *      )
+     * @SWG\Operation(
+     *      nickname="search.export",
+     *      summary="Instigate download of XLS containing search results"
      * )
      */
     public function searchExportAsXlsAction()
     {
         return new ViewModel(array(
-            'todo' => 'TODO - Search using the given query string',
+            'todo' => 'TODO - Search using the given query string and export as XLS',
         ));
     }
 
@@ -76,23 +60,15 @@ class SearchController extends AbstractRestfulController
      * Fetch params for the Search Query Builder Wizard
      * @return JsonModel
      *
-     * @SWG\Resource(
-     *      resourcePath="/",
-     *      @SWG\Api(
-     *          path="/search/params",
-     *          @SWG\Operation(
-     *              nickname="index",
-     *              summary="Fetch params for Query Builder Wizard",
-     *              httpMethod="GET",
-     *              responseClass="User"
-     *          )
-     *      )
+     * @SWG\Operation(
+     *      nickname="search.wizard.params",
+     *      summary="Return field parameters for Query Builder"
      * )
      */
     public function searchWizardParamsAction()
     {
         return new JsonModel(array(
-            'todo' => 'TODO - Search Query Builder Wizard params',
+            'todo' => 'TODO - Search Query Builder Wizard params.',
         ));
     }
 
@@ -101,23 +77,15 @@ class SearchController extends AbstractRestfulController
      * Translate between QueryBuilder SQL and JQL
      * @return JsonModel
      *
-     * @SWG\Resource(
-     *      resourcePath="/",
-     *      @SWG\Api(
-     *          path="/search/translate",
-     *          @SWG\Operation(
-     *              nickname="index",
-     *              summary="Translate between an SQL and JQL statement",
-     *              httpMethod="GET",
-     *              responseClass="User"
-     *          )
-     *      )
+     * @SWG\Operation(
+     *      nickname="search.wizard.translate",
+     *      summary="Translate between SQL and JS. Bi-directional."
      * )
      */
     public function searchWizardTranslateAction()
     {
         return new JsonModel(array(
-            'todo' => 'TODO - Search Query Builder Wizard params',
+            'todo' => 'TODO - Translate between JQL and SQL.',
         ));
     }
 }

@@ -16,7 +16,9 @@ use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Zend\View\Model\JsonModel;
 use Zend\Json\Json;
+use Zend\Http\Response as Response;
 use Swagger\Annotations as SWG;
+use Swagger\Swagger as Swagger;
 
 
 class ApiController extends AbstractActionController
@@ -34,27 +36,37 @@ class ApiController extends AbstractActionController
     /**
      * Output the API Documentation JSON for Swagger API Documentor
      * @return JsonModel
-
-     * @SWG\Resource(
-     *      resourcePath="/",
-     *      @SWG\Api(
-     *          path="/docs",
-     *          @SWG\Operation(
-     *              nickname="api/docs",
-     *              summary="Provides this JSON API Documentation",
-     *              httpMethod="GET"
-     *          )
-     *      )
-     * )
      */
     public function swaggerDocsAction()
     {
+        // Initialize Swagger
         $swagger = $this->getServiceLocator()->get('service.swagger');
         $swagger->flushCache();
-        $json = $swagger->getResource('/', true, true);
-        $array = (array) Json::decode($json);
 
-        return new JsonModel( $array );
+        // Get Params
+        $resource = $this->params('resource', null);
+
+        // Try to get a specific resource where specified
+        if ( !empty($resource) )
+        {
+            // Check it exists
+            $resources = $swagger->getResourceNames();
+            if ( !in_array( $resource, $resources ))
+            {
+                $this->getResponse()->setStatusCode( Response::STATUS_CODE_404 );
+                return new JsonModel();
+            }
+
+            // Get resource
+            $res = $swagger->getResource($resource, false, false);
+            $array = Swagger::export($res);
+            return new JsonModel( $array );
+        }
+        // Show all available resources
+        else
+        {
+            return new JsonModel( $swagger->getResourceList(false, false) );
+        }
 
     }
 
