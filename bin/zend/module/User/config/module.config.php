@@ -7,9 +7,25 @@
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
+use Swagger\Annotations as SWG;
+
 return array(
     'router' => array(
         'routes' => array(
+
+            /**
+             * @SWG\Resource(
+             *      resourcePath="/users",
+             *      @SWG\Api(
+             *          path="/login",
+             *          @SWG\Operation(
+             *              nickname="users.login",
+             *              httpMethod="POST",
+             *              summary="Login using supplied credentials"
+             *          )
+             *      )
+             * )
+             */
             'login' => array(
                 'type' => 'Literal',
                 'options' => array(
@@ -20,6 +36,20 @@ return array(
                     ),
                 ),
             ),
+
+            /**
+             * @SWG\Resource(
+             *      resourcePath="/users",
+             *      @SWG\Api(
+             *          path="/logout",
+             *          @SWG\Operation(
+             *              nickname="users.logout",
+             *              httpMethod="POST",
+             *              summary="Logout the current user"
+             *          )
+             *      )
+             * )
+             */
             'logout' => array(
                 'type' => 'Literal',
                 'options' => array(

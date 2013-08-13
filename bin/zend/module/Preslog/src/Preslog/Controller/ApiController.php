@@ -59,14 +59,34 @@ class ApiController extends AbstractActionController
 
             // Get resource
             $res = $swagger->getResource($resource, false, false);
-            $array = Swagger::export($res);
-            return new JsonModel( $array );
+            $data = Swagger::export($res);
         }
         // Show all available resources
         else
         {
-            return new JsonModel( $swagger->getResourceList(false, false) );
+            // Fetch resource list
+            $data = $swagger->getResourceList(false, false);
+
+            foreach ($data['apis'] as &$api)
+            {
+                $api['path'] = '/docs'.$api['path'];
+            }
+
         }
+
+        // Versions
+        $data['apiVersion'] = '1.0.0';
+        $data['swaggerVersion'] = '1.2';
+
+        // Specify basepath
+        $event = $this->getEvent();
+        $request = $event->getRequest();
+        $router = $event->getRouter();
+        $uri = $router->getRequestUri();
+        $data['basePath'] = sprintf('%s://%s%s', $uri->getScheme(), $uri->getHost(), $request->getBaseUrl());
+
+        // Return model
+        return new JsonModel( $data );
 
     }
 

@@ -69,7 +69,7 @@ return array(
                      * @SWG\Resource(
                      *      resourcePath="/users",
                      *      @SWG\Api(
-                     *          path="/my-profile",
+                     *          path="/users/my-profile",
                      *          @SWG\Operation(
                      *              nickname="users.my-profile.read",
                      *              httpMethod="GET"
@@ -94,7 +94,7 @@ return array(
                      * @SWG\Resource(
                      *      resourcePath="/users",
                      *      @SWG\Api(
-                     *          path="/my-profile",
+                     *          path="/users/my-profile",
                      *          @SWG\Operation(
                      *              nickname="users.my-profile.update",
                      *              httpMethod="POST"
@@ -129,7 +129,7 @@ return array(
                      * @SWG\Resource(
                      *      resourcePath="/users",
                      *      @SWG\Api(
-                     *          path="/my-notifications",
+                     *          path="/users/my-notifications",
                      *          @SWG\Operation(
                      *              nickname="users.my-notifications.read",
                      *              httpMethod="GET"
@@ -154,7 +154,7 @@ return array(
                      * @SWG\Resource(
                      *      resourcePath="/users",
                      *      @SWG\Api(
-                     *          path="/my-notifications",
+                     *          path="/users/my-notifications",
                      *          @SWG\Operation(
                      *              nickname="users.my-notifications.update",
                      *              httpMethod="POST"
@@ -166,7 +166,7 @@ return array(
                         'type' => 'Zend\Mvc\Router\Http\Method',
                         'may_terminate' => true,
                         'options' => array(
-                            'verb' => 'get',
+                            'verb' => 'post',
                             'defaults' => array(
                                 'controller' => 'Preslog\Controller\User',
                                 'action' => 'updateMyNotifications'
@@ -194,7 +194,7 @@ return array(
                      * @SWG\Resource(
                      *      resourcePath="/logs",
                      *      @SWG\Api(
-                     *          path="/{logId}",
+                     *          path="/logs/{logId}",
                      *          @SWG\Operation(
                      *              nickname="logs.read",
                      *              httpMethod="GET"
@@ -219,7 +219,7 @@ return array(
                      * @SWG\Resource(
                      *      resourcePath="/logs",
                      *      @SWG\Api(
-                     *          path="/{logId}",
+                     *          path="/logs/{logId}",
                      *          @SWG\Operation(
                      *              nickname="logs.update",
                      *              httpMethod="POST"
@@ -244,7 +244,7 @@ return array(
                      * @SWG\Resource(
                      *      resourcePath="/logs",
                      *      @SWG\Api(
-                     *          path="/{logId}",
+                     *          path="/logs/{logId}",
                      *          @SWG\Operation(
                      *              nickname="logs.delete",
                      *              httpMethod="DELETE"
@@ -280,7 +280,7 @@ return array(
                      * @SWG\Resource(
                      *      resourcePath="/dashboards",
                      *      @SWG\Api(
-                     *          path="/",
+                     *          path="/dashboards",
                      *          @SWG\Operation(
                      *              nickname="dashboards.list",
                      *              httpMethod="GET"
@@ -316,7 +316,7 @@ return array(
                              * @SWG\Resource(
                              *      resourcePath="/dashboards",
                              *      @SWG\Api(
-                             *          path="/{dashboardId}",
+                             *          path="/dashboards/{dashboardId}",
                              *          @SWG\Operation(
                              *              nickname="dashboards.specific.read",
                              *              httpMethod="GET"
@@ -341,7 +341,7 @@ return array(
                              * @SWG\Resource(
                              *      resourcePath="/dashboards",
                              *      @SWG\Api(
-                             *          path="/{dashboardId}",
+                             *          path="/dashboards/{dashboardId}",
                              *          @SWG\Operation(
                              *              nickname="dashboards.specific.update",
                              *              httpMethod="POST"
@@ -366,7 +366,7 @@ return array(
                              * @SWG\Resource(
                              *      resourcePath="/dashboards",
                              *      @SWG\Api(
-                             *          path="/{dashboardId}",
+                             *          path="/dashboards/{dashboardId}",
                              *          @SWG\Operation(
                              *              nickname="dashboards.specific.delete",
                              *              httpMethod="DELETE"
@@ -399,7 +399,7 @@ return array(
                                      * @SWG\Resource(
                                      *      resourcePath="/dashboards",
                                      *      @SWG\Api(
-                                     *          path="/{dashboardId}/widgets",
+                                     *          path="/dashboards/{dashboardId}/widgets",
                                      *          @SWG\Operation(
                                      *              nickname="dashboards.specific.widgets.create",
                                      *              httpMethod="POST"
@@ -435,7 +435,7 @@ return array(
                                              * @SWG\Resource(
                                              *      resourcePath="/dashboards",
                                              *      @SWG\Api(
-                                             *          path="/{dashboardId}/widgets/{widgetId}",
+                                             *          path="/dashboards/{dashboardId}/widgets/{widgetId}",
                                              *          @SWG\Operation(
                                              *              nickname="dashboards.specific.widgets.specific.read",
                                              *              httpMethod="GET"
@@ -460,7 +460,7 @@ return array(
                                              * @SWG\Resource(
                                              *      resourcePath="/dashboards",
                                              *      @SWG\Api(
-                                             *          path="/{dashboardId}/widgets/{widgetId}",
+                                             *          path="/dashboards/{dashboardId}/widgets/{widgetId}",
                                              *          @SWG\Operation(
                                              *              nickname="dashboards.specific.widgets.specific.update",
                                              *              httpMethod="POST"
@@ -485,7 +485,7 @@ return array(
                                              * @SWG\Resource(
                                              *      resourcePath="/dashboards",
                                              *      @SWG\Api(
-                                             *          path="/{dashboardId}/widgets/{widgetId}",
+                                             *          path="/dashboards/{dashboardId}/widgets/{widgetId}",
                                              *          @SWG\Operation(
                                              *              nickname="dashboards.specific.widgets.specific.delete",
                                              *              httpMethod="DELETE"
@@ -510,7 +510,7 @@ return array(
                                              * @SWG\Resource(
                                              *      resourcePath="/dashboards",
                                              *      @SWG\Api(
-                                             *          path="/{dashboardId}/widgets/{widgetId}/export",
+                                             *          path="/dashboards/{dashboardId}/widgets/{widgetId}/export",
                                              *          @SWG\Operation(
                                              *              nickname="dashboards.specific.widgets.specific.export",
                                              *              httpMethod="GET"
@@ -538,7 +538,7 @@ return array(
                              * @SWG\Resource(
                              *      resourcePath="/dashboards",
                              *      @SWG\Api(
-                             *          path="/{dashboardId}/export",
+                             *          path="/dashboards/{dashboardId}/export",
                              *          @SWG\Operation(
                              *              nickname="dashboards.specific.export",
                              *              httpMethod="GET"
@@ -565,7 +565,7 @@ return array(
                      * @SWG\Resource(
                      *      resourcePath="/dashboards",
                      *      @SWG\Api(
-                     *          path="/",
+                     *          path="/dashboards",
                      *          @SWG\Operation(
                      *              nickname="dashboards.create",
                      *              httpMethod="POST"
@@ -603,7 +603,7 @@ return array(
              * @SWG\Resource(
              *      resourcePath="/widgets",
              *      @SWG\Api(
-             *          path="/",
+             *          path="/widgets",
              *          @SWG\Operation(
              *              nickname="widgets.list",
              *              httpMethod="GET"
@@ -628,7 +628,7 @@ return array(
                      * @SWG\Resource(
                      *      resourcePath="/widgets",
                      *      @SWG\Api(
-                     *          path="/{widgetId}",
+                     *          path="/widgets/{widgetId}",
                      *          @SWG\Operation(
                      *              nickname="widgets.options",
                      *              httpMethod="GET"
@@ -659,7 +659,7 @@ return array(
              * @SWG\Resource(
              *      resourcePath="/search",
              *      @SWG\Api(
-             *          path="/",
+             *          path="/search",
              *          @SWG\Operation(
              *              nickname="search",
              *              httpMethod="GET"
@@ -673,7 +673,7 @@ return array(
                 'options' => array(
                     'route' => '/search',
                     'defaults' => array(
-                        'controller' => 'Preslog\Controller\Dashboard',
+                        'controller' => 'Preslog\Controller\Search',
                         'action' => 'search',
                     ),
                 ),
@@ -685,7 +685,7 @@ return array(
                      * @SWG\Resource(
                      *      resourcePath="/search",
                      *      @SWG\Api(
-                     *          path="/export",
+                     *          path="/search/export-xls",
                      *          @SWG\Operation(
                      *              nickname="search.export",
                      *              httpMethod="GET"
@@ -699,7 +699,7 @@ return array(
                         'options' => array(
                             'route' => '/export-xls',
                             'defaults' => array(
-                                'controller' => 'Preslog\Controller\Dashboard',
+                                'controller' => 'Preslog\Controller\Search',
                                 'action' => 'searchExportAsXlsOptions',
                             ),
                         ),
@@ -719,7 +719,7 @@ return array(
                              * @SWG\Resource(
                              *      resourcePath="/search",
                              *      @SWG\Api(
-                             *          path="/wizard/params",
+                             *          path="/search/wizard/params",
                              *          @SWG\Operation(
                              *              nickname="search.wizard.params",
                              *              httpMethod="GET"
@@ -733,7 +733,7 @@ return array(
                                 'options' => array(
                                     'route' => '/params',
                                     'defaults' => array(
-                                        'controller' => 'Preslog\Controller\Dashboard',
+                                        'controller' => 'Preslog\Controller\Search',
                                         'action' => 'searchWizardParams',
                                     ),
                                 ),
@@ -744,7 +744,7 @@ return array(
                              * @SWG\Resource(
                              *      resourcePath="/search",
                              *      @SWG\Api(
-                             *          path="/wizard/translate",
+                             *          path="/search/wizard/translate",
                              *          @SWG\Operation(
                              *              nickname="search.wizard.translate",
                              *              httpMethod="GET"
@@ -758,7 +758,7 @@ return array(
                                 'options' => array(
                                     'route' => '/translate',
                                     'defaults' => array(
-                                        'controller' => 'Preslog\Controller\Dashboard',
+                                        'controller' => 'Preslog\Controller\Search',
                                         'action' => 'searchWizardTranslate',
                                     ),
                                 ),
@@ -791,7 +791,7 @@ return array(
                              * @SWG\Resource(
                              *      resourcePath="/admin",
                              *      @SWG\Api(
-                             *          path="/users",
+                             *          path="/admin/users",
                              *          @SWG\Operation(
                              *              nickname="admin.users.read",
                              *              httpMethod="GET"
@@ -805,7 +805,7 @@ return array(
                                 'options' => array(
                                     'verb' => 'get',
                                     'defaults' => array(
-                                        'controller' => 'Preslog\Controller\Users',
+                                        'controller' => 'Preslog\Controller\User',
                                         'action' => 'readList',
                                     ),
                                 ),
@@ -816,7 +816,7 @@ return array(
                              * @SWG\Resource(
                              *      resourcePath="/admin",
                              *      @SWG\Api(
-                             *          path="/users",
+                             *          path="/admin/users",
                              *          @SWG\Operation(
                              *              nickname="admin.users.create",
                              *              httpMethod="POST"
@@ -830,7 +830,7 @@ return array(
                                 'options' => array(
                                     'verb' => 'post,put',
                                     'defaults' => array(
-                                        'controller' => 'Preslog\Controller\Users',
+                                        'controller' => 'Preslog\Controller\User',
                                         'action' => 'create',
                                     ),
                                 ),
@@ -852,7 +852,7 @@ return array(
                                      * @SWG\Resource(
                                      *      resourcePath="/admin",
                                      *      @SWG\Api(
-                                     *          path="/users/{userId}",
+                                     *          path="/admin/users/{userId}",
                                      *          @SWG\Operation(
                                      *              nickname="admin.users.specific.read",
                                      *              httpMethod="GET"
@@ -866,7 +866,7 @@ return array(
                                         'options' => array(
                                             'verb' => 'get',
                                             'defaults' => array(
-                                                'controller' => 'Preslog\Controller\Users',
+                                                'controller' => 'Preslog\Controller\User',
                                                 'action' => 'read',
                                             ),
                                         ),
@@ -878,7 +878,7 @@ return array(
                                      * @SWG\Resource(
                                      *      resourcePath="/admin",
                                      *      @SWG\Api(
-                                     *          path="/users/{userId}",
+                                     *          path="/admin/users/{userId}",
                                      *          @SWG\Operation(
                                      *              nickname="admin.users.specific.update",
                                      *              httpMethod="POST"
@@ -892,7 +892,7 @@ return array(
                                         'options' => array(
                                             'verb' => 'post,put',
                                             'defaults' => array(
-                                                'controller' => 'Preslog\Controller\Users',
+                                                'controller' => 'Preslog\Controller\User',
                                                 'action' => 'update',
                                             ),
                                         ),
@@ -903,7 +903,7 @@ return array(
                                      * @SWG\Resource(
                                      *      resourcePath="/admin",
                                      *      @SWG\Api(
-                                     *          path="/users/{userId}",
+                                     *          path="/admin/users/{userId}",
                                      *          @SWG\Operation(
                                      *              nickname="admin.users.specific.delete",
                                      *              httpMethod="DELETE"
@@ -917,7 +917,7 @@ return array(
                                         'options' => array(
                                             'verb' => 'delete',
                                             'defaults' => array(
-                                                'controller' => 'Preslog\Controller\Users',
+                                                'controller' => 'Preslog\Controller\User',
                                                 'action' => 'delete',
                                             ),
                                         ),
@@ -942,7 +942,7 @@ return array(
                              * @SWG\Resource(
                              *      resourcePath="/admin",
                              *      @SWG\Api(
-                             *          path="/clients",
+                             *          path="/admin/clients",
                              *          @SWG\Operation(
                              *              nickname="admin.clients.read",
                              *              httpMethod="GET"
@@ -956,7 +956,7 @@ return array(
                                 'options' => array(
                                     'verb' => 'get',
                                     'defaults' => array(
-                                        'controller' => 'Preslog\Controller\Clients',
+                                        'controller' => 'Preslog\Controller\Client',
                                         'action' => 'readList',
                                     ),
                                 ),
@@ -967,7 +967,7 @@ return array(
                              * @SWG\Resource(
                              *      resourcePath="/admin",
                              *      @SWG\Api(
-                             *          path="/clients",
+                             *          path="/admin/clients",
                              *          @SWG\Operation(
                              *              nickname="admin.clients.create",
                              *              httpMethod="POST"
@@ -981,7 +981,7 @@ return array(
                                 'options' => array(
                                     'verb' => 'post,put',
                                     'defaults' => array(
-                                        'controller' => 'Preslog\Controller\Clients',
+                                        'controller' => 'Preslog\Controller\Client',
                                         'action' => 'create',
                                     ),
                                 ),
@@ -1003,7 +1003,7 @@ return array(
                                      * @SWG\Resource(
                                      *      resourcePath="/admin",
                                      *      @SWG\Api(
-                                     *          path="/clients/{clientId}",
+                                     *          path="/admin/clients/{clientId}",
                                      *          @SWG\Operation(
                                      *              nickname="admin.clients.specific.read",
                                      *              httpMethod="GET"
@@ -1017,7 +1017,7 @@ return array(
                                         'options' => array(
                                             'verb' => 'get',
                                             'defaults' => array(
-                                                'controller' => 'Preslog\Controller\Clients',
+                                                'controller' => 'Preslog\Controller\Client',
                                                 'action' => 'read',
                                             ),
                                         ),
@@ -1028,7 +1028,7 @@ return array(
                                      * @SWG\Resource(
                                      *      resourcePath="/admin",
                                      *      @SWG\Api(
-                                     *          path="/clients/{clientId}",
+                                     *          path="/admin/clients/{clientId}",
                                      *          @SWG\Operation(
                                      *              nickname="admin.clients.specific.update",
                                      *              httpMethod="POST"
@@ -1042,7 +1042,7 @@ return array(
                                         'options' => array(
                                             'verb' => 'post,put',
                                             'defaults' => array(
-                                                'controller' => 'Preslog\Controller\Clients',
+                                                'controller' => 'Preslog\Controller\Client',
                                                 'action' => 'update',
                                             ),
                                         ),
@@ -1053,7 +1053,7 @@ return array(
                                      * @SWG\Resource(
                                      *      resourcePath="/admin",
                                      *      @SWG\Api(
-                                     *          path="/clients/{clientId}",
+                                     *          path="/admin/clients/{clientId}",
                                      *          @SWG\Operation(
                                      *              nickname="admin.clients.specific.delete",
                                      *              httpMethod="DELETE"
@@ -1067,7 +1067,7 @@ return array(
                                         'options' => array(
                                             'verb' => 'delete',
                                             'defaults' => array(
-                                                'controller' => 'Preslog\Controller\Clients',
+                                                'controller' => 'Preslog\Controller\Client',
                                                 'action' => 'delete',
                                             ),
                                         ),
@@ -1078,7 +1078,7 @@ return array(
                                      * @SWG\Resource(
                                      *      resourcePath="/admin",
                                      *      @SWG\Api(
-                                     *          path="/clients/{clientId}/duplicate",
+                                     *          path="/admin/clients/{clientId}/duplicate",
                                      *          @SWG\Operation(
                                      *              nickname="admin.clients.specific.duplicate",
                                      *              httpMethod="POST"
@@ -1093,7 +1093,7 @@ return array(
                                         'options' => array(
                                             'route'=>'/duplicate',
                                             'defaults' => array(
-                                                'controller' => 'Preslog\Controller\Clients',
+                                                'controller' => 'Preslog\Controller\Client',
                                                 'action' => 'duplicate',
                                             ),
                                         ),
