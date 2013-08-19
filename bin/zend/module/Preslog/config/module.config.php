@@ -19,8 +19,8 @@ return array(
 
     /**
      * Routes
-     * WARNING: If you update the routes below, update the SWG annotations!
-     * Documentation follows formatting of swagger-php
+     * WARNING: If you update the routes below, update the SWG (Swagger) annotations!
+     * Refer to documentation for Swagger API and swagger-php:
      *   http://zircote.com/swagger-php/
      *   https://github.com/wordnik/swagger-core/wiki
      */
@@ -186,9 +186,9 @@ return array(
             'logs' => array(
                 'type' => 'Zend\Mvc\Router\Http\Segment',
                 'options' => array(
-                    'route' => '/logs[/:id]',
+                    'route' => '/logs[/:log_id]',
                     'constraints' => array(
-                        'id' => '[0-9]+'
+                        'log_id' => '[0-9]+'
                     ),
                 ),
                 'child_routes' => array(
@@ -198,7 +198,7 @@ return array(
                      * @SWG\Resource(
                      *      resourcePath="/logs",
                      *      @SWG\Api(
-                     *          path="/logs/{logId}",
+                     *          path="/logs/{log_id}",
                      *          @SWG\Operation(
                      *              @SWG\Partial("logs.read"),
                      *              nickname="logs.read",
@@ -224,7 +224,7 @@ return array(
                      * @SWG\Resource(
                      *      resourcePath="/logs",
                      *      @SWG\Api(
-                     *          path="/logs/{logId}",
+                     *          path="/logs/{log_id}",
                      *          @SWG\Operation(
                      *              @SWG\Partial("logs.update"),
                      *              nickname="logs.update",
@@ -250,7 +250,7 @@ return array(
                      * @SWG\Resource(
                      *      resourcePath="/logs",
                      *      @SWG\Api(
-                     *          path="/logs/{logId}",
+                     *          path="/logs/{log_id}",
                      *          @SWG\Operation(
                      *              @SWG\Partial("logs.delete"),
                      *              nickname="logs.delete",
@@ -324,7 +324,7 @@ return array(
                              * @SWG\Resource(
                              *      resourcePath="/dashboards",
                              *      @SWG\Api(
-                             *          path="/dashboards/{dashboardId}",
+                             *          path="/dashboards/{dashboard_id}",
                              *          @SWG\Operation(
                              *              @SWG\Partial("dashboards.specific.read"),
                              *              nickname="dashboards.specific.read",
@@ -350,7 +350,7 @@ return array(
                              * @SWG\Resource(
                              *      resourcePath="/dashboards",
                              *      @SWG\Api(
-                             *          path="/dashboards/{dashboardId}",
+                             *          path="/dashboards/{dashboard_id}",
                              *          @SWG\Operation(
                              *              @SWG\Partial("dashboards.specific.update"),
                              *              nickname="dashboards.specific.update",
@@ -363,7 +363,7 @@ return array(
                                 'type' => 'Zend\Mvc\Router\Http\Method',
                                 'may_terminate' => true,
                                 'options' => array(
-                                    'verb' => 'post,put',
+                                    'verb' => 'post',
                                     'defaults' => array(
                                         'controller' => 'Preslog\Controller\Dashboard',
                                         'action' => 'update'
@@ -376,7 +376,7 @@ return array(
                              * @SWG\Resource(
                              *      resourcePath="/dashboards",
                              *      @SWG\Api(
-                             *          path="/dashboards/{dashboardId}",
+                             *          path="/dashboards/{dashboard_id}",
                              *          @SWG\Operation(
                              *              @SWG\Partial("dashboards.specific.delete"),
                              *              nickname="dashboards.specific.delete",
@@ -410,7 +410,7 @@ return array(
                                      * @SWG\Resource(
                                      *      resourcePath="/dashboards",
                                      *      @SWG\Api(
-                                     *          path="/dashboards/{dashboardId}/widgets",
+                                     *          path="/dashboards/{dashboard_id}/widgets",
                                      *          @SWG\Operation(
                                      *              @SWG\Partial("dashboards.specific.widgets.create"),
                                      *              nickname="dashboards.specific.widgets.create",
@@ -423,7 +423,7 @@ return array(
                                         'type' => 'Zend\Mvc\Router\Http\Method',
                                         'may_terminate' => true,
                                         'options' => array(
-                                            'verb' => 'post,put',
+                                            'verb' => 'post',
                                             'defaults' => array(
                                                 'controller' => 'Preslog\Controller\Dashboard',
                                                 'action' => 'createDashboardWidget'
@@ -447,7 +447,7 @@ return array(
                                              * @SWG\Resource(
                                              *      resourcePath="/dashboards",
                                              *      @SWG\Api(
-                                             *          path="/dashboards/{dashboardId}/widgets/{widgetId}",
+                                             *          path="/dashboards/{dashboard_id}/widgets/{widget_id}",
                                              *          @SWG\Operation(
                                              *              @SWG\Partial("dashboards.specific.widgets.specific.read"),
                                              *              nickname="dashboards.specific.widgets.specific.read",
@@ -473,7 +473,7 @@ return array(
                                              * @SWG\Resource(
                                              *      resourcePath="/dashboards",
                                              *      @SWG\Api(
-                                             *          path="/dashboards/{dashboardId}/widgets/{widgetId}",
+                                             *          path="/dashboards/{dashboard_id}/widgets/{widget_id}",
                                              *          @SWG\Operation(
                                              *              @SWG\Partial("dashboards.specific.widgets.specific.update"),
                                              *              nickname="dashboards.specific.widgets.specific.update",
@@ -499,7 +499,7 @@ return array(
                                              * @SWG\Resource(
                                              *      resourcePath="/dashboards",
                                              *      @SWG\Api(
-                                             *          path="/dashboards/{dashboardId}/widgets/{widgetId}",
+                                             *          path="/dashboards/{dashboard_id}/widgets/{widget_id}",
                                              *          @SWG\Operation(
                                              *              @SWG\Partial("dashboards.specific.widgets.specific.delete"),
                                              *              nickname="dashboards.specific.widgets.specific.delete",
@@ -525,7 +525,7 @@ return array(
                                              * @SWG\Resource(
                                              *      resourcePath="/dashboards",
                                              *      @SWG\Api(
-                                             *          path="/dashboards/{dashboardId}/widgets/{widgetId}/export",
+                                             *          path="/dashboards/{dashboard_id}/widgets/{widget_id}/export",
                                              *          @SWG\Operation(
                                              *              @SWG\Partial("dashboards.specific.widgets.specific.export"),
                                              *              nickname="dashboards.specific.widgets.specific.export",
@@ -534,10 +534,10 @@ return array(
                                              *      )
                                              * )
                                              */
-                                            'dashboards.specific.widgets.specific.export-xls' => array(
+                                            'dashboards.specific.widgets.specific.export' => array(
                                                 'type' => 'Zend\Mvc\Router\Http\Literal',
                                                 'options' => array(
-                                                    'route' => '/export-xls',
+                                                    'route' => '/export',
                                                     'defaults' => array(
                                                         'controller' => 'Preslog\Controller\Dashboard',
                                                         'action' => 'exportDashboardWidgetDataAsXls'
@@ -550,11 +550,11 @@ return array(
                             ),
 
                             /**
-                             * Dashboards.specific.export-report
+                             * Dashboards.specific.export
                              * @SWG\Resource(
                              *      resourcePath="/dashboards",
                              *      @SWG\Api(
-                             *          path="/dashboards/{dashboardId}/export",
+                             *          path="/dashboards/{dashboard_id}/export",
                              *          @SWG\Operation(
                              *              @SWG\Partial("dashboards.specific.export"),
                              *              nickname="dashboards.specific.export",
@@ -563,13 +563,13 @@ return array(
                              *      )
                              * )
                              */
-                            'dashboards.specific.widgets' => array(
+                            'dashboards.export' => array(
                                 'type' => 'Zend\Mvc\Router\Http\Literal',
                                 'options' => array(
-                                    'route' => '/export-report',
+                                    'route' => '/export',
                                     'defaults' => array(
                                         'controller' => 'Preslog\Controller\Dashboard',
-                                        'action' => 'exportDashboardAsDoc'
+                                        'action' => 'exportDashboardAsReport'
                                     ),
                                 ),
                             ),
@@ -592,21 +592,13 @@ return array(
                      * )
                      */
                     'dashboards.create-abstract' => array(
-                        'type' => 'Zend\Mvc\Router\Http\Literal',
+                        'type' => 'Zend\Mvc\Router\Http\Method',
+                        'may_terminate' => true,
                         'options' => array(
-                            'route' => '/create',
-                        ),
-                        'child_routes' => array(
-                            'dashboards.create' => array(
-                                'type' => 'Zend\Mvc\Router\Http\Method',
-                                'may_terminate' => true,
-                                'options' => array(
-                                    'verb' => 'post,put',
-                                    'defaults' => array(
-                                        'controller' => 'Preslog\Controller\Dashboard',
-                                        'action' => 'create',
-                                    ),
-                                ),
+                            'verb' => 'post,put',
+                            'defaults' => array(
+                                'controller' => 'Preslog\Controller\Dashboard',
+                                'action' => 'create',
                             ),
                         ),
                     ),
@@ -647,7 +639,7 @@ return array(
                      * @SWG\Resource(
                      *      resourcePath="/widgets",
                      *      @SWG\Api(
-                     *          path="/widgets/{widgetId}",
+                     *          path="/widgets/{widget_type}",
                      *          @SWG\Operation(
                      *              @SWG\Partial("widgets.options"),
                      *              nickname="widgets.options",
@@ -662,7 +654,7 @@ return array(
                         'options' => array(
                             'route' => '/:widget_type',
                             'constraints' => array(
-                                'widget_type' => '[0-9]+'
+                                'widget_type' => '[a-zA-Z\-]+'
                             ),
                             'defaults' => array(
                                 'controller' => 'Preslog\Controller\Dashboard',
@@ -722,7 +714,7 @@ return array(
                             'route' => '/export-xls',
                             'defaults' => array(
                                 'controller' => 'Preslog\Controller\Search',
-                                'action' => 'searchExportAsXlsOptions',
+                                'action' => 'searchExportAsXls',
                             ),
                         ),
                     ),
@@ -878,7 +870,7 @@ return array(
                                      * @SWG\Resource(
                                      *      resourcePath="/admin",
                                      *      @SWG\Api(
-                                     *          path="/admin/users/{userId}",
+                                     *          path="/admin/users/{user_id}",
                                      *          @SWG\Operation(
                                      *              @SWG\Partial("admin.users.specific.read"),
                                      *              nickname="admin.users.specific.read",
@@ -905,7 +897,7 @@ return array(
                                      * @SWG\Resource(
                                      *      resourcePath="/admin",
                                      *      @SWG\Api(
-                                     *          path="/admin/users/{userId}",
+                                     *          path="/admin/users/{user_id}",
                                      *          @SWG\Operation(
                                      *              @SWG\Partial("admin.users.specific.update"),
                                      *              nickname="admin.users.specific.update",
@@ -931,7 +923,7 @@ return array(
                                      * @SWG\Resource(
                                      *      resourcePath="/admin",
                                      *      @SWG\Api(
-                                     *          path="/admin/users/{userId}",
+                                     *          path="/admin/users/{user_id}",
                                      *          @SWG\Operation(
                                      *              @SWG\Partial("admin.users.specific.delete"),
                                      *              nickname="admin.users.specific.delete",
@@ -1034,7 +1026,7 @@ return array(
                                      * @SWG\Resource(
                                      *      resourcePath="/admin",
                                      *      @SWG\Api(
-                                     *          path="/admin/clients/{clientId}",
+                                     *          path="/admin/clients/{client_id}",
                                      *          @SWG\Operation(
                                      *              @SWG\Partial("admin.clients.specific.read"),
                                      *              nickname="admin.clients.specific.read",
@@ -1060,7 +1052,7 @@ return array(
                                      * @SWG\Resource(
                                      *      resourcePath="/admin",
                                      *      @SWG\Api(
-                                     *          path="/admin/clients/{clientId}",
+                                     *          path="/admin/clients/{client_id}",
                                      *          @SWG\Operation(
                                      *              @SWG\Partial("admin.clients.specific.update"),
                                      *              nickname="admin.clients.specific.update",
@@ -1086,7 +1078,7 @@ return array(
                                      * @SWG\Resource(
                                      *      resourcePath="/admin",
                                      *      @SWG\Api(
-                                     *          path="/admin/clients/{clientId}",
+                                     *          path="/admin/clients/{client_id}",
                                      *          @SWG\Operation(
                                      *              @SWG\Partial("admin.clients.specific.delete"),
                                      *              nickname="admin.clients.specific.delete",
@@ -1112,7 +1104,7 @@ return array(
                                      * @SWG\Resource(
                                      *      resourcePath="/admin",
                                      *      @SWG\Api(
-                                     *          path="/admin/clients/{clientId}/duplicate",
+                                     *          path="/admin/clients/{client_id}/duplicate",
                                      *          @SWG\Operation(
                                      *              @SWG\Partial("admin.clients.specific.duplicate"),
                                      *              nickname="admin.clients.specific.duplicate",

@@ -26,7 +26,8 @@ class ClientController extends AbstractRestfulController
      *
      * @SWG\Operation(
      *      partial="admin.clients.read",
-     *      summary="List clients"
+     *      summary="List clients",
+     *      notes="User must be an Administrator"
      * )
      */
     public function readListAction()
@@ -43,7 +44,8 @@ class ClientController extends AbstractRestfulController
      *
      * @SWG\Operation(
      *      partial="admin.clients.create",
-     *      summary="Create a new client"
+     *      summary="Create a new client",
+     *      notes="User must be an Administrator"
      * )
      */
     public function createAction()
@@ -60,12 +62,22 @@ class ClientController extends AbstractRestfulController
      *
      * @SWG\Operation(
      *      partial="admin.clients.specific.read",
-     *      summary="Fetch data for a specific client"
+     *      summary="Fetch data for a specific client",
+     *      notes="User must be an Administrator",
+     *      @SWG\Parameters(
+     *          @SWG\Parameter(
+     *              name="client_id",
+     *              paramType="path",
+     *              dataType="int",
+     *              required="true",
+     *              description="Client ID"
+     *          )
+     *      )
      * )
      */
     public function readAction()
     {
-        $id = $this->params('id', 'none specified');
+        $id = $this->params('client_id', 'none specified');
 
         return new JsonModel(array(
             'todo' => 'TODO: Admin read specific client ('.$id.')',
@@ -79,12 +91,22 @@ class ClientController extends AbstractRestfulController
      *
      * @SWG\Operation(
      *      partial="admin.clients.specific.update",
-     *      summary="Update a specific client"
+     *      summary="Update a specific client",
+     *      notes="User must be an Administrator",
+     *      @SWG\Parameters(
+     *          @SWG\Parameter(
+     *              name="client_id",
+     *              paramType="path",
+     *              dataType="int",
+     *              required="true",
+     *              description="Client ID"
+     *          )
+     *      )
      * )
      */
     public function updateAction()
     {
-        $id = $this->params('id', 'none specified');
+        $id = $this->params('client_id', 'none specified');
 
         return new JsonModel(array(
             'todo' => 'TODO: Admin update specific client ('.$id.')',
@@ -98,12 +120,23 @@ class ClientController extends AbstractRestfulController
      *
      * @SWG\Operation(
      *      partial="admin.clients.specific.delete",
-     *      summary="Delete a specific client"
+     *      summary="Delete a specific client",
+     *      notes="User must be an Administrator",
+     *      @SWG\Parameters(
+     *          @SWG\Parameter(
+     *              name="client_id",
+     *              paramType="path",
+     *              dataType="int",
+     *              required="true",
+     *              description="Client ID"
+     *          )
+     *      )
+
      * )
      */
     public function deleteAction()
     {
-        $id = $this->params('id', 'none specified');
+        $id = $this->params('client_id', 'none specified');
 
         return new JsonModel(array(
             'todo' => 'TODO: Admin delete specific client ('.$id.')',
@@ -117,12 +150,22 @@ class ClientController extends AbstractRestfulController
      *
      * @SWG\Operation(
      *      partial="admin.clients.specific.duplicate",
-     *      summary="Duplicate a specific client"
+     *      summary="Duplicate a specific client",
+     *      notes="User must be an Administrator",
+     *      @SWG\Parameters(
+     *          @SWG\Parameter(
+     *              name="client_id",
+     *              paramType="path",
+     *              dataType="int",
+     *              required="true",
+     *              description="Client ID"
+     *          )
+     *      )
      * )
      */
     public function duplicateAction()
     {
-        $id = $this->params('id', 'none specified');
+        $id = $this->params('client_id', 'none specified');
 
         return new JsonModel(array(
             'todo' => 'TODO: Admin duplicate specific client ('.$id.')',

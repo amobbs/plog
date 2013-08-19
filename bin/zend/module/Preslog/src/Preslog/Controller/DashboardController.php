@@ -26,7 +26,8 @@ class DashboardController extends AbstractRestfulController
      *
      * @SWG\Operation(
      *      partial="dashboards.list",
-     *      summary="List available dashboards"
+     *      summary="List available dashboards",
+     *      notes=""
      * )
      */
     public function readListAction()
@@ -42,7 +43,8 @@ class DashboardController extends AbstractRestfulController
      *
      * @SWG\Operation(
      *      partial="dashboards.create",
-     *      summary="Create a new dashboard"
+     *      summary="Create a new dashboard",
+     *      notes=""
      * )
      */
     public function createAction()
@@ -59,7 +61,17 @@ class DashboardController extends AbstractRestfulController
      *
      * @SWG\Operation(
      *      partial="dashboards.specific.read",
-     *      summary="Return data for a specific dashboard arrangement"
+     *      summary="Return data for a specific dashboard arrangement",
+     *      notes="",
+     *      @SWG\Parameters(
+     *          @SWG\Parameter(
+     *              name="dashboard_id",
+     *              paramType="path",
+     *              dataType="int",
+     *              required="true",
+     *              description="Dashboard ID"
+     *          )
+     *      )
      * )
      */
     public function readAction()
@@ -78,7 +90,17 @@ class DashboardController extends AbstractRestfulController
      *
      * @SWG\Operation(
      *      partial="dashboards.specific.update",
-     *      summary="Update the specified dashboard"
+     *      summary="Update the specified dashboard",
+     *      notes="",
+     *      @SWG\Parameters(
+     *          @SWG\Parameter(
+     *              name="dashboard_id",
+     *              paramType="path",
+     *              dataType="int",
+     *              required="true",
+     *              description="Dashboard ID"
+     *          )
+     *      )
      * )
      */
     public function updateAction()
@@ -97,7 +119,17 @@ class DashboardController extends AbstractRestfulController
      *
      * @SWG\Operation(
      *      partial="dashboards.specific.delete",
-     *      summary="Delete the specified dashboard"
+     *      summary="Delete the specified dashboard",
+     *      notes="",
+     *      @SWG\Parameters(
+     *          @SWG\Parameter(
+     *              name="dashboard_id",
+     *              paramType="path",
+     *              dataType="int",
+     *              required="true",
+     *              description="Dashboard ID"
+     *          )
+     *      )
      * )
      */
     public function deleteAction()
@@ -116,7 +148,8 @@ class DashboardController extends AbstractRestfulController
      *
      * @SWG\Operation(
      *      partial="widgets.list",
-     *      summary="List all available widgets"
+     *      summary="List all available widget types",
+     *      notes=""
      * )
      */
     public function readWidgetListAction()
@@ -133,7 +166,17 @@ class DashboardController extends AbstractRestfulController
      *
      * @SWG\Operation(
      *      partial="widgets.options",
-     *      summary="Fetch options for the specified widget type"
+     *      summary="Fetch options for the specified widget type",
+     *      notes="",
+     *      @SWG\Parameters(
+     *          @SWG\Parameter(
+     *              name="widget_type",
+     *              paramType="path",
+     *              dataType="string",
+     *              required="true",
+     *              description="Widget Type"
+     *          )
+     *      )
      * )
      */
     public function readWidgetOptionsAction()
@@ -152,12 +195,29 @@ class DashboardController extends AbstractRestfulController
      *
      * @SWG\Operation(
      *      partial="dashboards.specific.widgets.specific.read",
-     *      summary="Fetch data for a specified widget"
+     *      summary="Fetch data for a specified widget",
+     *      notes="",
+     *      @SWG\Parameters(
+     *          @SWG\Parameter(
+     *              name="dashboard_id",
+     *              paramType="path",
+     *              dataType="int",
+     *              required="true",
+     *              description="Dashboard ID"
+     *          ),
+     *          @SWG\Parameter(
+     *              name="widget_id",
+     *              paramType="path",
+     *              dataType="int",
+     *              required="true",
+     *              description="Widget ID"
+     *          )
+     *      )
      * )
      */
     public function readDashboardWidgetAction()
     {
-        $dashboard_id = $this->params('id');
+        $dashboard_id = $this->params('dashboard_id');
         $widget_id = $this->params('widget_id');
 
         return new JsonModel(array(
@@ -172,12 +232,22 @@ class DashboardController extends AbstractRestfulController
      *
      * @SWG\Operation(
      *      partial="dashboards.specific.widgets.create",
-     *      summary="Create a new widget on the specified dashboard"
+     *      summary="Create a new widget on the specified dashboard",
+     *      notes="",
+     *      @SWG\Parameters(
+     *          @SWG\Parameter(
+     *              name="dashboard_id",
+     *              paramType="path",
+     *              dataType="int",
+     *              required="true",
+     *              description="Dashboard ID"
+     *          )
+     *      )
      * )
      */
     public function createDashboardWidgetAction()
     {
-        $dashboard_id = $this->params('id');
+        $dashboard_id = $this->params('dashboard_id');
 
         return new JsonModel(array(
             'todo' => 'TODO - create widget on dashboard ('.$dashboard_id.')',
@@ -191,12 +261,29 @@ class DashboardController extends AbstractRestfulController
      *
      * @SWG\Operation(
      *      partial="dashboards.specific.widgets.specific.update",
-     *      summary="Update the specified widget"
+     *      summary="Update the specified widget",
+     *      notes="",
+     *      @SWG\Parameters(
+     *          @SWG\Parameter(
+     *              name="dashboard_id",
+     *              paramType="path",
+     *              dataType="int",
+     *              required="true",
+     *              description="Dashboard ID"
+     *          ),
+     *          @SWG\Parameter(
+     *              name="widget_id",
+     *              paramType="path",
+     *              dataType="int",
+     *              required="true",
+     *              description="Widget ID"
+     *          )
+     *      )
      * )
      */
     public function updateDashboardWidgetAction()
     {
-        $dashboard_id = $this->params('id');
+        $dashboard_id = $this->params('dashboard_id');
         $widget_id = $this->params('widget_id');
 
         return new JsonModel(array(
@@ -211,12 +298,29 @@ class DashboardController extends AbstractRestfulController
      *
      * @SWG\Operation(
      *      partial="dashboards.specific.widgets.specific.delete",
-     *      summary="Deletes the specified widget"
+     *      summary="Deletes the specified widget",
+     *      notes="",
+     *      @SWG\Parameters(
+     *          @SWG\Parameter(
+     *              name="dashboard_id",
+     *              paramType="path",
+     *              dataType="int",
+     *              required="true",
+     *              description="Dashboard ID"
+     *          ),
+     *          @SWG\Parameter(
+     *              name="widget_id",
+     *              paramType="path",
+     *              dataType="int",
+     *              required="true",
+     *              description="Widget ID"
+     *          )
+     *      )
      * )
      */
     public function deleteDashboardWidgetAction()
     {
-        $dashboard_id = $this->params('id');
+        $dashboard_id = $this->params('dashboard_id');
         $widget_id = $this->params('widget_id');
 
         return new JsonModel(array(
@@ -231,12 +335,29 @@ class DashboardController extends AbstractRestfulController
      *
      * @SWG\Operation(
      *      partial="dashboards.specific.widgets.specific.export",
-     *      summary="Instigate download of XLS containing logs used to compile specified widget"
+     *      summary="Download the given Widget as an XLS",
+     *      notes="Instigates the download of an XLS containg logs used to compile this widget.",
+     *      @SWG\Parameters(
+     *          @SWG\Parameter(
+     *              name="dashboard_id",
+     *              paramType="path",
+     *              dataType="int",
+     *              required="true",
+     *              description="Dashboard ID"
+     *          ),
+     *          @SWG\Parameter(
+     *              name="widget_id",
+     *              paramType="path",
+     *              dataType="int",
+     *              required="true",
+     *              description="Widget ID"
+     *          )
+     *      )
      * )
      */
     public function exportDashboardWidgetDataAsXlsAction()
     {
-        $dashboard_id = $this->params('id');
+        $dashboard_id = $this->params('dashboard_id');
         $widget_id = $this->params('widget_id');
 
         return new ViewModel();
@@ -249,7 +370,17 @@ class DashboardController extends AbstractRestfulController
      *
      * @SWG\Operation(
      *      partial="dashboards.specific.export",
-     *      summary="Instigate download of DOCX containing data from the specified dashboard"
+     *      summary="Download DOCX export of the specified dashboard",
+     *      notes="User must be an Administrator. Instigates a download of the Dashboard as a DOCX",
+     *      @SWG\Parameters(
+     *          @SWG\Parameter(
+     *              name="dashboard_id",
+     *              paramType="path",
+     *              dataType="int",
+     *              required="true",
+     *              description="Dashboard ID"
+     *          )
+     *      )
      * )
      */
     public function exportDashboardAsReportAction()

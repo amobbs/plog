@@ -25,7 +25,8 @@ class UserController extends AbstractRestfulController
      *
      * @SWG\Operation(
      *      partial="users.my-profile.read",
-     *      summary="Fetch My Profile data"
+     *      summary="Fetch My Profile data",
+     *      notes="Any logged in user may load this data."
      * )
      */
     public function readMyProfileAction()
@@ -42,7 +43,8 @@ class UserController extends AbstractRestfulController
      *
      * @SWG\Operation(
      *      partial="users.my-profile.update",
-     *      summary="Update My Profile data"
+     *      summary="Update My Profile data",
+     *      notes="Updates are applied to the currently logged in user account."
      * )
      */
     public function updateMyProfileAction()
@@ -59,7 +61,8 @@ class UserController extends AbstractRestfulController
      *
      * @SWG\Operation(
      *      partial="users.my-notifications.read",
-     *      summary="Read My Notifications data"
+     *      summary="Read My Notifications data",
+     *      notes="Any logged in user may load this data."
      * )
      */
     public function readMyNotificationsAction()
@@ -76,7 +79,8 @@ class UserController extends AbstractRestfulController
      *
      * @SWG\Operation(
      *      partial="users.my-notifications.update",
-     *      summary="Update My Notifications data"
+     *      summary="Update My Notifications data",
+     *      notes="Updates are applied to the currently logged in user account."
      * )
      */
     public function updateMyNotificationsAction()
@@ -93,7 +97,8 @@ class UserController extends AbstractRestfulController
      *
      * @SWG\Operation(
      *      partial="admin.users.read",
-     *      summary="List users"
+     *      summary="List users",
+     *      notes="User must be an Administrator"
      * )
      */
     public function readListAction()
@@ -110,7 +115,8 @@ class UserController extends AbstractRestfulController
      *
      * @SWG\Operation(
      *      partial="admin.users.create",
-     *      summary="Create a new user"
+     *      summary="Create a new user",
+     *      notes="User must be an Administrator"
      * )
      */
     public function createAction()
@@ -127,12 +133,22 @@ class UserController extends AbstractRestfulController
      *
      * @SWG\Operation(
      *      partial="admin.users.specific.read",
-     *      summary="Fetch data for a specific user"
+     *      summary="Fetch data for a specific user",
+     *      notes="User must be an Administrator",
+     *      @SWG\Parameters(
+     *          @SWG\Parameter(
+     *              name="user_id",
+     *              paramType="path",
+     *              dataType="int",
+     *              required="true",
+     *              description="User ID"
+     *          )
+     *      )
      * )
      */
     public function readAction()
     {
-        $id = $this->params('id', 'none specified');
+        $id = $this->params('user_id', 'none specified');
 
         return new JsonModel(array(
             'todo' => 'TODO: Admin read specific user ('.$id.')',
@@ -146,12 +162,22 @@ class UserController extends AbstractRestfulController
      *
      * @SWG\Operation(
      *      partial="admin.users.specific.update",
-     *      summary="Update a specific user"
+     *      summary="Update a specific user",
+     *       notes="User must be an Administrator",
+     *      @SWG\Parameters(
+     *          @SWG\Parameter(
+     *              name="user_id",
+     *              paramType="path",
+     *              dataType="int",
+     *              required="true",
+     *              description="User ID"
+     *          )
+     *      )
      * )
      */
     public function updateAction()
     {
-        $id = $this->params('id', 'none specified');
+        $id = $this->params('user_id', 'none specified');
 
         return new JsonModel(array(
             'todo' => 'TODO: Admin update specific user ('.$id.')',
@@ -165,12 +191,22 @@ class UserController extends AbstractRestfulController
      *
      * @SWG\Operation(
      *      partial="admin.users.specific.delete",
-     *      summary="Delete a specific user"
+     *      summary="Delete a specific user",
+     *      notes="User must be an Administrator",
+     *      @SWG\Parameters(
+     *          @SWG\Parameter(
+     *              name="user_id",
+     *              paramType="path",
+     *              dataType="int",
+     *              required="true",
+     *              description="User ID"
+     *          )
+     *      )
      * )
      */
     public function deleteAction()
     {
-        $id = $this->params('id', 'none specified');
+        $id = $this->params('user_id', 'none specified');
 
         return new JsonModel(array(
             'todo' => 'TODO: Admin delete specific user ('.$id.')',

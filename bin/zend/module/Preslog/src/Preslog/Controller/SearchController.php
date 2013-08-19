@@ -28,7 +28,8 @@ class SearchController extends AbstractRestfulController
      *
      * @SWG\Operation(
      *      partial="search",
-     *      summary="Return log list based on POST JQL search criteria"
+     *      summary="Return log list based on POST JQL search criteria",
+     *      notes="Users can only search across those Clients to which they have access."
      * )
      */
     public function searchAction()
@@ -45,7 +46,8 @@ class SearchController extends AbstractRestfulController
      *
      * @SWG\Operation(
      *      partial="search.export",
-     *      summary="Instigate download of XLS containing search results"
+     *      summary="Instigate download of XLS containing search results",
+     *      notes="Replicates the functionality of Search, with XLS output."
      * )
      */
     public function searchExportAsXlsAction()
@@ -62,7 +64,8 @@ class SearchController extends AbstractRestfulController
      *
      * @SWG\Operation(
      *      partial="search.wizard.params",
-     *      summary="Return field parameters for Query Builder"
+     *      summary="Return field parameters for Query Builder",
+     *      notes="Search params are limited to those from Clients to which this User has access."
      * )
      */
     public function searchWizardParamsAction()
@@ -79,7 +82,8 @@ class SearchController extends AbstractRestfulController
      *
      * @SWG\Operation(
      *      partial="search.wizard.translate",
-     *      summary="Translate between SQL and JS. Bi-directional."
+     *      summary="Translate between SQL and JS. Bi-directional.",
+     *      notes=""
      * )
      */
     public function searchWizardTranslateAction()

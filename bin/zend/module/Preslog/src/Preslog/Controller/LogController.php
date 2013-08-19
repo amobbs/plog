@@ -25,12 +25,22 @@ class LogController extends AbstractRestfulController
      *
      * @SWG\Operation(
      *      partial="logs.read",
-     *      summary="Returns a log where requested, and loggable field criteria"
+     *      summary="Returns a log where requested, and loggable field criteria",
+     *      notes="User must have permission to access the Client to which the Log belongs.",
+     *      @SWG\Parameters(
+     *          @SWG\Parameter(
+     *              name="log_id",
+     *              paramType="path",
+     *              dataType="int",
+     *              required="true",
+     *              description="Log ID"
+     *          )
+     *      )
      * )
      */
     public function readAction()
     {
-        $id = $this->params('id', 'none specified');
+        $id = $this->params('log_id', 'none specified');
 
         // :DEBUG: Must be ADMIN for record #1
         if ($id == 401 && !$this->getServiceLocator()->get('rbac')->isGranted('admin'))
@@ -55,12 +65,22 @@ class LogController extends AbstractRestfulController
      *
      * @SWG\Operation(
      *      partial="logs.update",
-     *      summary="Updates the specified log using POST data"
+     *      summary="Updates the specified log using POST data",
+     *      notes="User must have permission to access the Client to which this Log belongs. Some clients have restricted update rights.",
+     *      @SWG\Parameters(
+     *          @SWG\Parameter(
+     *              name="log_id",
+     *              paramType="path",
+     *              dataType="int",
+     *              required="true",
+     *              description="Log ID"
+     *          )
+     *      )
      * )
      */
     public function updateAction()
     {
-        $id = $this->params('id', 'none specified');
+        $id = $this->params('log_id', 'none specified');
 
         return new JsonModel(array(
             'todo' => 'TODO: Create/Update Log ('.$id.')',
@@ -74,12 +94,22 @@ class LogController extends AbstractRestfulController
      *
      * @SWG\Operation(
      *      partial="logs.delete",
-     *      summary="Deletes the specified log"
+     *      summary="Deletes the specified log",
+     *      notes="User must be an Administrator",
+     *      @SWG\Parameters(
+     *          @SWG\Parameter(
+     *              name="log_id",
+     *              paramType="path",
+     *              dataType="int",
+     *              required="true",
+     *              description="Log ID"
+     *          )
+     *      )
      * )
      */
     public function deleteAction()
     {
-        $id = $this->params('id', 'none specified');
+        $id = $this->params('log_id', 'none specified');
 
         return new JsonModel(array(
             'todo' => 'TODO: Delete Log ('.$id.')',
