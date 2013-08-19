@@ -25,7 +25,7 @@ class DashboardController extends AbstractRestfulController
      * @return JsonModel
      *
      * @SWG\Operation(
-     *      nickname="dashboards.list",
+     *      partial="dashboards.list",
      *      summary="List available dashboards"
      * )
      */
@@ -41,7 +41,7 @@ class DashboardController extends AbstractRestfulController
      * @return JsonModel
      *
      * @SWG\Operation(
-     *      nickname="dashboards.create",
+     *      partial="dashboards.create",
      *      summary="Create a new dashboard"
      * )
      */
@@ -58,7 +58,7 @@ class DashboardController extends AbstractRestfulController
      * @return JsonModel
      *
      * @SWG\Operation(
-     *      nickname="dashboards.specific.read",
+     *      partial="dashboards.specific.read",
      *      summary="Return data for a specific dashboard arrangement"
      * )
      */
@@ -77,7 +77,7 @@ class DashboardController extends AbstractRestfulController
      * @return JsonModel
      *
      * @SWG\Operation(
-     *      nickname="dashboards.specific.update",
+     *      partial="dashboards.specific.update",
      *      summary="Update the specified dashboard"
      * )
      */
@@ -96,7 +96,7 @@ class DashboardController extends AbstractRestfulController
      * @return JsonModel
      *
      * @SWG\Operation(
-     *      nickname="dashboards.specific.delete",
+     *      partial="dashboards.specific.delete",
      *      summary="Delete the specified dashboard"
      * )
      */
@@ -115,7 +115,7 @@ class DashboardController extends AbstractRestfulController
      * @return JsonModel
      *
      * @SWG\Operation(
-     *      nickname="widgets.list",
+     *      partial="widgets.list",
      *      summary="List all available widgets"
      * )
      */
@@ -132,7 +132,7 @@ class DashboardController extends AbstractRestfulController
      * @return JsonModel
      *
      * @SWG\Operation(
-     *      nickname="widgets.options",
+     *      partial="widgets.options",
      *      summary="Fetch options for the specified widget type"
      * )
      */
@@ -151,7 +151,7 @@ class DashboardController extends AbstractRestfulController
      * @return JsonModel
      *
      * @SWG\Operation(
-     *      nickname="dashboards.specific.widgets.specific.read",
+     *      partial="dashboards.specific.widgets.specific.read",
      *      summary="Fetch data for a specified widget"
      * )
      */
@@ -171,7 +171,7 @@ class DashboardController extends AbstractRestfulController
      * @return JsonModel
      *
      * @SWG\Operation(
-     *      nickname="dashboards.specific.widgets.create",
+     *      partial="dashboards.specific.widgets.create",
      *      summary="Create a new widget on the specified dashboard"
      * )
      */
@@ -190,7 +190,7 @@ class DashboardController extends AbstractRestfulController
      * @return JsonModel
      *
      * @SWG\Operation(
-     *      nickname="dashboards.specific.widgets.specific.update",
+     *      partial="dashboards.specific.widgets.specific.update",
      *      summary="Update the specified widget"
      * )
      */
@@ -210,7 +210,7 @@ class DashboardController extends AbstractRestfulController
      * @return JsonModel
      *
      * @SWG\Operation(
-     *      nickname="dashboards.specific.widgets.specific.delete",
+     *      partial="dashboards.specific.widgets.specific.delete",
      *      summary="Deletes the specified widget"
      * )
      */
@@ -230,7 +230,7 @@ class DashboardController extends AbstractRestfulController
      * @return ViewModel
      *
      * @SWG\Operation(
-     *      nickname="dashboards.specific.widgets.specific.export",
+     *      partial="dashboards.specific.widgets.specific.export",
      *      summary="Instigate download of XLS containing logs used to compile specified widget"
      * )
      */
@@ -248,7 +248,7 @@ class DashboardController extends AbstractRestfulController
      * @return ViewModel
      *
      * @SWG\Operation(
-     *      nickname="dashboards.specific.export",
+     *      partial="dashboards.specific.export",
      *      summary="Instigate download of DOCX containing data from the specified dashboard"
      * )
      */

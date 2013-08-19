@@ -24,7 +24,7 @@ class LogController extends AbstractRestfulController
      * @return JsonModel
      *
      * @SWG\Operation(
-     *      nickname="logs.read",
+     *      partial="logs.read",
      *      summary="Returns a log where requested, and loggable field criteria"
      * )
      */
@@ -54,7 +54,7 @@ class LogController extends AbstractRestfulController
      * @return JsonModel
      *
      * @SWG\Operation(
-     *      nickname="logs.update",
+     *      partial="logs.update",
      *      summary="Updates the specified log using POST data"
      * )
      */
@@ -73,7 +73,7 @@ class LogController extends AbstractRestfulController
      * @return JsonModel
      *
      * @SWG\Operation(
-     *      nickname="logs.delete",
+     *      partial="logs.delete",
      *      summary="Deletes the specified log"
      * )
      */

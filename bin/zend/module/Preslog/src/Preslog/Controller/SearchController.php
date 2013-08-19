@@ -27,7 +27,7 @@ class SearchController extends AbstractRestfulController
      * @return JsonModel
      *
      * @SWG\Operation(
-     *      nickname="search",
+     *      partial="search",
      *      summary="Return log list based on POST JQL search criteria"
      * )
      */
@@ -44,7 +44,7 @@ class SearchController extends AbstractRestfulController
      * @return ViewModel
      *
      * @SWG\Operation(
-     *      nickname="search.export",
+     *      partial="search.export",
      *      summary="Instigate download of XLS containing search results"
      * )
      */
@@ -61,7 +61,7 @@ class SearchController extends AbstractRestfulController
      * @return JsonModel
      *
      * @SWG\Operation(
-     *      nickname="search.wizard.params",
+     *      partial="search.wizard.params",
      *      summary="Return field parameters for Query Builder"
      * )
      */
@@ -78,7 +78,7 @@ class SearchController extends AbstractRestfulController
      * @return JsonModel
      *
      * @SWG\Operation(
-     *      nickname="search.wizard.translate",
+     *      partial="search.wizard.translate",
      *      summary="Translate between SQL and JS. Bi-directional."
      * )
      */

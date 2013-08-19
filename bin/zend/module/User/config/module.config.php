@@ -60,6 +60,7 @@ return array(
                     ),
                 ),
             ),
+
             'zfcuser' => array(
                 'type' => 'Literal',
                 'priority' => 1000,

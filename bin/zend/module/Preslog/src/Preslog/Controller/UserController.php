@@ -24,7 +24,7 @@ class UserController extends AbstractRestfulController
      * @return JsonModel
      *
      * @SWG\Operation(
-     *      nickname="users.my-profile.read",
+     *      partial="users.my-profile.read",
      *      summary="Fetch My Profile data"
      * )
      */
@@ -41,7 +41,7 @@ class UserController extends AbstractRestfulController
      * @return JsonModel
      *
      * @SWG\Operation(
-     *      nickname="users.my-profile.update",
+     *      partial="users.my-profile.update",
      *      summary="Update My Profile data"
      * )
      */
@@ -58,7 +58,7 @@ class UserController extends AbstractRestfulController
      * @return JsonModel
      *
      * @SWG\Operation(
-     *      nickname="users.my-notifications.read",
+     *      partial="users.my-notifications.read",
      *      summary="Read My Notifications data"
      * )
      */
@@ -75,7 +75,7 @@ class UserController extends AbstractRestfulController
      * @return JsonModel
      *
      * @SWG\Operation(
-     *      nickname="users.my-notifications.update",
+     *      partial="users.my-notifications.update",
      *      summary="Update My Notifications data"
      * )
      */
@@ -92,7 +92,7 @@ class UserController extends AbstractRestfulController
      * @return JsonModel
      *
      * @SWG\Operation(
-     *      nickname="admin.users.read",
+     *      partial="admin.users.read",
      *      summary="List users"
      * )
      */
@@ -109,7 +109,7 @@ class UserController extends AbstractRestfulController
      * @return JsonModel
      *
      * @SWG\Operation(
-     *      nickname="admin.users.create",
+     *      partial="admin.users.create",
      *      summary="Create a new user"
      * )
      */
@@ -126,7 +126,7 @@ class UserController extends AbstractRestfulController
      * @return JsonModel
      *
      * @SWG\Operation(
-     *      nickname="admin.users.specific.read",
+     *      partial="admin.users.specific.read",
      *      summary="Fetch data for a specific user"
      * )
      */
@@ -145,7 +145,7 @@ class UserController extends AbstractRestfulController
      * @return JsonModel
      *
      * @SWG\Operation(
-     *      nickname="admin.users.specific.update",
+     *      partial="admin.users.specific.update",
      *      summary="Update a specific user"
      * )
      */
@@ -164,7 +164,7 @@ class UserController extends AbstractRestfulController
      * @return JsonModel
      *
      * @SWG\Operation(
-     *      nickname="admin.users.specific.delete",
+     *      partial="admin.users.specific.delete",
      *      summary="Delete a specific user"
      * )
      */

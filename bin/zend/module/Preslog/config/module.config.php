@@ -71,6 +71,7 @@ return array(
                      *      @SWG\Api(
                      *          path="/users/my-profile",
                      *          @SWG\Operation(
+                     *              @SWG\Partial("users.my-profile.read"),
                      *              nickname="users.my-profile.read",
                      *              httpMethod="GET"
                      *          )
@@ -96,6 +97,7 @@ return array(
                      *      @SWG\Api(
                      *          path="/users/my-profile",
                      *          @SWG\Operation(
+                     *              @SWG\Partial("users.my-profile.update"),
                      *              nickname="users.my-profile.update",
                      *              httpMethod="POST"
                      *          )
@@ -131,6 +133,7 @@ return array(
                      *      @SWG\Api(
                      *          path="/users/my-notifications",
                      *          @SWG\Operation(
+                     *              @SWG\Partial("users.my-notifications.read"),
                      *              nickname="users.my-notifications.read",
                      *              httpMethod="GET"
                      *          )
@@ -156,6 +159,7 @@ return array(
                      *      @SWG\Api(
                      *          path="/users/my-notifications",
                      *          @SWG\Operation(
+                     *              @SWG\Partial("users.my-notifications.update"),
                      *              nickname="users.my-notifications.update",
                      *              httpMethod="POST"
                      *          )
@@ -196,6 +200,7 @@ return array(
                      *      @SWG\Api(
                      *          path="/logs/{logId}",
                      *          @SWG\Operation(
+                     *              @SWG\Partial("logs.read"),
                      *              nickname="logs.read",
                      *              httpMethod="GET"
                      *          )
@@ -221,6 +226,7 @@ return array(
                      *      @SWG\Api(
                      *          path="/logs/{logId}",
                      *          @SWG\Operation(
+                     *              @SWG\Partial("logs.update"),
                      *              nickname="logs.update",
                      *              httpMethod="POST"
                      *          )
@@ -246,6 +252,7 @@ return array(
                      *      @SWG\Api(
                      *          path="/logs/{logId}",
                      *          @SWG\Operation(
+                     *              @SWG\Partial("logs.delete"),
                      *              nickname="logs.delete",
                      *              httpMethod="DELETE"
                      *          )
@@ -282,6 +289,7 @@ return array(
                      *      @SWG\Api(
                      *          path="/dashboards",
                      *          @SWG\Operation(
+                     *              @SWG\Partial("dashboards.list"),
                      *              nickname="dashboards.list",
                      *              httpMethod="GET"
                      *          )
@@ -318,6 +326,7 @@ return array(
                              *      @SWG\Api(
                              *          path="/dashboards/{dashboardId}",
                              *          @SWG\Operation(
+                             *              @SWG\Partial("dashboards.specific.read"),
                              *              nickname="dashboards.specific.read",
                              *              httpMethod="GET"
                              *          )
@@ -343,6 +352,7 @@ return array(
                              *      @SWG\Api(
                              *          path="/dashboards/{dashboardId}",
                              *          @SWG\Operation(
+                             *              @SWG\Partial("dashboards.specific.update"),
                              *              nickname="dashboards.specific.update",
                              *              httpMethod="POST"
                              *          )
@@ -368,6 +378,7 @@ return array(
                              *      @SWG\Api(
                              *          path="/dashboards/{dashboardId}",
                              *          @SWG\Operation(
+                             *              @SWG\Partial("dashboards.specific.delete"),
                              *              nickname="dashboards.specific.delete",
                              *              httpMethod="DELETE"
                              *          )
@@ -401,6 +412,7 @@ return array(
                                      *      @SWG\Api(
                                      *          path="/dashboards/{dashboardId}/widgets",
                                      *          @SWG\Operation(
+                                     *              @SWG\Partial("dashboards.specific.widgets.create"),
                                      *              nickname="dashboards.specific.widgets.create",
                                      *              httpMethod="POST"
                                      *          )
@@ -437,6 +449,7 @@ return array(
                                              *      @SWG\Api(
                                              *          path="/dashboards/{dashboardId}/widgets/{widgetId}",
                                              *          @SWG\Operation(
+                                             *              @SWG\Partial("dashboards.specific.widgets.specific.read"),
                                              *              nickname="dashboards.specific.widgets.specific.read",
                                              *              httpMethod="GET"
                                              *          )
@@ -462,6 +475,7 @@ return array(
                                              *      @SWG\Api(
                                              *          path="/dashboards/{dashboardId}/widgets/{widgetId}",
                                              *          @SWG\Operation(
+                                             *              @SWG\Partial("dashboards.specific.widgets.specific.update"),
                                              *              nickname="dashboards.specific.widgets.specific.update",
                                              *              httpMethod="POST"
                                              *          )
@@ -487,6 +501,7 @@ return array(
                                              *      @SWG\Api(
                                              *          path="/dashboards/{dashboardId}/widgets/{widgetId}",
                                              *          @SWG\Operation(
+                                             *              @SWG\Partial("dashboards.specific.widgets.specific.delete"),
                                              *              nickname="dashboards.specific.widgets.specific.delete",
                                              *              httpMethod="DELETE"
                                              *          )
@@ -512,6 +527,7 @@ return array(
                                              *      @SWG\Api(
                                              *          path="/dashboards/{dashboardId}/widgets/{widgetId}/export",
                                              *          @SWG\Operation(
+                                             *              @SWG\Partial("dashboards.specific.widgets.specific.export"),
                                              *              nickname="dashboards.specific.widgets.specific.export",
                                              *              httpMethod="GET"
                                              *          )
@@ -540,6 +556,7 @@ return array(
                              *      @SWG\Api(
                              *          path="/dashboards/{dashboardId}/export",
                              *          @SWG\Operation(
+                             *              @SWG\Partial("dashboards.specific.export"),
                              *              nickname="dashboards.specific.export",
                              *              httpMethod="GET"
                              *          )
@@ -567,6 +584,7 @@ return array(
                      *      @SWG\Api(
                      *          path="/dashboards",
                      *          @SWG\Operation(
+                     *              @SWG\Partial("dashboards.create"),
                      *              nickname="dashboards.create",
                      *              httpMethod="POST"
                      *          )
@@ -605,6 +623,7 @@ return array(
              *      @SWG\Api(
              *          path="/widgets",
              *          @SWG\Operation(
+             *              @SWG\Partial("widgets.list"),
              *              nickname="widgets.list",
              *              httpMethod="GET"
              *          )
@@ -630,6 +649,7 @@ return array(
                      *      @SWG\Api(
                      *          path="/widgets/{widgetId}",
                      *          @SWG\Operation(
+                     *              @SWG\Partial("widgets.options"),
                      *              nickname="widgets.options",
                      *              httpMethod="GET"
                      *          )
@@ -661,6 +681,7 @@ return array(
              *      @SWG\Api(
              *          path="/search",
              *          @SWG\Operation(
+             *              @SWG\Partial("search"),
              *              nickname="search",
              *              httpMethod="GET"
              *          )
@@ -687,6 +708,7 @@ return array(
                      *      @SWG\Api(
                      *          path="/search/export-xls",
                      *          @SWG\Operation(
+                     *              @SWG\Partial("search.export"),
                      *              nickname="search.export",
                      *              httpMethod="GET"
                      *          )
@@ -721,6 +743,7 @@ return array(
                              *      @SWG\Api(
                              *          path="/search/wizard/params",
                              *          @SWG\Operation(
+                             *              @SWG\Partial("search.wizard.params"),
                              *              nickname="search.wizard.params",
                              *              httpMethod="GET"
                              *          )
@@ -746,6 +769,7 @@ return array(
                              *      @SWG\Api(
                              *          path="/search/wizard/translate",
                              *          @SWG\Operation(
+                             *              @SWG\Partial("search.wizard.translate"),
                              *              nickname="search.wizard.translate",
                              *              httpMethod="GET"
                              *          )
@@ -793,6 +817,7 @@ return array(
                              *      @SWG\Api(
                              *          path="/admin/users",
                              *          @SWG\Operation(
+                             *              @SWG\Partial("admin.users.read"),
                              *              nickname="admin.users.read",
                              *              httpMethod="GET"
                              *          )
@@ -818,6 +843,7 @@ return array(
                              *      @SWG\Api(
                              *          path="/admin/users",
                              *          @SWG\Operation(
+                             *              @SWG\Partial("admin.users.create"),
                              *              nickname="admin.users.create",
                              *              httpMethod="POST"
                              *          )
@@ -854,6 +880,7 @@ return array(
                                      *      @SWG\Api(
                                      *          path="/admin/users/{userId}",
                                      *          @SWG\Operation(
+                                     *              @SWG\Partial("admin.users.specific.read"),
                                      *              nickname="admin.users.specific.read",
                                      *              httpMethod="GET"
                                      *          )
@@ -880,6 +907,7 @@ return array(
                                      *      @SWG\Api(
                                      *          path="/admin/users/{userId}",
                                      *          @SWG\Operation(
+                                     *              @SWG\Partial("admin.users.specific.update"),
                                      *              nickname="admin.users.specific.update",
                                      *              httpMethod="POST"
                                      *          )
@@ -905,6 +933,7 @@ return array(
                                      *      @SWG\Api(
                                      *          path="/admin/users/{userId}",
                                      *          @SWG\Operation(
+                                     *              @SWG\Partial("admin.users.specific.delete"),
                                      *              nickname="admin.users.specific.delete",
                                      *              httpMethod="DELETE"
                                      *          )
@@ -944,6 +973,7 @@ return array(
                              *      @SWG\Api(
                              *          path="/admin/clients",
                              *          @SWG\Operation(
+                             *              @SWG\Partial("admin.clients.read"),
                              *              nickname="admin.clients.read",
                              *              httpMethod="GET"
                              *          )
@@ -969,6 +999,7 @@ return array(
                              *      @SWG\Api(
                              *          path="/admin/clients",
                              *          @SWG\Operation(
+                             *              @SWG\Partial("admin.clients.create"),
                              *              nickname="admin.clients.create",
                              *              httpMethod="POST"
                              *          )
@@ -1005,6 +1036,7 @@ return array(
                                      *      @SWG\Api(
                                      *          path="/admin/clients/{clientId}",
                                      *          @SWG\Operation(
+                                     *              @SWG\Partial("admin.clients.specific.read"),
                                      *              nickname="admin.clients.specific.read",
                                      *              httpMethod="GET"
                                      *          )
@@ -1030,6 +1062,7 @@ return array(
                                      *      @SWG\Api(
                                      *          path="/admin/clients/{clientId}",
                                      *          @SWG\Operation(
+                                     *              @SWG\Partial("admin.clients.specific.update"),
                                      *              nickname="admin.clients.specific.update",
                                      *              httpMethod="POST"
                                      *          )
@@ -1055,6 +1088,7 @@ return array(
                                      *      @SWG\Api(
                                      *          path="/admin/clients/{clientId}",
                                      *          @SWG\Operation(
+                                     *              @SWG\Partial("admin.clients.specific.delete"),
                                      *              nickname="admin.clients.specific.delete",
                                      *              httpMethod="DELETE"
                                      *          )
@@ -1080,6 +1114,7 @@ return array(
                                      *      @SWG\Api(
                                      *          path="/admin/clients/{clientId}/duplicate",
                                      *          @SWG\Operation(
+                                     *              @SWG\Partial("admin.clients.specific.duplicate"),
                                      *              nickname="admin.clients.specific.duplicate",
                                      *              httpMethod="POST"
                                      *          )

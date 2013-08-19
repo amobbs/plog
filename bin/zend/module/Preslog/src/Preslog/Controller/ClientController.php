@@ -25,7 +25,7 @@ class ClientController extends AbstractRestfulController
      * @return JsonModel
      *
      * @SWG\Operation(
-     *      nickname="admin.clients.read",
+     *      partial="admin.clients.read",
      *      summary="List clients"
      * )
      */
@@ -42,7 +42,7 @@ class ClientController extends AbstractRestfulController
      * @return JsonModel
      *
      * @SWG\Operation(
-     *      nickname="admin.clients.create",
+     *      partial="admin.clients.create",
      *      summary="Create a new client"
      * )
      */
@@ -59,7 +59,7 @@ class ClientController extends AbstractRestfulController
      * @return JsonModel
      *
      * @SWG\Operation(
-     *      nickname="admin.clients.specific.read",
+     *      partial="admin.clients.specific.read",
      *      summary="Fetch data for a specific client"
      * )
      */
@@ -78,7 +78,7 @@ class ClientController extends AbstractRestfulController
      * @return JsonModel
      *
      * @SWG\Operation(
-     *      nickname="admin.clients.specific.update",
+     *      partial="admin.clients.specific.update",
      *      summary="Update a specific client"
      * )
      */
@@ -97,7 +97,7 @@ class ClientController extends AbstractRestfulController
      * @return JsonModel
      *
      * @SWG\Operation(
-     *      nickname="admin.clients.specific.delete",
+     *      partial="admin.clients.specific.delete",
      *      summary="Delete a specific client"
      * )
      */
@@ -116,7 +116,7 @@ class ClientController extends AbstractRestfulController
      * @return JsonModel
      *
      * @SWG\Operation(
-     *      nickname="admin.clients.specific.duplicate",
+     *      partial="admin.clients.specific.duplicate",
      *      summary="Duplicate a specific client"
      * )
      */
