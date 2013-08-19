@@ -182,91 +182,139 @@ return array(
             ),
 
 
-            // Logs
+            /**
+             * Logs
+             */
             'logs' => array(
-                'type' => 'Zend\Mvc\Router\Http\Segment',
+                'type' => 'Zend\Mvc\Router\Http\Literal',
                 'options' => array(
-                    'route' => '/logs[/:log_id]',
-                    'constraints' => array(
-                        'log_id' => '[0-9]+'
-                    ),
+                    'route' => '/logs'
                 ),
                 'child_routes' => array(
 
                     /**
-                     * Logs: GET (read log)
-                     * @SWG\Resource(
-                     *      resourcePath="/logs",
-                     *      @SWG\Api(
-                     *          path="/logs/{log_id}",
-                     *          @SWG\Operation(
-                     *              @SWG\Partial("logs.read"),
-                     *              nickname="logs.read",
-                     *              httpMethod="GET"
-                     *          )
-                     *      )
-                     * )
+                     * Specific ID
                      */
-                    'logs.read' => array(
-                        'type' => 'Zend\Mvc\Router\Http\Method',
+                    'specific' => array(
+                        'type' => 'Zend\Mvc\Router\Http\Segment',
                         'options' => array(
-                            'verb' => 'get',
-                            'may_terminate' => true,
-                            'defaults' => array(
-                                'controller' => 'Preslog\Controller\Log',
-                                'action' => 'read'
+                            'route' => '/:log_id',
+                            'constraints' => array(
+                                'log_id' => '[0-9]+'
+                            ),
+                        ),
+                        'child_routes' => array(
+
+                            /**
+                             * Logs: GET (read log)
+                             * @SWG\Resource(
+                             *      resourcePath="/logs",
+                             *      @SWG\Api(
+                             *          path="/logs/{log_id}",
+                             *          @SWG\Operation(
+                             *              @SWG\Partial("logs.read"),
+                             *              nickname="logs.read",
+                             *              httpMethod="GET"
+                             *          )
+                             *      )
+                             * )
+                             */
+                            'read' => array(
+                                'type' => 'Zend\Mvc\Router\Http\Method',
+                                'options' => array(
+                                    'verb' => 'get',
+                                    'may_terminate' => true,
+                                    'defaults' => array(
+                                        'controller' => 'Preslog\Controller\Log',
+                                        'action' => 'read'
+                                    ),
+                                ),
+                            ),
+
+                            /**
+                             * Logs: POST (create/update log)
+                             * @SWG\Resource(
+                             *      resourcePath="/logs",
+                             *      @SWG\Api(
+                             *          path="/logs/{log_id}",
+                             *          @SWG\Operation(
+                             *              @SWG\Partial("logs.update"),
+                             *              nickname="logs.update",
+                             *              httpMethod="POST"
+                             *          )
+                             *      )
+                             * )
+                             */
+                            'update' => array(
+                                'type' => 'Zend\Mvc\Router\Http\Method',
+                                'may_terminate' => true,
+                                'options' => array(
+                                    'verb' => 'post,put',
+                                    'defaults' => array(
+                                        'controller' => 'Preslog\Controller\Log',
+                                        'action' => 'update'
+                                    ),
+                                ),
+                            ),
+
+                            /**
+                             * Logs: DELETE (delete log)
+                             * @SWG\Resource(
+                             *      resourcePath="/logs",
+                             *      @SWG\Api(
+                             *          path="/logs/{log_id}",
+                             *          @SWG\Operation(
+                             *              @SWG\Partial("logs.delete"),
+                             *              nickname="logs.delete",
+                             *              httpMethod="DELETE"
+                             *          )
+                             *      )
+                             * )
+                             */
+                            'delete' => array(
+                                'type' => 'Zend\Mvc\Router\Http\Method',
+                                'may_terminate' => true,
+                                'options' => array(
+                                    'verb' => 'delete',
+                                    'defaults' => array(
+                                        'controller' => 'Preslog\Controller\Log',
+                                        'action' => 'delete'
+                                    ),
+                                ),
                             ),
                         ),
                     ),
 
                     /**
-                     * Logs: POST (create/update log)
+                     * Logs: POST (create log)
                      * @SWG\Resource(
                      *      resourcePath="/logs",
                      *      @SWG\Api(
-                     *          path="/logs/{log_id}",
+                     *          path="/logs/create",
                      *          @SWG\Operation(
-                     *              @SWG\Partial("logs.update"),
-                     *              nickname="logs.update",
-                     *              httpMethod="POST"
+                     *              @SWG\Partial("logs.create"),
+                     *              nickname="logs.create",
+                     *              httpMethod="post"
                      *          )
                      *      )
                      * )
                      */
-                    'logs.update' => array(
-                        'type' => 'Zend\Mvc\Router\Http\Method',
-                        'may_terminate' => true,
+                    'create' => array(
+                        'type' => 'Zend\Mvc\Router\Http\Literal',
                         'options' => array(
-                            'verb' => 'post,put',
-                            'defaults' => array(
-                                'controller' => 'Preslog\Controller\Log',
-                                'action' => 'update'
-                            ),
+                            'route' => '/create',
                         ),
-                    ),
-
-                    /**
-                     * Logs: DELETE (delete log)
-                     * @SWG\Resource(
-                     *      resourcePath="/logs",
-                     *      @SWG\Api(
-                     *          path="/logs/{log_id}",
-                     *          @SWG\Operation(
-                     *              @SWG\Partial("logs.delete"),
-                     *              nickname="logs.delete",
-                     *              httpMethod="DELETE"
-                     *          )
-                     *      )
-                     * )
-                     */
-                    'logs.delete' => array(
-                        'type' => 'Zend\Mvc\Router\Http\Method',
-                        'may_terminate' => true,
-                        'options' => array(
-                            'verb' => 'delete',
-                            'defaults' => array(
-                                'controller' => 'Preslog\Controller\Log',
-                                'action' => 'delete'
+                        'child_routes' => array(
+                            'post' => array(
+                                'type' => 'Zend\Mvc\Router\Http\Method',
+                                'may_terminate' => true,
+                                'options' => array(
+                                    'verb' => 'post',
+                                    'defaults' => array(
+                                        'controller' => 'Preslog\Controller\Log',
+                                        'action' => 'create',
+                                    ),
+                                ),
                             ),
                         ),
                     ),

@@ -19,6 +19,28 @@ use Swagger\Annotations as SWG;
 class LogController extends AbstractRestfulController
 {
     /**
+     * Create log
+     * Create the specified log
+     * @return JsonModel
+     *
+     * @SWG\Operation(
+     *      partial="logs.create",
+     *      summary="Createa new Log",
+     *      notes="User must have permission to access the Client to which this Log belongs. User must have permissions to create logs."
+
+     * )
+     */
+    public function updateAction()
+    {
+        $id = $this->params('log_id', 'none specified');
+
+        return new JsonModel(array(
+            'todo' => 'TODO: Create/Update Log ('.$id.')',
+        ));
+    }
+
+
+    /**
      * Prepare fields are data for Log Crate/Edit page
      * Load log from URL param "id" where specified
      * @return JsonModel

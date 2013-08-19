@@ -5,6 +5,9 @@
  * If you have a ./config/autoload/ directory set up for your project, you can
  * drop this config file in it and change the values as you wish.
  */
+
+use User\View\UnauthorizedStrategyFactory;
+
 $settings = array(
     /**
      * The default role that is used if no role is found from the
@@ -15,17 +18,12 @@ $settings = array(
     /**
      * Flag: enable or disable the routing firewall.
      */
-    'firewallRoute' => false,
+    'firewallRoute' => true,
 
     /**
      * Flag: enable or disable the controller firewall.
      */
     'firewallController' => false,
-
-    /**
-     * Set the view template to use on a 403 error.
-     */
-    'template' => 'error/403',
 
     /**
      * flag: enable or disable the use of lazy-loading providers.
@@ -39,56 +37,40 @@ $settings = array(
          */
         'ZfcRbac\Firewall\Route' => array(
 
-            array('route' => 'home', 'permissions' => 'guest'),
-            //array('route' => 'login', 'roles' => 'guest'),
-            //array('route' => 'logout', 'roles' => 'guest'),
-            //array('route' => 'user/register', 'roles' => 'guest'),
-            //array('route' => 'admin/*', 'roles' => 'admin'),
+            // API Documentation can be accessed by anyone
 
-            // Block everything
-            array('route' => '/*', 'roles' => 'admin'),
 
-            /*
+            // Public (Guest)
+            array('route' => 'api',         'permissions' => 'guest'),      // API UI
+            array('route' => 'api.docs',    'permissions' => 'guest'), // API Docs
 
-            // Pdf
-            array('route' => 'pdf/*', 'roles' => 'salesperson'),
+            array('route' => 'login',       'roles' => 'guest'),          // Login / Homepage
+            array('route' => 'logout',      'roles' => 'guest'),         // Logout
+
+            // Standard Users
+            array('route' => 'users.my-profile/*',          'permissions' => 'user'),         // User: My-Profile
+            array('route' => 'users.my-notifications/*',    'permissions' => 'user'),         // User: My-Notifications
+
+            // Logs
+            array('route' => 'logs/*',                      'permissions' => 'user'),         // Logs
+            array('route' => 'logs/create',                 'permissions' => 'log-create'),   // Logs: Create
+            array('route' => 'logs/specific/delete',        'permissions' => 'log-delete'),   // Logs: Delete
+
+            // Dashboards
+            array('route' => 'dashboards/*',                'permissions' => 'dashboards'),   // Dashboard Access
+            array('route' => 'dashboards/dashboards.specific/dashboards.export', 'permissions' => 'dashboard-export-reports'),   // export
+            array('route' => 'widgets/*',                   'permissions' => 'dashboards'),   // Dashboard Access
+
+            // Search
+            array('route' => 'search/*',                    'permissions' => 'user'),         // Search
 
             // Admin
-            array('route' => 'admin/*', 'roles' => 'admin'),
+            array('route' => 'user/register',   'roles' => 'guest'),
+            array('route' => 'admin/admin.user/*',         'permissions' => 'user-manager'),
+            array('route' => 'admin/admin.client/*',       'permissions' => 'client-manager'),
 
-            // Tenders
-            array('route' => 'tender/list', 'roles' => 'salesperson'),
-            array('route' => 'tender/fetch/*', 'roles' => 'salesperson'),
-            array('route' => 'tender/create/*', 'roles' => array('salesperson', 'office_admin', 'estimator')),
-            array('route' => 'tender/variation', 'roles' => 'estimator'),
-            array('route' => 'tender/view/*', 'roles' => 'salesperson'),
-            array('route' => 'tender/edit/*', 'roles' => 'estimator'),
-            array('route' => 'tender/store/*', 'roles' => 'approver'),
-            array('route' => 'tender/directive/*', 'roles' => 'salesperson'),
-            array('route' => 'tender/comment/*', 'roles' => 'salesperson'),
-            array('route' => 'tender/delete/*', 'roles' => 'admin'),
-            array('route' => 'client', 'roles' => 'salesperson'),
-            array('route' => 'attachment', 'roles' => 'salesperson'),
-            array('route' => 'ajax-find-house', 'roles' => 'salesperson'),
-
-            // Vendors
-            array('route' => 'DkcwdZf2Munee', 'roles' => 'guest'),
-            array('route' => 'StaticPages', 'roles' => 'salesperson'),
-
-            // ZfcUser
-            array('route' => 'zfcuser/login', 'roles' => 'guest'),
-            array('route' => 'zfcuser/logout', 'roles' => 'guest'),
-            array('route' => 'zfcuser/lost-password', 'roles' => 'guest'),
-            array('route' => 'zfcuser/reset-password', 'roles' => 'guest'),
-            array('route' => 'zfcuser/invalid', 'roles' => 'guest'),
-            array('route' => 'login', 'roles' => 'guest'),
-            array('route' => 'logout', 'roles' => 'guest'),
-//
-//            // Home
-            array('route' => 'home', 'roles' => 'guest'),
-            array('route' => 'dashboard', 'roles' => 'salesperson'),
+            // Block everything else
             array('route' => '/*', 'roles' => 'admin'),
-*/
         ),
 
         /**
@@ -104,7 +86,8 @@ $settings = array(
 
         /**
          * Rule permissions inheritance
-         * Each role specified below can specify a Parent Role.  Parents will inherit permissions from their subordinates.
+         * Each role specified below can specify a Parent Role.
+         * Parents will inherit permissions (see permissions section) from their subordinates.
          */
         'ZfcRbac\Provider\Generic\Role\InMemory' => array(
             'roles' => array(
@@ -114,22 +97,39 @@ $settings = array(
                 'operator'      => array('supervisor'),
                 'engineer'      => array(),
                 'client'        => array(),
-                'guest'         => array('client', 'operator', 'engineer', 'supervisor', 'admin'),
+                'user'          => array('client', 'operator', 'engineer', 'supervisor', 'admin', 'super-admin'),
+                'guest'         => array('user'),
             ),
         ),
 
         /**
          * Permissions can be assigned to roles. Permissions will be checked in code.
          * Permissions are inherited (see above).
+         *
+         * Permission types and what they control:
+         * - guest:                         Guest sections only
+         * - user:                          User is logged in
+         * - dashboards:                    Can view Custom and Preset Dashboards
+         * - single-client:                 Can only view the one client they're assigned to
+         * - comment-only:                  May only comment on Logs during an update
+         * - dashboards-export-reports:     May export Dashboards as reports
+         * - accountability-fields:         May see/edit the Accountability fields in Logs
+         * - log-create:                    May create new Logs
+         * - log-delete:                    May delete Logs
+         * - user-manager:                  Can access the User Manager
+         * - client-manager:                Can access the Client Manager
+         * - admin:                         User gets the Admin controls
+         * - edit-preset-dashboards:        May edit the Preset dashboards.
          */
         'ZfcRbac\Provider\Generic\Permission\InMemory' => array(
             'permissions' => array(
-                'super-admin'   => array('manage-preset-dashboards'),
-                'admin'         => array('admin'),
+                'super-admin'   => array('edit-preset-dashboards'),
+                'admin'         => array('admin', 'user-manager', 'client-manager'),
                 'supervisor'    => array('dashboards', 'dashboard-export-reports', 'accountability-fields', 'log-delete'),
-                'operator'      => array(),
+                'operator'      => array('dashboards', 'log-create'),
                 'engineer'      => array('dashboards', 'single-client', 'comment-only'),
                 'client'        => array('dashboards', 'single-client', 'dashboard-export-reports', 'comment-only'),
+                'user'          => array('user'),
                 'guest'         => array('guest'),
             )
         ),
@@ -147,4 +147,12 @@ $settings = array(
  */
 return array(
     'zfcrbac' => $settings,
+
+    'service_manager' => array(
+        'factories' => array(
+
+            // Override the default UnauthorisedViewStrategyFactory with our own
+            'ZfcRbac\View\UnauthorizedStrategy' =>  new \User\View\UnauthorizedStrategyFactory
+        ),
+    ),
 );
