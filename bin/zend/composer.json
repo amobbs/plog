@@ -14,6 +14,7 @@
         "zf-commons/zfc-rbac": "dev-master",
         "zircote/swagger-php": "dev-master",
         "outeredge/swagger-module": "dev-master",
-        "phpword/phpword": "dev-master"
+        "phpword/phpword": "dev-master",
+        "soundintheory/php-sql-parser": "dev-master"
     }
 }
