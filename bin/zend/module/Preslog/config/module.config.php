@@ -331,7 +331,7 @@ return array(
                 'child_routes' => array(
 
                     /**
-                     * Dashboards: GET (read dashboards)
+                     * Dashboards: GET (read all dashboards)
                      * @SWG\Resource(
                      *      resourcePath="/dashboards",
                      *      @SWG\Api(
@@ -624,7 +624,6 @@ return array(
                         ),
                     ),
 
-                    //
                     /**
                      * Dashboard.Create: POST (create new dashboard)
                      * @SWG\Resource(
@@ -639,7 +638,7 @@ return array(
                      *      )
                      * )
                      */
-                    'dashboards.create-abstract' => array(
+                    'create' => array(
                         'type' => 'Zend\Mvc\Router\Http\Method',
                         'may_terminate' => true,
                         'options' => array(
@@ -651,7 +650,93 @@ return array(
                         ),
                     ),
 
+                    // Favourites
+                    'favourites' => array(
+                        'type' => 'Zend\Mvc\Router\Http\Literal',
+                        'options' => array(
+                            'route' => '/favourites',
+                        ),
+                        'child_routes' => array(
 
+                            /**
+                             * Dashboard.Favourites: GET (Fetch my favourite dashboards)
+                             * @SWG\Resource(
+                             *      resourcePath="/dashboards",
+                             *      @SWG\Api(
+                             *          path="/dashboards/favourites",
+                             *          @SWG\Operation(
+                             *              @SWG\Partial("dashboards.favourites.read"),
+                             *              nickname="dashboards.favourites.read",
+                             *              httpMethod="GET"
+                             *          )
+                             *      )
+                             * )
+                             */
+                            'read' => array(
+                                'type' => 'Zend\Mvc\Router\Http\Method',
+                                'may_terminate' => true,
+                                'options' => array(
+                                    'verb' => 'get',
+                                    'defaults' => array(
+                                        'controller' => 'Preslog\Controller\Dashboard',
+                                        'action' => 'favouritesRead',
+                                    ),
+                                ),
+                            ),
+
+                            /**
+                             * Dashboard.Favourites: POST (Save a favourite)
+                             * @SWG\Resource(
+                             *      resourcePath="/dashboards",
+                             *      @SWG\Api(
+                             *          path="/dashboards/favourites",
+                             *          @SWG\Operation(
+                             *              @SWG\Partial("dashboards.favourites.update"),
+                             *              nickname="dashboards.favourites.update",
+                             *              httpMethod="POST"
+                             *          )
+                             *      )
+                             * )
+                             */
+                            'update' => array(
+                                'type' => 'Zend\Mvc\Router\Http\Method',
+                                'may_terminate' => true,
+                                'options' => array(
+                                    'verb' => 'post',
+                                    'defaults' => array(
+                                        'controller' => 'Preslog\Controller\Dashboard',
+                                        'action' => 'favouritesUpdate',
+                                    ),
+                                ),
+                            ),
+
+                            /**
+                             * Dashboard.Favourites: DELETE (Delete a favourite)
+                             * @SWG\Resource(
+                             *      resourcePath="/dashboards",
+                             *      @SWG\Api(
+                             *          path="/dashboards/favourites",
+                             *          @SWG\Operation(
+                             *              @SWG\Partial("dashboards.favourites.delete"),
+                             *              nickname="dashboards.favourites.delete",
+                             *              httpMethod="DELETE"
+                             *          )
+                             *      )
+                             * )
+                             */
+                            'delete' => array(
+                                'type' => 'Zend\Mvc\Router\Http\Method',
+                                'may_terminate' => true,
+                                'options' => array(
+                                    'verb' => 'delete',
+                                    'defaults' => array(
+                                        'controller' => 'Preslog\Controller\Dashboard',
+                                        'action' => 'favouritesDelete',
+                                    ),
+                                ),
+                            ),
+                        ),
+                    ),
                 ),
             ),
 

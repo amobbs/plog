@@ -390,4 +390,57 @@ class DashboardController extends AbstractRestfulController
         return new ViewModel();
     }
 
+
+    /**
+     * Read the list of this users favourite dashboards
+     * @return JsonModel
+     *
+     * @SWG\Operation(
+     *      partial="dashboards.favourites.read",
+     *      summary="Read the list of this users favourite dashboards",
+     *      notes="User must be logged in."
+     * )
+     */
+    public function favouritesReadAction()
+    {
+        return new JsonModel(array(
+            'todo' => 'TODO - list this users favourite dashboards.',
+        ));
+    }
+
+
+    /**
+     * Add to the list of this users favourite dashboards
+     * @return JsonModel
+     *
+     * @SWG\Operation(
+     *      partial="dashboards.favourites.update",
+     *      summary="Submit a new dashboard to add to this users favourites",
+     *      notes="User must be logged in."
+     * )
+     */
+    public function favouritesUpdateAction()
+    {
+        return new JsonModel(array(
+            'todo' => 'TODO - Add the submitted dashboard ID to the list of favourites.',
+        ));
+    }
+
+
+    /**
+     * Delete a favourite dashboard from the favourites list
+     * @return JsonModel
+     *
+     * @SWG\Operation(
+     *      partial="dashboards.favourites.delete",
+     *      summary="Delete a favourite dashboard from the dashboard list",
+     *      notes="User must be logged in."
+     * )
+     */
+    public function favouritesDeleteAction()
+    {
+        return new JsonModel(array(
+            'todo' => 'TODO - Delete the specified dashboard from this users favourites.',
+        ));
+    }
 }
