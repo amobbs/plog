@@ -7,6 +7,7 @@ angular.module('moduleManager', [
     'ui.state',
     'ui.route',
     'ui.bootstrap',
+    'ui.select2',
     'restangular',
     'queryBuilder',
     'stateHelper',

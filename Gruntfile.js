@@ -18,6 +18,7 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-karma');
     grunt.loadNpmTasks('grunt-ngmin');
     grunt.loadNpmTasks('grunt-html2js');
+    grunt.loadNpmTasks('grunt-text-replace');
 
     /**
      * Load in our build configuration file.
@@ -118,26 +119,9 @@ module.exports = function (grunt) {
             build_files: {
                 files: [
                     {
-                        expand: true,
-                        dot: true,
-                        cwd: 'src',
-                        dest: '<%= build_dir %>',
-                        src: [
-                            '**/.htaccess'
-                        ]
-                    },
-                    // Import RedQueryBuilder files
-                    {
-                        src: ['*.cache.html', 'gwt/**', 'clear.cache.gif'],
-                        dest: '<%= build_dir %>/vendor/RedQueryBuilder/',
-                        cwd: 'vendor/RedQueryBuilder',
-                        expand: true
-                    },
-                    // Import jQuery UI
-                    {
-                        src: ['ui-darkness/**'],
-                        dest: '<%= build_dir %>/assets/jquery-ui/themes',
-                        cwd: 'vendor/jquery-ui/themes',
+                        src: ['<%= vendor_files.files %>'],
+                        dest: '<%= build_dir %>/assets',
+                        cwd: '.',
                         expand: true
                     }
                 ]
@@ -162,6 +146,7 @@ module.exports = function (grunt) {
                     }
                 ]
             },
+
             compile_assets: {
                 files: [
                     {
@@ -269,8 +254,13 @@ module.exports = function (grunt) {
          */
         recess: {
             build: {
-                src: [ '<%= app_files.less %>' ],
-                dest: '<%= build_dir %>/assets/<%= pkg.name %>.css',
+                files: {
+                    '<%= build_dir %>/assets/<%= pkg.name %>.css': [
+                        '<%= vendor_files.css %>',
+                        '<%= app_files.less %>',
+                        '<%= app_files.app_less %>'
+                    ]
+                },
                 options: {
                     compile: true,
                     compress: false,
@@ -280,8 +270,8 @@ module.exports = function (grunt) {
                 }
             },
             compile: {
-                src: [ '<%= recess.build.dest %>' ],
-                dest: '<%= recess.build.dest %>',
+                src: ['<%= build_dir %>/src/**/*.css', '<%= build_dir %>/src/global.css', '<%= build_dir %>/local_vendor/**/*.css', '<%= build_dir %>/vendor/**/*.css'],
+                dest: '<%= build_dir %>/assets/<%= pkg.name %>.css',
                 options: {
                     compile: true,
                     compress: true,
@@ -289,6 +279,23 @@ module.exports = function (grunt) {
                     noIDs: false,
                     zeroUnits: false
                 }
+            }
+        },
+
+        /**
+         * String Replace for css files. Helps with rewriting url paths to images
+         */
+        replace: {
+            build: {
+                src: '<%= build_dir %>/**/*.css',
+                overwrite: true,
+                replacements: [
+                    // Fix for Select2 css to point to the correct images
+                    {
+                        from: /select2(\.png|-spinner\.gif|x2\.png)/g,
+                        to: '/assets/vendor/select2/select2$1'
+                    }
+                ]
             }
         },
 
@@ -406,7 +413,7 @@ module.exports = function (grunt) {
                     '<%= html2js.common.dest %>',
                     '<%= html2js.app.dest %>',
                     '<%= vendor_files.css %>',
-                    '<%= recess.build.dest %>'
+                    '<%= build_dir %>/assets/<%= pkg.name %>.css'
                 ]
             },
 
@@ -531,7 +538,7 @@ module.exports = function (grunt) {
              */
             less: {
                 files: [ 'src/**/*.less' ],
-                tasks: [ 'recess:build' ]
+                tasks: [ 'recess:build', 'replace:build' ]
             },
 
             /**
@@ -586,7 +593,7 @@ module.exports = function (grunt) {
      */
     grunt.registerTask('build', [
         'clean', 'html2js', 'jshint', 'coffeelint', 'coffee', 'recess:build',
-        'copy:build_assets', 'copy:build_appjs', 'copy:build_vendorjs', 'copy:build_files',
+        'copy:build_assets', 'copy:build_appjs', 'copy:build_vendorjs', 'copy:build_files', 'replace:build',
         'index:build', 'karmaconfig', 'karma:continuous'
     ]);
 

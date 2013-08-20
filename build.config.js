@@ -30,7 +30,13 @@ module.exports = {
         ctpl: [ 'src/common/**/*.tpl.html' ],
 
         html: [ 'src/index.html' ],
-        less: 'src/less/main.less'
+        less: 'src/less/main.less',
+
+        app_less: ['src/global.less', 'src/app/**/*.less'],
+
+        files: [
+            'src/.htaccess'
+        ]
     },
 
     /**
@@ -51,17 +57,31 @@ module.exports = {
         js: [
             'vendor/jquery/jquery.min.js',
             'vendor/jquery-ui/ui/minified/jquery-ui.min.js',
+
             'vendor/RedQueryBuilder/RedQueryBuilderFactory.nocache.js',
             'vendor/RedQueryBuilder/RedQueryBuilder.nocache.js',
+
+            'vendor/select2/select2.js',
+
             'vendor/angular-unstable/angular.js',
             'vendor/angular-bootstrap/ui-bootstrap-tpls.min.js',
             'vendor/angular-ui-router/release/angular-ui-router.js',
             'vendor/angular-ui-utils/modules/route/route.js',
+            'vendor/angular-ui-select2/src/select2.js',
             'vendor/angular-resource-unstable/angular-resource.js',
+
             'vendor/lodash/dist/lodash.js',
             'vendor/restangular/dist/restangular.js'
         ],
         css: [
+            'vendor/select2/select2.css'
+        ],
+        files: [
+            'vendor/select2/select2.png',
+            'vendor/select2/select2-spinner.gif',
+            'vendor/select2/select2x2.png',
+            'vendor/RedQueryBuilder/**'
         ]
+
     }
 };

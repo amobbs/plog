@@ -11,6 +11,7 @@
         "angular-bootstrap": "~0.4.0",
         "angular-ui-router": "~0.0.1",
         "angular-ui-utils": "~0.0.3",
+        "angular-ui-select2": "latest",
         "restangular": "~1.0.4",
         "highcharts.com": "dev-master",
         "angular-highcharts-directive": "dev-master",

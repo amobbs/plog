@@ -2,18 +2,28 @@
 
     <div id="preslog_sidebar">
 
+        <h3>Preset Dashboards</h3>
         <ul class="nav nav-tabs nav-stacked">
             <li><a href="/dashboard/log-list">Live Report<i class="icon-chevron-right"></i></a></li>
             <li><a href="/dashboard/log-list">Daily Logs<i class="icon-chevron-right"></i></a></li>
             <li><a href="/dashboard/log-list">Weekly Logs<i class="icon-chevron-right"></i></a></li>
             <li><a href="/dashboard/log-list">To Be Released Logs<i class="icon-chevron-right"></i></a></li>
         </ul>
-
+        <h3>Favourite Dashboards</h3>
         <ul class="nav nav-tabs nav-stacked">
             <li class="active"><a href="/dashboard/dashboard">Dashboard Example<i class="icon-chevron-right"></i></a></li>
             <li><a href="/dashboard/dashboard">Name of another custom dashboard<i class="icon-chevron-right"></i></a></li>
             <li><a href="/dashboard/dashboard">Dashboard galore<i class="icon-chevron-right"></i></a></li>
         </ul>
+        <h3>Add Favourite</h3>
+        <div class="favourites-manager">
+            <select ui-select2 ng-model="select2" data-placeholder="Add to Favourites">
+                <option value="test">Dashboard Custom</option>
+                <option value="test">Magical Dash</option>
+                <option value="test">Reporting Box</option>
+            </select>
+        </div>
+
     </div>
 
     <div class="container-fluid" id="preslog_content">
@@ -24,8 +34,14 @@
             <div class="span4">
                 <div class="btn-group dash-controls pull-right">
                     <button class="btn" ng-click="dashboardAddWidget = true"><i class="icon icon-plus"></i> Add Widget</button>
-                    <button class="btn" ng-click="dashboardCreate = true"><i class="icon icon-list-alt"></i> Create New Dashboard</button>
-                    <button class="btn" ng-click="dashboardExport = true"><i class="icon icon-download"></i> Export as Report</button>
+                    <button class="btn" ng-click="dashboardCreate = true"><i class="icon icon-pencil"></i> Create Dashboard </button>
+                    <button class="btn dropdown-toggle"><i class="icon icon-list-alt"></i> More <b class="caret"></b> </button>
+                    <ul class="dropdown-menu">
+                        <li><a href="#" ng-click="dashboardCreate = true"><i class="icon icon-edit"></i> Edit Dashboard </a></li>
+                        <li><a href="#"><i class="icon icon-star-empty"></i> Remove from Favourites </a></li>
+                        <li><a href="#"><i class="icon icon-download"></i> Export as Report</a></li>
+                    </ul>
+
                 </div>
             </div>
         </div>
@@ -55,10 +71,6 @@
                     <div class="widget-content">
                         <p><img src="/assets/img/placeholder/graph1.png" /></p>
                     </div>
-                    <div class="widget-footnote" ng-show="dashboardExport">
-                        <h4>Report Footnote</h4>
-                        <textarea></textarea>
-                    </div>
                 </div>
             </div>
 
@@ -85,10 +97,6 @@
                     <div class="widget-content">
                         <p><img src="/assets/img/placeholder/graph2.png" /></p>
                     </div>
-                    <div class="widget-footnote" ng-show="dashboardExport">
-                        <h4>Report Footnote</h4>
-                        <textarea></textarea>
-                    </div>
                 </div>
             </div>
 
@@ -114,10 +122,6 @@
                     </div>
                     <div class="widget-content">
                         <p><img src="/assets/img/placeholder/graph3.png" /></p>
-                    </div>
-                    <div class="widget-footnote" ng-show="dashboardExport">
-                        <h4>Report Footnote</h4>
-                        <textarea></textarea>
                     </div>
                 </div>
             </div>
