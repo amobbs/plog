@@ -20,20 +20,25 @@ module.exports = {
      * app's unit tests.
      */
     app_files: {
+
+        /** JS files and unit tests **/
         js: [ 'src/**/*.js', '!src/**/*.spec.js', '!src/assets/api/**' ],
         jsunit: [ 'src/**/*.spec.js' ],
 
+        /** Coffee Script and unit tests **/
         coffee: [ 'src/**/*.coffee', '!src/**/*.spec.coffee' ],
         coffeeunit: [ 'src/**/*.spec.coffee' ],
 
+        /** Template files */
         atpl: [ 'src/app/**/*.tpl.html' ],
         ctpl: [ 'src/common/**/*.tpl.html' ],
-
         html: [ 'src/index.html' ],
-        less: 'src/less/main.less',
 
+        /** Less CSS */
+        less: 'src/less/main.less',
         app_less: ['src/global.less', 'src/app/**/*.less'],
 
+        /** Files that must be copied */
         files: [
             'src/.htaccess'
         ]
@@ -46,20 +51,15 @@ module.exports = {
      * standardized files are collected for compilation, it is the user's job
      * to ensure non-standardized (i.e. vendor-related) files are handled
      * appropriately in `vendor_files.js`.
-     *
-     * The `vendor_files.js` property holds files to be automatically
-     * concatenated and minified with our project source files.
-     *
-     * The `vendor_files.css` property holds any CSS files to be automatically
-     * included in our app.
      */
     vendor_files: {
+
+        /**
+         * Files to be concatenated and minified into the project
+         */
         js: [
             'vendor/jquery/jquery.min.js',
             'vendor/jquery-ui/ui/minified/jquery-ui.min.js',
-
-            'vendor/RedQueryBuilder/RedQueryBuilderFactory.nocache.js',
-            'vendor/RedQueryBuilder/RedQueryBuilder.nocache.js',
 
             'vendor/select2/select2.js',
 
@@ -73,15 +73,38 @@ module.exports = {
             'vendor/lodash/dist/lodash.js',
             'vendor/restangular/dist/restangular.js'
         ],
+
+        /**
+         * Files to NOT be concatenated or minified, but will still be included in the project.
+         */
+        js_separate: [
+            'vendor/RedQueryBuilder/RedQueryBuilderFactory.nocache.js',
+            'vendor/RedQueryBuilder/RedQueryBuilder.nocache.js'
+        ],
+
+        /**
+         * CSS files to be explicitly included in the concatenated CSS
+         */
         css: [
             'vendor/select2/select2.css'
         ],
+
+        /**
+         * Directories to straight copy into the project
+         */
         files: [
+            'vendor/RedQueryBuilder/**'
+        ],
+
+        /**
+         * Directories to copy into the /assets build folder
+         */
+        files_to_assets: [
             'vendor/select2/select2.png',
             'vendor/select2/select2-spinner.gif',
-            'vendor/select2/select2x2.png',
-            'vendor/RedQueryBuilder/**'
+            'vendor/select2/select2x2.png'
         ]
+
 
     }
 };

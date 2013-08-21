@@ -105,9 +105,10 @@ module.exports = function (grunt) {
          * `build_dir`, and then to copy the assets to `compile_dir`.
          */
         copy: {
+
+            // Build general assets from src/assets to build_dir/assets/
             build_assets: {
                 files: [
-                    // General assets
                     {
                         src: [ '**' ],
                         dest: '<%= build_dir %>/assets/',
@@ -116,16 +117,32 @@ module.exports = function (grunt) {
                     }
                 ]
             },
-            build_files: {
+
+            // Build files from src/X to build_dir/X
+            build_vendor_files: {
                 files: [
                     {
                         src: ['<%= vendor_files.files %>'],
-                        dest: '<%= build_dir %>/assets',
+                        dest: '<%= build_dir %>',
                         cwd: '.',
                         expand: true
                     }
                 ]
             },
+
+            // Build files from /vendor/X to /src/vendor/X
+            build_vendor_assets: {
+                files: [
+                    {
+                        src: ['<%= vendor_files.files_to_assets %>'],
+                        dest: '<%= build_dir %>/assets/',
+                        cwd: '.',
+                        expand: true
+                    }
+                ]
+            },
+
+            // Build all App JS files into build_dir
             build_appjs: {
                 files: [
                     {
@@ -136,7 +153,9 @@ module.exports = function (grunt) {
                     }
                 ]
             },
-            build_vendorjs: {
+
+            // Build all Vendor JS files into build_dir
+            build_vendor_js: {
                 files: [
                     {
                         src: [ '<%= vendor_files.js %>' ],
@@ -147,6 +166,7 @@ module.exports = function (grunt) {
                 ]
             },
 
+            // Compile assets from build_dir/assets to compile_dir/assets
             compile_assets: {
                 files: [
                     {
@@ -157,15 +177,15 @@ module.exports = function (grunt) {
                     }
                 ]
             },
-            compile_files: {
+
+            // Compile files from build_dir to compile_dir
+            compile_vendor_files: {
                 files: [{
                     expand: true,
                     dot: true,
-                    cwd: '<%= build_dir %>',
-                    dest: '<%= compile_dir %>',
-                    src: [
-                        '.htaccess'
-                    ]
+                    src: ['<%= vendor_files.files %>'],
+                    cwd: '.',
+                    dest: '<%= compile_dir %>'
                 }]
             }
 
@@ -184,7 +204,6 @@ module.exports = function (grunt) {
                     banner: '<%= meta.banner %>'
                 },
                 src: [
-                    '<%= vendor_files.js %>',
                     'module.prefix',
                     '<%= build_dir %>/src/**/*.js',
                     '<%= html2js.app.dest %>',
@@ -256,9 +275,9 @@ module.exports = function (grunt) {
             build: {
                 files: {
                     '<%= build_dir %>/assets/<%= pkg.name %>.css': [
-                        '<%= vendor_files.css %>',
                         '<%= app_files.less %>',
-                        '<%= app_files.app_less %>'
+                        '<%= app_files.app_less %>',
+                        '<%= vendor_files.css %>'
                     ]
                 },
                 options: {
@@ -270,8 +289,13 @@ module.exports = function (grunt) {
                 }
             },
             compile: {
-                src: ['<%= build_dir %>/src/**/*.css', '<%= build_dir %>/src/global.css', '<%= build_dir %>/local_vendor/**/*.css', '<%= build_dir %>/vendor/**/*.css'],
-                dest: '<%= build_dir %>/assets/<%= pkg.name %>.css',
+                files: {
+                    '<%= compile_dir %>/assets/<%= pkg.name %>.css': [
+                        '<%= app_files.less %>',
+                        '<%= app_files.app_less %>',
+                        '<%= vendor_files.css %>'
+                    ]
+                },
                 options: {
                     compile: true,
                     compress: true,
@@ -409,10 +433,10 @@ module.exports = function (grunt) {
                 dir: '<%= build_dir %>',
                 src: [
                     '<%= vendor_files.js %>',
+                    '<%= vendor_files.js_separate %>',
                     '<%= build_dir %>/src/**/*.js',
                     '<%= html2js.common.dest %>',
                     '<%= html2js.app.dest %>',
-                    '<%= vendor_files.css %>',
                     '<%= build_dir %>/assets/<%= pkg.name %>.css'
                 ]
             },
@@ -426,8 +450,9 @@ module.exports = function (grunt) {
                 dir: '<%= compile_dir %>',
                 src: [
                     '<%= concat.compile_js.dest %>',
+                    '<%= vendor_files.js_separate %>',
                     '<%= vendor_files.css %>',
-                    '<%= recess.compile.dest %>'
+                    '<%= compile_dir %>/assets/<%= pkg.name %>.css'
                 ]
             }
         },
@@ -593,7 +618,7 @@ module.exports = function (grunt) {
      */
     grunt.registerTask('build', [
         'clean', 'html2js', 'jshint', 'coffeelint', 'coffee', 'recess:build',
-        'copy:build_assets', 'copy:build_appjs', 'copy:build_vendorjs', 'copy:build_files', 'replace:build',
+        'copy:build_assets', 'copy:build_appjs', 'copy:build_vendor_js', 'copy:build_vendor_files', 'copy:build_vendor_assets', 'replace:build',
         'index:build', 'karmaconfig', 'karma:continuous'
     ]);
 
@@ -602,7 +627,7 @@ module.exports = function (grunt) {
      * minifying your code.
      */
     grunt.registerTask('compile', [
-        'recess:compile', 'copy:compile_assets', 'copy:compile_files', 'ngmin', 'concat', 'uglify', 'index:compile'
+        'recess:compile', 'copy:compile_assets', 'copy:compile_vendor_files', 'ngmin', 'concat', 'uglify', 'index:compile'
     ]);
 
     /**
