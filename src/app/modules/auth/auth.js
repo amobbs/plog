@@ -57,7 +57,7 @@ angular.module( 'Preslog.auth', [
         $rootScope.global.logout = function () {
             $rootScope.global.user = {};
             $rootScope.global.loggedIn = false;
-            Restangular.all('account').customGET('logoff').then(function() {
+            userService.logout().then(function() {
                 $rootScope.$broadcast('event:auth-loggedOut');
                 $location.path('/login');
             });

@@ -12,6 +12,10 @@ angular.module('moduleManager', [
     'queryBuilder',
     'stateHelper',
 
+    // Shared Modules
+    'userService',
+    'errorHandler',
+
     // Site Modules
     'pages',
     'Preslog.auth',
