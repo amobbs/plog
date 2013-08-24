@@ -9,8 +9,8 @@ angular.module('stateManager', ['moduleManager', 'stateHelper'])
         // HTML Templates
         $locationProvider.html5Mode(true);
 
-        // Homepage (?)
-        $urlRouterProvider.otherwise('/');
+        // 404 error
+        $urlRouterProvider.otherwise('/errors/404');
 
         // Layouts
         $stateProvider

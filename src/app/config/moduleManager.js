@@ -9,16 +9,17 @@ angular.module('moduleManager', [
     'ui.bootstrap',
     'ui.select2',
     'restangular',
-    'queryBuilder',
+//    'queryBuilder',
     'stateHelper',
+    'titleService',
 
     // Shared Modules
-    'userService',
+//    'userService',
     'errorHandler',
 
     // Site Modules
-    'pages',
-    'Preslog.auth',
-    'Preslog.home'
+    'pages'
+//    'Preslog.auth',
+//    'Preslog.home'
 ]);
 

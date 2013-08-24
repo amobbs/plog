@@ -1,7 +1,7 @@
 angular.module('pages', ['ui.bootstrap'])
     .config(function(stateHelperProvider) {
         stateHelperProvider.addState('mainLayout.pages', {
-            url: '/{uri:.*}',
+            url: '/pages/{uri:.*}',
             views: {
                 "main@mainLayout": {
                     templateUrl: 'modules/pages/index.tpl.html',
