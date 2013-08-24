@@ -1,14 +1,29 @@
 angular.module('errorHandler', [])
-    .config(function(stateHelperProvider) {
+    .config(function(stateHelperProvider, $urlRouterProvider) {
+
+        // Error state
         stateHelperProvider.addState('modalLayout.errorHandler', {
             views: {
                 "main@modalLayout": { // Points to the ui-view="main" in modal-layout.tpl.html
                     controller: 'ErrorHandlerCtrl as ErrorHandlerCtrl',
-                    templateUrl: 'errorHandler/template.tpl.html'
+                    templateUrl: 'modules/errorHandler/template.tpl.html'
                 }
             },
             params: ['title', 'message', 'details']
         });
+
+        // 404 error provider
+        $urlRouterProvider.otherwise(function( $injector )
+        {
+            var $state = $injector.get('$state');
+
+            $state.transitionTo('modalLayout.errorHandler', {
+                title: "404 - Not Found",
+                message: "This page does not exist",
+                details: ""
+            });
+        });
+
     })
     .config(function($httpProvider) {
         $httpProvider.responseInterceptors.push(['$q', '$injector', function($q, $injector) {

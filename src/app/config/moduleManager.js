@@ -14,12 +14,12 @@ angular.module('moduleManager', [
     'titleService',
 
     // Shared Modules
-//    'userService',
+    'userService',
     'errorHandler',
 
     // Site Modules
-    'pages'
-//    'Preslog.auth',
-//    'Preslog.home'
+    'pages',
+    'Preslog.auth',
+    'Preslog.home'
 ]);
 

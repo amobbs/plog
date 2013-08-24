@@ -9,8 +9,6 @@ angular.module('Preslog', [
     ])
 
     .config(function myAppConfig($stateProvider, $urlRouterProvider, $locationProvider, RestangularProvider) {
-        $urlRouterProvider.otherwise('/');
-        $locationProvider.html5Mode(true);
         RestangularProvider.setBaseUrl('/api');
     })
 

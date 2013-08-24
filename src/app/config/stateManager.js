@@ -9,9 +9,6 @@ angular.module('stateManager', ['moduleManager', 'stateHelper'])
         // HTML Templates
         $locationProvider.html5Mode(true);
 
-        // 404 error
-        $urlRouterProvider.otherwise('/errors/404');
-
         // Layouts
         $stateProvider
             .state('publicLayout', {
@@ -44,5 +41,6 @@ angular.module('stateManager', ['moduleManager', 'stateHelper'])
         angular.forEach(stateHelperProvider.getStates(), function(state) {
             $stateProvider.state(state.name, state.options);
         });
+
     })
 ;
