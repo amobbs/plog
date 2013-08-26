@@ -1,7 +1,10 @@
 angular.module('errorHandler', [])
     .config(function(stateHelperProvider, $urlRouterProvider) {
 
-        // Error state
+
+        /**
+         * Error State
+         */
         stateHelperProvider.addState('modalLayout.errorHandler', {
             views: {
                 "main@modalLayout": { // Points to the ui-view="main" in modal-layout.tpl.html
@@ -12,7 +15,11 @@ angular.module('errorHandler', [])
             params: ['title', 'message', 'details']
         });
 
-        // 404 error provider
+
+        /**
+         * 404 Error Handler
+         * Executes the function on 404, which changes the state to an error state.
+         */
         $urlRouterProvider.otherwise(function( $injector )
         {
             var $state = $injector.get('$state');
@@ -26,10 +33,16 @@ angular.module('errorHandler', [])
 
     })
     .config(function($httpProvider) {
+
+        /**
+         * Response Interceptor
+         * Handles 400, 403, 404, 500 and 0 errors from HTTP requests.
+         * Changes to the error state on failure
+         */
         $httpProvider.responseInterceptors.push(['$q', '$injector', function($q, $injector) {
             return function (promise) {
                 return promise.then(function(response) {
-                    // Nothing needed here
+                    // Nothing needed here - request was OK
                     return response;
                 }, function(response) {
                     var $state = $injector.get('$state'),
@@ -41,7 +54,8 @@ angular.module('errorHandler', [])
                             500: '500 - Internal Server Error',
                             0: 'CORS Error - API Not Accepting Request'
                         };
-                    // Only on 404 errors will we transition to the Error State.
+
+                    // Handle the specified error types
                     if (response.status in errors) {
                         $state.transitionTo('modalLayout.errorHandler', {
                             title: errors[response.status],
@@ -50,11 +64,18 @@ angular.module('errorHandler', [])
                         });
                     }
 
+                    // Reject the deferred request
                     return $q.reject(response);
                 });
             };
         }]);
     })
+
+/**
+ * Error Handler Controller
+ * - Applies passed properties to the view
+ * - Allows the user to "go back"
+ */
     .controller('ErrorHandlerCtrl', function ErrorHandlerCtrl(titleService, $stateParams, $window) {
         var Ctrl = this;
 

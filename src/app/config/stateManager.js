@@ -2,7 +2,6 @@ angular.module('stateManager', ['moduleManager', 'stateHelper'])
     .config(function(
         $stateProvider,
         stateHelperProvider,
-        $urlRouterProvider,
         $locationProvider
         ) {
 

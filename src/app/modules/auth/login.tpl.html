@@ -18,38 +18,39 @@
                     <h3>Login</h3>
                 </div>
                 <div class="widget-content">
-                    <form class="form-horizontal">
+                    <form class="form-horizontal" ng-controller="AuthCtrl" name="LoginForm" ng-submit="submit(user)">
 
                         <!-- error -->
                         <div class="control-group error">
                             <div class="controls">
-                                <span class="help-inline">Invalid username or password</span>
+                                &nbsp;<span class="help-inline" ng-show="errors.message">{{errors.message}}</span>
                             </div>
                         </div>
 
-                        <div class="control-group">
+                        <div class="control-group" ng-class="{error:errors.identity}">
                             <label class="control-label" for="inputEmail">Email Address</label>
                             <div class="controls">
-                                <input type="text" id="inputEmail" placeholder="Email Address">
+                                <input type="email" id="inputEmail" placeholder="Email Address" ng-model="user.identity" required>
+                                <br/><span class="help-inline">{{errors.identity}}&nbsp;</span>
                             </div>
                         </div>
-                        <div class="control-group">
+                        <div class="control-group" ng-class="{error:errors.credential}">
                             <label class="control-label" for="inputPassword">Password</label>
                             <div class="controls">
-                                <input type="password" id="inputPassword" placeholder="Password">
-
+                                <input type="password" id="inputPassword" placeholder="Password" ng-model="user.credential" required>
+                                <br/><span class="help-inline">{{errors.credential}}&nbsp;</span>
                             </div>
                         </div>
                         <div class="control-group">
                             <div class="controls">
                                 <label class="checkbox">
-                                    <input type="checkbox"> Remember me
+                                    <input type="checkbox" ng-model="user.remember"> Remember me
                                 </label>
                             </div>
                         </div>
                         <div class="control-group">
                             <div class="controls">
-                                <button type="submit" class="btn btn-primary" onclick="parent.location='/'">Sign in</button>
+                                <button type="submit" class="btn btn-primary">Sign in</button>
                             </div>
                         </div>
                     </form>

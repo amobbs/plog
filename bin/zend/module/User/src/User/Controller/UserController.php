@@ -9,49 +9,190 @@
 
 namespace User\Controller;
 
-//use Zend\Mvc\Controller\AbstractActionController;
+use Zend\Json\Json;
 use Zend\View\Model\ViewModel;
+use Zend\View\Model\JsonModel;
+use ZfcRbac\Service\Rbac;
 use ZfcUser\Controller\UserController as ZfcUser;
+use Swagger\Annotations as SWG;
 
 class UserController extends ZfcUser
 {
-    public function __construct()
+
+    /**
+     * Login form
+     * - Modified: Now uses a JSON view
+     *
+     *
+     * @SWG\Operation(
+     *      partial="users.login",
+     *      summary="Attempt to login the user.",
+     *      notes="Attempts to login with existing Session, then form data.",
+     *      @SWG\Parameters(
+     *          @SWG\Parameter(
+     *              name="identity",
+     *              paramType="form",
+     *              dataType="string",
+     *              required="false",
+     *              description="Users username"
+     *          ),
+     *          @SWG\Parameter(
+     *              name="credential",
+     *              paramType="form",
+     *              dataType="string",
+     *              required="false",
+     *              description="Users password"
+     *          )
+     *      )
+     * )
+     */
+    public function loginAction()
     {
-        $this->getEventManager()->getSharedManager()->attach('Zend\Mvc\Controller\AbstractActionController', 'dispatch', function($e) {
-            $controller = $e->getTarget();
-            $controller->layout('user/layout');
-        });
+        // Check if user is logged in already
+        // This works off the Session variables
+        if ($this->zfcUserAuthentication()->getAuthService()->hasIdentity()) {
+            return $this->getUsersIdentity();
+        }
 
-        $roles = array('salesperson'=>'Salesperson', 'approver'=>'Approver', 'estimator'=>'Estimator', 'office_admin'=>'Office Admin', 'admin'=>'Administrator');
-        $events = $this->getEventManager()->getSharedManager();
+        // Set up the login "form", used to validate the login fields
+        $request = $this->getRequest();
+        $form    = $this->getLoginForm();
+        $form->setData($this->params()->fromJson());
 
-        $events->attach('ZfcUser\Form\Register','init', function($e) use ($roles) {
-            $form = $e->getTarget();
-            $form->add(array(
-                'type' => 'select',
-                'name' => 'user_type',
-                'options' => array(
-                    'label' => 'User Type',
-                    'value_options' => $roles,
-                    'selected' => 'salesperson',
-                ),
-                'value'=>'salesperson',
-                'attributes' => array(
-                    'id' => 'user_type'
-                ),
-                'default'=>'salesperson'
+        // Check the form validates
+        if (!$form->isValid()) {
+            return new JsonModel(array(
+                'login'=>array(
+                    'error'=>true,
+                    'message'=>'Login details failed to validate',
+                    'data'=>$form->getMessages()
+                )
             ));
-        });
+        }
 
-        $events->attach('ZfcUser\Form\RegisterFilter','init', function($e) use ($roles) {
-            $form = $e->getTarget();
-            $form->add(array(
-                'name'       => 'user_type',
-                'required'   => true,
-            ));
-        });
+        // clear adapters
+        $this->zfcUserAuthentication()->getAuthAdapter()->resetAdapters();
+        $this->zfcUserAuthentication()->getAuthService()->clearIdentity();
+
+        // Pass to the authentication method
+        return $this->authenticateAction();
     }
 
+
+    /**
+     * Logout and clear the identity
+     *
+     * @SWG\Operation(
+     *      partial="users.logout",
+     *      summary="Logout the current user.",
+     *      notes=""
+     * )
+     */
+    public function logoutAction()
+    {
+        $this->zfcUserAuthentication()->getAuthAdapter()->resetAdapters();
+        $this->zfcUserAuthentication()->getAuthAdapter()->logoutAdapters();
+        $this->zfcUserAuthentication()->getAuthService()->clearIdentity();
+
+        return new JsonModel(array(
+            'success'=>true
+        ));
+    }
+
+
+    /**
+     * General-purpose authentication action
+     */
+    public function authenticateAction()
+    {
+        // Check if user is logged in already
+        if ($this->zfcUserAuthentication()->getAuthService()->hasIdentity()) {
+            return $this->getUsersIdentity();
+        }
+
+        // Get auth adapter
+        // Set auth adapter up with the request
+        $adapter = $this->zfcUserAuthentication()->getAuthAdapter();
+        $result = $adapter->prepareForAuthentication($this->getRequest());
+
+        // Return early if an adapter returned a response
+        if ($result instanceof Response) {
+            return new JsonModel(array(
+                'login' => array(
+                    'error'=>true,
+                    'message' => 'Unknown authentication error'
+                )
+            ));
+        }
+
+        // Athenticate using the adapter
+        $auth = $this->zfcUserAuthentication()->getAuthService()->authenticate($adapter);
+
+        // If not valid..
+        if (!$auth->isValid()) {
+
+            $adapter->resetAdapters();
+            return new JsonModel(array(
+                'login'=> array(
+                    'error'=>true,
+                    'message' => 'Invalid email or password'
+                )
+            ));
+        }
+
+        // Logged in!
+        return $this->getUsersIdentity();
+    }
+
+
+    /**
+     *
+     */
+    protected function getUsersIdentity()
+    {
+        // Fetch user
+        $user = array();
+
+        // Fetch rbac Service so we can harvest Permissions
+        $rbacService = $this->getServiceLocator()->get('ZfcRbac\Service\Rbac');
+        $x = $rbacService->getOptions()->getProviders();
+
+        foreach ($x as $type)
+        {
+            $item = current($type);
+            $types[ key($type) ] = $item;
+        }
+
+        foreach ($types['roles'] as $k=>$v)
+        {
+            $roles[] = $k;
+        }
+
+        // Fetch permissions list
+        $perms = array();
+
+        // get user roles inheretance?
+        // $this->getIdentity()->getRoles();
+
+        // get rbac?
+        // v$rbacService = $controller->getServiceLocator()->get('ZfcRbac\Service\Rbac');
+
+
+
+        return new JsonModel(array(
+            'login'=> array(
+                'success'=>true,
+                'user' => $user,
+                'permissions' => $perms,
+            )
+        ));
+    }
+
+
+    /**
+     * Lost Password
+     * @return ViewModel
+     */
     public function lostPasswordAction()
     {
         $request = $this->getRequest();
@@ -70,6 +211,11 @@ class UserController extends ZfcUser
         );
     }
 
+
+    /**
+     * Reset Password
+     * @return \Zend\Http\Response|ViewModel
+     */
     public function resetPasswordAction()
     {
         $request = $this->getRequest();
@@ -112,8 +258,13 @@ class UserController extends ZfcUser
         return $this->redirect()->toRoute('zfcuser/invalid');
     }
 
+
+    /**
+     * ??
+     * @return ViewModel
+     */
     public function invalidAction()
     {
-        return new ViewModel();
+        return new JsonModel();
     }
 }

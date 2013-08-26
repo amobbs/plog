@@ -38,6 +38,7 @@ angular.module( 'Preslog.auth', [
             $rootScope.global.loggedIn = true;
         });
 
+        // On LoginRequired event; logout the user and go to /login
         $rootScope.$on('event:auth-loginRequired', function () {
             var path = $location.path();
             if ('/login' != path) {
@@ -48,12 +49,14 @@ angular.module( 'Preslog.auth', [
             $location.path('/login');
         });
 
+        // On LoginConfirmed event; set the user, go back to requested path
         $rootScope.$on('event:auth-loginConfirmed', function (event, data) {
             $rootScope.global.user = data;
             $rootScope.global.loggedIn = true;
             $location.path(requestedPath);
         });
 
+        // Logout: Logout the user and broadcast this event (LoggedOut).
         $rootScope.global.logout = function () {
             $rootScope.global.user = {};
             $rootScope.global.loggedIn = false;
@@ -68,9 +71,42 @@ angular.module( 'Preslog.auth', [
 /**
  * Controller
  */
-    .controller( 'AuthCtrl', function AuthController( $scope, titleService ) {
-        console.log('auth');
+    .controller( 'AuthCtrl', function AuthController( $scope, titleService, userService ) {
+
+        // Title
         titleService.setTitle( 'Login' );
+
+        /**
+         * Submit Form
+         * @param user
+         */
+        $scope.submit = function (user) {
+
+            // Fire user login
+            userService.login(user).then(function(ret) {
+
+                // OK?
+                if ( ret.success ) {
+                    // do stuff
+                    alert('OK!');
+                }
+                else {
+
+                    $scope.errors = { message: ret.login.message};
+
+                    for (var i in ret.login.data)
+                    {
+                        $scope.errors[i] = ret.login.data[i][Object.keys(ret.login.data[i])[0]];
+                    }
+
+                }
+
+            });
+
+
+
+
+        };
     })
 
 ;

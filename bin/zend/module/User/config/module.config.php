@@ -13,66 +13,27 @@ return array(
     'router' => array(
         'routes' => array(
 
-            /**
-             * @SWG\Resource(
-             *      resourcePath="/users",
-             *      @SWG\Api(
-             *          path="/login",
-             *          @SWG\Operation(
-             *              nickname="users.login",
-             *              httpMethod="POST",
-             *              summary="Login using supplied credentials"
-             *          )
-             *      )
-             * )
-             */
-            'login' => array(
-                'type' => 'Literal',
-                'options' => array(
-                    'route' => '/login',
-                    'defaults' => array(
-                        'controller' => 'user',
-                        'action'     => 'login',
-                    ),
-                ),
-            ),
-
-            /**
-             * @SWG\Resource(
-             *      resourcePath="/users",
-             *      @SWG\Api(
-             *          path="/logout",
-             *          @SWG\Operation(
-             *              nickname="users.logout",
-             *              httpMethod="POST",
-             *              summary="Logout the current user"
-             *          )
-             *      )
-             * )
-             */
-            'logout' => array(
-                'type' => 'Literal',
-                'options' => array(
-                    'route' => '/logout',
-                    'defaults' => array(
-                        'controller' => 'user',
-                        'action'     => 'logout',
-                    ),
-                ),
-            ),
-
             'zfcuser' => array(
                 'type' => 'Literal',
                 'priority' => 1000,
                 'options' => array(
-                    'route' => '/user',
-                    'defaults' => array(
-                        'controller' => 'user',
-                        'action'     => 'index',
-                    ),
+                    'route' => '/users',
                 ),
-                'may_terminate' => true,
                 'child_routes' => array(
+
+                    /**
+                     * @SWG\Resource(
+                     *      resourcePath="/users",
+                     *      @SWG\Api(
+                     *          path="/users/login",
+                     *          @SWG\Operation(
+                     *              @SWG\Partial("users.login"),
+                     *              nickname="users.login",
+                     *              httpMethod="POST"
+                     *          )
+                     *      )
+                     * )
+                     */
                     'login' => array(
                         'type' => 'Literal',
                         'options' => array(
@@ -83,6 +44,43 @@ return array(
                             ),
                         ),
                     ),
+
+                    /**
+                     * @SWG\Resource(
+                     *      resourcePath="/users",
+                     *      @SWG\Api(
+                     *          path="/users/logout",
+                     *          @SWG\Operation(
+                     *              @SWG\Partial("users.logout"),
+                     *              nickname="users.logout",
+                     *              httpMethod="POST"
+                     *          )
+                     *      )
+                     * )
+                     */
+                    'logout' => array(
+                        'type' => 'Literal',
+                        'options' => array(
+                            'route' => '/logout',
+                            'child_routes' => array(
+                                'post'=>array(
+                                    'may_terminate'=>true,
+                                    'verb'=>'post',
+                                    'defaults' => array(
+                                        'controller' => 'user',
+                                        'action'     => 'logout',
+                                    ),
+                                ),
+                            ),
+                        ),
+                    ),
+
+
+                    /**************************************************************
+                     * OLD SYSTEM ROUTES: WARNING
+                     * These should be deleted before release.
+                     */
+
                     'register' => array(
                         'type' => 'Literal',
                         'options' => array(
@@ -129,8 +127,13 @@ return array(
     ),
     'controllers' => array(
         'invokables' => array(
-            'user' => 'User\Controller\UserController'
+            'user' => 'User\Controller\UserController',
         ),
+    ),
+    'controller_plugins' => array(
+        'invokables' => array(
+            'params' => 'Preslog\Controller\Plugin\Params',
+        )
     ),
     'view_manager' => array(
         'template_path_stack' => array(

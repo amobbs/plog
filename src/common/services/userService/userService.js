@@ -4,7 +4,7 @@
  */
 
 angular.module('userService', ['restangular'])
-    .factory('userService', function (Restangular, $q) {
+    .factory('userService', function (Restangular, $q, $rootScope) {
         var user,
             permissions,
             clients,
@@ -15,22 +15,29 @@ angular.module('userService', ['restangular'])
 
             /**
              * Fetch this logged in users details
+             * - Attempt to login this user with an empty POST request
+             * - This will be fulfilled server-side by Sessions if the user is already logged in, like "remember me".
+             * - Failure will trigger an Auth-LoginRequired event.
+             *
              * @returns User details object
              */
             getUser: function () {
                 var deferred = $q.defer();
 
-                // Attempt to fetch this users details via a GET request.
-                // This will be fulfilled server-side by Sessions if the user is logged in.
-                // Works like "Remember Me"
+                // If user is not set, attempt to login
                 if (! user) {
-                    Restangular.all('users/login').getList().then(function (ret) {
+                    service.login().then(function (ret) {
 
-                        // Set permissions
-                        user = ret.user;
-                        permissions = ret.permissions;
+                        // Login OK?
+                        if (ret.login.success)
+                        {
+                            // Resolve this promise
+                            deferred.resolve(user);
+                        }
 
-                        deferred.resolve(user);
+                        // Abandon the promise, and fire the Auth-LoginRequired event
+                        deferred.reject();
+                        $rootScope.$broadcast('event:auth-loginRequired');
                     });
                 } else {
                     deferred.resolve(user);
@@ -46,15 +53,25 @@ angular.module('userService', ['restangular'])
              * @param username
              * @param password
              */
-            login: function(username, password) {
+            login: function(user) {
                 var deferred = $q.defer();
 
-                // Post-request the login
-                Restangular.all('users/login').post({
-                    username: username,
-                    password: password
-                }).then(function (ret) {
-                    // Fulfil the request
+                // default user object
+                user = (user === undefined ? {} : user);
+
+                // Attempt to login
+                Restangular.all('users/login').post( user ).then(function (ret) {
+
+                    // Login OK?
+                    if (ret.login.success)
+                    {
+                        // Save user details
+                        user = ret.login.user;
+                        permissions = ret.login.permissions;
+                    }
+
+                    // resolve the promise
+                    // We always resolve this process, even in error cases.
                     deferred.resolve(ret);
                 });
 
@@ -153,6 +170,7 @@ angular.module('userService', ['restangular'])
         var checkPermissions = function( key ) {
             return (permissions.indexOf(key) !== -1);
         };
+
 
         // Factory finish
         return service;
