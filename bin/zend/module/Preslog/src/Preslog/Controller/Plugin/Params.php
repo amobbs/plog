@@ -15,7 +15,7 @@ class Params extends ZendParams {
             }
         }
 
-        return false;
+        return array();
     }
 
 }

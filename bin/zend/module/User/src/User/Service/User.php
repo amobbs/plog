@@ -10,6 +10,53 @@ use Zend\Crypt\Password\Bcrypt;
 class User extends zfcUser implements ServiceManagerAwareInterface
 {
 
+    /**
+     * Fetch current users permissions
+     * @return array
+     */
+    public function getPermissions()
+    {
+        // Fetch rbac Service so we can harvest Permissions
+        $rbacService = $this->getServiceManager()->get('ZfcRbac\Service\Rbac');
+        $providers = $rbacService->getOptions()->getProviders();
+
+        // Extract the many types
+        foreach ($providers as $type)
+        {
+            $item = current($type);
+            $types[ key($type) ] = $item;
+        }
+
+        // Extract list of roles
+        foreach ($types['roles'] as $k=>$v)
+        {
+            $roles[] = $k;
+        }
+
+        // For each role..
+        foreach ($types['permissions'] as $k=>$v)
+        {
+            // For each permissions
+            foreach ($v as $p)
+            {
+                // Get unique permissions
+                $perms[$p] = $p;
+            }
+        }
+
+        // Filter the list just to the permissions this user has access to
+        foreach ($perms as $perm)
+        {
+            if ( $rbacService->isGranted($perm) )
+            {
+                $userPerms[] = $perm;
+            }
+        }
+
+        return $userPerms;
+    }
+
+
     public function sendReset($postData, $url)
     {
         $user = $this->getUserMapper();

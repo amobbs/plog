@@ -12,17 +12,17 @@ class User implements UserInterface
     /**
      * @var string
      */
-    protected $username;
-
-    /**
-     * @var string
-     */
     protected $email;
 
     /**
      * @var string
      */
-    protected $displayName;
+    protected $firstName;
+
+    /**
+     * @var string
+     */
+    protected $lastName;
 
     /**
      * @var string
@@ -30,46 +30,60 @@ class User implements UserInterface
     protected $password;
 
     /**
+     * @var string
+     */
+    protected $company;
+
+    /**
+     * @var string
+     */
+    protected $phoneNumber;
+
+    /**
+     * @var string
+     */
+    protected $client;
+
+    /**
+     * @var string
+     */
+    protected $dashboards;
+
+    /**
+     * @var string
+     */
+    protected $notifications;
+
+    /**
      * @var int
      */
-    protected $state;
+    protected $role;
+
 
     public function getId()
     {
-        return $this->get_id();
+        if (!$this->id) return null;
+        return $this->id;
     }
 
     public function setId($id)
-    {
-        return $this->set_id($id);
-    }
-
-    /**
-     * Get id.
-     *
-     * @return int
-     */
-    public function set_id($id)
     {
         if (is_object($id)) {
             $id = (string) $id;
         }
         $this->id = $id;
 
-
         return $this;
     }
 
-    /**
-     * Set id.
-     *
-     * @param int $id
-     * @return UserInterface
-     */
+    public function set_id($id)
+    {
+        return $this->setId( $id );
+    }
+
     public function get_id()
     {
-        if (!$this->id) return null;
-        return $this->id;
+        return $this->getId();
     }
 
     /**
@@ -77,20 +91,20 @@ class User implements UserInterface
      *
      * @return string
      */
-    public function getUsername()
+    public function getFirstName()
     {
-        return $this->username;
+        return $this->firstName;
     }
 
     /**
      * Set username.
      *
-     * @param string $username
-     * @return UserInterface
+     * @param   string $str
+     * @return  UserInterface
      */
-    public function setUsername($username)
+    public function setFirstName( $str )
     {
-        $this->username = $username;
+        $this->firstName = $str;
         return $this;
     }
 
@@ -117,24 +131,24 @@ class User implements UserInterface
     }
 
     /**
-     * Get displayName.
+     * Get last name.
      *
      * @return string
      */
-    public function getDisplayName()
+    public function getLastName()
     {
-        return $this->displayName;
+        return $this->lastName;
     }
 
     /**
-     * Set displayName.
+     * Set last name.
      *
-     * @param string $displayName
+     * @param string $str
      * @return UserInterface
      */
-    public function setDisplayName($displayName)
+    public function setLastName( $str )
     {
-        $this->displayName = $displayName;
+        $this->lastName = $str;
         return $this;
     }
 
@@ -165,20 +179,125 @@ class User implements UserInterface
      *
      * @return int
      */
-    public function getState()
+    public function getRole()
     {
-        return $this->state;
+        return $this->role;
     }
 
     /**
-     * Set state.
+     * Set Role.
      *
-     * @param int $state
+     * @param int $str
      * @return UserInterface
      */
-    public function setState($state)
+    public function setRole( $str )
     {
-        $this->state = $state;
+        $this->role = $str;
         return $this;
     }
+
+    /**
+     * @param string $client
+     */
+    public function setClient($client)
+    {
+        $this->client = $client;
+    }
+
+    /**
+     * @return string
+     */
+    public function getClient()
+    {
+        return $this->client;
+    }
+
+    /**
+     * @param string $company
+     */
+    public function setCompany($company)
+    {
+        $this->company = $company;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCompany()
+    {
+        return $this->company;
+    }
+
+    /**
+     * @param string $dashboards
+     */
+    public function setDashboards($dashboards)
+    {
+        $this->dashboards = $dashboards;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDashboards()
+    {
+        return $this->dashboards;
+    }
+
+    /**
+     * @param string $notifications
+     */
+    public function setNotifications($notifications)
+    {
+        $this->notifications = $notifications;
+    }
+
+    /**
+     * @return string
+     */
+    public function getNotifications()
+    {
+        return $this->notifications;
+    }
+
+    /**
+     * @param string $phoneNumber
+     */
+    public function setPhoneNumber($phoneNumber)
+    {
+        $this->phoneNumber = $phoneNumber;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPhoneNumber()
+    {
+        return $this->phoneNumber;
+    }
+
+
+
+    public function getUsername() {}
+
+    public function setUsername( $username ) {}
+
+    public function getDisplayName() {}
+
+    public function setDisplayName( $displayName ) {}
+
+    public function getState() {}
+
+    public function setState($state) {}
+
+    public function getRoles() {
+        return $this->role;
+    }
+
+    public function setRoles($roles) {
+        $this->role = $roles
+        return $this;
+    }
+
+
 }

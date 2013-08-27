@@ -48,6 +48,8 @@ class UserController extends ZfcUser
      */
     public function loginAction()
     {
+        $data = $this->params()->fromJson();
+
         // Check if user is logged in already
         // This works off the Session variables
         if ($this->zfcUserAuthentication()->getAuthService()->hasIdentity()) {
@@ -57,18 +59,21 @@ class UserController extends ZfcUser
         // Set up the login "form", used to validate the login fields
         $request = $this->getRequest();
         $form    = $this->getLoginForm();
-        $form->setData($this->params()->fromJson());
+        $form->setData($data);
 
         // Check the form validates
         if (!$form->isValid()) {
             return new JsonModel(array(
                 'login'=>array(
                     'error'=>true,
-                    'message'=>'Login details failed to validate',
+                    'message'=>'There was a problem with your submission',
                     'data'=>$form->getMessages()
                 )
             ));
         }
+
+        // Force our Request Body content into the Post content, for use in ZfcUser.
+        $this->getRequest()->getPost()->fromArray( $data );
 
         // clear adapters
         $this->zfcUserAuthentication()->getAuthAdapter()->resetAdapters();
@@ -102,6 +107,7 @@ class UserController extends ZfcUser
 
     /**
      * General-purpose authentication action
+     * - Warning: uses HTTP\Request which must contain POST variables with the authentication details.
      */
     public function authenticateAction()
     {
@@ -110,12 +116,12 @@ class UserController extends ZfcUser
             return $this->getUsersIdentity();
         }
 
-        // Get auth adapter
-        // Set auth adapter up with the request
+        // Get auth adapter, Set auth adapter up with the request
+        // Will actually perform the authentication task via event calls.
         $adapter = $this->zfcUserAuthentication()->getAuthAdapter();
         $result = $adapter->prepareForAuthentication($this->getRequest());
 
-        // Return early if an adapter returned a response
+        // Return early if an adapter returned a bad response
         if ($result instanceof Response) {
             return new JsonModel(array(
                 'login' => array(
@@ -125,7 +131,7 @@ class UserController extends ZfcUser
             ));
         }
 
-        // Athenticate using the adapter
+        // Fetch the auth info from the Adapter
         $auth = $this->zfcUserAuthentication()->getAuthService()->authenticate($adapter);
 
         // If not valid..
@@ -150,40 +156,26 @@ class UserController extends ZfcUser
      */
     protected function getUsersIdentity()
     {
+        // get user service
+        $us = $this->getServiceLocator()->get('UserService');
+
         // Fetch user
-        $user = array();
+        $userObj = $this->zfcUserAuthentication()->getIdentity();
 
-        // Fetch rbac Service so we can harvest Permissions
-        $rbacService = $this->getServiceLocator()->get('ZfcRbac\Service\Rbac');
-        $x = $rbacService->getOptions()->getProviders();
+        // Truncate userObj to an array
+        $user['id'] = $userObj->getId();
+        $user['firstname'] = $userObj->getFirstName();
+        $user['lastname'] = $userObj->getLastName();
+        $user['role'] = $userObj->getRole();
 
-        foreach ($x as $type)
-        {
-            $item = current($type);
-            $types[ key($type) ] = $item;
-        }
-
-        foreach ($types['roles'] as $k=>$v)
-        {
-            $roles[] = $k;
-        }
-
-        // Fetch permissions list
-        $perms = array();
-
-        // get user roles inheretance?
-        // $this->getIdentity()->getRoles();
-
-        // get rbac?
-        // v$rbacService = $controller->getServiceLocator()->get('ZfcRbac\Service\Rbac');
-
-
+        // Get user permissions
+        $userPerms = $us->getPermissions();
 
         return new JsonModel(array(
             'login'=> array(
                 'success'=>true,
                 'user' => $user,
-                'permissions' => $perms,
+                'permissions' => $userPerms,
             )
         ));
     }
