@@ -29,10 +29,11 @@ angular.module('userService', ['restangular'])
                     service.login().then(function (ret) {
 
                         // Login OK?
-                        if (ret.login.success)
+                        if (ret.login.user)
                         {
                             // Resolve this promise
                             deferred.resolve(user);
+                            return;
                         }
 
                         // Abandon the promise, and fire the Auth-LoginRequired event

@@ -20,6 +20,7 @@ angular.module('moduleManager', [
     // Site Modules
     'pages',
     'Preslog.auth',
+    'Preslog.users',
     'Preslog.home'
 ]);
 
