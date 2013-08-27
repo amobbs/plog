@@ -167,7 +167,7 @@ return array(
                 $mapper = new User\Mapper\User();
                 $mapper->setConfig($sm->get('config'));
 
-                $mapper->setEntityPrototype(new User\Entity\User);
+                $mapper->setEntityPrototype(new \MongoUser\Entity\User);
                 $mapper->setHydrator(new \MongoUser\Mapper\UserHydrator(false));
 
                 return $mapper;
