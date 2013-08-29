@@ -198,7 +198,8 @@ class User
 
     public function getRoles() { return $this->getRole(); }
     public function setRoles( $roles ) { return $this->setRole( $roles ); }
-
+    public function getId() { return $this->get_id(); }
+    public function setId( $id ) { return $this->set_id($id); }
 
 
 

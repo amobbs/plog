@@ -4,7 +4,7 @@
  */
 
 angular.module( 'Preslog.users', [
-        'titleService'
+        'titleService', 'ngTable'
     ])
 
     .config(function(stateHelperProvider) {
@@ -23,7 +23,7 @@ angular.module( 'Preslog.users', [
             url: '/my-notifications',
             views: {
                 "main@mainLayout": {
-                    controller: 'HomeCtrl',
+                    controller: 'UserMyNotifyCtrl',
                     templateUrl: 'modules/users/my-notify.tpl.html'
                 }
             }
@@ -71,14 +71,59 @@ angular.module( 'Preslog.users', [
     /**
      * Admin: User: List
      */
-    .controller( 'UserAdminListCtrl', function UserAdminListController( $scope, titleService ) {
+    .controller( 'AdminUserListCtrl', function UserAdminListController( $scope, titleService, ngTableParams, Restangular, $filter ) {
         titleService.setTitle( 'Admin - Users ' );
+
+        $scope.tableParams = new ngTableParams({
+            page: 1,            // show first page
+            total: 0,           // length of data
+            count: 10,          // count per page
+            sorting: {
+                name: 'asc'     // initial sorting
+            },
+            filter: {           // initial filter
+                deleted: false  // do not show deleted users
+            }
+        });
+
+        $scope.loading = true;
+
+        Restangular.all('admin/users').getList().then(function (data) {
+            $scope.loading = false;
+            $scope.allUsers = data.users;
+
+            // Watch table and perform actions
+            $scope.$watch('tableParams', function(params) {
+
+                var data = $scope.allUsers;
+
+                // Filter and order
+                var orderedData = params.filter ?
+                    $filter('filter')(data, params.filter) :
+                    data;
+
+                // set total for pagination
+                params.total = orderedData.length;
+
+                // slice array data on pages
+                $scope.users = data.slice(
+                    (params.page - 1) * params.count,
+                    params.page * params.count
+                );
+
+            }, true);
+
+        });
+
+
+
+
     })
 
     /**
      * Admin: User: Edit
      */
-    .controller( 'UserAdminEditCtrl', function UserAdminEditController( $scope, titleService ) {
+    .controller( 'AdminUserEditCtrl', function UserAdminEditController( $scope, titleService ) {
         titleService.setTitle( 'Admin - Users ' );
     })
 

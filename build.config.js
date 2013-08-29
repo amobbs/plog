@@ -69,6 +69,7 @@ module.exports = {
             'vendor/angular-ui-utils/modules/route/route.js',
             'vendor/angular-ui-select2/src/select2.js',
             'vendor/angular-resource-unstable/angular-resource.js',
+            'vendor/ng-table/ng-table.js',
 
             'vendor/lodash/dist/lodash.js',
             'vendor/restangular/dist/restangular.js'

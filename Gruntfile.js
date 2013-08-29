@@ -344,7 +344,7 @@ module.exports = function (grunt) {
             options: {
                 curly: true,
                 immed: true,
-                newcap: true,
+                newcap: false,
                 noarg: true,
                 sub: true,
                 boss: true,

@@ -9,17 +9,24 @@ use Exception;
 
 use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\ResultSet\HydratingResultSet;
+use Zend\ServiceManager\ServiceManager;
 use Zend\Stdlib\Hydrator\ClassMethods;
 use Zend\Di\ServiceLocator;
 
 use ZfcBase\EventManager\EventProvider;
+use Zend\ServiceManager\ServiceLocatorAwareInterface;
+use Zend\ServiceManager\ServiceLocatorInterface;
+
+use Zend\Mvc\Application;
+use Zend\Mvc\MvcEvent;
+
 
 /**
  * Class DbAbstract
  *
  * @package Zf2Mongo\Mapper
  */
-abstract class DbAbstract extends EventProvider
+abstract class DbAbstract extends EventProvider implements ServiceLocatorAwareInterface
 {
     /**
      * @var MongoClient
@@ -62,6 +69,11 @@ abstract class DbAbstract extends EventProvider
     protected $isInitialised = false;
 
     /**
+     * @var ServiceLocatorInterface
+     */
+    protected $services;
+
+    /**
      * Initialise Class
      * @return bool
      * @throws \Exception
@@ -75,12 +87,31 @@ abstract class DbAbstract extends EventProvider
             $this->getHydrator();
         }
 
-        
         if (!is_object($this->entityPrototype)) {
             throw new \Exception('No entity prototype set');
         }
 
+        if (!is_object($this->services)) {
+            throw new \Exception('No service locator set');
+        }
+
         $this->isInitialised = true;
+    }
+
+    /**
+     * @param ServiceLocatorInterface $serviceLocator
+     */
+    public function setServiceLocator(ServiceLocatorInterface $serviceLocator)
+    {
+        $this->services = $serviceLocator;
+    }
+
+    /**
+     * @return ServiceLocatorInterface
+     */
+    public function getServiceLocator()
+    {
+        return $this->services;
     }
 
     /**
@@ -99,15 +130,18 @@ abstract class DbAbstract extends EventProvider
 
         $collection = $this->getCollectionPrototype();
 
+        // Under FindAll we want to return a HydratingResultSet.
+        // Under a FindOne, we want just the Entity.
         if ($findAll) {
             $cursor = $collection->find($query, $fields);
 
-            if (is_null($cursor)) return false;
+            if (is_null($cursor)) return 'nope';
             $resultSet = new HydratingResultSet($hydrator ?: $this->getHydrator(),
                 $entityPrototype ?: $this->getEntityPrototype());
 
             $resultSet->initialize($cursor);
         } else {
+
             $cursor = $collection->findOne($query, $fields);
 
             if (is_null($cursor)) return false;
@@ -289,7 +323,8 @@ abstract class DbAbstract extends EventProvider
      * @param array $config
      *
      * @return $this
-     * @throws
+     * @throws MongoConnectionException
+     * @throws MongoException
      */
     public function setDbAdapter(array $config)
     {
@@ -308,10 +343,25 @@ abstract class DbAbstract extends EventProvider
 
         $connectString = sprintf("mongodb://%s:%d", $config['mongo']['hostname'], $config['mongo']['port']);
 
-        $client = new MongoClient($connectString, $options);
+        // abstracted to a method for Exception-related reasons
+        // MongoClient can throw a MongoConnectionException - we catch this here and engage an event where needed.
+        try{
+            $client = $this->establishMongo($connectString, $options);
+            $this->dbAdapter = $client->{$this->database};
+        }
+        catch (\Exception $e) {
+            $this->databaseException($e);
+        }
 
-        $this->dbAdapter = $client->{$this->database};
+
+
         return $this;
+    }
+
+
+    protected function establishMongo($connectString, $options)
+    {
+        return new MongoClient($connectString, $options);
     }
 
     /**
@@ -387,5 +437,30 @@ abstract class DbAbstract extends EventProvider
         return $this->lastCursor;
     }
 
+
+    /**
+     * Trigger an unrecoverable database exception
+     * @param Exception $e
+     */
+    protected function databaseException( \Exception $e)
+    {
+        // Get the app and event manager
+        $app = $this->getServiceLocator()->get('Application');
+        $events = $app->getEventManager();
+
+        // Set up the occurred event
+        $event = $app->getMvcEvent();
+        $event->setError(Application::ERROR_EXCEPTION)
+            ->setParam('exception', $e);
+
+        // Fire event from the app's event manager
+        $events->trigger(MvcEvent::EVENT_DISPATCH_ERROR, $event);
+        $event->setTarget($app);
+        $events->trigger(MvcEvent::EVENT_RENDER, $event);
+        $events->trigger(MvcEvent::EVENT_FINISH, $event);
+
+        // Graceful exit
+        exit();
+    }
 
 }

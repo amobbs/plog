@@ -12,6 +12,7 @@ angular.module('moduleManager', [
 //    'queryBuilder',
     'stateHelper',
     'titleService',
+    'ngTable',
 
     // Shared Modules
     'userService',
