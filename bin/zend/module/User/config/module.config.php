@@ -8,6 +8,8 @@
  */
 
 use Swagger\Annotations as SWG;
+use Zend\Mvc\MvcEvent;
+use Zend\Mvc\Application;
 
 return array(
     'router' => array(
@@ -151,24 +153,19 @@ return array(
             'User\Form\LostPasswordFilter' => 'User\Form\LostPasswordFilter',
             'User\Form\ResetPassword' => 'User\Form\resetPassword',
             'User\Form\ResetPasswordFilter' => 'User\Form\ResetPasswordFilter',
-            'User\Entity\User' => 'User\Entity\User',
+            'User\Entity\User' => 'Preslog\Entity\User',
         ),
         'factories' => array(
             'lost_password_form' => 'User\Service\LostPasswordFormServiceFactory',
             'reset_password_form' => 'User\Service\ResetPasswordFormServiceFactory',
-            'user_role' => function ($sm) {
-                if ($sm->get('zfcuser_auth_service')->hasIdentity()) {
-                    return $sm->get('zfcuser_auth_service')->getIdentity()->getRoles();
-                } else {
-                    return 'guest';
-                }
-            },
+            'user_role' => function($sm) { return 'guest'; },        // User role cannot be set until Routes execution
             'zfcuser_user_mapper' => function ($sm) {
-                $mapper = new User\Mapper\User();
-                $mapper->setConfig($sm->get('config'));
-
-                $mapper->setEntityPrototype(new \MongoUser\Entity\User);
-                $mapper->setHydrator(new \MongoUser\Mapper\UserHydrator(false));
+                $mapper = new \Preslog\Mapper\User();
+                $mapper->setServiceLocator($sm);
+                $mapper->setEntityPrototype(new \Preslog\Entity\User);
+                $mapper->getHydrator()->setUnderscoreSeparatedKeys(false);
+                $mapper->setServiceLocator($sm);
+                $mapper->setDbAdapter($sm->get('config'));
 
                 return $mapper;
             },

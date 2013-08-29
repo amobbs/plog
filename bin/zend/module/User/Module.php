@@ -8,6 +8,7 @@
  */
 
 namespace User;
+use Zend\Mvc\Application;
 use Zend\Mvc\MvcEvent;
 
 
@@ -25,6 +26,14 @@ class Module
      */
     public function onBootstrap(MvcEvent $e)
     {
+        // Instigate loading of the user profile on EVENT_ROUTE
+        // Prevents errors occurring inside onBootstrap which we can't recover from.
+        $app = $e->getTarget();
+        $app->getEventManager()->attach(MvcEvent::EVENT_ROUTE, array($this, 'loadCurrentIdentity'));
+
+
+        // Form
+
         $roles = array('super-admin'=>'Super Admin', 'operator'=>'Operator');
 
         $events = $e->getApplication()->getEventManager()->getSharedManager();
@@ -88,6 +97,20 @@ class Module
 
         });
     }
+
+
+    public function loadCurrentIdentity( MvcEvent $e )
+    {
+        $sm = $e->getApplication()->getServiceManager();
+
+        // If the user has identity in store, try to fetch it.
+        if ($sm->get('zfcuser_auth_service')->hasIdentity()) {
+            $rbac = $sm->get('ZfcRbac\Service\Rbac');
+            $role = $sm->get('zfcuser_auth_service')->getIdentity()->getRoles();
+            $rbac->setIdentity( $role );
+        }
+    }
+
 
     public function getAutoloaderConfig()
     {

@@ -118,23 +118,59 @@ class ExceptionStrategy extends AbstractListenerAggregate
 
             case Application::ERROR_EXCEPTION:
             default:
-                $model = new JsonModel(array(
-                    'message'            => 'An error occurred during execution; please try again later.',
-                    'exception'          => $e->getParam('exception'),
-                    'display_exceptions' => $this->displayExceptions(),
-                ));
-                $model->setTemplate($this->getExceptionTemplate());
+                $exception = $e->getParam('exception');
+
+                // Default data
+                $data = array();
+                $newStatusCode = 500;
+
+                // standard respons messages
+                $dataDefault = array(
+                    'message'           => 'An error occurred during execution, please try again later.',
+                    'error' => array(
+                        'message'       => $exception->getMessage(),
+                        'code'          => $exception->getCode(),
+                        'file'          => $exception->getFile(),
+                        'line'          => $exception->getLine(),
+                        'trace'         => $exception->getTrace(),
+                    )
+                );
+
+                // Mongo Connection Exception?
+                if ($exception instanceof \MongoConnectionException) {
+                    $data = array(
+                        'message' => 'There was an error connecting to the database.'
+                    );
+
+                    $newStatusCode = 504;
+                }
+
+                // General Mongo Exception?
+                elseif ($exception instanceof \MongoException) {
+                    $data = array(
+                        'message' => 'There was an error communicating with the database.'
+                    );
+
+                    $newStatusCode = 504;
+                }
+
+                // Create output model
+                $data = array_merge($dataDefault, $data);
+                $model = new JsonModel($data);
+
+                // Set output model
                 $e->setResult($model);
 
+                // Response code
                 $response = $e->getResponse();
                 if (!$response) {
                     $response = new HttpResponse();
-                    $response->setStatusCode(500);
+                    $response->setStatusCode($newStatusCode);
                     $e->setResponse($response);
                 } else {
                     $statusCode = $response->getStatusCode();
                     if ($statusCode === 200) {
-                        $response->setStatusCode(500);
+                        $response->setStatusCode($newStatusCode);
                     }
                 }
 

@@ -67,6 +67,9 @@ class UserController extends AbstractRestfulController
      */
     public function readMyNotificationsAction()
     {
+        // Fetch user service
+        $userService = $this->getServiceLocator()->get('Preslog\Service\User');
+
         return new JsonModel(array(
             'todo' => 'TODO - Read My Notifications',
         ));
@@ -103,8 +106,17 @@ class UserController extends AbstractRestfulController
      */
     public function readListAction()
     {
+        // Validate: User must be administrator
+        if ( !$this->getServiceLocator()->get('ZfcRbac\Service\Rbac')->isGranted('admin') ) {
+            return $this->errorForbidden();
+        }
+
+        // Using the User Service, find all users.
+        $userService = $this->getServiceLocator()->get('Preslog\Service\User');
+        $users = $userService->findAll();
+
         return new JsonModel(array(
-            'todo' => 'TODO: Admin list users',
+            'users'=>$users->toArray()
         ));
     }
 
@@ -148,10 +160,36 @@ class UserController extends AbstractRestfulController
      */
     public function readAction()
     {
-        $id = $this->params('user_id', 'none specified');
+        $id = $this->params('user_id', null);
+
+        // Validate: User must be administrator
+        if ( !$this->getServiceLocator()->get('ZfcRbac\Service\Rbac')->isGranted('admin') ) {
+            return $this->errorForbidden();
+        }
+
+        // Validate: ID must be supplied
+        if ( !$id ) {
+            return $this->errorGeneric(array(
+                'message' => 'User ID required'
+            ));
+        }
+
+        // Using the User Service, find the specific user
+        $userService = $this->getServiceLocator()->get('Preslog\Service\User');
+        $user = $userService->findById( $id );
+
+        // Validate: Find must locate a user
+        if ( !$user || !$user->get_id() ) {
+            return $this->errorGeneric(array(
+                'message'=>'Specified user does not exist'
+            ));
+        }
+
+        // Extract user to array
+        $user = $userService->getMapper()->getHydrator()->extract($user);
 
         return new JsonModel(array(
-            'todo' => 'TODO: Admin read specific user ('.$id.')',
+            'user' => $user
         ));
     }
 

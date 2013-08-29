@@ -993,7 +993,7 @@ return array(
                                 'options' => array(
                                     'route' => '/:user_id',
                                     'constraints' => array(
-                                        'user_id' => '[0-9]+',
+                                        'user_id' => '[a-z0-9]+',
                                     ),
                                 ),
                                 'child_routes' => array(
@@ -1274,16 +1274,6 @@ return array(
     ),
 
 
-    /**
-     * Services manager
-     */
-    'service_manager' => array(
-
-        'invokables' => array(
-            'Rbac' => 'ZfcRbac\Service\Rbac',
-        ),
-    ),
-
 
     /**
      * Translation manager. Delete me?
@@ -1338,4 +1328,19 @@ return array(
             'ViewJsonStrategy',
         ),
     ),
+
+
+    /**
+     * Service Manager
+     */
+    'service_manager' => array(
+        'invokables' => array(
+            'Rbac' => 'ZfcRbac\Service\Rbac',
+            'Preslog\Entity\User' => 'Preslog\Entity\User'
+        ),
+        'factories' => array(
+            'Preslog\Service\User' => 'Preslog\Service\Factory\UserServiceFactory',
+        ),
+    ),
+
 );

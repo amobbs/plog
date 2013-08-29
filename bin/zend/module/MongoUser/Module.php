@@ -22,9 +22,10 @@ class Module
                 'zfcuser_user_mapper' => function ($sm) {
                     $options = $sm->get('zfcuser_module_options');
                     $mapper = new Mapper\User();
-                    $mapper->setConfig($sm->get('config'));
                     $mapper->setEntityPrototype(new Entity\User);
+                    $mapper->setServiceLocator($sm);
                     $mapper->setHydrator(new \MongoUser\Mapper\UserHydrator(false));
+                    $mapper->setDbAdapter($sm->get('config'));
                     return $mapper;
                 },
             ),
