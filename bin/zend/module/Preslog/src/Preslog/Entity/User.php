@@ -7,33 +7,57 @@ namespace Preslog\Entity;
 
 class User
 {
-    protected $_id;
+    /** @var    \MongoId    $id         */
+    protected $id;
+
+    /** @var    string      $firstName  */
     protected $firstName;
+
+    /** @var    string      $lastName   */
     protected $lastName;
+
+    /** @var    string      $email   */
     protected $email;
+
+    /** @var    string      $password   */
     protected $password;
+
+    /** @var    string      $company   */
     protected $company;
+
+    /** @var    string      $phoneNumber   */
     protected $phoneNumber;
-    protected $role;                    // Role this user has (admin, operator, etc)
-    protected $clientId;                // Client ID this user is assigned to
-    protected $notifications;           // Notifications entity
-    protected $favouriteDashboards;     // List of favourite dashboards
+
+    /** @var    string      $role                   Role (thus permissions) this user has */
+    protected $role;
+
+    /** @var    \MongoId    $clientId               Client ID this user is assigned to */
+    protected $clientId;
+
+    /** @var    array       $notifications          Notifications this client is attached to */
+    protected $notifications;
+
+    /** @var    \MongoId[]  $favouriteDashboards    List of dashboards this user has as favourites */
+    protected $favouriteDashboards;
+
+    /** @var    boolean     $deleted                Had this user been deleted? */
+    protected $deleted;
 
 
     /**
-     * @param mixed $id
+     * @param string $id
      */
-    public function set_id($id)
+    public function setId($id)
     {
-        $this->_id = $id;
+        $this->id = $id;
     }
 
     /**
-     * @return mixed
+     * @return  string
      */
-    public function get_id()
+    public function getId()
     {
-        return $this->_id;
+        return $this->id;
     }
 
     /**
@@ -196,11 +220,27 @@ class User
         return $this->role;
     }
 
+    /**
+     * @param mixed $deleted
+     */
+    public function setDeleted($deleted)
+    {
+        $this->deleted = $deleted;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDeleted()
+    {
+        return $this->deleted;
+    }
+
+
     public function getRoles() { return $this->getRole(); }
     public function setRoles( $roles ) { return $this->setRole( $roles ); }
-    public function getId() { return $this->get_id(); }
-    public function setId( $id ) { return $this->set_id($id); }
 
-
+    public function get_id() { return $this->getId(); }
+    public function set_id( $id ) { return $this->setId($id); }
 
 }

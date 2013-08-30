@@ -15,29 +15,37 @@
                 </a>
                 <ul class="dropdown-menu">
                     <li><a href="/admin/users/edit"><i class="icon icon-plus"></i> Add New User </a></li>
-                    <li><a href=""><i class="icon icon-eye-open"></i> Show Deleted USers </a></li>
+                    <li><a href="" ng-click="toggleDeleted()"><i class="icon icon-eye-open"></i> {{ tableParams.filter.deleted === undefined && 'Hide' || 'Show' }} Deleted Users </a></li>
                 </ul>
             </div>
         </div>
     </div>
     <div class="row-fluid">
         <div class="span12">
+
             <table ng-table="tableParams" show-filter="true" class="table table-bordered table-condensed">
                 <tr ng-repeat="user in users">
-                    <td data-title="'Name'" sortable="firstName" filter="{ 'firstName': 'text' }">
-                        {{user.firstName}} {{user.lastName}}
+                    <td title="'First Name'" sortable="firstName" filter="{ 'firstName': 'text' }">
+                        {{user.firstName}}
                     </td>
-                    <td data-title="'Client'" sortable="client" filter="{ 'action': 'button' }">
+                    <td title="'Last Name'" sortable="lastName" filter="{ 'lastName': 'text' }">
+                        {{user.lastName}}
+                    </td>
+                    <td title="'Client'" sortable="client" filter="{ 'client': 'text' }">
                         {{user.client}}
                     </td>
-                    <td data-title="'Email'" sortable="email">
+                    <td title="'Email'" sortable="email" filter="{ 'email': 'text' }">
                         {{user.email}}
                     </td>
-                    <td data-title="'Role'" sortable="role">
+                    <td title="'Role'" sortable="role" filter="{ 'role': 'text' }">
                         {{user.role}}
+                    </td>
+                    <td title="'Actions'" sortable="role" filter="{ 'role': 'text' }">
+                        <a class="btn btn-info" href="/admin/users/{{user.id}}"> <i class="icon icon-edit"></i> Edit </a>
                     </td>
                 </tr>
             </table>
+
         </div>
     </div>
 

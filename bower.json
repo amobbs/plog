@@ -16,7 +16,7 @@
         "highcharts.com": "dev-master",
         "angular-highcharts-directive": "dev-master",
         "dynatree": "dev-master",
-        "ng-table": "https://github.com/esvit/ng-table.git"
+        "ng-table": "https://github.com/esvit/ng-table.git#~v0.2.0"
     },
     "dependencies": {}
 }
