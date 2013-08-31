@@ -106,6 +106,18 @@ module.exports = function (grunt) {
          */
         copy: {
 
+            // Build app files, collapsing the "src" folder
+            build_src_files: {
+                files: [
+                    {
+                        src: [ '<%= app_files.files_from_src %>' ],
+                        dest: '<%= build_dir %>/',
+                        cwd: 'src',
+                        expand: true
+                    }
+                ]
+            },
+
             // Build general assets from src/assets to build_dir/assets/
             build_assets: {
                 files: [
@@ -514,7 +526,7 @@ module.exports = function (grunt) {
                 files: [
                     '<%= app_files.js %>'
                 ],
-                tasks: [ 'jshint:src', 'karma:unit:run', 'copy:build_appjs', 'copy:build_assets', 'copy:build_vendor_files', 'copy:build_vendor_assets', 'copy:build_vendor_js' ]
+                tasks: [ 'jshint:src', 'karma:unit:run', 'copy:build_appjs', 'copy:build_src_files', 'copy:build_assets', 'copy:build_vendor_files', 'copy:build_vendor_assets', 'copy:build_vendor_js' ]
             },
 
             /**
@@ -618,7 +630,7 @@ module.exports = function (grunt) {
      */
     grunt.registerTask('build', [
         'clean', 'html2js', 'jshint', 'coffeelint', 'coffee', 'recess:build',
-        'copy:build_assets', 'copy:build_appjs', 'copy:build_vendor_js', 'copy:build_vendor_files', 'copy:build_vendor_assets', 'replace:build',
+        'copy:build_assets', 'copy:build_appjs', 'copy:build_src_files', 'copy:build_vendor_js', 'copy:build_vendor_files', 'copy:build_vendor_assets', 'replace:build',
         'index:build', 'karmaconfig', 'karma:continuous'
     ]);
 

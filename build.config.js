@@ -39,8 +39,8 @@ module.exports = {
         app_less: ['src/global.less', 'src/app/**/*.less'],
 
         /** Files that must be copied */
-        files: [
-            'src/.htaccess'
+        files_from_src: [
+            '.htaccess'
         ]
     },
 
