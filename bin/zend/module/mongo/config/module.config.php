@@ -20,9 +20,17 @@ return array(
             'password'  => '',
         ),
     ),
+
     'view_manager' => array(
         'template_path_stack' => array(
             __DIR__ . '/../view',
+        ),
+    ),
+
+    // MongoDB adapter access
+    'service_manager' => array(
+        'factories' => array(
+            'Mongo\Db\Adapter\Adapter' => 'Mongo\Db\Adapter\AdapterServiceFactory',
         ),
     ),
 );

@@ -1,7 +1,7 @@
 <?php
 /**
  * Mongo Id strategy
- * Class Rot13Strategy
+ * Rewrites the ID to and from MongoID instances
  */
 
 namespace Mongo\Hydrator\Strategy;

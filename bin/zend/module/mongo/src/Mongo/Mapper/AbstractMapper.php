@@ -12,6 +12,7 @@ use Zend\Db\ResultSet\HydratingResultSet;
 use Zend\ServiceManager\ServiceManager;
 use Zend\Stdlib\Hydrator\ClassMethods;
 use Zend\Di\ServiceLocator;
+use Zend\Stdlib\Hydrator\HydratorInterface;
 
 use ZfcBase\EventManager\EventProvider;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
@@ -26,7 +27,7 @@ use Zend\Mvc\MvcEvent;
  *
  * @package Zf2Mongo\Mapper
  */
-abstract class DbAbstract extends EventProvider implements ServiceLocatorAwareInterface
+abstract class AbstractMapper extends EventProvider implements ServiceLocatorAwareInterface
 {
     /**
      * @var MongoClient
@@ -36,12 +37,12 @@ abstract class DbAbstract extends EventProvider implements ServiceLocatorAwareIn
     /**
      * @var string
      */
-    protected $database;
+    protected $collection;
 
     /**
      * @var string
      */
-    protected $collection;
+    protected $database;
 
     /**
      * @var MongoCollection
@@ -230,7 +231,7 @@ abstract class DbAbstract extends EventProvider implements ServiceLocatorAwareIn
      * @param HydratorInterface $hydrator
      * @return bool
      */
-    protected function update($entity, array $where = null, array $options = array(), $collectionName = null, HydratorInterface $hydrator = null)
+    public function update($entity, array $where = null, array $options = array(), $collectionName = null, HydratorInterface $hydrator = null)
     {
         $this->initialise();
         $collectionName = $collectionName ?: $this->collection;
@@ -310,11 +311,12 @@ abstract class DbAbstract extends EventProvider implements ServiceLocatorAwareIn
      */
     public function getCollectionPrototype()
     {
-        $test = $this->getDbAdapter();
-
+        // Fetch the collection to this object
         if (!$this->collectionPrototype) {
-            $this->collectionPrototype = $this->getDbAdapter()->{$this->collection};
+            $this->collectionPrototype = $this->getDbAdapter()->getDriver()->getConnection()->getResource()->{$this->database}->{$this->collection};
         }
+
+        // Return the collection
         return $this->collectionPrototype;
     }
 
@@ -326,47 +328,15 @@ abstract class DbAbstract extends EventProvider implements ServiceLocatorAwareIn
      * @throws MongoConnectionException
      * @throws MongoException
      */
-    public function setDbAdapter(array $config)
+    public function setDbAdapter($adapter)
     {
-        $username = '';
-        $options = array("connect" => TRUE);
-
-        // Check if authentication is required
-        if ($config['mongo']['auth']['requireAuthentication'] == true) {
-            if ($config['mongo']['auth']['username'] == '') {
-                throw \Exception("Mongo Authentication is selected, but the username is empty.");
-            }
-
-            $options['username'] = $config['mongo']['auth']['username'];
-            $options['password'] = $config['mongo']['auth']['password'];
-        }
-
-        $connectString = sprintf("mongodb://%s:%d", $config['mongo']['hostname'], $config['mongo']['port']);
-
-        // abstracted to a method for Exception-related reasons
-        // MongoClient can throw a MongoConnectionException - we catch this here and engage an event where needed.
-        try{
-            $client = $this->establishMongo($connectString, $options);
-            $this->dbAdapter = $client->{$this->database};
-        }
-        catch (\Exception $e) {
-            $this->databaseException($e);
-        }
-
-
-
+        $this->dbAdapter = $adapter;
         return $this;
-    }
-
-
-    protected function establishMongo($connectString, $options)
-    {
-        return new MongoClient($connectString, $options);
     }
 
     /**
      * Get MongoClient Instance
-     * @return MongoClient
+     * @return \Mongo\Db\Adapter\Adapter
      */
     public function getDbAdapter()
     {
@@ -380,7 +350,6 @@ abstract class DbAbstract extends EventProvider implements ServiceLocatorAwareIn
     public function setEntityPrototype($entityPrototype)
     {
         $this->entityPrototype = $entityPrototype;
-
         return $this;
     }
 
