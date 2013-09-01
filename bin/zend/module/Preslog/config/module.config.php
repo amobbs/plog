@@ -41,20 +41,6 @@ return array(
                 ),
             ),
 
-            // Homepage API Documentation
-            'api.docs' => array(
-                'type' => 'Zend\Mvc\Router\Http\Regex',
-                'options' => array(
-                    'regex' => '/docs(?<resource>.*)',
-                    'spec'  => '/docs%resource%',
-                    'may_terminate' => true,
-                    'defaults' => array(
-                        'controller' => 'Preslog\Controller\Api',
-                        'action'     => 'swaggerDocs',
-                    ),
-                ),
-            ),
-
             // Users: My-Profile
             'users.my-profile' => array(
                 'type' => 'Zend\Mvc\Router\Http\Literal',
@@ -108,7 +94,7 @@ return array(
                         'type' => 'Zend\Mvc\Router\Http\Method',
                         'may_terminate' => true,
                         'options' => array(
-                            'verb' => 'post,put',
+                            'verb' => 'post',
                             'defaults' => array(
                                 'controller' => 'Preslog\Controller\User',
                                 'action' => 'updateMyProfile'
@@ -249,7 +235,7 @@ return array(
                                 'type' => 'Zend\Mvc\Router\Http\Method',
                                 'may_terminate' => true,
                                 'options' => array(
-                                    'verb' => 'post,put',
+                                    'verb' => 'post',
                                     'defaults' => array(
                                         'controller' => 'Preslog\Controller\Log',
                                         'action' => 'update'
@@ -534,7 +520,7 @@ return array(
                                                 'type' => 'Zend\Mvc\Router\Http\Method',
                                                 'may_terminate' => true,
                                                 'options' => array(
-                                                    'verb' => 'post,put',
+                                                    'verb' => 'post',
                                                     'defaults' => array(
                                                         'controller' => 'Preslog\Controller\Dashboard',
                                                         'action' => 'updateDashboardWidget'
@@ -642,7 +628,7 @@ return array(
                         'type' => 'Zend\Mvc\Router\Http\Method',
                         'may_terminate' => true,
                         'options' => array(
-                            'verb' => 'post,put',
+                            'verb' => 'post',
                             'defaults' => array(
                                 'controller' => 'Preslog\Controller\Dashboard',
                                 'action' => 'create',
@@ -979,10 +965,36 @@ return array(
                                 'type' => 'Zend\Mvc\Router\Http\Method',
                                 'may_terminate' => true,
                                 'options' => array(
-                                    'verb' => 'post,put',
+                                    'verb' => 'post',
                                     'defaults' => array(
                                         'controller' => 'Preslog\Controller\User',
                                         'action' => 'create',
+                                    ),
+                                ),
+                            ),
+
+                            /**
+                             * Admin.Users.Options: OPTIONS (options for users)
+                             * @SWG\Resource(
+                             *      resourcePath="/admin",
+                             *      @SWG\Api(
+                             *          path="/admin/users",
+                             *          @SWG\Operation(
+                             *              @SWG\Partial("admin.users.options"),
+                             *              nickname="admin.users.options",
+                             *              httpMethod="OPTIONS"
+                             *          )
+                             *      )
+                             * )
+                             */
+                            'admin.users.options' => array(
+                                'type' => 'Zend\Mvc\Router\Http\Method',
+                                'may_terminate' => true,
+                                'options' => array(
+                                    'verb' => 'options',
+                                    'defaults' => array(
+                                        'controller' => 'Preslog\Controller\User',
+                                        'action' => 'options',
                                     ),
                                 ),
                             ),
@@ -1043,7 +1055,7 @@ return array(
                                         'type' => 'Zend\Mvc\Router\Http\Method',
                                         'may_terminate' => true,
                                         'options' => array(
-                                            'verb' => 'post,put',
+                                            'verb' => 'post',
                                             'defaults' => array(
                                                 'controller' => 'Preslog\Controller\User',
                                                 'action' => 'update',
@@ -1118,6 +1130,32 @@ return array(
                             ),
 
                             /**
+                             * Admin.Clients.Options: OPTIONS (options for clients)
+                             * @SWG\Resource(
+                             *      resourcePath="/admin",
+                             *      @SWG\Api(
+                             *          path="/admin/clients",
+                             *          @SWG\Operation(
+                             *              @SWG\Partial("admin.clients.options"),
+                             *              nickname="admin.clients.options",
+                             *              httpMethod="OPTIONS"
+                             *          )
+                             *      )
+                             * )
+                             */
+                            'admin.clients.create' => array(
+                                'type' => 'Zend\Mvc\Router\Http\Method',
+                                'may_terminate' => true,
+                                'options' => array(
+                                    'verb' => 'options',
+                                    'defaults' => array(
+                                        'controller' => 'Preslog\Controller\Client',
+                                        'action' => 'options',
+                                    ),
+                                ),
+                            ),
+
+                            /**
                              * Admin.Clients.Create: POST (create a client)
                              * @SWG\Resource(
                              *      resourcePath="/admin",
@@ -1135,7 +1173,7 @@ return array(
                                 'type' => 'Zend\Mvc\Router\Http\Method',
                                 'may_terminate' => true,
                                 'options' => array(
-                                    'verb' => 'post,put',
+                                    'verb' => 'post',
                                     'defaults' => array(
                                         'controller' => 'Preslog\Controller\Client',
                                         'action' => 'create',
@@ -1198,7 +1236,7 @@ return array(
                                         'type' => 'Zend\Mvc\Router\Http\Method',
                                         'may_terminate' => true,
                                         'options' => array(
-                                            'verb' => 'post,put',
+                                            'verb' => 'post',
                                             'defaults' => array(
                                                 'controller' => 'Preslog\Controller\Client',
                                                 'action' => 'update',

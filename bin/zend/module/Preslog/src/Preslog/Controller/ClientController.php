@@ -37,6 +37,22 @@ class ClientController extends AbstractRestfulController
         ));
     }
 
+    /**
+     * Client Options
+     * @return JsonModel
+     *
+     * @SWG\Operation(
+     *      partial="admin.clients.options",
+     *      summary="Retrieve form options for clients",
+     *      notes="User must be an Administrator"
+     * )
+     */
+    public function optionsAction()
+    {
+        return new JsonModel(array(
+            'todo' => 'TODO: Admin client options',
+        ));
+    }
 
     /**
      * Create a client

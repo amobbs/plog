@@ -120,6 +120,22 @@ class UserController extends AbstractRestfulController
         ));
     }
 
+    /**
+     * Get form options for users
+     * @return JsonModel
+     *
+     * @SWG\Operation(
+     *      partial="admin.users.options",
+     *      summary="Retrieves form options for users",
+     *      notes="User must be an Administrator"
+     * )
+     */
+    public function optionsAction()
+    {
+        return new JsonModel(array(
+            'todo' => 'TODO: Admin user options',
+        ));
+    }
 
     /**
      * Create a user
