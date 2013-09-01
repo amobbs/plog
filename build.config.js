@@ -79,8 +79,8 @@ module.exports = {
          * Files to NOT be concatenated or minified, but will still be included in the project.
          */
         js_separate: [
-//            'vendor/RedQueryBuilder/RedQueryBuilderFactory.nocache.js',
-//            'vendor/RedQueryBuilder/RedQueryBuilder.nocache.js'
+            'vendor/RedQueryBuilder/RedQueryBuilderFactory.nocache.js',
+            'vendor/RedQueryBuilder/RedQueryBuilder.nocache.js'
         ],
 
         /**
