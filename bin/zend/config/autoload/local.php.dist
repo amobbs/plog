@@ -13,8 +13,16 @@
 
 return array(
     'db' => array(
-		'username' => '',
-        'password' => '',
-		'dsn' => 'mysql:dbname=mediahub_preslog;host=localhost',
+        'driver' => 'mongodb',
+        'database' => 'preslog',
+        'hostname'  => '127.0.0.1',
+        'port' => '27017',
+
+        /* The following is only required if the above key is set to TRUE */
+        'auth' => array(
+            'requireAuthentication' => false,
+            'username'  => '',
+            'password'  => '',
+        ),
     ),
 );

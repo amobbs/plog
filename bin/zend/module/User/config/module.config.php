@@ -160,14 +160,7 @@ return array(
             'reset_password_form' => 'User\Service\ResetPasswordFormServiceFactory',
             'user_role' => function($sm) { return 'guest'; },        // User role cannot be set until Routes execution
             'zfcuser_user_mapper' => function ($sm) {
-                $mapper = new \Preslog\Mapper\User();
-                $mapper->setServiceLocator($sm);
-                $mapper->setEntityPrototype(new \Preslog\Entity\User);
-                $mapper->getHydrator()->setUnderscoreSeparatedKeys(false);
-                $mapper->setServiceLocator($sm);
-                $mapper->setDbAdapter($sm->get('config'));
-
-                return $mapper;
+                return $sm->get('Preslog\Service\User')->getMapper();
             },
         ),
     ),

@@ -22,7 +22,7 @@ class UserServiceFactory implements FactoryInterface
     {
         // Configure mapper
         $mapper = new UserMapper;
-        $mapper->setDbAdapter($serviceLocator->get('config'));
+        $mapper->setDbAdapter($serviceLocator->get('Mongo\Db\Adapter\Adapter'));
         $mapper->setEntityPrototype($serviceLocator->get('Preslog\Entity\User'));
         $mapper->setServiceLocator($serviceLocator);
 

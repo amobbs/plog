@@ -9,6 +9,7 @@ namespace Preslog\Service;
 use Zend\ServiceManager\ServiceManagerAwareInterface;
 use Zend\ServiceManager\ServiceManager;
 use ZfcBase\EventManager\EventProvider;
+use Preslog\Entity\User as UserEntity;
 
 class User extends EventProvider implements ServiceManagerAwareInterface
 {
@@ -59,6 +60,18 @@ class User extends EventProvider implements ServiceManagerAwareInterface
     {
         $this->getMapper()->delete($id);
     }
+
+    /**
+     * Extract the array, giving fields the front UI will use for login
+     * @param   User
+     * @return  array
+     */
+    public function extractForLogin( UserEntity $userObject )
+    {
+        $user = $this->getMapper()->getHydrator()->extract($userObject);
+        return $user;
+    }
+
 
 
     /**

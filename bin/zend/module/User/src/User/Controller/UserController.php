@@ -156,19 +156,16 @@ class UserController extends ZfcUser
      */
     protected function getUsersIdentity()
     {
-        // get user service
-        $us = $this->getServiceLocator()->get('UserService');
 
         // Fetch user
         $userObj = $this->zfcUserAuthentication()->getIdentity();
 
-        // Truncate userObj to an array
-        $user['id'] = $userObj->getId();
-        $user['firstname'] = $userObj->getFirstName();
-        $user['lastname'] = $userObj->getLastName();
-        $user['role'] = $userObj->getRole();
+        // extract the user object for use in logins
+        $preslogUserService = $this->getServiceLocator()->get('Preslog\Service\User');
+        $user = $preslogUserService->extractForLogin( $userObj );
 
-        // Get user permissions
+        // Get user permissions from ZFC user service, which ALWAYS applies to the current user.
+        $us = $this->getServiceLocator()->get('UserService');
         $userPerms = $us->getPermissions();
 
         return new JsonModel(array(

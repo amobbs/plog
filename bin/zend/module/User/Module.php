@@ -106,7 +106,7 @@ class Module
         // If the user has identity in store, try to fetch it.
         if ($sm->get('zfcuser_auth_service')->hasIdentity()) {
             $rbac = $sm->get('ZfcRbac\Service\Rbac');
-            $role = $sm->get('zfcuser_auth_service')->getIdentity()->getRoles();
+            $role = $sm->get('zfcuser_auth_service')->getIdentity()->getRole();
             $rbac->setIdentity( $role );
         }
     }

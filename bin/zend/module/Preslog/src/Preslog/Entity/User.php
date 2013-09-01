@@ -47,7 +47,7 @@ class User
     /**
      * @param string $id
      */
-    public function setId($id)
+    public function set_id($id)
     {
         $this->id = $id;
     }
@@ -55,6 +55,16 @@ class User
     /**
      * @return  string
      */
+    public function get_id()
+    {
+        return $this->id;
+    }
+
+    public function setId( $id )
+    {
+        $this->id = $id;
+    }
+
     public function getId()
     {
         return $this->id;
@@ -236,11 +246,6 @@ class User
         return $this->deleted;
     }
 
-
     public function getRoles() { return $this->getRole(); }
     public function setRoles( $roles ) { return $this->setRole( $roles ); }
-
-    public function get_id() { return $this->getId(); }
-    public function set_id( $id ) { return $this->setId($id); }
-
 }

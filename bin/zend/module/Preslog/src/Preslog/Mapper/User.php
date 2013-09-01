@@ -6,10 +6,11 @@
 
 namespace Preslog\Mapper;
 
-use Mongo\Mapper\DbAbstract as AbstractDbMapper;
+use Zend\Stdlib\Hydrator\HydratorInterface;
+use Mongo\Mapper\AbstractMapper;
 use MongoId;
 
-class User extends AbstractDbMapper
+class User extends AbstractMapper implements \ZfcUser\Mapper\UserInterface
 {
     protected $database = 'preslog';
     protected $collection  = 'users';
@@ -19,9 +20,9 @@ class User extends AbstractDbMapper
      * @param array|object $entity
      * @return \Zend\Db\Adapter\Driver\ResultInterface
      */
-    public function insert($entity)
+    public function insert($entity, $options = array())
     {
-        $result = parent::insert($entity);
+        $result = parent::insert($entity, $options);
         $entity->set_id($result->getGeneratedValue());
         return $result;
     }
@@ -32,10 +33,9 @@ class User extends AbstractDbMapper
      * @param array|object $entity
      * @return \Zend\Db\Adapter\Driver\ResultInterface
      */
-    public function update($entity)
+    public function update($entity, array $where = null, array $options = array(), $collectionName = null, HydratorInterface $hydrator = null)
     {
-        $result = parent::update($entity, array('newsId'=>$entity->getNewsId()));
-        return $result;
+        return parent::update($entity, array('newsId'=>$entity->getNewsId()));
     }
 
 
@@ -44,7 +44,7 @@ class User extends AbstractDbMapper
      * @param array|string|\ZfcBase\Mapper\closure $id
      * @return \Zend\Db\Adapter\Driver\ResultInterface
      */
-    public function delete($id)
+    public function delete($entity, array $where = null, array $options = array())
     {
         return parent::delete(array('newsId'=>$id));
     }
@@ -78,6 +78,25 @@ class User extends AbstractDbMapper
         // Perform find
         return parent::find(array(
             '_id'=> $id
+        ), array(), null, null, false);
+    }
+
+    /**
+     * Find a singler use by ID
+     * @param $id
+     * @return \Preslog\Entity\User
+     */
+    public function findByEmail( $email )
+    {
+        return parent::find(array(
+            'email'=> $email
+        ), array(), null, null, false);
+    }
+
+    public function findByUsername( $username )
+    {
+        return parent::find(array(
+            'username'=> $username
         ), array(), null, null, false);
     }
 

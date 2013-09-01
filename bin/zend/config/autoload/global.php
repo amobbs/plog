@@ -13,27 +13,26 @@
 
 return array(
 
-    // Database adapter
-    'db' => array(
-        'driver' => 'Pdo',
-        'dsn' => 'mysql:dbname=ppm;host=localhost',
-        'driver_options' => array(
-            PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\'',
-        ),
-    ),
 
-    // Error Logger adapter
+    /**
+     * Service override
+     * - Override the User module
+     */
     'service_manager' => array(
+        'invokables' => array(
+            'UserService' => 'User\Service\User',
+            'User\Form\LostPassword' => 'User\Form\LostPassword',
+            'User\Form\LostPasswordFilter' => 'User\Form\LostPasswordFilter',
+            'User\Form\ResetPassword' => 'User\Form\resetPassword',
+            'User\Form\ResetPasswordFilter' => 'User\Form\ResetPasswordFilter',
+            'User\Entity\User' => 'Preslog\Entity\User',
+        ),
         'factories' => array(
-            'Zend\Db\Adapter\Adapter'
-            => 'Zend\Db\Adapter\AdapterServiceFactory',
-            'Log' => function ($sm) {
-                $log = new \Zend\Log\Logger();
-                $writer = new \Zend\Log\Writer\Stream(
-                    __DIR__ . '/../../data/logs/application.log'
-                );
-                $log->addWriter($writer);
-                return $log;
+            'lost_password_form' => 'User\Service\LostPasswordFormServiceFactory',
+            'reset_password_form' => 'User\Service\ResetPasswordFormServiceFactory',
+            'user_role' => function($sm) { return 'guest'; },        // User role cannot be set until Routes execution
+            'zfcuser_user_mapper' => function ($sm) {
+                return $sm->get('Preslog\Service\User')->getMapper();
             },
         ),
     ),
