@@ -5,6 +5,8 @@
  */
 namespace Preslog\Entity;
 
+use MongoId;
+
 class User
 {
     /** @var    \MongoId    $id         */
@@ -62,12 +64,12 @@ class User
 
     public function setId( $id )
     {
-        $this->id = $id;
+        $this->id = new MongoId($id);
     }
 
     public function getId()
     {
-        return $this->id;
+        return (string) $this->id;
     }
 
     /**

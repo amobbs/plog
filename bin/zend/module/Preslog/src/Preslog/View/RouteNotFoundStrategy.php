@@ -191,8 +191,8 @@ class RouteNotFoundStrategy extends AbstractListenerAggregate
         }
 
         $model->setVariable('error', array(
-            'code'=>404,
             'message'=>'Page not found.',
+            'code'=>404,
         ));
 
         $model->setTemplate($this->getNotFoundTemplate());

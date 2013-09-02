@@ -17,6 +17,7 @@ class User extends zfcUser implements ServiceManagerAwareInterface
     public function getPermissions()
     {
         // Fetch rbac Service so we can harvest Permissions
+        /** @var \ZfcRbac\Service\Rbac $rbacService */
         $rbacService = $this->getServiceManager()->get('ZfcRbac\Service\Rbac');
         $providers = $rbacService->getOptions()->getProviders();
 

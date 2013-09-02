@@ -146,6 +146,11 @@ class UserController extends ZfcUser
             ));
         }
 
+        // Fetch role and initialise identity (permissions)
+        $role = $this->zfcUserAuthentication()->getAuthService()->getIdentity()->getRole();
+        $rbacService = $this->getServiceLocator()->get('ZfcRbac\Service\Rbac');
+        $rbacService->setIdentity( $role );
+
         // Logged in!
         return $this->getUsersIdentity();
     }

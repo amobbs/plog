@@ -16,6 +16,7 @@ use Zend\Mvc\Application;
 use Zend\Mvc\MvcEvent;
 use Zend\Stdlib\ResponseInterface as Response;
 use Zend\View\Model\JsonModel;
+use ZfcRbac\Service\Rbac as Rbac;
 
 class ExceptionStrategy extends AbstractListenerAggregate
 {
@@ -110,71 +111,112 @@ class ExceptionStrategy extends AbstractListenerAggregate
         }
 
         switch ($error) {
+
+            // Standard errors
             case Application::ERROR_CONTROLLER_NOT_FOUND:
             case Application::ERROR_CONTROLLER_INVALID:
             case Application::ERROR_ROUTER_NO_MATCH:
                 // Specifically not handling these
                 return;
 
+            // Unauthorised Access errors
+            case Rbac::ERROR_ROUTE_UNAUTHORIZED;
+            case Rbac::ERROR_CONTROLLER_UNAUTHORIZED:
+
+                $responseMessage = array(
+                    'error' => array(
+                        'message' => 'You do not have sufficient permissions to access this resource.',
+                        'code' => 403,
+                        'data' => array(),
+                    ),
+                );
+
+                break;
+
+            // Generic exceptions
             case Application::ERROR_EXCEPTION:
             default:
+                /** @var \Exception $exception */
                 $exception = $e->getParam('exception');
 
-                // Default data
-                $data = array();
-                $newStatusCode = 500;
-
                 // standard respons messages
-                $dataDefault = array(
-                    'message'           => 'An error occurred during execution, please try again later.',
+                $responseMessage = array(
                     'error' => array(
-                        'message'       => $exception->getMessage(),
-                        'code'          => $exception->getCode(),
-                        'file'          => $exception->getFile(),
-                        'line'          => $exception->getLine(),
-                        'trace'         => $exception->getTrace(),
-                    )
+                        'message'           => 'An error occurred during execution, please try again later.',
+                        'code' => 500,
+                        'data' => array(),
+                    ),
                 );
 
                 // Mongo Connection Exception?
                 if ($exception instanceof \MongoConnectionException) {
-                    $data = array(
-                        'message' => 'There was an error connecting to the database.'
-                    );
-
-                    $newStatusCode = 504;
+                    $responseMessage['error']['message'] = 'There was an error connecting to the database.';
+                    $responseMessage['error']['code'] = 504;
                 }
 
                 // General Mongo Exception?
                 elseif ($exception instanceof \MongoException) {
-                    $data = array(
-                        'message' => 'There was an error communicating with the database.'
-                    );
-
-                    $newStatusCode = 504;
+                    $responseMessage['error']['message'] = 'There was an error communicating with the database.';
+                    $responseMessage['error']['code'] = 504;
                 }
 
-                // Create output model
-                $data = array_merge($dataDefault, $data);
-                $model = new JsonModel($data);
-
-                // Set output model
-                $e->setResult($model);
-
-                // Response code
-                $response = $e->getResponse();
-                if (!$response) {
-                    $response = new HttpResponse();
-                    $response->setStatusCode($newStatusCode);
-                    $e->setResponse($response);
-                } else {
-                    $statusCode = $response->getStatusCode();
-                    if ($statusCode === 200) {
-                        $response->setStatusCode($newStatusCode);
-                    }
+                // Extract exceptions where available
+                if($exception instanceof \Exception) {
+                    $responseMessage['error']['data']['exceptions'] = $this->extractExceptions( $exception );
                 }
 
                 break;
         }
+
+        // Create output model
+        $model = new JsonModel($responseMessage);
+
+        // Set output model
+        $e->setResult($model);
+
+        // Response code
+        $response = $e->getResponse();
+        if (!$response) {
+            $response = new HttpResponse();
+            $response->setStatusCode($responseMessage['error']['code']);
+            $e->setResponse($response);
+        } else {
+            $currentStatusCode = $response->getStatusCode();
+            if ($currentStatusCode === 200) {
+                $response->setStatusCode($responseMessage['error']['code']);
+            }
+        }
     }
+
+
+    /**
+     * Extract child Exceptions from the one we caught and extrapolate to array
+     * @param       \Exception  $exception
+     * @return      array
+     */
+    protected function extractExceptions( \Exception $exception )
+    {
+        $exceptions = array();
+
+        // Go through all exceptions and extract to array
+        do {
+
+            // Fetch data for the exception
+            $data = array(
+                'message' => $exception->getMessage(),
+                'code' => $exception->getCode(),
+                'file' => $exception->getFile(),
+                'line' => $exception->getLine(),
+            );
+
+            // Save this ref
+            array_unshift($exceptions, $data);
+
+            // next
+        } while ( $exception = $exception->getPrevious() );
+
+
+        return $exceptions;
+    }
+
 }
