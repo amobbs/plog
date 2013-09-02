@@ -31,7 +31,7 @@ angular.module( 'Preslog.auth', [
             $rootScope.global = {};
         }
 
-        var requestedPath = '/';
+        var requestedPath = null;
         $rootScope.global.loggedIn = false;
         userService.getUser().then(function (user) {
             $rootScope.global.user = user;
@@ -41,7 +41,7 @@ angular.module( 'Preslog.auth', [
         // On LoginRequired event; logout the user and go to /login
         $rootScope.$on('event:auth-loginRequired', function () {
             var path = $location.path();
-            if ('/login' != path) {
+            if ('/login' != path && '/' != path) {
                 requestedPath = path;
             }
             $rootScope.global.loggedIn = false;
@@ -53,6 +53,26 @@ angular.module( 'Preslog.auth', [
         $rootScope.$on('event:auth-loginConfirmed', function (event, data) {
             $rootScope.global.user = data;
             $rootScope.global.loggedIn = true;
+
+            // Load path depending on route if none established
+            if (requestedPath === null) {
+                var role = userService.getUser().role;
+
+                switch( role ) {
+                    case 'supervisor':
+                        requestedPath = '/dashboards/to-be-released';
+                        break;
+                    case 'operator':
+                        requestedPath = '/log';
+                        break;
+                    default:
+                        requestedPath = '/dashboard';
+                }
+            }
+
+            console.log(requestedPath);
+
+            // Send to new path
             $location.path(requestedPath);
         });
 
@@ -71,7 +91,7 @@ angular.module( 'Preslog.auth', [
 /**
  * Controller
  */
-    .controller( 'AuthCtrl', function AuthController( $scope, titleService, userService ) {
+    .controller( 'AuthCtrl', function AuthController( $rootScope, $scope, titleService, userService ) {
 
         // Title
         titleService.setTitle( 'Login' );
@@ -86,9 +106,12 @@ angular.module( 'Preslog.auth', [
             userService.login(user).then(function(ret) {
 
                 // OK?
-                if ( ret.success ) {
-                    // do stuff
-                    alert('OK!');
+                if ( ret.login.success ) {
+
+                    console.log('ok!');
+
+                    // Logged in!
+                    $rootScope.$broadcast('event:auth-loginConfirmed', user);
                 }
                 else {
 

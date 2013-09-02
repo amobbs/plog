@@ -90,16 +90,20 @@ class User extends AbstractMapper implements \ZfcUser\Mapper\UserInterface
      */
     public function findByEmail( $email )
     {
-        return parent::find(array(
+        $user = parent::find(array(
             'email'=> $email
         ), array(), null, null, false);
+
+        return $user->current();
     }
 
     public function findByUsername( $username )
     {
-        return parent::find(array(
+        $user = parent::find(array(
             'username'=> $username
         ), array(), null, null, false);
+
+        return $user->current();
     }
 
 }

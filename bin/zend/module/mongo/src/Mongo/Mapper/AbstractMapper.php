@@ -131,25 +131,17 @@ abstract class AbstractMapper extends EventProvider implements ServiceLocatorAwa
 
         $collection = $this->getCollectionPrototype();
 
-        // Under FindAll we want to return a HydratingResultSet.
-        // Under a FindOne, we want just the Entity.
         if ($findAll) {
             $cursor = $collection->find($query, $fields);
-
-            if (is_null($cursor)) return 'nope';
-            $resultSet = new HydratingResultSet($hydrator ?: $this->getHydrator(),
-                $entityPrototype ?: $this->getEntityPrototype());
-
-            $resultSet->initialize($cursor);
         } else {
-
             $cursor = $collection->findOne($query, $fields);
-
-            if (is_null($cursor)) return false;
-            $resultSet = $this->getHydrator()->hydrate($cursor,
-                $entityPrototype ?: $this->getEntityPrototype());
-
+            $cursor = array($cursor);
         }
+
+        // Push to hydrator
+        $resultSet = new HydratingResultSet($hydrator ?: $this->getHydrator(),
+            $entityPrototype ?: $this->getEntityPrototype());
+        $resultSet->initialize($cursor);
 
         // Save the cursor to the object for raw output
         $this->setLastCursor($cursor);
