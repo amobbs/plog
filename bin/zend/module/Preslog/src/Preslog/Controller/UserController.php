@@ -132,8 +132,38 @@ class UserController extends AbstractRestfulController
      */
     public function optionsAction()
     {
+
+        // :TODO:
         return new JsonModel(array(
             'todo' => 'TODO: Admin user options',
+            'user'=>array(
+                'clients' => array(
+                    '1'=>'derp',
+                    '2'=>'derpderp',
+                ),
+                'roles' => array(
+                    'super-admin',
+                    'admin',
+                    'operator',
+                ),
+                'notifications' => array(
+                    'types' => array(
+                        'email', 'sms'
+                    ),
+                    'clients' => array(
+                        'win' => array(
+                            '5'=>'WIN',
+                            '6'=>'WIN 2',
+                            '7'=>'WIN 3',
+                        ),
+                        'abc' => array(
+                            '1'=>'ABC 1',
+                            '2'=>'ABC 2',
+                            '3'=>'ABC 3',
+                        ),
+                    ),
+                ),
+            ),
         ));
     }
 
@@ -201,11 +231,9 @@ class UserController extends AbstractRestfulController
             ));
         }
 
-        // Extract user to array
-        $user = $userService->getMapper()->getHydrator()->extract($user);
-
+        // Output as array
         return new JsonModel(array(
-            'user' => $user
+            'user' => $userService->getMapper()->getHydrator()->extract($user)
         ));
     }
 
@@ -232,6 +260,26 @@ class UserController extends AbstractRestfulController
     public function updateAction()
     {
         $id = $this->params('user_id', 'none specified');
+
+        // Validate: User must be administrator
+        if ( !$this->getServiceLocator()->get('ZfcRbac\Service\Rbac')->isGranted('admin') ) {
+            return $this->errorForbidden();
+        }
+
+        // Validate: ID must be supplied
+        if ( !$id ) {
+            return $this->errorGeneric(array(
+                'message' => 'User ID required'
+            ));
+        }
+
+        // :TODO: FORM VALIDATION CRAP HERE
+        $user = $this->params()->fromJson();
+
+
+        // Using the User Service, find the specific user
+        $userService = $this->getServiceLocator()->get('Preslog\Service\User');
+        $userService->save( $user );
 
         return new JsonModel(array(
             'todo' => 'TODO: Admin update specific user ('.$id.')',

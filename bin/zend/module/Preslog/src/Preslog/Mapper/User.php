@@ -76,9 +76,11 @@ class User extends AbstractMapper implements \ZfcUser\Mapper\UserInterface
         }
 
         // Perform find
-        return parent::find(array(
+        $user = parent::find(array(
             '_id'=> $id
         ), array(), null, null, false);
+
+        return $user->current();
     }
 
     /**
