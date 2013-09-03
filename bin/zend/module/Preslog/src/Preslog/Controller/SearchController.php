@@ -15,6 +15,7 @@
 namespace Preslog\Controller;
 
 use Preslog\Controller\AbstractRestfulController;
+use JqlParser\Parser;
 use Zend\View\Model\JsonModel;
 use Swagger\Annotations as SWG;
 
@@ -34,8 +35,18 @@ class SearchController extends AbstractRestfulController
      */
     public function searchAction()
     {
+
+        //$sql = 'WHERE (a = startOfDay("2013-01-03 12:00" -2d)) AND ((c > d) OR (e in (1, 2, 3)))';
+        $sql = 'SELECT * FROM Log WHERE "Log"."id" =  1';
+
+        $parser = new Parser();
+        $parser->setJqlFromSql($sql);
+
+
         return new JsonModel(array(
-            'todo' => 'TODO - Search using the given query string',
+            'mongo' => $parser->getMongoCriteria(),
+            'sql' => $parser->getSql(),
+            'jql' => $parser->getJql(),
         ));
     }
 

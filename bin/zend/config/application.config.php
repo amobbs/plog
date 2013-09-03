@@ -13,6 +13,7 @@ return array(
         // App
         'Preslog',          // Preslog Application
         'User',             // User management
+        'JqlParser',        // Jql/Sql/Mongo Parser
     ),
 
     // These are various options for the listeners attached to the ModuleManager
