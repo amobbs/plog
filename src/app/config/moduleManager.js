@@ -22,6 +22,7 @@ angular.module('moduleManager', [
     'pages',
     'Preslog.auth',
     'Preslog.users',
-    'Preslog.home'
+    'Preslog.home',
+    'Preslog.log'
 ]);
 

@@ -72,7 +72,9 @@ module.exports = {
             'vendor/ng-table/ng-table.js',
 
             'vendor/lodash/dist/lodash.js',
-            'vendor/restangular/dist/restangular.js'
+            'vendor/restangular/dist/restangular.js',
+
+            'vendor/dynatree/dist/jquery.dynatree-1.2.4.js',
         ],
 
         /**
@@ -87,7 +89,8 @@ module.exports = {
          * CSS files to be explicitly included in the concatenated CSS
          */
         css: [
-            'vendor/select2/select2.css'
+            'vendor/select2/select2.css',
+            'vendor/dynatree/src/skin/ui.dynatree.css',
         ],
 
         /**
@@ -103,7 +106,10 @@ module.exports = {
         files_to_assets: [
             'vendor/select2/select2.png',
             'vendor/select2/select2-spinner.gif',
-            'vendor/select2/select2x2.png'
+            'vendor/select2/select2x2.png',
+
+            'vendor/dynatree/src/skin/*.gif',
+
         ]
 
 
