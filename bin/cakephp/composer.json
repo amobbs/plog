@@ -1,0 +1,30 @@
+{
+	
+    "name": "Preslog",
+	"minimum-stability": "dev",
+    "repositories": [
+        {
+            "type": "pear",
+            "url": "http://pear.cakephp.org"
+        },
+		{
+			"type": "package",
+            "package": {
+                "name": "ichikaway/cakephp-mongodb",
+                "version": "master",
+                "source": {
+                    "url": "https://github.com/ichikaway/cakephp-mongodb.git",
+                    "type": "git",
+                    "reference": "origin/master"
+                }
+            }		
+		}
+    ],
+    "require": {
+        "pear-cakephp/cakephp": ">=2.4.0",
+		"ichikaway/cakephp-mongodb": "master"
+    },
+    "config": {
+        "vendor-dir": "Vendor/"
+    }
+}
