@@ -27,7 +27,7 @@ class AppController extends Controller {
 
     // use Json responses
     public $viewClass = 'Json';
-    public $components = array('Auth', 'RequestHandler');
+    public $components = array('PreslogAuth', 'RequestHandler');
 
 
 
@@ -90,10 +90,6 @@ class AppController extends Controller {
         // Set data for output
         $this->set( 'options', $options );
         $this->set('_serialize', array('options'));
-
-        // Force render and exit
-        $this->render();
-        exit();
     }
 
 
@@ -102,15 +98,15 @@ class AppController extends Controller {
      */
     function beforeFilter()
     {
-        $this->Auth->fields  = array(
+        $this->PreslogAuth->fields  = array(
             'username'=>'username', //The field the user logs in with (eg. username)
             'password' =>'password' //The password field
         );
-        $this->Auth->authorize = 'controller';
-        $this->Auth->autoRedirect = false;
-        $this->Auth->loginAction = array('controller' => 'users', 'action' => 'login');
-        $this->Auth->logoutRedirect = array('controller' => 'users', 'action' => 'login');
-        $this->Auth->loginRedirect = array('controller' => 'users', 'action' => 'welcome');
+        $this->PreslogAuth->authorize = 'controller';
+        $this->PreslogAuth->autoRedirect = false;
+        $this->PreslogAuth->loginAction = array('controller' => 'users', 'action' => 'login');
+        $this->PreslogAuth->logoutRedirect = array('controller' => 'users', 'action' => 'login');
+        $this->PreslogAuth->loginRedirect = array('controller' => 'users', 'action' => 'welcome');
     }
 
 
@@ -121,7 +117,7 @@ class AppController extends Controller {
     function isAuthorised( $permission=null )
     {
         // Get the users role
-        $userRole = $this->Auth->user('role');
+        $userRole = $this->PreslogAuth->user('role');
 
         // Load the ACL configuration
         $config = Configure::read('auth-acl');

@@ -16,7 +16,7 @@ class UsersController extends AppController
     {
         $success = 'nope';
 
-        if($this->Auth->user()) {
+        if($this->PreslogAuth->user()) {
             $this->Session->write('Auth.User.group', $this->User->Group->field('name',array('id' => $this->Auth->user('group_id'))));
 
             $success = 'yup';
@@ -33,7 +33,8 @@ class UsersController extends AppController
      */
     public function testPermissions()
     {
-        $this->isAuthorised('guest');
+        echo "derp";
+        var_dump($this->isAuthorised('guest'));
     }
 
 
@@ -42,7 +43,7 @@ class UsersController extends AppController
      */
     public function logout()
     {
-        $this->Auth->logout();
+        $this->PreslogAuth->logout();
         $this->set('test', 'Logged out');
         $this->set('_serialize', array('test'));
 
