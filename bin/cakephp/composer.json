@@ -22,7 +22,10 @@
     ],
     "require": {
         "pear-cakephp/cakephp": ">=2.4.0",
-		"ichikaway/cakephp-mongodb": "master"
+		"ichikaway/cakephp-mongodb": "master",
+        "zircote/swagger-php": "dev-master",
+        "outeredge/swagger-module": "dev-master",
+        "phpword/phpword": "dev-master"
     },
     "config": {
         "vendor-dir": "Vendor/"
