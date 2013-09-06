@@ -106,6 +106,7 @@ CakeLog::config('error', array(
 
 require 'acl.php';
 
+
 /**
  * Composer autoload workaround
  * http://book.cakephp.org/2.0/en/installation/advanced-installation.html

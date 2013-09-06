@@ -366,3 +366,12 @@ Cache::config('_cake_model_', array(
 	'serialize' => ($engine === 'File'),
 	'duration' => $duration
 ));
+
+/**
+ * Error handling
+ */
+
+App::import('Lib', 'JsonErrorHandler');
+App::import('Lib', 'JsonExceptionRenderer');
+Configure::write('Error.handler', array('JsonErrorHandler','handleError'));
+Configure::write('Exception.renderer', 'JsonExceptionRenderer');

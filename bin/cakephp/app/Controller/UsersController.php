@@ -28,17 +28,6 @@ class UsersController extends AppController
 
 
     /**
-     * test user permissions
-     * delete me
-     */
-    public function testPermissions()
-    {
-        echo "derp";
-        var_dump($this->isAuthorised('guest'));
-    }
-
-
-    /**
      * Logout the current user
      */
     public function logout()

@@ -31,8 +31,8 @@ Configure::write('auth-acl', array(
      * Controller-based permissions
      */
     'routes'=>array(
-        array('controller'=>'users', 'action'=>'*', 'permissions'=>array('guest')),
-        //array('controller'=>'', 'action'=>'', 'permissions'=>array('guest')),
+        array('controller'=>'Users', 'action'=>'*', 'permissions'=>array('guest')),
+
     )
 
 ));

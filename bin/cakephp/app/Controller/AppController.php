@@ -114,7 +114,7 @@ class AppController extends Controller {
      * Check if the user is authorised on this resource
      * We can also call $this->isAuthorised against a specific permission
      */
-    function isAuthorised( $permission=null )
+    function isAuthorized( $permission=null )
     {
         // Get the users role
         $userRole = $this->PreslogAuth->user('role');
@@ -137,7 +137,7 @@ class AppController extends Controller {
         else {
 
             // Scan all rules
-            foreach ($config as $rule)
+            foreach ($config['routes'] as $rule)
             {
                 // Match by controller or wildcard
                 if ($rule['controller'] != $this->name && $rule['controller'] != '*')
