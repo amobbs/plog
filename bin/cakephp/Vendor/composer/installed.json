@@ -1,18 +1,5 @@
 [
     {
-        "name": "ichikaway/cakephp-mongodb",
-        "version": "master",
-        "version_normalized": "9999999-dev",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/ichikaway/cakephp-mongodb.git",
-            "reference": "origin/master"
-        },
-        "time": "2011-11-27 05:31:45",
-        "type": "library",
-        "installation-source": "source"
-    },
-    {
         "name": "pear-pear.cakephp.org/CakePHP",
         "version": "2.4.0",
         "version_normalized": "2.4.0.0",
@@ -596,5 +583,17 @@
             "docx",
             "word"
         ]
+    },
+    {
+        "name": "ichikaway/Mongodb",
+        "version": "master",
+        "version_normalized": "9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/ichikaway/cakephp-mongodb.git",
+            "reference": "origin/cake2.0"
+        },
+        "type": "library",
+        "installation-source": "source"
     }
 ]

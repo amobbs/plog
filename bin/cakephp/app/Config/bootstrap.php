@@ -44,6 +44,11 @@ Cache::config('default', array('engine' => 'File'));
  *
  */
 
+App::build(array(
+    'Plugin'            => array(ROOT.DS.'Vendor'.DS.'ichikaway'.DS),
+));
+
+
 /**
  * Custom Inflector rules, can be set to correctly pluralize or singularize table, model, controller names or whatever other
  * string is passed to the inflection functions
@@ -103,8 +108,14 @@ CakeLog::config('error', array(
 /**
  * ACL
  */
-
 require 'acl.php';
+
+
+/**
+ * MongoDB
+ */
+CakePlugin::load('Mongodb');
+App::load('Mongodb');
 
 
 /**

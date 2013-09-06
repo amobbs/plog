@@ -1,5 +1,7 @@
 <?php
 
+App::import('Component', 'Auth');
+
 /**
  * Preslog customised authentication component
  * - Handles unauthorised attempts with 401 errors

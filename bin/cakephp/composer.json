@@ -10,19 +10,19 @@
 		{
 			"type": "package",
             "package": {
-                "name": "ichikaway/cakephp-mongodb",
+                "name": "ichikaway/Mongodb",
                 "version": "master",
                 "source": {
                     "url": "https://github.com/ichikaway/cakephp-mongodb.git",
                     "type": "git",
-                    "reference": "origin/master"
+                    "reference": "origin/cake2.0"
                 }
             }		
 		}
     ],
     "require": {
         "pear-cakephp/cakephp": ">=2.4.0",
-		"ichikaway/cakephp-mongodb": "master",
+		"ichikaway/Mongodb": "master",
         "zircote/swagger-php": "dev-master",
         "outeredge/swagger-module": "dev-master",
         "phpword/phpword": "dev-master"

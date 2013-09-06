@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "8507919b38ef00dabdc4f0c1c3784565",
+    "hash": "e86d7970ce043db10e1ab3073b3e2412",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -412,15 +412,15 @@
             "time": "2013-03-07 12:15:25"
         },
         {
-            "name": "ichikaway/cakephp-mongodb",
+            "name": "ichikaway/Mongodb",
             "version": "master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ichikaway/cakephp-mongodb.git",
-                "reference": "origin/master"
+                "reference": "origin/cake2.0"
             },
             "type": "library",
-            "time": "2011-11-27 05:31:45"
+            "time": "2013-05-01 03:05:06"
         },
         {
             "name": "outeredge/swagger-module",

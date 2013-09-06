@@ -6,7 +6,7 @@
 class UsersController extends AppController
 {
 
-    public $uses = array('User');
+    public $uses = array('Users');
 
 
     /**
@@ -14,16 +14,41 @@ class UsersController extends AppController
      */
     public function login()
     {
-        $success = 'nope';
+        $users = $this->Users->find('all');
+        print_r($users);
+        die();
 
+        // Establish default response
+        $response = array(
+            'error' => true,
+            'message' => '',
+        );
+
+        // Try to login the user
         if($this->PreslogAuth->user()) {
             $this->Session->write('Auth.User.group', $this->User->Group->field('name',array('id' => $this->Auth->user('group_id'))));
+        }
+        else {
+            $response['message'] = "Invalid username or password";
 
-            $success = 'yup';
         }
 
-        $this->set('test', $success);
-        $this->set('_serialize', array('test'));
+        // Did login succeed?
+        if ($this->PreslogAuth->loggedIn())
+        {
+            // Fetch user data
+            $user = $this->PreslogAuth->User();
+            $permissions = array();
+
+            // Override error response with success response!
+            $response = array(
+                'user' => $user,
+                'permissions' => $permissions
+            );
+        }
+
+        $this->set('login', $response);
+        $this->set('_serialize', array('login'));
     }
 
 
