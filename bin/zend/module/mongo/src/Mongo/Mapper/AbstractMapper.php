@@ -208,7 +208,7 @@ abstract class AbstractMapper extends EventProvider implements ServiceLocatorAwa
         $rowData = $this->getHydrator()->extract($entity);
         if (is_null($rowData['_id'])) unset($rowData['_id']);
 
-        $collection->insert($rowData, $options);
+        $result = $collection->insert($rowData, $options);
 
         return $rowData;
     }
@@ -223,14 +223,10 @@ abstract class AbstractMapper extends EventProvider implements ServiceLocatorAwa
      * @param HydratorInterface $hydrator
      * @return bool
      */
-    public function update($entity, array $where = null, array $options = array(), $collectionName = null, HydratorInterface $hydrator = null)
+    public function update($entity, array $where = null, array $options = array(), HydratorInterface $hydrator = null)
     {
         $this->initialise();
-        $collectionName = $collectionName ?: $this->collection;
         $hydrator = (!$hydrator)?$this->getHydrator():$hydrator;
-
-        $this->getDbAdapter()->selectCollection($collectionName);
-        $collection = $this->getCollectionPrototype();
 
         if (!$where) {
             $id = $entity->get_id();
@@ -242,9 +238,7 @@ abstract class AbstractMapper extends EventProvider implements ServiceLocatorAwa
 
         $rowData = $hydrator->extract($entity);
 
-        $collection->update($where, $rowData, $options);
-
-        return $collection->update($rowData);
+        return $this->getCollectionPrototype()->update($where, $rowData, $options);
     }
 
     /**
@@ -267,8 +261,7 @@ abstract class AbstractMapper extends EventProvider implements ServiceLocatorAwa
             $where = array('_id'=>$id);
         }
 
-        $collection = $this->getCollectionPrototype();
-        $result = $collection->remove($where, $options);
+        $result = $this->getCollectionPrototype()->remove($where, $options);
 
         return $result;
     }
@@ -305,7 +298,7 @@ abstract class AbstractMapper extends EventProvider implements ServiceLocatorAwa
     {
         // Fetch the collection to this object
         if (!$this->collectionPrototype) {
-            $this->collectionPrototype = $this->getDbAdapter()->getDriver()->getConnection()->getResource()->{$this->database}->{$this->collection};
+            $this->collectionPrototype = $this->getDbAdapter()->getCollection( $this->database, $this->collection );
         }
 
         // Return the collection

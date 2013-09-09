@@ -23,7 +23,7 @@ class User extends AbstractMapper implements \ZfcUser\Mapper\UserInterface
     public function insert($entity, $options = array())
     {
         $result = parent::insert($entity, $options);
-        $entity->set_id($result->getGeneratedValue());
+
         return $result;
     }
 
@@ -35,7 +35,7 @@ class User extends AbstractMapper implements \ZfcUser\Mapper\UserInterface
      */
     public function update($entity, array $where = null, array $options = array(), $collectionName = null, HydratorInterface $hydrator = null)
     {
-        return parent::update($entity, array('newsId'=>$entity->getNewsId()));
+        return parent::update($entity, array('_id'=>$entity->get_id()));
     }
 
 
@@ -46,7 +46,7 @@ class User extends AbstractMapper implements \ZfcUser\Mapper\UserInterface
      */
     public function delete($entity, array $where = null, array $options = array())
     {
-        return parent::delete(array('newsId'=>$id));
+        return parent::delete(array('_id'=>$entity->get_id()));
     }
 
 

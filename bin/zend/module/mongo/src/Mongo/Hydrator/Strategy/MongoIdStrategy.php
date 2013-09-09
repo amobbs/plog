@@ -7,6 +7,7 @@
 namespace Mongo\Hydrator\Strategy;
 
 use Zend\Stdlib\Hydrator\Strategy\StrategyInterface;
+use MongoId;
 
 class MongoIdStrategy implements StrategyInterface
 {

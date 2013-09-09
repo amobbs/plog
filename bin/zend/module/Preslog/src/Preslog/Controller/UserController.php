@@ -13,8 +13,11 @@
 namespace Preslog\Controller;
 
 use Preslog\Controller\AbstractRestfulController;
+use Zend\Form\Annotation\Hydrator;
 use Zend\View\Model\JsonModel;
 use Swagger\Annotations as SWG;
+use Preslog\Form\UserForm;
+use Preslog\Form\UserFilter;
 
 class UserController extends AbstractRestfulController
 {
@@ -273,13 +276,34 @@ class UserController extends AbstractRestfulController
             ));
         }
 
-        // :TODO: FORM VALIDATION CRAP HERE
-        $user = $this->params()->fromJson();
+        // Get UserService
+        /** @var \Preslog\Service\User $userService */
+        $userService = $this->getServiceLocator()->get('Preslog\Service\User');
 
+        // Initialise validator
+        $userForm = new UserForm();
+        $userForm->setHydrator( $userService->getMapper()->getHydrator() );
+        $userForm->bind( $userService->getEntity() );
+        $userForm->setInputFilter( new UserFilter() );
+
+        // Validate
+        $userForm->setData( $this->params()->fromJson() );
+        if ( !$userForm->isValid() )
+        {
+            return new JsonModel(array(
+                'user'=>array(
+                    'error'=>true,
+                    'message'=>'There was a problem with your submission',
+                    'data'=>$userForm->getMessages()
+                )
+            ));
+        }
+
+        $user = $userForm->getData();
 
         // Using the User Service, find the specific user
         $userService = $this->getServiceLocator()->get('Preslog\Service\User');
-        $userService->save( $user );
+        $result = $userService->update( $user );
 
         return new JsonModel(array(
             'todo' => 'TODO: Admin update specific user ('.$id.')',

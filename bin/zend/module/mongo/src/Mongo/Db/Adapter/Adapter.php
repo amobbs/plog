@@ -13,6 +13,7 @@ use Zend\Db\ResultSet;
 use Zend\Db\Adapter\AdapterInterface;
 use Zend\Db\Adapter\Profiler\ProfilerAwareInterface;
 use Zend\Code\Exception;
+use MongoCollection;
 
 class Adapter implements AdapterInterface, ProfilerAwareInterface
 {
@@ -87,6 +88,17 @@ class Adapter implements AdapterInterface, ProfilerAwareInterface
         }
 
         return $driver;
+    }
+
+    /**
+     * Fetch the requested collection
+     * @param   string  $database
+     * @param   string  $collection
+     * @return  MongoCollection
+     */
+    public function getCollection($database, $collection)
+    {
+        return $this->getDriver()->getConnection()->getResource()->{$database}->{$collection};
     }
 
     /**

@@ -30,40 +30,42 @@ class User extends EventProvider implements ServiceManagerAwareInterface
      */
     public function findById( $id )
     {
-        return $this->getMapper()->findById($id);
+        return $this->getMapper()->findById( $id );
     }
 
 
     /**
-     * Save this entity
-     * @param $arrayData
+     * Update the given entity
+     * @param   mixed   $entity
      */
-    public function save($arrayData)
+    public function update( $entity )
     {
-        $entity = $this->getMapper()->getEntityPrototype();
-        $this->getMapper()->getHydrator()->hydrate($arrayData, $entity);
+        return $this->getMapper()->update($entity);
+    }
 
-        // Update / Insert
-        if (!is_null($entity->getId())) {
-            $this->getMapper()->update($entity);
-        } else {
-            $this->getMapper()->insert($entity);
-        }
+
+    /**
+     * Insert the given entity
+     * @param $entity
+     */
+    public function insert( $entity )
+    {
+        return $this->getMapper()->insert($entity);
     }
 
 
     /**
      * Delete this item
-     * @param $id
+     * @param   mixed    $id
      */
     public function delete($id)
     {
-        $this->getMapper()->delete($id);
+        return $this->getMapper()->delete($id);
     }
 
     /**
      * Extract the array, giving fields the front UI will use for login
-     * @param   User
+     * @param   UserEntity    $userObject
      * @return  array
      */
     public function extractForLogin( UserEntity $userObject )
@@ -73,6 +75,9 @@ class User extends EventProvider implements ServiceManagerAwareInterface
     }
 
 
+    /*****************************************************************
+     * Object setup methods
+     */
 
     /**
      * Configure
@@ -82,7 +87,6 @@ class User extends EventProvider implements ServiceManagerAwareInterface
     {
         return $this->serviceManager;
     }
-
 
     /**
      * Attach the service manager
@@ -95,7 +99,6 @@ class User extends EventProvider implements ServiceManagerAwareInterface
         return $this;
     }
 
-
     /**
      * Fetch the entity from the mapper.
      * Used when constructing a new entity.
@@ -105,7 +108,6 @@ class User extends EventProvider implements ServiceManagerAwareInterface
     {
         return $this->getMapper()->getEntityPrototype();
     }
-
 
     /**
      * Set the mapper
@@ -117,7 +119,6 @@ class User extends EventProvider implements ServiceManagerAwareInterface
         $this->mapper = $mapper;
         return $this;
     }
-
 
     /**
      * Get the mapper
