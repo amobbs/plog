@@ -29,6 +29,8 @@ class JqlFunction {
      */
     private $_name;
 
+    private $_intervals = array('s', 'm', 'h', 'd', 'w', 'mon', 'y');
+
     /**
      * constructor
      * @param $name
@@ -72,19 +74,25 @@ class JqlFunction {
 
         if ($date == 0) $date = mktime(date('H'), date('i'), date('s'), date('n'), date('j'), date('y'));
 
-
+        $date = $this->_evaluateInterval($value, $date);
         return $date;
     }
 
-    /**
-     * given a string representing an interval, return the number of milliseconds it represents
-     * @param $interval
-     *
-     * @return int
-     */
-    protected function _parseInterval($interval) {
+    protected function _evaluateInterval($string, $date) {
+        $sign = '';
+        if (substr($string, 0, 1) == '-') {
+            $sign = '-';
+            $string = substr($string, 1);
+        }
 
+        $string = preg_replace('%(\d+)s%', $sign . '${1}seconds', $string);
+        $string = preg_replace('%(\d+)min%', $sign . '${1}minutes', $string);
+        $string = preg_replace('%(\d+)h%', $sign . '${1}hours', $string);
+        $string = preg_replace('%(\d+)d%', $sign . '${1}days', $string);
+        $string = preg_replace('%(\d+)w%', $sign . '${1}weeks', $string);
+        $string = preg_replace('%(\d+)mon%', $sign . '${1}months', $string);
+        $string = preg_replace('%(\d+)y%', $sign . '${1}years', $string);
 
-        return 0;
+        return strtotime($string, $date);
     }
 }

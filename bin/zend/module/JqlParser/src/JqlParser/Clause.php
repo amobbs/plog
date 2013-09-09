@@ -5,30 +5,40 @@ use JqlParser\JqlFunction\JqlFunction;
 use JqlParser\JqlOperator\JqlOperator;
 
 class Clause {
-    private $_sql;
+    private $_unparsedClause;
+    private $_originallyJql;
     private $_field;
     private $_operator;
     private $_value;
 
     private static $STRIP_TABLENAME = TRUE;
 
-    public function __construct($sql) {
-        $this->_sql = $sql;
-        $this->_populateFields();
+    public function __construct($unparsedClause, $jql = FALSE) {
+        $this->_unparsedClause = trim($unparsedClause);
+        $this->_originallyJql = $jql;
+        $this->_populateFields(false);
     }
 
     public function getJql() {
-        return $this->_field . ' ' . $this->_operator->getJqlSymbol() . ' ' . $this->_operator->formatValueForSql($this->_value);
+        return $this->_field . ' ' . $this->_operator->getJqlSymbol() . ' ' . $this->_value;
     }
 
     public function getSql() {
-        return $this->_field . ' ' . $this->_operator->getSqlSymbol() . ' ' . $this->_operator->formatValueForSql($this->_value);
+        return $this->_field . ' ' . $this->_operator->getSqlSymbol() . ' ?';
+    }
+
+    public function getValue() {
+        return $this->_operator->formatValueForSql($this->_value);
+    }
+
+    public function getFunctionEvaluated() {
+        return $this->_executeFunctionInValue($this->_value);
     }
 
     public function getMongoCriteria() {
         $doc = "$this->_field  : ";
 
-        $value = $this->_operator->formatValueForJql($this->_value);
+        $value = $this->getFunctionEvaluated($this->_operator->formatValueForJql($this->_value));
         if ($this->_operator->getMongoInline()) {
             $doc .= " $value";
         } elseif ($this->_operator instanceof JqlOperator) {
@@ -39,16 +49,38 @@ class Clause {
     }
 
     private function _populateFields() {
-        $parts = explode(' ', $this->_sql);
-        $this->_field = $this->_stripTableNameFromSql($parts[0]);
-        $this->_operator = $this->_findOperator($parts[1]);
-        $this->_value = trim(substr($this->_sql, strpos($this->_sql, $this->_operator->getSqlSymbol()) + strlen( $this->_operator->getSqlSymbol())));
-        $this->_value = $this->_executeFunctionInValue($this->_value);
+        $parts = $this->_explodeClause($this->_originallyJql);
+
+        $this->_field = $this->_stripTableName($parts['field']);
+        $this->_operator = $this->_findOperator($parts['operator']);
+        $this->_value = $parts['value'];
     }
 
-    private function _findOperator($operatorSymbol, $jqlSymbol = TRUE) {
+    private function _explodeClause() {
+        $parts = array();
+
+        foreach(JqlOperator::listOperators() as $operator) {
+            $operatorPos = false;
+            $operatorSymbol = $operator->getJqlSymbol();
+            if (!$this->_originallyJql) {
+                $operatorSymbol = $operator->getSqlSymbol();
+            }
+
+            $operatorPos = strpos($this->_unparsedClause, $operatorSymbol);
+            if ($operatorPos !== false ) {
+                $parts['field'] = trim(substr($this->_unparsedClause, 0, $operatorPos));
+                $parts['operator'] = trim(substr($this->_unparsedClause, $operatorPos, strlen($operatorSymbol)));
+                $parts['value'] = trim(substr($this->_unparsedClause, $operatorPos + strlen($operatorSymbol)));
+
+                return $parts;
+            }
+        }
+        return $parts;
+    }
+
+    private function _findOperator($operatorSymbol) {
         foreach (JqlOperator::listOperators() as $operator) {
-            if ($jqlSymbol) {
+            if ($this->_originallyJql) {
                 if (strtoupper($operatorSymbol) == $operator->getJqlSymbol())
                     return $operator;
             } else {
@@ -78,7 +110,7 @@ class Clause {
      * @return mixed
      */
     private function _executeFunctionInValue($value) {
-        if (substr_count($value, '(') == 0) return $value;
+        if (substr_count($value, '[') == 0) return $value;
 
         $parts = explode('(', $value);
         $functionName = trim($parts[0]);
@@ -92,7 +124,7 @@ class Clause {
         return $function->execute($args);
     }
 
-    private function _stripTableNameFromSql($value) {
+    private function _stripTableName($value) {
         if (!Clause::$STRIP_TABLENAME) {
             return $value;
         }
