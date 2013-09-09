@@ -8,28 +8,22 @@ use JqlParser\JqlKeyword\JqlKeyword;
 class Parser {
 
     /**
-     *
+     * jql version of expression
      * @var string
      */
     private $_jql = '';
 
+    /**
+     * sql version of expression
+     * @var string
+     */
     private $_sql = '';
 
+    /**
+     * generic version of expression
+     * @var array
+     */
     private $_expression = array();
-
-    private function _findKeyword($keywordSymbol, $jqlSymbol = TRUE) {
-        foreach (JqlKeyword::listKeywords() as $keyword) {
-            if ($jqlSymbol) {
-                if (strtoupper($keywordSymbol) == $keyword->getJqlSymbol())
-                    return $keyword;
-            } else {
-                if (strtoupper($keywordSymbol) == $keyword->getSqlSymbol())
-                    return $keyword;
-            }
-        }
-
-        return NULL;
-    }
 
     public function getJql() {
         return $this->_jql;
@@ -39,21 +33,50 @@ class Parser {
         return $this->_sql;
     }
 
-    public function setJqlFromSql($sql) {
-        $this->_sql = $sql;
-        $where = $this->_getWhereFromSql($sql, "");
+    public function getArguments() {
+        $args = array();
+        $this->_getArgumentsFromArray($this->_expression, $args);
+        return $args;
+    }
 
-        $this->_expression = $this->_seperateIntoGroups($where);
+    private function _getArgumentsFromArray($clauses, &$args) {
+        if(is_array($clauses)) {
+            foreach($clauses as $clause) {
+                if($clause instanceof Clause) {
+                    $args[] = $clause->getValue();
+                } else if (is_array($clause)) {
+                    $this->_getArgumentsFromArray($clause, $args);
+                }
+            }
+        } else if($clauses instanceof Clause) {
+            $args[] = $clauses->getValue();
+        }
+        return $args;
+    }
 
-        $this->_jql = $this->_experssionToJql($this->_expression);
+    public function setJqlFromSql($sql, $args) {
+        $this->_sql = strtoupper($sql);
+        $where = $this->_getWhereFromSql($this->_sql, $args);
+
+        $this->_expression = $this->_seperateIntoGroups($where, false);
+
+        if (!$this->_expression) {
+            $this->_jql = "";
+        } else {
+            $this->_jql = $this->_expressionToJql($this->_expression);
+        }
     }
 
     public function setSqlFromJql($jql) {
         $this->_jql = $jql;
 
-        $this->_expression = $this->_seperateIntoGroups($jql);
+        $this->_expression = $this->_seperateIntoGroups($jql, true);
 
-        $this->_sql = $this->_expressionToSql($this->_expression);
+        if (!$this->_expression) {
+            $this->_sql = "";
+        } else {
+            $this->_sql = 'SELECT * FROM "LOGS" WHERE ' . $this->_expressionToSql($this->_expression);
+        }
     }
 
     public function getMongoCriteria() {
@@ -93,6 +116,11 @@ class Parser {
 
     private function _getWhereFromSql($sql, $args)
     {
+        //there is no where clause so just return nothing.
+        if (!strpos($sql, 'WHERE')) {
+            return '';
+        }
+
         // Don't need anything before the WHERE clause
         $ret = preg_replace('%(^.*?WHERE\s|"x\d"\.)%sm', '', $sql);
 
@@ -115,25 +143,46 @@ class Parser {
         return $ret;
     }
 
+
+
+
+
     /**
-     * given an SQL string. parse it and make it in to an array similar to the way cakePHP conditions for,
+     * given a string. parse it and make it in to an array similar to the way cakePHP conditions work
      * @param $string
+     * @param $jql
      *
-     * @return array
+     * @return array|bool|Clause
      */
-    private function _seperateIntoGroups($string) {
+    private function _seperateIntoGroups($string, $jql) {
+        if (empty($string)) {
+            return FALSE;
+        }
+
+        if (!$this->_groupsOnlyInString($string)) { //no grouping
+            return $this->_seperateClauses($string, $jql);
+        }
+
+
         $groups = array();
 
-        $open = strpos($string, '(');
-        if ($open === FALSE) {
-            return new Clause($string);
-        } else { //add one to remove the first ( from the string
-            $open++;
+        //find any groups
+        $openPos = FALSE;
+        $lastChar = '';
+        $i = 0;
+        //a group starts with a ( which is preceded with a space or another ( anything else and it is a function
+        while (!$openPos) {
+            $thisChar = substr($string, $i, 1);
+            if($thisChar == '(' && ($lastChar == '(' || $lastChar == ' ')) {
+                $openPos = $i + 1;
+            }
+            $lastChar = $thisChar;
+            $i++;
         }
 
         $close = -1;
         $groupCount = 0;
-        for($i = $open; $i < strlen($string); $i++) {
+        for($i = $openPos; $i < strlen($string); $i++) {
             $char = substr($string, $i, 1);
             if($char == '(') {
                 $groupCount++;
@@ -141,86 +190,163 @@ class Parser {
                 if ($groupCount > 0) {
                     $groupCount--;
                 } else {
-                    $close = $i - $open;
+                    $close = $i - $openPos;
                     break;
                 }
             }
         }
 
+        //find any groups in string
         if ($close > -1) {
-            $groupString = strtoupper(substr($string, $open, $close));
+            $groupString = strtoupper(substr($string, $openPos, $close));
         } else {
-            $groupString = strtoupper(substr($string, $open));
+            $groupString = strtoupper(substr($string, $openPos));
         }
 
-        //there is more grouping then just the IN keyword
-        if ($this->_groupsOnlyInString($groupString)) {
-            $subGroups = $this->_seperateIntoGroups($groupString);
-            if (sizeof($subGroups) > 1) {
-                $groups[] = array($this->_findFirstKeyword($groupString, $subGroups) => $subGroups);
-            } else {
-                $groups[] = $subGroups;
+        //any clauses at beginning of string
+        $startOfString = '';
+        $firstKeyword = 'NO KEYWORD';
+        $startClause = false;
+        if ($openPos > 1) {
+            $startOfString = substr($string, 0, $openPos - 1);
+            $firstKeyword = $this->_findFirstKeyword($string, $jql);
+            if (!$firstKeyword) { //just a single clause eg: a = 1
+                //throw exception there should be a clause before the first group at this point
+            } else { //s  eg: a = 1 AND (b = 2) assumption there is only on
+                $startClause = $this->_seperateClauses(substr($startOfString, 0, strpos($startOfString, $firstKeyword)), $jql);
             }
-        }  else {
-            $groups[] =  new Clause($groupString);
         }
 
-        $groupStringLen = strlen($groupString) + 2; //+2 to include the ( and )
+        //there are groups inside this group
+        $clauses = false;
+        if ($this->_groupsOnlyInString($groupString)) {
+            $subGroups = $this->_seperateIntoGroups($groupString, $jql);
+            if (sizeof($subGroups) > 1) {
+                $clauses[] = array($this->_findFirstKeyword($groupString, $jql) => $subGroups);
+            } else {
+                $clauses[array_keys($subGroups)[0]] = array_values($subGroups)[0];
+            }
+        }  else if ($this->_findFirstKeyword($groupString, $jql)) {
+            $clauses = $this->_seperateClauses($groupString, $jql);
+        } else {
+            $clauses = new Clause($groupString, $jql);
+        }
+
+        if($clauses == false) {
+            //wtf how did that happen?
+        }
+
+        //add group to start of string
+        if($startClause) {
+            if (is_array($clauses)) {
+                $groups[$firstKeyword] = array($startClause, array_keys($clauses)[0] => array_values($clauses)[0]);
+            } else {
+                $groups[$firstKeyword] = array($startClause, $clauses);
+            }
+        }
+
+        //get anything after any groups
+        $groupStringLen = strlen($startOfString) + strlen($groupString) + 2; //+2 to include the ( and )
         $restOfString = substr($string, $groupStringLen);
 
-        if ($this->_groupsOnlyInString($restOfString)) {
-            $subGroups = $this->_seperateIntoGroups($restOfString);
-            if (sizeof($subGroups) > 1) {
-                $groups[] = array($this->_findFirstKeyword($groupString, $subGroups) => $subGroups);
+        if (!empty($restOfString)) {
+            $joiningKeyword = $this->_findFirstKeyword($restOfString, $jql);
+            $clausesInRestOfString = substr($restOfString, strpos($joiningKeyword, $restOfString) + strlen($joiningKeyword));
+            $clauses = $this->_seperateIntoGroups($clausesInRestOfString, $jql);
+            if (isset($groups[$joiningKeyword])) {
+                if (is_array($groups[$joiningKeyword])) {
+                    $groups[$joiningKeyword][] = $clauses;
+                } else {
+                    $currentValue = $groups[$joiningKeyword];
+                    $groups[$joiningKeyword] = array($currentValue, $clauses);
+                }
             } else {
-                $groups[] =  $subGroups;
+                $groups[$joiningKeyword] = $clauses;
             }
         }
 
         if (sizeof($groups) == 2) {
-            if (is_array($groups[0]) && is_array($groups[1])) {
-                return new Clause($groups);
+            if (!(is_array(array_values($clauses)[0]) && is_array(array_values($groups)[1]))) {
+                return new Clause($groups, $jql);
             } else {
-                return array($this->_findFirstKeyword($string, $groups) => $groups);
+                return array($this->_findFirstKeyword($string, $jql) => $groups);
             }
         } else {
-            return $groups[0];
+            return $groups;
         }
+    }
+
+    private function _seperateClauses($string, $jql) {
+        if (empty($string)) {
+            return FALSE;
+        }
+
+        if (!$this->_findFirstKeyword($string, $jql)) { //there are no keywords just one clause
+            return new Clause($string);
+        }
+
+        //there are some keywords, seperate them
+        $workingString = $string;
+        $keyword = $this->_findFirstKeyword($workingString, $jql);
+        $keywordPos = strpos($workingString, $keyword);
+        $clauseString = substr($workingString, 0, $keywordPos);
+        if (empty($clauseString)) {
+            return new Clause(substr($workingString,$keywordPos + strlen($keyword)));
+        }
+
+        $clause = new Clause($clauseString);
+        $workingString = substr($workingString,$keywordPos + strlen($keyword));
+        $subClauses = $this->_seperateClauses($workingString, $jql);
+        $clauses = array($keyword => array($clause, $subClauses));
+
+        return $clauses;
     }
 
     /**
      * given a string find the keyword that is closest to the begining of the string.
-     * @param $string
      *
-     * @return mixed
+     * @param $string
+     * @param $jql
+     *
+     * @return bool
      */
-    private function _findFirstKeyword($string) {
+    private function _findFirstKeyword($string, $jql) {
         $closestKeywordPos = strlen($string);
-        $closestKeyword = null;
+        $closestKeyword = false;
         foreach(JqlKeyword::listKeywords() as $keyword) {
-            $keywordPos = strpos($string, $keyword->getJqlSymbol());
+            $keywordSymbol = $keyword->getJqlSymbol();
+            if (!$jql) {
+                $keywordSymbol = $keyword->getSqlSymbol();
+            }
+            $keywordPos = strpos($string, $keywordSymbol);
             if ($keywordPos !== false && $keywordPos < $closestKeywordPos) {
-                $closestKeywordPos = strpos($string, $keyword->getJqlSymbol());
-                $closestKeyword = $keyword->getJqlSymbol();
+                $closestKeywordPos = strpos($string, $keywordSymbol);
+                $closestKeyword = $keywordSymbol;
             }
         }
         return $closestKeyword;
     }
 
-    private function _experssionToJql($expression) {
+    private function _expressionToJql($expression) {
         $jql = '';
         if ($expression instanceof Clause) {
             return $expression->getJql();
         }
 
         foreach($expression as $operator => $clauses) {
-            if (is_array($clauses) && sizeof($clauses) == 2) {
+            if (is_array($clauses) && sizeof($clauses) == 1){
+                $jql .= $this->_expressionToSql($clauses);
+            } else if (is_array($clauses)) {
                 $jql .= '(';
-                $jql .= (is_array($clauses[0]) ? $this->_experssionToJql($clauses[0]) : $clauses[0]->getJql());
-                $jql .= ' ' . $operator . ' ';
-                $jql .= (is_array($clauses[1]) ? $this->_experssionToJql($clauses[1]) : $clauses[1]->getJql());
+
+                foreach($clauses as $key => $value) {
+                    $jql .= (is_array($value) ? $this->_expressionToJql(array($key =>$value)) : $value->getJql());
+                    $jql .= $operator;
+                }
+                $jql = substr($jql, 0, strlen($jql) - strlen($operator));
+
                 $jql .= ')';
-            } else {
+            } else if ($clauses instanceof Clause) {
                 $jql .= $clauses->getJql();
             }
         }
@@ -228,20 +354,26 @@ class Parser {
     }
 
     private function _expressionToSql($expression) {
-        $sql = 'SELECT * FROM "Logs" WHERE ';
+        $sql = '';
         if ($expression instanceof Clause) {
             return $sql . $expression->getSql();
         }
 
         foreach($expression as $operator => $clauses) {
-            if (is_array($clauses) && sizeof($clauses) == 2) {
+            if (is_array($clauses) && sizeof($clauses) == 1){
+                $sql .= $this->_expressionToSql($clauses);
+            } else if (is_array($clauses)) {
                 $sql .= '(';
-                $sql .= (is_array($clauses[0]) ? $this->_experssionToSql($clauses[0]) : $clauses[0]->getSql());
-                $sql .= ' ' . $operator . ' ';
-                $sql .= (is_array($clauses[1]) ? $this->_experssionToSql($clauses[1]) : $clauses[1]->getSql());
+
+                foreach($clauses as $key => $value) {
+                    $sql .= (is_array($value) ? $this->_expressionToSql(array($key =>$value)) : $value->getSql());
+                    $sql .= $operator;
+                }
+                $sql = substr($sql, 0, strlen($sql) - strlen($operator));
+
                 $sql .= ')';
-            } else {
-                $sql .= $clauses->getJql();
+            } else if ($clauses instanceof Clause) {
+                    $sql .= $clauses->getSql();
             }
         }
 
@@ -274,5 +406,19 @@ class Parser {
             $count += substr_count($string, $function->getName() . '(');
         }
         return $count;
+    }
+
+    private function _findKeyword($keywordSymbol, $jqlSymbol = TRUE) {
+        foreach (JqlKeyword::listKeywords() as $keyword) {
+            if ($jqlSymbol) {
+                if (strtoupper($keywordSymbol) == $keyword->getJqlSymbol())
+                    return $keyword;
+            } else {
+                if (strtoupper($keywordSymbol) == $keyword->getSqlSymbol())
+                    return $keyword;
+            }
+        }
+
+        return NULL;
     }
 }

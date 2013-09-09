@@ -35,21 +35,10 @@ class SearchController extends AbstractRestfulController
      */
     public function searchAction()
     {
-
-        //$sql = 'WHERE (a = startOfDay("2013-01-03 12:00" -2d)) AND ((c > d) OR (e in (1, 2, 3)))';
-        $sql = 'SELECT * FROM Log WHERE "Log"."id" =  1';
-
-        $parser = new Parser();
-        $parser->setJqlFromSql($sql);
-
-
         return new JsonModel(array(
-            'mongo' => $parser->getMongoCriteria(),
-            'sql' => $parser->getSql(),
-            'jql' => $parser->getJql(),
+            'todo' => 'TODO - Search using the given query string',
         ));
     }
-
 
     /**
      * Search using the given query string and export as an XLS
@@ -81,8 +70,15 @@ class SearchController extends AbstractRestfulController
      */
     public function searchWizardParamsAction()
     {
+        $jql = strtoupper($this->params()->fromQuery('jql'));
+        $args = json_decode($this->params()->fromQuery('args'));
+
+        $parser = new Parser();
+        $parser->setSqlFromJql($jql, $args);
+
         return new JsonModel(array(
-            'todo' => 'TODO - Search Query Builder Wizard params.',
+            'sql' => $parser->getSql(),
+            'args' => $parser->getArguments(),
         ));
     }
 
@@ -99,8 +95,19 @@ class SearchController extends AbstractRestfulController
      */
     public function searchWizardTranslateAction()
     {
+        //$sql = 'WHERE (a = startOfDay("2013-01-03 12:00" -2d)) AND ((c > d) OR (e in (1, 2, 3)))';
+        //$sql = 'SELECT * FROM Log WHERE "Log"."id" =  1';
+
+        $sql = strtoupper($this->params()->fromQuery('sql'));
+        $args = json_decode($this->params()->fromQuery('args'));
+
+        $parser = new Parser();
+        $parser->setJqlFromSql($sql, $args);
+
         return new JsonModel(array(
-            'todo' => 'TODO - Translate between JQL and SQL.',
+            'jql' => $parser->getJql(),
+            'args' => $parser->getArguments(),
         ));
+
     }
 }

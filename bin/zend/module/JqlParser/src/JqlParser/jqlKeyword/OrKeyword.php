@@ -13,6 +13,6 @@ namespace JqlParser\JqlKeyword;
 class OrKeyword extends JqlKeyword{
 
     public function __construct() {
-        parent::__construct('OR', 'OR', '$or');
+        parent::__construct(' OR ', ' OR ', '$or');
     }
 }
