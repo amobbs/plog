@@ -44,6 +44,9 @@ Cache::config('default', array('engine' => 'File'));
  *
  */
 
+/**
+ * Include MongoDB Datasource
+ */
 App::build(array(
     'Plugin'            => array(ROOT.DS.'Vendor'.DS.'ichikaway'.DS),
 ));
@@ -106,10 +109,14 @@ CakeLog::config('error', array(
 
 
 /**
- * ACL
+ * Custom Configs
  */
-require 'acl.php';
 
+// ACL
+require_once('acl.php');
+
+// Swagger-Php
+require_once('swagger.php');
 
 /**
  * MongoDB

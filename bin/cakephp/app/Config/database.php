@@ -15,8 +15,9 @@ class DATABASE_CONFIG {
         'password' => 'root',
 
         'replicaset' => array(
-            'host' => 'mongodb://root:root@localhost:27021',
+            'host' => 'mongodb://root:root@localhost:27017',
           'options' => array('replicaSet' => '4mation')
         ),
+
     );
 }

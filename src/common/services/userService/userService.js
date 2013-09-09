@@ -58,7 +58,7 @@ angular.module('userService', ['restangular'])
                 var deferred = $q.defer();
 
                 // default user object
-                user = (user === undefined ? {} : user);
+                user = (user === undefined ? {} : {'User':user});
 
                 // Attempt to login
                 Restangular.all('users/login').post( user ).then(function (ret) {

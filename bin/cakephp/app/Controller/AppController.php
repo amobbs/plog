@@ -15,19 +15,26 @@
 App::uses('Controller', 'Controller');
 
 /**
- * Application Controller
+ * CakePHP Component & Model Code Completion
+ * @author junichi11
  *
- * Add your application-wide methods in the class below, your controllers
- * will inherit them.
- *
- * @package		app.Controller
- * @link		http://book.cakephp.org/2.0/en/controllers.html#the-app-controller
+ * ==============================================
+ * CakePHP Core Components
+ * ==============================================
+ * @property PreslogAuthComponent $PreslogAuth
+ * @property AclComponent $Acl
+ * @property CookieComponent $Cookie
+ * @property EmailComponent $Email
+ * @property RequestHandlerComponent $RequestHandler
+ * @property SecurityComponent $Security
+ * @property SessionComponent $Session
  */
+
 class AppController extends Controller {
 
     // use Json responses
     public $viewClass = 'Json';
-    public $components = array('PreslogAuth', 'RequestHandler');
+    public $components = array('PreslogAuth', 'RequestHandler', 'Session');
 
 
 
@@ -90,23 +97,37 @@ class AppController extends Controller {
         // Set data for output
         $this->set( 'options', $options );
         $this->set('_serialize', array('options'));
+
+        echo $this->render();
+        exit();
     }
 
 
     /**
      * Configure authentication
      */
-    function beforeFilter()
+    public function beforeFilter()
     {
-        $this->PreslogAuth->fields  = array(
-            'username'=>'username', //The field the user logs in with (eg. username)
-            'password' =>'password' //The password field
-        );
+        // Configure auth
         $this->PreslogAuth->authorize = 'controller';
         $this->PreslogAuth->autoRedirect = false;
         $this->PreslogAuth->loginAction = array('controller' => 'users', 'action' => 'login');
         $this->PreslogAuth->logoutRedirect = array('controller' => 'users', 'action' => 'login');
         $this->PreslogAuth->loginRedirect = array('controller' => 'users', 'action' => 'welcome');
+
+        // Use Blowfish (bcrypt)
+        // Set Form fields are email and password
+        $this->PreslogAuth->authenticate = array(
+            'Form'=>array(
+                'passwordHasher'=>'blowfish',
+                'fields'=>array(
+                    'username'=>'email',
+                    'password'=>'password',
+                ),
+            ),
+        );
+
+        parent::beforeFilter();
     }
 
 
@@ -124,9 +145,6 @@ class AppController extends Controller {
 
         // If no role, set as anonymous
         $userRole = ($userRole ? $userRole : $config['anonymousRole']);
-
-        // super-user can do everything
-        if($userRole === $config['superUser']) return true;
 
         // If we're not checking a SPECIFIC permission on the user, check the controller/action path
         if ( $permission ) {
@@ -147,7 +165,8 @@ class AppController extends Controller {
                 if ($rule['action'] != $this->action && $rule['action'] != '*')
                     continue;
 
-                if ( in_array($userRole, $rule['permissions']) )
+                // Match permission required to the role's available permissions
+                if ( sizeof( array_intersect($rule['permissions'], $config['permissions'][$userRole]) ) )
                     return true;
             }
         }

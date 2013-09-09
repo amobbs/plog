@@ -27,18 +27,18 @@
                             </div>
                         </div>
 
-                        <div class="control-group" ng-class="{error:errors.identity}">
+                        <div class="control-group" ng-class="{error:errors.email}">
                             <label class="control-label" for="inputEmail">Email Address</label>
                             <div class="controls">
-                                <input type="email" id="inputEmail" placeholder="Email Address" ng-model="user.identity" required>
-                                <br/><span class="help-inline">{{errors.identity}}&nbsp;</span>
+                                <input type="email" id="inputEmail" placeholder="Email Address" ng-model="user.email" required>
+                                <br/><span class="help-inline">{{errors.email}}&nbsp;</span>
                             </div>
                         </div>
-                        <div class="control-group" ng-class="{error:errors.credential}">
+                        <div class="control-group" ng-class="{error:errors.password}">
                             <label class="control-label" for="inputPassword">Password</label>
                             <div class="controls">
-                                <input type="password" id="inputPassword" placeholder="Password" ng-model="user.credential" required>
-                                <br/><span class="help-inline">{{errors.credential}}&nbsp;</span>
+                                <input type="password" id="inputPassword" placeholder="Password" ng-model="user.password" required>
+                                <br/><span class="help-inline">{{errors.password}}&nbsp;</span>
                             </div>
                         </div>
                         <div class="control-group">

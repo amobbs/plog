@@ -124,4 +124,31 @@ class PreslogAuthComponent extends AuthComponent
         return $this->_unauthorized($controller);
     }
 
+
+    /**
+     * Fetch a users full list of permissions via their role
+     * @params      array       User Data
+     * @returns     array       Permissions
+     */
+    public function getUserPermissions( $user=null )
+    {
+        $config = Configure::read('auth-acl');
+
+        // Use the current user if none supplied
+        if ( empty($user) ) {
+            $role = $this->user('role');
+        }
+        else {
+            $role = $user['role'];
+        }
+
+        // No role? Must be a guest. Grab the anonymous permissions
+        if (empty($role)) {
+            $role =  $config['anonymousRole'];
+        }
+
+        // Send back
+        return $config['permissions'][ $role ];
+    }
+
 }

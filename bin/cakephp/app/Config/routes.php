@@ -13,27 +13,41 @@
  * @since         CakePHP(tm) v 0.2.9
  */
 
-Router::mapResources('users');
-
-Router::resourceMap(array(
-    array('action' => 'index',  'method' => 'GET',      'id' => false),
-    array('action' => 'view',   'method' => 'GET',      'id' => true),
-    array('action' => 'add',    'method' => 'POST',     'id' => false),
-    array('action' => 'edit',   'method' => 'PUT',      'id' => true),
-    array('action' => 'delete', 'method' => 'DELETE',   'id' => true),
-    array('action' => 'update', 'method' => 'POST',     'id' => true)
-));
 
 /**
- * Here, we are connecting '/' (base path) to controller called 'Pages',
- * its action called 'display', and we pass a param to select the view file
- * to use (in this case, /app/View/Pages/home.ctp)...
+ * Load all routing files
  */
-	Router::connect('/', array('controller' => 'pages', 'action' => 'display', 'home'));
+require_once('routes.dashboards.php');
+require_once('routes.logs.php');
+require_once('routes.users.php');
+require_once('routes.clients.php');
+require_once('routes.search.php');
+
+
 /**
- * ...and connect the rest of 'Pages' controller's URLs.
+ * Swagger-UI Document Interface
  */
-	Router::connect('/pages/*', array('controller' => 'pages', 'action' => 'display'));
+Router::connect(
+    '/',
+    array('controller' => 'Docs', 'action' => 'index')
+);
+
+
+/**
+ * Swagger Document Generator
+ */
+Router::connect(
+    '/docs',
+    array('controller' => 'Docs', 'action' => 'generateDocumentation')
+);
+
+Router::connect(
+    '/docs/:resource',
+    array('controller' => 'Docs', 'action' => 'generateDocumentation'),
+    array('pass'=>array('resource'))
+);
+
+
 
 /**
  * Load all plugin routes. See the CakePlugin documentation on
@@ -45,4 +59,6 @@ Router::resourceMap(array(
  * Load the CakePHP default routes. Only remove this if you do not want to use
  * the built-in default routes.
  */
-	require CAKE . 'Config' . DS . 'routes.php';
+
+// Disabled because we explicitly define our routes. We don't want Controller/Action URLs here.
+//require CAKE . 'Config' . DS . 'routes.php';

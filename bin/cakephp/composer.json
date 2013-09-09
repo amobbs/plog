@@ -13,9 +13,9 @@
                 "name": "ichikaway/Mongodb",
                 "version": "master",
                 "source": {
-                    "url": "https://github.com/ichikaway/cakephp-mongodb.git",
+                    "url": "https://github.com/sabohoney/cakephp-mongodb",
                     "type": "git",
-                    "reference": "origin/cake2.0"
+                    "reference": "mongoclient"
                 }
             }		
 		}

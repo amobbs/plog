@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "e86d7970ce043db10e1ab3073b3e2412",
+    "hash": "135904c2a8b9576ec1f77ceda0c1b510",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -218,12 +218,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/common.git",
-                "reference": "b4c7860e0c5a8d13598ca34d156533300b0dacf0"
+                "reference": "67c8d7ea5dfe93b758d21c9bcb1e7a831b3a9e54"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/common/zipball/b4c7860e0c5a8d13598ca34d156533300b0dacf0",
-                "reference": "b4c7860e0c5a8d13598ca34d156533300b0dacf0",
+                "url": "https://api.github.com/repos/doctrine/common/zipball/67c8d7ea5dfe93b758d21c9bcb1e7a831b3a9e54",
+                "reference": "67c8d7ea5dfe93b758d21c9bcb1e7a831b3a9e54",
                 "shasum": ""
             },
             "require": {
@@ -237,7 +237,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.4.x-dev"
+                    "dev-master": "2.5.x-dev"
                 }
             },
             "autoload": {
@@ -269,7 +269,7 @@
                     "email": "kontakt@beberlei.de"
                 },
                 {
-                    "name": "Johannes M. Schmitt",
+                    "name": "Johannes Schmitt",
                     "email": "schmittjoh@gmail.com",
                     "homepage": "http://jmsyst.com",
                     "role": "Developer of wrapped JMSSerializerBundle"
@@ -284,7 +284,7 @@
                 "persistence",
                 "spl"
             ],
-            "time": "2013-08-20 18:10:31"
+            "time": "2013-09-07 10:21:05"
         },
         {
             "name": "doctrine/inflector",
@@ -416,11 +416,10 @@
             "version": "master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/ichikaway/cakephp-mongodb.git",
-                "reference": "origin/cake2.0"
+                "url": "https://github.com/sabohoney/cakephp-mongodb",
+                "reference": "mongoclient"
             },
-            "type": "library",
-            "time": "2013-05-01 03:05:06"
+            "type": "library"
         },
         {
             "name": "outeredge/swagger-module",
