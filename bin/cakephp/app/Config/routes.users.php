@@ -8,6 +8,16 @@ use Swagger\Annotations as SWG;
 
 
 /**
+ * TODO: DELETE ME
+ * Debug task route
+ */
+
+Router::connect(
+    '/users/task',
+    array('controller' => 'Users', 'action' => 'debugTask', '[method]' => 'GET')
+);
+
+/**
  * @SWG\Resource(
  *      resourcePath="/users",
  *      @SWG\Api(

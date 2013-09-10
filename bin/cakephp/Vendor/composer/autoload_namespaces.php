@@ -6,7 +6,6 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-    'SwaggerModule' => array($vendorDir . '/outeredge/swagger-module/src'),
     'Swagger' => array($vendorDir . '/zircote/swagger-php/library'),
     'PHPWord' => array($vendorDir . '/phpword/phpword/Library'),
     'Doctrine\\Common\\Lexer\\' => array($vendorDir . '/doctrine/lexer/lib'),

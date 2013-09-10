@@ -24,7 +24,6 @@
         "pear-cakephp/cakephp": ">=2.4.0",
 		"ichikaway/Mongodb": "master",
         "zircote/swagger-php": "dev-master",
-        "outeredge/swagger-module": "dev-master",
         "phpword/phpword": "dev-master"
     },
     "config": {

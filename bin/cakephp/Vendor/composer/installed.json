@@ -428,49 +428,6 @@
         ]
     },
     {
-        "name": "outeredge/swagger-module",
-        "version": "dev-master",
-        "version_normalized": "9999999-dev",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/outeredge/SwaggerModule.git",
-            "reference": "b42029bfed56852904f299339d20b8a88b704c33"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/outeredge/SwaggerModule/zipball/b42029bfed56852904f299339d20b8a88b704c33",
-            "reference": "b42029bfed56852904f299339d20b8a88b704c33",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.3.3",
-            "zircote/swagger-php": "dev-master"
-        },
-        "time": "2013-05-25 07:36:14",
-        "type": "library",
-        "installation-source": "source",
-        "autoload": {
-            "psr-0": {
-                "SwaggerModule": "src/"
-            },
-            "classmap": [
-                "./"
-            ]
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "Apache-2.0"
-        ],
-        "description": "Zend Framework 2 Module for Swagger resource file generation",
-        "homepage": "https://github.com/outeredge/SwaggerModule",
-        "keywords": [
-            "api",
-            "rest",
-            "swagger",
-            "zf2"
-        ]
-    },
-    {
         "name": "phpword/phpword",
         "version": "dev-master",
         "version_normalized": "9999999-dev",

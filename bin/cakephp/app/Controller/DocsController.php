@@ -67,7 +67,21 @@ class DocsController extends AppController
         }
 
         // Fetch the resource listing
-        return $swagger->getResourceList(true, true);
+        $data = $swagger->getResourceList(false, false);
+        $data['apiVersion'] = '1.0.0';
+        $data['swaggerVersion'] = '1.2';
+        $data['basePath'] = Router::url('/', true);
+
+        // Affix "docs" link
+        foreach ($data['apis'] as &$api)
+        {
+            $api['path'] = '/docs'.$api['path'];
+        }
+
+        // output
+        $this->set($data);
+        $this->set('_serialize', array_keys($data));
+        $this->render();
     }
 
 }

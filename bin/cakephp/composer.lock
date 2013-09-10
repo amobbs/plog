@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "135904c2a8b9576ec1f77ceda0c1b510",
+    "hash": "0aff849a040a058489bc027ec6fc11ab",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -422,47 +422,6 @@
             "type": "library"
         },
         {
-            "name": "outeredge/swagger-module",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/outeredge/SwaggerModule.git",
-                "reference": "b42029bfed56852904f299339d20b8a88b704c33"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/outeredge/SwaggerModule/zipball/b42029bfed56852904f299339d20b8a88b704c33",
-                "reference": "b42029bfed56852904f299339d20b8a88b704c33",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.3",
-                "zircote/swagger-php": "dev-master"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-0": {
-                    "SwaggerModule": "src/"
-                },
-                "classmap": [
-                    "./"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "Apache-2.0"
-            ],
-            "description": "Zend Framework 2 Module for Swagger resource file generation",
-            "homepage": "https://github.com/outeredge/SwaggerModule",
-            "keywords": [
-                "api",
-                "rest",
-                "swagger",
-                "zf2"
-            ],
-            "time": "2013-05-25 07:36:14"
-        },
-        {
             "name": "pear-pear.cakephp.org/CakePHP",
             "version": "2.4.0",
             "dist": {
@@ -590,7 +549,6 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "zircote/swagger-php": 20,
-        "outeredge/swagger-module": 20,
         "phpword/phpword": 20
     },
     "platform": [

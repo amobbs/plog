@@ -31,6 +31,7 @@ Configure::write('auth-acl', array(
     'routes'=>array(
 
         // Public routes
+        array('controller'=>'Users', 'action'=>'debugTask', 'permissions'=>array('guest')),     // TODO: DELETE ME
         array('controller'=>'Users', 'action'=>'login', 'permissions'=>array('guest')),
         array('controller'=>'Users', 'action'=>'logout', 'permissions'=>array('user')),
         array('controller'=>'Docs', 'action'=>'*', 'permissions'=>array('guest')),

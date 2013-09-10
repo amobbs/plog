@@ -10,6 +10,18 @@ class UsersController extends AppController
 {
     public $uses = array('Users');
 
+
+    /**
+     * TODO: DELETE ME
+     * Debug task, for random actions.
+     */
+    public function debugTask()
+    {
+        echo Security::hash('test11', 'blowfish', false);
+    }
+
+
+
     /**
      * Login the given user
      * - A call without credentials is an auto-login ping (session login). Return a simple error on fail.
