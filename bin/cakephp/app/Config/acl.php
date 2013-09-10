@@ -14,7 +14,7 @@ Configure::write('auth-acl', array(
      * Note: Some permissions are restrictive, like "comment-only" and "single-client".
      */
     'permissions'=>array(
-        'super-admin'   => array('guest', 'user', 'dashboards', 'log-create', 'dashboard-export-reports', 'log-accountability', 'log-delete', 'admin', 'user-manager', 'client-manager', 'edit-preset-dashboards'),
+        'super-admin'   => array('guest', 'user', 'dashboards', 'log-create', 'dashboard-export-reports', 'log-accountability', 'log-delete', 'admin', 'user-manager', 'client-manager', 'edit-preset-dashboards', 'super-admin'),
         'admin'         => array('guest', 'user', 'dashboards', 'log-create', 'dashboard-export-reports', 'log-accountability', 'log-delete', 'admin', 'user-manager', 'client-manager'),
         'supervisor'    => array('guest', 'user', 'dashboards', 'log-create', 'dashboard-export-reports', 'log-accountability', 'log-delete'),
         'operator'      => array('guest', 'user', 'dashboards', 'log-create'),
