@@ -28,5 +28,10 @@
     },
     "config": {
         "vendor-dir": "Vendor/"
+    },
+    "autoload": {
+        "psr-0": {
+            "JqlParser": "Vendor/JqlParser"
+        }
     }
 }

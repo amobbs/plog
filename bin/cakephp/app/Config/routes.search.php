@@ -52,18 +52,18 @@ Router::connect(
  * @SWG\Resource(
  *      resourcePath="/search",
  *      @SWG\Api(
- *          path="/search/wizard",
+ *          path="/search/wizard/params",
  *          @SWG\Operation(
  *              @SWG\Partial("search.wizard.params"),
  *              nickname="search.wizard.params",
- *              httpMethod="OPTIONS"
+ *              httpMethod="GET"
  *          )
  *      )
  * )
  */
 Router::connect(
-    '/search/wizard',
-    array('controller' => 'Search', 'action' => 'wizardParams', '[method]' => 'OPTIONS')
+    '/search/wizard/params',
+    array('controller' => 'Search', 'action' => 'wizardParams', '[method]' => 'GET')
 );
 
 
@@ -82,6 +82,6 @@ Router::connect(
  * )
  */
 Router::connect(
-    '/search/wizard',
+    '/search/wizard/translate',
     array('controller' => 'Search', 'action' => 'wizardTranslate', '[method]' => 'GET')
 );
