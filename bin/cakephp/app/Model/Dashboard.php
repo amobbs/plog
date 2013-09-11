@@ -1,0 +1,215 @@
+<?php
+
+/**
+ * Dashboard Model
+ */
+
+//use Phighchart\Chart;
+//use Phighchart\Options\Container;
+//use Phighchart\Options\ExtendedContainer;
+//use Phighchart\Data;
+//use Phighchart\Renderer\Pie;
+//use Phighchart\Renderer\Line;
+
+//use Misd\Highcharts\Chart;
+//use Misd\Highcharts\DataPoint\DataPoint;
+//use Misd\Highcharts\Renderer\HSRenderer;
+//use Misd\Highcharts\Series\LineSeries;
+//use Misd\Highcharts\Series\ScatterSeries;
+//use Zend\Json\Json;
+
+App::uses('AppModel', 'Model');
+
+class Dashboard extends AppModel
+{
+    public $name = "Dashboard";
+
+
+    public function serializeDashboardForHighcharts() {
+        $chart = new Highchart();
+
+        $chart->chart = array(
+            'type' => 'column',
+            'marginRight' => 130,
+            'marginBottom' => 25
+        );
+
+        $chart->title = array(
+            'text' => 'Monthly Average Temperature',
+            'x' => - 20
+        );
+        $chart->subtitle = array(
+            'text' => 'Source: WorldClimate.com',
+            'x' => - 20
+        );
+
+        $chart->xAxis->categories = array(
+            'Jan',
+            'Feb',
+            'Mar',
+            'Apr',
+            'May',
+            'Jun',
+            'Jul',
+            'Aug',
+            'Sep',
+            'Oct',
+            'Nov',
+            'Dec'
+        );
+
+        $chart->yAxis = array(
+            'title' => array(
+                'text' => 'Temperature (°C)'
+            ),
+            'plotLines' => array(
+                array(
+                    'value' => 0,
+                    'width' => 1,
+                    'color' => '#808080'
+                )
+            )
+        );
+        $chart->legend = array(
+            'layout' => 'vertical',
+            'align' => 'right',
+            'verticalAlign' => 'top',
+            'x' => - 10,
+            'y' => 100,
+            'borderWidth' => 0
+        );
+
+        $chart->series[] = array(
+            'name' => 'Tokyo',
+            'data' => array(
+                7.0,
+                6.9,
+                9.5,
+                14.5,
+                18.2,
+                21.5,
+                25.2,
+                26.5,
+                23.3,
+                18.3,
+                13.9,
+                9.6
+            )
+        );
+        $chart->series[] = array(
+            'name' => 'New York',
+            'data' => array(
+                - 0.2,
+                0.8,
+                5.7,
+                11.3,
+                17.0,
+                22.0,
+                24.8,
+                24.1,
+                20.1,
+                14.1,
+                8.6,
+                2.5
+            )
+        );
+        $chart->series[] = array(
+            'name' => 'Berlin',
+            'data' => array(
+                - 0.9,
+                0.6,
+                3.5,
+                8.4,
+                13.5,
+                17.0,
+                18.6,
+                17.9,
+                14.3,
+                9.0,
+                3.9,
+                1.0
+            )
+        );
+        $chart->series[] = array(
+            'name' => 'London',
+            'data' => array(
+                3.9,
+                4.2,
+                5.7,
+                8.5,
+                11.9,
+                15.2,
+                17.0,
+                16.6,
+                14.2,
+                10.3,
+                6.6,
+                4.8
+            )
+        );
+
+//        $chart->tooltip->formatter = new HighchartJsExpr(
+//            "function() { return ''+ this.series.name +'
+//        '+ this.x +': '+ this.y +'°C';}");
+
+        return $chart->renderOptions();
+
+    }
+
+//    public function serializeDashboardForHighcharts() {
+//        $chart = Chart::factory()
+//            ->setTitle('Scatter plot with regression line')
+//            ->addSeries(
+//                array(
+//                    ScatterSeries::factory()
+//                        ->setName('Observations')
+//                        ->addData(array(1, 1.5, 2.8, 3.5, 3.9, 4.2)),
+//                    LineSeries::factory()
+//                        ->setName('Regression line')
+//                        ->addDataPoint(DataPoint::factory(0, 1.11))
+//                        ->addDataPoint(DataPoint::factory(5, 4.51))
+//                        ->getMarker()->setEnabled(false)->getSeries()
+//                        ->setEnableMouseTracking(false),
+//                )
+//            );
+//
+//        $renderer = new HSRenderer();
+//        return $renderer->renderChart($chart);
+//      //  return json_encode();
+//
+//
+//    }
+    //_catchamonkey
+//    public function serializeDashboardForHighcharts() {
+//        $options = new Container('chart');
+//        $options->setRenderTo('chart_example_1');
+//
+//        $titleOptions= new Container('title');
+//        $titleOptions->setText("Temprature");
+//
+//        $subTitleOptions = new Container('subtitle');
+//        $subTitleOptions->setTest('Source: Monthly avg temp');
+//
+//        $data = new Data();
+//        $data
+//            ->addCount('Tokyo', 5)
+//            ->addSeries('Toyko', array(
+//                    "2013-01-01" => 400,
+//                    "2013-01-02" => 100,
+//                    "2013-01-03" => 300,
+//                    "2013-01-04" => 250,
+//                    "2013-01-05" => 130
+//                ));
+//
+//        $chart = new Chart();
+//        $chart
+//            ->addOptions($options)
+//            ->addOptions($titleOptions)
+//            ->addOptions($subTitleOptions)
+//            ->setData($data)
+//            ->setRenderer(new Line());
+//
+//        return $chart->getOptionsForOutput();
+//
+//    }
+}

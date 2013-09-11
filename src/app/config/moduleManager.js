@@ -24,6 +24,7 @@ angular.module('moduleManager', [
     'Preslog.users',
     'Preslog.home',
     'Preslog.log',
-    'Preslog.search'
+    'Preslog.search',
+    'Preslog.dashboard'
 ]);
 
