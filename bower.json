@@ -14,7 +14,7 @@
         "angular-ui-select2": "latest",
         "restangular": "~1.0.4",
         "highcharts.com": "~3.0.5",
-        "angular-highcharts-directive": "master",
+        "angular-highcharts-directive": "~0.4.0",
         "dynatree": "~1.2.4",
         "ng-table": "https://github.com/esvit/ng-table.git#~v0.2.0"
     },

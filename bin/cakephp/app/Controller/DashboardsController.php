@@ -6,7 +6,7 @@
 
 use Swagger\Annotations as SWG;
 
-class DashboardController extends AppController
+class DashboardsController extends AppController
 {
     public $uses = array();
 
@@ -24,7 +24,8 @@ class DashboardController extends AppController
     {
         // TODO
         $this->set('todo', 'List Dashboards');
-        $this->set('_serialize', array('todo'));
+        $this->set('data', $this->Dashboard->serializeDashboardForHighcharts());
+        $this->set('_serialize', array('todo', 'data'));
     }
 
 

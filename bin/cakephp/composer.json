@@ -24,9 +24,15 @@
         "pear-cakephp/cakephp": ">=2.4.0",
 		"ichikaway/Mongodb": "master",
         "zircote/swagger-php": "dev-master",
-        "phpword/phpword": "dev-master"
+        "phpword/phpword": "*"
     },
     "config": {
         "vendor-dir": "Vendor/"
+    },
+    "autoload": {
+        "psr-0": {
+            "JqlParser": "Vendor/JqlParser"
+        },
+        "classmap": ["Vendor/HighchartsPHP/"]
     }
 }
