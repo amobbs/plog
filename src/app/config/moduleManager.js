@@ -4,7 +4,7 @@
 angular.module('moduleManager', [
 
     // Vendor Modules
-    'ui.state',
+    'ui.router',
     'ui.route',
     'ui.bootstrap',
     'ui.select2',
@@ -14,9 +14,14 @@ angular.module('moduleManager', [
     'titleService',
     'ngTable',
 
-    // Shared Modules
+    // Services and Interceptors
     'userService',
     'errorHandler',
+
+    // Directives
+    'ngConfirmClick',
+    'hierarchyFields',
+    '4mValidation',
 
     // Site Modules
     'pages',

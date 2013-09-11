@@ -148,7 +148,7 @@ class AppController extends Controller {
 
         // If we're not checking a SPECIFIC permission on the user, check the controller/action path
         if ( $permission ) {
-            return ( isset($config['permissions'][ $userRole ]) && in_array($permission, $config['permissions'][ $userRole ]) );
+            return ( isset($config['roles'][ $userRole ]['permissions']) && in_array($permission, $config['roles'][ $userRole ]['permissions']) );
         }
 
         // Check the route
@@ -166,7 +166,7 @@ class AppController extends Controller {
                     continue;
 
                 // Match permission required to the role's available permissions
-                if ( sizeof( array_intersect($rule['permissions'], $config['permissions'][$userRole]) ) )
+                if ( sizeof( array_intersect($rule['permissions'], $config['roles'][$userRole]['permissions']) ) )
                     return true;
             }
         }
