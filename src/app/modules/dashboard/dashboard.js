@@ -31,10 +31,14 @@ angular.module( 'Preslog.dashboard', [
 /**
  * And of course we define a controller for our route.
  */
-    .controller( 'DashboardCtrl', function DashboardController( $scope, $http, titleService ) {
+    .controller( 'DashboardCtrl', function DashboardController( $scope, $http, $window, titleService ) {
         titleService.setTitle( 'Dashboard' );
 
         $scope.id = 1;
+
+        $scope.exportReport = function() {
+            window.location = 'http://local.preslog/api/dashboards/' + $scope.id + '/export';
+        };
 
         $http.get("/assets/testchart.json").success(function(data) {
             $scope.basicAreaChart = data;

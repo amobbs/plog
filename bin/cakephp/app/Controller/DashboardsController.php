@@ -224,26 +224,16 @@ class DashboardsController extends AppController
      */
     public function exportDashboard()
     {
+        $dashboardId = $this->request->params['dashboard_id'];
 
-        $reportName = 'example_report.docx';
+        $reportName = 'report_' . $dashboardId . '.docx';
         $reportPath = $this->Dashboard->generateReport($reportName);
 
         $this->response->file($reportPath, array(
             'download' => true,
             'name' => $reportName
         ));
-        //Return reponse object to prevent controller from trying to render a view
         return $this->response;
-
-//        $file = $this->Attachment->getFile(TMP . $reportName);
-//        $this->response->file($file['path']);
-//        //Return reponse object to prevent controller from trying to render a view
-//        $this->response->file($file['path'], array('download' => true, 'name' => $reportName));
-//        return $this->response;
-
-        // TODO
-//        $this->set('todo', 'Export Dashboard');
-//        $this->set('_serialize', array('todo'));
     }
 
 
