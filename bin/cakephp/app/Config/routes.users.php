@@ -155,26 +155,6 @@ Router::connect(
 
 
 /**
- * Admin.Users.Create: POST (create a user)
- * @SWG\Resource(
- *      resourcePath="/admin",
- *      @SWG\Api(
- *          path="/admin/users",
- *          @SWG\Operation(
- *              @SWG\Partial("admin.users.create"),
- *              nickname="admin.users.create",
- *              httpMethod="POST"
- *          )
- *      )
- * )
- */
-Router::connect(
-    '/admin/users',
-    array('controller' => 'Users', 'action' => 'adminEdit', '[method]' => 'POST')
-);
-
-
-/**
  * Admin.Users.Options: OPTIONS (options for users)
  * @SWG\Resource(
  *      resourcePath="/admin",
@@ -195,6 +175,26 @@ Router::connect(
 
 
 /**
+ * Admin.Users.Create: POST (create a user)
+ * @SWG\Resource(
+ *      resourcePath="/admin",
+ *      @SWG\Api(
+ *          path="/admin/users",
+ *          @SWG\Operation(
+ *              @SWG\Partial("admin.users.create"),
+ *              nickname="admin.users.create",
+ *              httpMethod="POST"
+ *          )
+ *      )
+ * )
+ */
+Router::connect(
+    '/admin/users',
+    array('controller' => 'Users', 'action' => 'adminEdit', '[method]' => 'POST')
+);
+
+
+/**
  * Admin.Users.Specific.Read: GET (read a specific user)
  * @SWG\Resource(
  *      resourcePath="/admin",
@@ -210,7 +210,7 @@ Router::connect(
  */
 Router::connect(
     '/admin/users/:id',
-    array('controller' => 'Users', 'action' => 'adminEdit', '[method]' => 'GET'),
+    array('controller' => 'Users', 'action' => 'adminRead', '[method]' => 'GET'),
     array('pass'=>array('id'), 'id'=>'[0-9a-z]+')
 );
 

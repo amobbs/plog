@@ -36,7 +36,7 @@ angular.module('errorHandler', [])
 
         /**
          * Response Interceptor
-         * Handles 400, 403, 404, 500 and 0 errors from HTTP requests.
+         * Handles 403, 404, 500, 503 and 0 errors from HTTP requests.
          * Changes to the error state on failure
          */
         $httpProvider.responseInterceptors.push(['$q', '$injector', function($q, $injector) {
@@ -48,10 +48,10 @@ angular.module('errorHandler', [])
                     var $state = $injector.get('$state'),
                         $filter = $injector.get('$filter'),
                         errors = {
-                            400: '400 - Bad Request',
                             403: '403 - Access Forbidden',
                             404: '404 - Not Found',
                             500: '500 - Internal Server Error',
+                            503: '503 - Gateway Time-out',
                             0: 'CORS Error - API Not Accepting Request'
                         };
 

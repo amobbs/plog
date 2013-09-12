@@ -48,14 +48,7 @@ class ClientsController extends AppController
 
 
     /**
-     * Create a client
-     * @return JsonModel
-     *
-     * @SWG\Operation(
-     *      partial="admin.clients.create",
-     *      summary="Create a new client",
-     *      notes="User must be an Administrator"
-     * )
+     * Read specified client
      *
      * @SWG\Operation(
      *      partial="admin.clients.specific.read",
@@ -70,6 +63,24 @@ class ClientsController extends AppController
      *              description="Client ID"
      *          )
      *      )
+     * )
+     */
+    public function adminRead()
+    {
+        // TODO
+        $this->set('todo', 'Admin Read');
+        $this->set('_serialize', array('todo'));
+    }
+
+
+    /**
+     * Create a client
+     * @return JsonModel
+     *
+     * @SWG\Operation(
+     *      partial="admin.clients.create",
+     *      summary="Create a new client",
+     *      notes="User must be an Administrator"
      * )
      *
      * @SWG\Operation(

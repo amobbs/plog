@@ -98,13 +98,16 @@
                     </div>
                 </div>
 
-                <div class="control-group">
+                <div class="control-group" ng-class="{error: userForm.company.$invalid}">
                     <label class="control-label" for="inputCompany">Company</label>
                     <div class="controls">
                         <input type="text"
                                id="inputCompany"
+                               name="company"
                                placeholder="Company.."
-                               ng-model="user.company" />
+                               ng-model="user.company"
+                               server-validated />
+                        <span class="help-inline" ng-show="userForm.company.$error.serverValidated" ng-bind="validation.company"></span>
                     </div>
                 </div>
 
@@ -117,9 +120,11 @@
                                placeholder="eg. 0412345678.."
                                ng-model="user.phoneNumber"
                                ng-pattern="/([0-9]+)/"
+                               server-validated
                                tooltip-placement="right"
                                tooltip="Phone Numbers can be used to send instant notifications." />
                         <span class="help-inline" ng-show="userForm.phoneNumber.$error.pattern">Phone numbers may only contain numbers</span>
+                        <span class="help-inline" ng-show="userForm.phoneNumber.$error.serverValidated" ng-bind="validation.phoneNumber"></span>
                     </div>
                 </div>
 

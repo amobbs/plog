@@ -37,13 +37,23 @@ class AppController extends Controller {
     public $components = array('PreslogAuth', 'RequestHandler', 'Session');
 
 
+    /**
+     * Error 400 - Bad Request
+     * - Resource request validation failed
+     */
+    public function errorBadRequest( $options=array() )
+    {
+        $this->triggerError( 400, $options);
+    }
+
 
     /**
      * Error 404 -  Not Found handler
+     * - Resource does not exist
      */
-    public function errorNotFound( $options )
+    public function errorNotFound( $options=array() )
     {
-        return $this->triggerError( 401, $options );
+        return $this->triggerError( 404, $options );
     }
 
 
@@ -52,19 +62,9 @@ class AppController extends Controller {
      * @param $options
      * @return mixed
      */
-    public function errorUnauthorised( $options )
+    public function errorUnauthorised( $options=array() )
     {
         return $this->triggerError( 401, $options );
-    }
-
-
-    /**
-     * Error 500 - Generic server error
-     * @param $options
-     */
-    public function errorGeneric( $options )
-    {
-        return $this->triggerError( 500, $options );
     }
 
 
@@ -72,9 +72,19 @@ class AppController extends Controller {
      * Error 403 - Gateway Time-out
      * @param $options
      */
-    public function errorGateway( $options )
+    public function errorGateway( $options=array() )
     {
         return $this->triggerError( 503, $options );
+    }
+
+
+    /**
+     * Error 500 - Generic server error
+     * @param $options
+     */
+    public function errorGeneric( $options=array() )
+    {
+        return $this->triggerError( 500, $options );
     }
 
 
@@ -91,14 +101,18 @@ class AppController extends Controller {
         // Apply code
         $options['code'] = $code;
 
+        $options['error'] = true;
+
         // Set header
         $this->response->statusCode( $code );
 
         // Set data for output
-        $this->set( 'options', $options );
-        $this->set('_serialize', array('options'));
+        $this->set($options);
+        $this->set('_serialize', array_keys($options));
 
-        echo $this->render();
+        $this->render();
+        $this->response->send();
+        $this->shutdownProcess();
         exit();
     }
 

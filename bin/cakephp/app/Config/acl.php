@@ -61,20 +61,24 @@ Configure::write('auth-acl', array(
     'routes'=>array(
 
         // Public routes
-        array('controller'=>'Users', 'action'=>'debugTask', 'permissions'=>array('guest')),     // TODO: DELETE ME
-        array('controller'=>'Users', 'action'=>'login', 'permissions'=>array('guest')),
-        array('controller'=>'Users', 'action'=>'logout', 'permissions'=>array('user')),
-        array('controller'=>'Docs', 'action'=>'*', 'permissions'=>array('guest')),
+        array('controller'=>'Users',    'action'=>'debugTask',  'permissions'=>array('guest')),     // TODO: DELETE ME
+        array('controller'=>'Users',    'action'=>'login',      'permissions'=>array('guest')),
+        array('controller'=>'Users',    'action'=>'logout',     'permissions'=>array('user')),
+        array('controller'=>'Docs',     'action'=>'*',          'permissions'=>array('guest')),
 
-        // User Management
-        array('controller'=>'Users', 'action'=>'adminList', 'permissions'=>array('user-manager')),
-        array('controller'=>'Users', 'action'=>'adminEdit', 'permissions'=>array('user-manager')),
-        array('controller'=>'Users', 'action'=>'adminEditOptions', 'permissions'=>array('user-manager')),
+        // User Management - Accessible to user-manager only
+        array('controller'=>'Users',    'action'=>'adminList',          'permissions'=>array('user-manager')),
+        array('controller'=>'Users',    'action'=>'adminEdit',          'permissions'=>array('user-manager')),
+        array('controller'=>'Users',    'action'=>'adminEditOptions',   'permissions'=>array('user-manager')),
 
-        // Client Management
+        // Client Management - Accessible ot client-manager only
+        array('controller'=>'Clients',    'action'=>'adminList',          'permissions'=>array('user-manager')),
+        array('controller'=>'Clients',    'action'=>'adminEdit',          'permissions'=>array('user-manager')),
+        array('controller'=>'Clients',    'action'=>'adminEditOptions',   'permissions'=>array('user-manager')),
 
 
-        // TODO - REMOVE DEBUG - Super-Admin can do anything
+
+        // TODO - DEBUG - DELETE ME - Super-Admin can do anything
         array('controller'=>'*', 'action'=>'*', 'permissions'=>array('super-admin')),
     )
 

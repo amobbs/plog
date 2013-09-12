@@ -25,6 +25,30 @@ class Dashboard extends AppModel
     public $name = "Dashboard";
 
 
+    /**
+     * @var array   Schema definition for this document
+     */
+    public $mongoSchema = array(
+        '_id'           => array('type' => 'string', 'length'=>40, 'primary' => true),
+        'name'          => array('type' => 'string', 'length'=>255),
+        'type'          => array('type' => 'string', 'length'=>64),
+        'widgets'       => array('type' => null),
+        'shares'        => array('type' => null),
+
+        'email'         => array('type' => 'string', 'length'=>255),
+        'password'      => array('type' => 'string'),
+        'company'       => array('type' => 'text'),
+        'phoneNumber'   => array('type' => 'integer'),
+        'role'          => array('type' => 'string'),
+        'client'        => array('type' => 'string'),
+        'deleted'       => array('type' => 'boolean'),
+
+        'favouriteDashboards'   => array('type' => null),
+        'created'       => array('type' => 'datetime'),
+        'modified'      => array('type' => 'datetime'),
+    );
+
+
     public function serializeDashboardForHighcharts()
     {
         $chart = new Highchart();

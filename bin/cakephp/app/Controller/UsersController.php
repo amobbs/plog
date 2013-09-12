@@ -298,21 +298,6 @@ class UsersController extends AppController
      * )
      *
      * @SWG\Operation(
-     *      partial="admin.users.specific.read",
-     *      summary="Fetch data for a specific user",
-     *      notes="User must be an Administrator",
-     *      @SWG\Parameters(
-     *          @SWG\Parameter(
-     *              name="user_id",
-     *              paramType="path",
-     *              dataType="int",
-     *              required="true",
-     *              description="User ID"
-     *          )
-     *      )
-     * )
-     *
-     * @SWG\Operation(
      *      partial="admin.users.specific.update",
      *      summary="Update a specific user",
      *       notes="User must be an Administrator",
@@ -326,28 +311,64 @@ class UsersController extends AppController
      *          )
      *      )
      * )
-     *
-     *
      */
     public function adminEdit( $id=null )
     {
-        // On submit ...
-        if ($this->request->isPost())
-        {
+        // Fetch user data
+        $user = $this->request->data['User'];
 
-        }
-
+        // If user has ID, make sure this is the one we save
         if ($id)
         {
-            // Fetch all users, with limited fields
-            $user = $this->User->findById( $id );
-
-            if (!$user)
-            {
-                $this->errorNotFound(array('message'=>'User could not be found'));
-            }
+            $user['_id'] = $id;
         }
 
+        // Apply data and validate before insert
+        $this->User->set($user);
+        if ( !$this->User->validatesAdminEdit() )
+        {
+            $this->errorBadRequest( array('data'=>$this->User->validationErrors, 'message'=>'Validation failed') );
+        }
+
+        // Save
+        $ret = $this->User->save( $user );
+
+
+        // Return success
+        $return = array('Success'=>$ret);
+        $this->set($return);
+        $this->set('_serialize', array_keys($return));
+    }
+
+
+    /**
+     * GET: Read the specified user
+     *
+     * @SWG\Operation(
+     *      partial="admin.users.specific.read",
+     *      summary="Fetch data for a specific user",
+     *      notes="User must be an Administrator",
+     *      @SWG\Parameters(
+     *          @SWG\Parameter(
+     *              name="user_id",
+     *              paramType="path",
+     *              dataType="int",
+     *              required="true",
+     *              description="User ID"
+     *          )
+     *      )
+     * )
+     */
+    public function adminRead( $id )
+    {
+        // Fetch user with all fields
+        $user = $this->User->findById( $id );
+
+        // User must exist
+        if (!$user)
+        {
+            $this->errorNotFound(array('message'=>'User could not be found'));
+        }
 
         // Output
         $this->set($user);

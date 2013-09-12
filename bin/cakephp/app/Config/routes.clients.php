@@ -83,7 +83,7 @@ Router::connect(
  */
 Router::connect(
     '/admin/clients/:id',
-    array('controller' => 'Clients', 'action' => 'adminEdit', '[method]' => 'GET'),
+    array('controller' => 'Clients', 'action' => 'adminRead', '[method]' => 'GET'),
     array('pass'=>array('id'), 'id'=>'[0-9]+')
 );
 
@@ -146,7 +146,7 @@ Router::connect(
  */
 Router::connect(
     '/admin/clients/:id',
-    array('controller' => 'Clients', 'action' => 'adminDuplicate', '[method]' => 'POST'),
+    array('controller' => 'Clients', 'action' => 'adminDuplicate', '[method]' => 'COPY'),
     array('pass'=>array('id'), 'id'=>'[0-9]+')
 );
 

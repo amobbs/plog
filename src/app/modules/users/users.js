@@ -190,10 +190,9 @@ angular.module( 'Preslog.users', [
          */
         $scope.saveUser = function() {
 
-            // Validate the form
+            // Will not submit without validation passing
             if ( $scope.userForm.$invalid ) {
-                alert('Invalid!');
-
+                alert('Your submission is not valid. Please check for errors.');
                 return false;
             }
 
@@ -205,6 +204,19 @@ angular.module( 'Preslog.users', [
             {
                 // Redirect to user list
                 $location.path('/admin/users');
+            }, function(response)
+            {
+                // Extrapolate all fields to the scope
+                $scope.validation = response.data.data;
+
+                // If field exists, mark is as invalid
+                for (var i in $scope.validation)
+                {
+                    if ($scope.userForm[i] !== undefined) {
+                        $scope.userForm[i].$setValidity('serverValidated', false);
+                    }
+                }
+
             });
         };
 
