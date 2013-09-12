@@ -148,7 +148,7 @@ class PreslogAuthComponent extends AuthComponent
         }
 
         // Send back
-        return $config['permissions'][ $role ];
+        return $config['roles'][ $role ]['permissions'];
     }
 
 }

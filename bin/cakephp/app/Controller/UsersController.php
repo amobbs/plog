@@ -6,9 +6,14 @@
 App::uses('AppController', 'Controller');
 use Swagger\Annotations as SWG;
 
+/**
+ * Class UsersController
+ * @property User $User
+ */
+
 class UsersController extends AppController
 {
-    public $uses = array('Users');
+    public $uses = array('User');
 
 
     /**
@@ -183,21 +188,22 @@ class UsersController extends AppController
     public function adminList()
     {
         // Fetch all users, with limited fields
-        $users = $this->Users->find('all', array(
+        $users = $this->User->find('all', array(
             'fields'=>array(
-                'Users.id',
-                'Users.firstName',
-                'Users.lastName',
-                'Users.role',
-                'Users.email',
-                'Users.client',
-                'Users.company',
+                'id',
+                'firstName',
+                'lastName',
+                'role',
+                'email',
+                'client',
+                'company',
+                'deleted',
             )
         ));
 
         // Flatten the array for simplicity
         foreach ($users as &$user) {
-            $user = $user['Users'];
+            $user = $user['User'];
         }
 
         // Output
@@ -220,27 +226,61 @@ class UsersController extends AppController
      */
     public function adminEditOptions()
     {
-        // Fetch all user opts for the user edit screen
+        $options = array();
+
+        // Get all roles
+        $options['roles'] = $this->User->getAvailableRoles();
+
 
         // TODO
-        $roles = array();
-
-        // TODO
-        $clients = array();
-
-        // TODO
-        $notifications = array();
-
-        // Compile to a block
-        $options = array(
-            'roles'=>$roles,
-            'clients'=>$clients,
-            'notifications'=>$notifications,
+        $options['clients'] = array(
+            array(
+                'id'=>'1',
+                'name'=>'ABC',
+            ),
+            array(
+                'id'=>'2',
+                'name'=>'WIN',
+            )
         );
 
+        // TODO
+        $options['notifications'] = array(
+            'clients'=>array(
+                'name'=>'one',
+                'id'=>1,
+                'severities'=>array(
+                    array(
+                        'name'=>'Sev 1',
+                        'id'=>'1',
+                    ),
+                    array(
+                        'name'=>'Sev 2',
+                        'id'=>'2',
+                    )
+                ),
+                'attributes'=>array(
+                    array(
+                        'id'=>'1234',
+                        'name'=>'Networks',
+                        'deleted'=>false,
+                        'children'=>array(
+                            array(
+                                'id'=>'1',
+                                'name'=>'test',
+                                'deleted'=>false,
+                                'children'=>array()
+                            )
+                        )
+                    ),
+                )
+            )
+        );
+
+
         // Output
-        $this->set('options', $options);
-        $this->set('_serialize', array('options'));
+        $this->set($options);
+        $this->set('_serialize', array_keys($options));
     }
 
 
@@ -291,9 +331,27 @@ class UsersController extends AppController
      */
     public function adminEdit( $id=null )
     {
-        // TODO
-        $this->set('todo', 'Admin Edit');
-        $this->set('_serialize', array('todo'));
+        // On submit ...
+        if ($this->request->isPost())
+        {
+
+        }
+
+        if ($id)
+        {
+            // Fetch all users, with limited fields
+            $user = $this->User->findById( $id );
+
+            if (!$user)
+            {
+                $this->errorNotFound(array('message'=>'User could not be found'));
+            }
+        }
+
+
+        // Output
+        $this->set($user);
+        $this->set('_serialize', array_keys($user));
     }
 
 
@@ -315,11 +373,25 @@ class UsersController extends AppController
      *      )
      * )
      */
-    public function adminDelete( $id=null )
+    public function adminDelete( $id )
     {
-        // TODO
-        $this->set('todo', 'Admin Delete');
-        $this->set('_serialize', array('todo'));
+        // user must exist
+        if (!$this->User->findById($id)) {
+            $this->errorNotFound('User could not be found');
+        }
+
+        // Simple delete save
+        $user = array(
+            'id'=>$id,
+            'deleted'=>true,
+        );
+
+        // Delete
+        $this->User->save( array('User'=>$user) );
+
+        // OK Response
+        $this->set('success', true);
+        $this->set('_serialize', array('success'));
     }
 
 

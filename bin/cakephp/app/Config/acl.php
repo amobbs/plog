@@ -10,17 +10,47 @@ Configure::write('auth-acl', array(
     'anonymousRole' => 'guest',
 
     /**
-     * User permissions sequence
+     * User roles sequence
      * Note: Some permissions are restrictive, like "comment-only" and "single-client".
+     *       "Hidden" prevents the user type being selectable in the User Admin
      */
-    'permissions'=>array(
-        'super-admin'   => array('guest', 'user', 'dashboards', 'log-create', 'dashboard-export-reports', 'log-accountability', 'log-delete', 'admin', 'user-manager', 'client-manager', 'edit-preset-dashboards', 'super-admin'),
-        'admin'         => array('guest', 'user', 'dashboards', 'log-create', 'dashboard-export-reports', 'log-accountability', 'log-delete', 'admin', 'user-manager', 'client-manager'),
-        'supervisor'    => array('guest', 'user', 'dashboards', 'log-create', 'dashboard-export-reports', 'log-accountability', 'log-delete'),
-        'operator'      => array('guest', 'user', 'dashboards', 'log-create'),
-        'engineer'      => array('guest', 'user', 'dashboards', 'single-client', 'comment-only'),
-        'client'        => array('guest', 'user', 'dashboards', 'single-client', 'dashboard-export-reports', 'comment-only'),
-        'guest'         => array('guest'),
+    'roles'=>array(
+        'super-admin'   => array(
+            'name'=>'Super Admin',
+            'hidden'=>true,
+            'permissions'=>array('guest', 'user', 'dashboards', 'log-create', 'dashboard-export-reports', 'log-accountability', 'log-delete', 'admin', 'user-manager', 'client-manager', 'edit-preset-dashboards', 'super-admin'),
+        ),
+
+        'admin'         => array(
+            'name'=>'Administrator',
+            'permissions'=>array('guest', 'user', 'dashboards', 'log-create', 'dashboard-export-reports', 'log-accountability', 'log-delete', 'admin', 'user-manager', 'client-manager'),
+        ),
+
+        'supervisor'    => array(
+            'name'=>'Supervisor',
+            'permissions'=>array('guest', 'user', 'dashboards', 'log-create', 'dashboard-export-reports', 'log-accountability', 'log-delete'),
+        ),
+
+        'operator'      => array(
+            'name'=>'Operator',
+            'permissions'=>array('guest', 'user', 'dashboards', 'log-create'),
+        ),
+
+        'engineer'      => array(
+            'name'=>'Engineer',
+            'permissions'=>array('guest', 'user', 'dashboards', 'single-client', 'comment-only'),
+        ),
+
+        'client'        => array(
+            'name'=>'Client',
+            'permissions'=>array('guest', 'user', 'dashboards', 'single-client', 'dashboard-export-reports', 'comment-only'),
+        ),
+
+        'guest'         => array(
+            'name'=>'Guest',
+            'hidden'=>true,
+            'permissions'=>array('guest'),
+        ),
     ),
 
 

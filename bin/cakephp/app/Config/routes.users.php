@@ -211,7 +211,7 @@ Router::connect(
 Router::connect(
     '/admin/users/:id',
     array('controller' => 'Users', 'action' => 'adminEdit', '[method]' => 'GET'),
-    array('pass'=>array('id'), 'id'=>'[0-9]+')
+    array('pass'=>array('id'), 'id'=>'[0-9a-z]+')
 );
 
 
@@ -232,7 +232,7 @@ Router::connect(
 Router::connect(
     '/admin/users/:id',
     array('controller' => 'Users', 'action' => 'adminEdit', '[method]' => 'POST'),
-    array('pass'=>array('id'), 'id'=>'[0-9]+')
+    array('pass'=>array('id'), 'id'=>'[0-9a-z]+')
 );
 
 
@@ -253,5 +253,5 @@ Router::connect(
 Router::connect(
     '/admin/users/:id',
     array('controller' => 'Users', 'action' => 'adminDelete', '[method]' => 'DELETE'),
-    array('pass'=>array('id'), 'id'=>'[0-9]+')
+    array('pass'=>array('id'), 'id'=>'[0-9a-z]+')
 );
