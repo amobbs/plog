@@ -18,14 +18,15 @@
 //use Misd\Highcharts\Series\ScatterSeries;
 //use Zend\Json\Json;
 
-App::uses('AppModel', 'Model');
+App::uses('AppModel', 'Model', 'HttpSocket', 'Network/Http');
 
 class Dashboard extends AppModel
 {
     public $name = "Dashboard";
 
 
-    public function serializeDashboardForHighcharts() {
+    public function serializeDashboardForHighcharts()
+    {
         $chart = new Highchart();
 
         $chart->chart = array(
@@ -156,60 +157,35 @@ class Dashboard extends AppModel
 
     }
 
-//    public function serializeDashboardForHighcharts() {
-//        $chart = Chart::factory()
-//            ->setTitle('Scatter plot with regression line')
-//            ->addSeries(
-//                array(
-//                    ScatterSeries::factory()
-//                        ->setName('Observations')
-//                        ->addData(array(1, 1.5, 2.8, 3.5, 3.9, 4.2)),
-//                    LineSeries::factory()
-//                        ->setName('Regression line')
-//                        ->addDataPoint(DataPoint::factory(0, 1.11))
-//                        ->addDataPoint(DataPoint::factory(5, 4.51))
-//                        ->getMarker()->setEnabled(false)->getSeries()
-//                        ->setEnableMouseTracking(false),
-//                )
-//            );
-//
-//        $renderer = new HSRenderer();
-//        return $renderer->renderChart($chart);
-//      //  return json_encode();
-//
-//
-//    }
-    //_catchamonkey
-//    public function serializeDashboardForHighcharts() {
-//        $options = new Container('chart');
-//        $options->setRenderTo('chart_example_1');
-//
-//        $titleOptions= new Container('title');
-//        $titleOptions->setText("Temprature");
-//
-//        $subTitleOptions = new Container('subtitle');
-//        $subTitleOptions->setTest('Source: Monthly avg temp');
-//
-//        $data = new Data();
-//        $data
-//            ->addCount('Tokyo', 5)
-//            ->addSeries('Toyko', array(
-//                    "2013-01-01" => 400,
-//                    "2013-01-02" => 100,
-//                    "2013-01-03" => 300,
-//                    "2013-01-04" => 250,
-//                    "2013-01-05" => 130
-//                ));
-//
-//        $chart = new Chart();
-//        $chart
-//            ->addOptions($options)
-//            ->addOptions($titleOptions)
-//            ->addOptions($subTitleOptions)
-//            ->setData($data)
-//            ->setRenderer(new Line());
-//
-//        return $chart->getOptionsForOutput();
-//
-//    }
+    public function getChartImage($chartOptions, $tmpFilename) {
+        $data = array(
+            'options' => $chartOptions,
+            'type' => 'image/png',
+            'filename' => $tmpFilename,
+            'constr' => 'Chart',
+        );
+
+        $httpSocket = new HttpSocket();
+        $f = fopen(TMP . $tmpFilename, 'w');
+        $httpSocket->setContentResource($f);
+        $result = $httpSocket->post(
+            Configure::read('highcharts_export_server'),
+            $data
+        );
+        fclose($f);
+    }
+
+    public function generateReport($reportName)
+    {
+        $phpWord = new PHPWord();
+        $section= $phpWord->createSection();
+        $imageFilename = 'chart1.png';
+        $this->getChartImage($this->serializeDashboardForHighcharts(), $imageFilename);
+        $section->addImage(TMP . $imageFilename);
+
+        $objWriter = PHPWord_IOFactory::createWriter($phpWord, 'Word2007');
+        $objWriter->save(TMP . $reportName);
+
+        return TMP . $reportName;
+    }
 }

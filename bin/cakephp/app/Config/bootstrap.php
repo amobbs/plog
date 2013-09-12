@@ -124,6 +124,10 @@ require_once('swagger.php');
 CakePlugin::load('Mongodb');
 App::load('Mongodb');
 
+/**
+ * Configuration options
+ */
+Configure::write(array('highcharts_export_server' => 'http://192.168.4.49:8080/highcharts-export-web/'));
 
 /**
  * Composer autoload workaround

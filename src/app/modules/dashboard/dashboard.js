@@ -34,6 +34,8 @@ angular.module( 'Preslog.dashboard', [
     .controller( 'DashboardCtrl', function DashboardController( $scope, $http, titleService ) {
         titleService.setTitle( 'Dashboard' );
 
+        $scope.id = 1;
+
         $http.get("/assets/testchart.json").success(function(data) {
             $scope.basicAreaChart = data;
         });
