@@ -22,6 +22,11 @@ angular.module( 'Preslog.home', [])
                     controller: 'HomeCtrl',
                     templateUrl: 'modules/home/home.tpl.html'
                 }
+            },
+            resolve: {
+                permissions: ['$q', 'userService', function($q, userService) {
+                    return userService.controllerPermission('single-client');
+                }]
             }
         });
     })

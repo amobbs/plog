@@ -29,7 +29,7 @@ angular.module('userService', ['restangular'])
                     service.login().then(function (ret) {
 
                         // Login OK?
-                        if (ret.login.user)
+                        if (user)
                         {
                             // Resolve this promise
                             deferred.resolve(user);
@@ -166,6 +166,34 @@ angular.module('userService', ['restangular'])
                 getUser().then(function(ret) {
                     checkPermissions( key );
                 });
+
+                return deferred.promise;
+            },
+
+
+            /**
+             * Check for this permission on Controller access.
+             * If failed, deny the state change with an error.
+             * @param   string      Permission to check
+             */
+            controllerPermission: function( key ) {
+                var deferred = $q.defer();
+
+                // Ensures the user object is loaded, which populates permissions
+                getUser().then(function(user) {
+
+                    if (!checkPermissions( key ))
+                    {
+                        $rootScope.$broadcast('event:auth-loginRequired');
+                        deferred.reject();
+                    }
+                    else
+                    {
+                        deferred.resolve();
+                    }
+                });
+
+                return deferred.promise;
             }
 
         };
