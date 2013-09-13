@@ -16,6 +16,7 @@ angular.module( 'Preslog.dashboard', [
         'titleService'
     ])
 
+
     .config(function(stateHelperProvider) {
         stateHelperProvider.addState('mainLayout.dashboard', {
             url: '/dashboard',
@@ -28,9 +29,10 @@ angular.module( 'Preslog.dashboard', [
         });
     })
 
-/**
- * And of course we define a controller for our route.
- */
+
+    /**
+     * Dashboard Controller
+     */
     .controller( 'DashboardCtrl', function DashboardController( $scope, $http, $window, titleService ) {
         titleService.setTitle( 'Dashboard' );
 
@@ -52,6 +54,7 @@ angular.module( 'Preslog.dashboard', [
             $scope.chart2 = JSON.parse(data.data);
         });
     })
+
 
     .directive('chart', function () {
         return {

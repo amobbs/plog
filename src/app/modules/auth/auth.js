@@ -54,25 +54,12 @@ angular.module( 'Preslog.auth', [
             $rootScope.global.user = data;
             $rootScope.global.loggedIn = true;
 
-            // Load path depending on route if none established
+            // Send to requested page, otherwise go to Homepage which will redirect from there
             if (requestedPath === null) {
-                var role = userService.getUser().role;
-
-                switch( role ) {
-                    case 'supervisor':
-                        requestedPath = '/dashboards/to-be-released';
-                        break;
-                    case 'operator':
-                        requestedPath = '/log';
-                        break;
-                    default:
-                        requestedPath = '/dashboard';
-                }
+                requestedPath = '/';
             }
 
-            console.log(requestedPath);
-
-            // Send to new path
+            // Redirect
             $location.path(requestedPath);
         });
 

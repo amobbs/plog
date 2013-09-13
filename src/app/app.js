@@ -13,7 +13,7 @@ angular.module('Preslog', [
     })
 
     .run(function run(titleService) {
-        titleService.setSuffix(' | Preslog');
+        titleService.setSuffix(' - Preslog');
     })
 
     .controller('AppCtrl', function AppCtrl($scope, $location) {

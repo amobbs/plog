@@ -89,6 +89,14 @@ angular.module('userService', ['restangular'])
 
                 // Post-request a logout from the server
                 Restangular.all('users/logout').post({}).then(function(ret) {
+
+                    // clear current user
+                    user = undefined;
+                    permissions = undefined;
+                    clients = undefined;
+                    dashboards = undefined;
+
+                    // complete request
                     deferred.resolve(ret);
                 });
 

@@ -12,9 +12,7 @@
  * The dependencies block here is also where component dependencies should be
  * specified, as shown below.
  */
-angular.module( 'Preslog.home', [
-        'titleService'
-    ])
+angular.module( 'Preslog.home', [])
 
     .config(function(stateHelperProvider) {
         stateHelperProvider.addState('mainLayout.home', {
@@ -30,11 +28,29 @@ angular.module( 'Preslog.home', [
 
 
     /**
-     * And of course we define a controller for our route.
+     * Home Controller
      */
-    .controller( 'HomeCtrl', function HomeController( $scope, titleService ) {
-        console.log('home');
-      titleService.setTitle( 'Home' );
+    .controller( 'HomeCtrl', function HomeController( $scope, userService, $location ) {
+
+        // Load path depending on route if none established
+        // If no user, auth will be executed.
+        var role = userService.getUser().role;
+
+        // Direct to the appropriate role
+        switch( role ) {
+            case 'supervisor':
+                requestedPath = '/dashboards/to-be-released';
+                break;
+            case 'operator':
+                requestedPath = '/log';
+                break;
+            default:
+                requestedPath = '/dashboard';
+        }
+
+        // Redirect
+        $location(requestedPath);
+
     })
 
 ;

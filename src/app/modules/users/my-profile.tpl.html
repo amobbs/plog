@@ -1,28 +1,28 @@
-<nav class="navbar navbar-fixed-top" id="preslog_sub_nav">
-    <div class="navbar-inner">
-        <div class="container-fluid">
-            <a class="btn btn-navbar" data-toggle="collapse" data-target=".navbar-responsive-collapse">
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </a>
+<form name="userForm" ng-submit="saveProfile()" id="userForm">
 
-            <h2>My Profile</h2>
+    <nav class="navbar navbar-fixed-top" id="preslog_sub_nav">
+        <div class="navbar-inner">
+            <div class="container-fluid">
+                <a class="btn btn-navbar" data-toggle="collapse" data-target=".navbar-responsive-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </a>
 
-            <div class="nav-collapse collapse navbar-responsive-collapse">
-                <ul class="nav pull-right">
-                    <li>
-                        <button class="btn btn-success" ><i class="icon icon-ok"></i> Save Changes</button>
-                    </li>
-                </ul>
-            </div><!-- /.nav-collapse -->
-        </div>
-    </div><!-- /navbar-inner -->
-</nav>
+                <h2>My Profile</h2>
 
-<!-- My Details -->
-<form>
+                <div class="nav-collapse collapse navbar-responsive-collapse">
+                    <ul class="nav pull-right">
+                        <li>
+                            <button type="submit" class="btn btn-success" ng-disabled="userForm.$invalid"><i class="icon icon-ok"></i> Save Changes</button>
+                        </li>
+                    </ul>
+                </div><!-- /.nav-collapse -->
+            </div>
+        </div><!-- /navbar-inner -->
+    </nav>
 
+    <!-- My Details -->
     <div class="container-fluid" id="preslog_my_profile">
         <div class="row-fluid">
             <div class="span12 form-horizontal">
@@ -30,56 +30,116 @@
                 <p>Use the form below to modify your personal details.</p>
 
                 <!-- Names -->
-                <div class="control-group">
+                <div class="control-group" ng-class="{error: userForm.firstName.$invalid}">
                     <label class="control-label" for="inputFirstname">First Name</label>
                     <div class="controls">
-                        <input type="text" id="inputFirstname" placeholder="First name.." value="Dave" />
+                        <input type="text"
+                               id="inputFirstname"
+                               name="firstName"
+                               placeholder="First name.."
+                               ng-model="user.firstName"
+                               required
+                               validate-server />
+                        <span class="help-inline" ng-show="userForm.firstName.$error.required">You must supply a first name.</span>
+                        <span class="help-inline" ng-show="userForm.firstName.$error.validateServer" ng-bind="validation.firstName"></span>
                     </div>
                 </div>
-                <div class="control-group">
+                <div class="control-group" ng-class="{error: userForm.lastName.$invalid}">
                     <label class="control-label" for="inputLastname">Last Name</label>
                     <div class="controls">
-                        <input type="text" id="inputLastname" placeholder="Last name.." value="Newson" />
+                        <input type="text"
+                               id="inputLastname"
+                               name="lastName"
+                               placeholder="Last name.."
+                               ng-model="user.lastName"
+                               required
+                               validate-server />
+                        <span class="help-inline" ng-show="userForm.lastName.$error.required">You must supply a last name.</span>
+                        <span class="help-inline" ng-show="userForm.lastName.$error.validateServer" ng-bind="validation.lastName"></span>
                     </div>
                 </div>
 
-                <!-- Email -->
-                <div class="control-group success">
+                <!-- Contact -->
+                <div class="control-group" ng-class="{error: userForm.email.$invalid}">
                     <label class="control-label" for="inputEmail">Email Address</label>
                     <div class="controls">
-                        <input type="text" id="inputEmail" placeholder="Email address.." value="dave@4mation.com.au" tooltip="If you change your email address, a email will be sent to your new address and must be confirmed before the change will take affect." tooltip-placement="right" />
-                        <span class="help-inline">An email has been sent to your new email. Please follow the link in the email to confirm your new address.</span>
-                    </div>
-                </div>
-
-                <!-- SMS Number -->
-                <div class="control-group success">
-                    <label class="control-label" for="inputEmail">Phone Number</label>
-                    <div class="controls">
-                        <input type="text" id="inputEmail" placeholder="Phone number.." value="dave@4mation.com.au" tooltip="If you enable SMS Notifications, they will be sent to the number specified here." tooltip-placement="right" />
+                        <input type="email"
+                               id="inputEmail"
+                               name="email"
+                               required placeholder="Email address.."
+                               ng-model="user.email"
+                               tooltip="If you change your email address, a email will be sent to the new address and must be confirmed before the change will take affect."
+                               tooltip-placement="right"
+                               validate-server />
+                        <span class="help-inline" ng-show="userForm.email.$error.required">You must supply an email address.</span>
+                        <span class="help-inline" ng-show="userForm.email.$error.email">Email address in invalid.</span>
+                        <span class="help-inline" ng-show="userForm.email.$error.validateServer" ng-bind="validation.email"></span>
                     </div>
                 </div>
 
                 <!-- Passwords -->
-                <div class="control-group error">
+                <div class="control-group" ng-class="{error: userForm.passwordConfirm.$invalid}">
                     <label class="control-label" for="inputPassword">Password</label>
                     <div class="controls">
-                        <input type="text" id="inputPassword" placeholder="new password.." />
-                        <span class="help-inline">Passwords do not match</span>
+                        <input type="password"
+                               id="inputPassword"
+                               name="password"
+                               placeholder="enter new password.."
+                               ng-model="user.password"
+                               validate-server />
+                        <span class="help-inline" ng-show="userForm.passwordConfirm.$error.validatePassword">Passwords do not match</span>
+                        <span class="help-inline" ng-show="userForm.password.$error.validateServer" ng-bind="validation.password"></span>
                     </div>
                 </div>
-                <div class="control-group error">
+                <div class="control-group" ng-class="{error: userForm.passwordConfirm.$invalid}">
                     <label class="control-label" for="inputPassword2">Confirm Password</label>
                     <div class="controls">
-                        <input type="text" id="inputPassword2" placeholder="confirm new password.." />
-                        <span class="help-inline">Passwords do not match</span>
+                        <input type="password"
+                               id="inputPassword2"
+                               name="passwordConfirm"
+                               validate-password="inputPassword"
+                               placeholder="confirm new password.."
+                               ng-model="user.passwordConfirm" />
+                        <span class="help-inline" ng-show="userForm.passwordConfirm.$error.validatePassword">Passwords do not match</span>
+                    </div>
+                </div>
+
+                <!-- Company -->
+                <div class="control-group" ng-class="{error: userForm.company.$invalid}">
+                    <label class="control-label" for="inputCompany">Company</label>
+                    <div class="controls">
+                        <input type="text"
+                               id="inputCompany"
+                               name="company"
+                               placeholder="Company.."
+                               ng-model="user.company"
+                               validate-server />
+                        <span class="help-inline" ng-show="userForm.company.$error.validateServer" ng-bind="validation.company"></span>
+                    </div>
+                </div>
+
+                <!-- Phone Number -->
+                <div class="control-group" ng-class="{error: userForm.phoneNumber.$invalid}">
+                    <label class="control-label" for="inputPhoneNumber">Phone Number</label>
+                    <div class="controls">
+                        <input type="text"
+                               id="inputPhoneNumber"
+                               name="phoneNumber"
+                               placeholder="eg. 0412345678.."
+                               ng-model="user.phoneNumber"
+                               ng-pattern="/([0-9]+)/"
+                               validate-server
+                               tooltip-placement="right"
+                               tooltip="Phone Numbers can be used to send instant notifications." />
+                        <span class="help-inline" ng-show="userForm.phoneNumber.$error.pattern">Phone numbers may only contain numbers</span>
+                        <span class="help-inline" ng-show="userForm.phoneNumber.$error.validateServer" ng-bind="validation.phoneNumber"></span>
                     </div>
                 </div>
 
                 <!-- Save -->
                 <div class="control-group">
                     <div class="controls">
-                        <button type="submit" class="btn btn-success" onclick="parent.location='/'"><i class="icon icon-ok"></i> Save Changes</button>
+                        <button type="submit" name="submitButton" class="btn btn-success" ng-disabled="userForm.$invalid"><i class="icon icon-ok"></i> Save Changes</button>
                     </div>
                 </div>
 
@@ -87,5 +147,4 @@
             </div>
         </div>
     </div>
-
 </form>

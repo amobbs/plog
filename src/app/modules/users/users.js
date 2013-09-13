@@ -18,6 +18,27 @@ angular.module( 'Preslog.users', [
                     controller: 'UserMyProfileCtrl',
                     templateUrl: 'modules/users/my-profile.tpl.html'
                 }
+            },
+            resolve: {
+                userSource: ['$q', 'Restangular', '$stateParams', function($q, Restangular, $stateParams) {
+                    // Fetch user details
+                    var deferred = $q.defer();
+                    Restangular.one('/users/my-profile').get().then(function(user) {
+                        user.id = user.User._id;
+                        deferred.resolve(user);
+                    });
+
+                    return deferred.promise;
+                }],
+                optionsSource: ['$q', 'Restangular', '$stateParams', function($q, Restangular, $stateParams) {
+                    // Fetch edit opts
+                    var deferred = $q.defer();
+                    Restangular.one('/users/my-profile').options().then(function(options) {
+                        deferred.resolve(options);
+                    });
+
+                    return deferred.promise;
+                }]
             }
         });
 
@@ -28,6 +49,27 @@ angular.module( 'Preslog.users', [
                     controller: 'UserMyNotifyCtrl',
                     templateUrl: 'modules/users/my-notify.tpl.html'
                 }
+            },
+            resolve: {
+                userSource: ['$q', 'Restangular', '$stateParams', function($q, Restangular, $stateParams) {
+                    // Fetch notify details
+                    var deferred = $q.defer();
+                    Restangular.one('/users/my-notifications').get().then(function(user) {
+                        user.id = user.User._id;
+                        deferred.resolve(user);
+                    });
+
+                    return deferred.promise;
+                }],
+                optionsSource: ['$q', 'Restangular', '$stateParams', function($q, Restangular, $stateParams) {
+                    // Fetch edit opts
+                    var deferred = $q.defer();
+                    Restangular.one('/users/my-notifications').options().then(function(options) {
+                        deferred.resolve(options);
+                    });
+
+                    return deferred.promise;
+                }]
             }
         });
 
@@ -51,7 +93,7 @@ angular.module( 'Preslog.users', [
             },
             resolve: {
                 userSource: ['$q', 'Restangular', '$stateParams', function($q, Restangular, $stateParams) {
-                    // Fetch edit opts
+                    // Fetch user and notify details
                     var deferred = $q.defer();
                     Restangular.one('admin/users', $stateParams.user_id).get().then(function(user) {
                         user.id = user.User._id;
@@ -72,22 +114,123 @@ angular.module( 'Preslog.users', [
             }
         });
 
+        stateHelperProvider.addState('mainLayout.logout', {
+            url: '/logout',
+            views: {
+                "main@mainLayout": {
+                    controller: 'UserLogout'
+                }
+            }
+        });
+
     })
 
 
     /**
      * User: My Profile
      */
-    .controller( 'UserMyProfileCtrl', function UserMyProfileController( $scope, titleService ) {
+    .controller( 'UserMyProfileCtrl', function UserMyProfileController( $scope, titleService, userSource, optionsSource, $location ) {
         titleService.setTitle( 'My Profile' );
+
+        // Pass resolves to the scope
+        $scope.options = optionsSource;
+        $scope.user = userSource.User;
+
+        /**
+         * Save My Profile
+         */
+        $scope.saveProfile = function()
+        {
+            // Will not submit without validation passing
+            if ( $scope.userForm.$invalid ) {
+                alert('Your submission is not valid. Please check for errors.');
+                return false;
+            }
+
+            // Fetch data from form
+            userSource.User = $scope.user;
+
+            // Post back to API
+            userSource.post().then(
+
+                // On success
+                function()
+                {
+                    // Redirect to user list
+                    $location.path('/my-profile');
+                },
+
+                // On failure
+                function(response)
+                {
+                    // Extrapolate all fields to the scope
+                    $scope.validation = response.data.data;
+
+                    // If field exists, mark is as invalid
+                    for (var i in $scope.validation)
+                    {
+                        if ($scope.userForm[i] !== undefined) {
+                            $scope.userForm[i].$setValidity('validateServer', false);
+                        }
+                    }
+
+                }
+            );
+        };
     })
 
 
     /**
      * User: My Notifications
      */
-    .controller( 'UserMyNotifyCtrl', function UserMyNotifyController( $scope, titleService ) {
+    .controller( 'UserMyNotifyCtrl', function UserMyNotifyController( $scope, titleService, userSource, optionsSource, $location ) {
         titleService.setTitle( 'My Notifications' );
+
+        // Pass resolves to the scope
+        $scope.options = optionsSource;
+        $scope.user = userSource.User;
+
+        /**
+         * Save My Notifications
+         */
+        $scope.saveNotifications = function()
+        {
+            // Will not submit without validation passing
+            if ( $scope.userForm.$invalid ) {
+                alert('Your submission is not valid. Please check for errors.');
+                return false;
+            }
+
+            // Fetch data from form
+            userSource.User = $scope.user;
+
+            // Post back to API
+            userSource.post().then(
+
+                // On success
+                function()
+                {
+                    // Redirect to user list
+                    $location.path('/my-notifications');
+                },
+
+                // On failure
+                function(response)
+                {
+                    // Extrapolate all fields to the scope
+                    $scope.validation = response.data.data;
+
+                    // If field exists, mark is as invalid
+                    for (var i in $scope.validation)
+                    {
+                        if ($scope.userForm[i] !== undefined) {
+                            $scope.userForm[i].$setValidity('validateServer', false);
+                        }
+                    }
+
+                }
+            );
+        };
     })
 
 
@@ -134,9 +277,6 @@ angular.module( 'Preslog.users', [
 
             // Watch table and perform actions
             $scope.$watch('tableParams', function(params) {
-
-                console.log($scope.allUsers);
-                console.log(params.filter);
 
                 // Filter and order
                 var orderedData = params.filter ? $filter('filter')($scope.allUsers, params.filter) : $scope.allUsers;
@@ -200,24 +340,31 @@ angular.module( 'Preslog.users', [
             userSource.User = $scope.user;
 
             // Post back to API
-            userSource.post().then(function()
-            {
-                // Redirect to user list
-                $location.path('/admin/users');
-            }, function(response)
-            {
-                // Extrapolate all fields to the scope
-                $scope.validation = response.data.data;
+            userSource.post().then(
 
-                // If field exists, mark is as invalid
-                for (var i in $scope.validation)
+                // On success
+                function()
                 {
-                    if ($scope.userForm[i] !== undefined) {
-                        $scope.userForm[i].$setValidity('serverValidated', false);
-                    }
-                }
+                    // Redirect to user list
+                    $location.path('/admin/users');
+                },
 
-            });
+                // On failure
+                function(response)
+                {
+                    // Extrapolate all fields to the scope
+                    $scope.validation = response.data.data;
+
+                    // If field exists, mark is as invalid
+                    for (var i in $scope.validation)
+                    {
+                        if ($scope.userForm[i] !== undefined) {
+                            $scope.userForm[i].$setValidity('validateServer', false);
+                        }
+                    }
+
+                }
+            );
         };
 
 
@@ -287,6 +434,17 @@ angular.module( 'Preslog.users', [
             }
         ];
 
+    })
+
+    /**
+     * Logout
+     */
+    .controller( 'UserLogout', function UserAdminListController( $scope, Restangular, $location, userService ) {
+
+        userService.logout().then(function()
+        {
+            $location.path('/');
+        });
     })
 
 ;

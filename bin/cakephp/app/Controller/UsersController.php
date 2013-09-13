@@ -13,7 +13,7 @@ use Swagger\Annotations as SWG;
 
 class UsersController extends AppController
 {
-    public $uses = array('User');
+    public $uses = array('User', 'Client');
 
 
     /**
@@ -131,13 +131,61 @@ class UsersController extends AppController
 
 
     /**
-     * My-Profile Get/Edit
+     * My-Profile Options
+     *
+     * @SWG\Operation(
+     *      partial="users.my-profile.options",
+     *      summary="Fetch My Profile options",
+     *      notes="Any logged in user may load this data."
+     * )
+     */
+    public function myProfileOptions()
+    {
+        // Nothing to return.
+        $this->set('_serialize', array());
+    }
+
+
+    /**
+     * My-Profile Read
      *
      * @SWG\Operation(
      *      partial="users.my-profile.read",
      *      summary="Fetch My Profile data",
      *      notes="Any logged in user may load this data."
      * )
+     */
+    public function myProfileRead()
+    {
+        // Fetch user with all fields
+        $user = $this->User->findById(
+            $this->PreslogAuth->user('id'),
+            array('fields'=>array(
+                'firstName',
+                'lastName',
+                'email',
+                'company',
+                'phoneNumber',
+            ))
+        );
+
+        // User must exist
+        if (!$user)
+        {
+            $this->errorNotFound(array('message'=>'User could not be found'));
+        }
+
+        // Kill the ID - otherwise POST backs go wrong
+        unset($user['User']['_id']);
+
+        // Output
+        $this->set($user);
+        $this->set('_serialize', array_keys($user));
+    }
+
+
+    /**
+     * My-Profile Edit
      *
      * @SWG\Operation(
      *      partial="users.my-profile.update",
@@ -145,22 +193,93 @@ class UsersController extends AppController
      *      notes="Updates are applied to the currently logged in user account."
      * )
      */
-    public function myProfile()
+    public function myProfileUpdate()
     {
-        // TODO
-        $this->set('todo', 'My Profile');
-        $this->set('_serialize', array('todo'));
+        // Fetch user data
+        $user = $this->request->data['User'];
+
+        // Force the user ID to be the current user
+        $user['_id'] = $this->PreslogAuth->user('_id');
+
+        // Apply data and validate before insert
+        $this->User->set($user);
+        if ( !$this->User->validatesMyProfile() )
+        {
+            $this->errorBadRequest( array('data'=>$this->User->validationErrors, 'message'=>'Validation failed') );
+        }
+
+        // Save limited fields
+        $ret = $this->User->save( $user, false, array(
+            'id',
+            'firstName',
+            'lastName',
+            'email',
+            'password',
+            'company',
+            'phoneNumber',
+        ));
+
+
+        // Return success
+        $return = array('Success'=>$ret);
+        $this->set($return);
+        $this->set('_serialize', array_keys($return));
     }
 
 
     /**
-     * My-Notifications Get/Edit
+     * My-Notifications Options
+     *
+     * @SWG\Operation(
+     *      partial="users.my-notifications.options",
+     *      summary="Fetch My Notifications Options",
+     *      notes="Any logged in user may load this data."
+     * )
+     */
+    public function myNotificationsOptions()
+    {
+        // Get all clients and attributes
+        $options['notifications'] = $this->Client->getNotificationsList();
+
+        // Output
+        $this->set($options);
+        $this->set('_serialize', array_keys($options));
+    }
+
+
+    /**
+     * My-Notifications Read
      *
      * @SWG\Operation(
      *      partial="users.my-notifications.read",
      *      summary="Read My Notifications data",
      *      notes="Any logged in user may load this data."
      * )
+     */
+    public function myNotificationsRead()
+    {
+        // Fetch user with all fields
+        $user = $this->User->findById(
+            $this->PreslogAuth->user('id'),
+            array('fields'=>array(
+                'notifications',
+            ))
+        );
+
+        // User must exist
+        if (!$user)
+        {
+            $this->errorNotFound(array('message'=>'User could not be found'));
+        }
+
+        // Output
+        $this->set($user);
+        $this->set('_serialize', array_keys($user));
+    }
+
+
+    /**
+     * My Notifications Edit
      *
      * @SWG\Operation(
      *      partial="users.my-notifications.update",
@@ -168,13 +287,31 @@ class UsersController extends AppController
      *      notes="Updates are applied to the currently logged in user account."
      * )
      */
-    public function myNotifications()
+    public function myNotificationsEdit()
     {
-        // TODO
-        $this->set('todo', 'My Notifications');
-        $this->set('_serialize', array('todo'));
-    }
+        // Fetch user data
+        $user = $this->request->data['User'];
 
+        // Set the ID to the current user
+        $user['_id'] = $this->PreslogAuth->user('id');
+
+        // Apply data and validate before insert
+        $this->User->set($user);
+        if ( !$this->User->validatesMyNotifications() )
+        {
+            $this->errorBadRequest( array('data'=>$this->User->validationErrors, 'message'=>'Validation failed') );
+        }
+
+        // Save
+        $ret = $this->User->save( $user, false, array(
+            'notifications'
+        ));
+
+        // Return success
+        $return = array('Success'=>$ret);
+        $this->set($return);
+        $this->set('_serialize', array_keys($return));
+    }
 
     /**
      * List all users with partial details
@@ -231,56 +368,50 @@ class UsersController extends AppController
         // Get all roles
         $options['roles'] = $this->User->getAvailableRoles();
 
+        // Get all clients
+        $options['clients'] = $this->Client->getClientsAsOptions();
 
-        // TODO
-        $options['clients'] = array(
-            array(
-                'id'=>'1',
-                'name'=>'ABC',
-            ),
-            array(
-                'id'=>'2',
-                'name'=>'WIN',
-            )
-        );
-
-        // TODO
-        $options['notifications'] = array(
-            'clients'=>array(
-                'name'=>'one',
-                'id'=>1,
-                'severities'=>array(
-                    array(
-                        'name'=>'Sev 1',
-                        'id'=>'1',
-                    ),
-                    array(
-                        'name'=>'Sev 2',
-                        'id'=>'2',
-                    )
-                ),
-                'attributes'=>array(
-                    array(
-                        'id'=>'1234',
-                        'name'=>'Networks',
-                        'deleted'=>false,
-                        'children'=>array(
-                            array(
-                                'id'=>'1',
-                                'name'=>'test',
-                                'deleted'=>false,
-                                'children'=>array()
-                            )
-                        )
-                    ),
-                )
-            )
-        );
-
+        // Get all clients and attributes
+        $options['notifications'] = $this->Client->getNotificationsList();
 
         // Output
         $this->set($options);
         $this->set('_serialize', array_keys($options));
+    }
+
+
+    /**
+     * GET: Read the specified user
+     *
+     * @SWG\Operation(
+     *      partial="admin.users.specific.read",
+     *      summary="Fetch data for a specific user",
+     *      notes="User must be an Administrator",
+     *      @SWG\Parameters(
+     *          @SWG\Parameter(
+     *              name="user_id",
+     *              paramType="path",
+     *              dataType="int",
+     *              required="true",
+     *              description="User ID"
+     *          )
+     *      )
+     * )
+     */
+    public function adminRead( $id )
+    {
+        // Fetch user with all fields
+        $user = $this->User->findById( $id );
+
+        // User must exist
+        if (!$user)
+        {
+            $this->errorNotFound(array('message'=>'User could not be found'));
+        }
+
+        // Output
+        $this->set($user);
+        $this->set('_serialize', array_keys($user));
     }
 
 
@@ -338,41 +469,6 @@ class UsersController extends AppController
         $return = array('Success'=>$ret);
         $this->set($return);
         $this->set('_serialize', array_keys($return));
-    }
-
-
-    /**
-     * GET: Read the specified user
-     *
-     * @SWG\Operation(
-     *      partial="admin.users.specific.read",
-     *      summary="Fetch data for a specific user",
-     *      notes="User must be an Administrator",
-     *      @SWG\Parameters(
-     *          @SWG\Parameter(
-     *              name="user_id",
-     *              paramType="path",
-     *              dataType="int",
-     *              required="true",
-     *              description="User ID"
-     *          )
-     *      )
-     * )
-     */
-    public function adminRead( $id )
-    {
-        // Fetch user with all fields
-        $user = $this->User->findById( $id );
-
-        // User must exist
-        if (!$user)
-        {
-            $this->errorNotFound(array('message'=>'User could not be found'));
-        }
-
-        // Output
-        $this->set($user);
-        $this->set('_serialize', array_keys($user));
     }
 
 

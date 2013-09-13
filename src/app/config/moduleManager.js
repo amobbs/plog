@@ -21,7 +21,8 @@ angular.module('moduleManager', [
     // Directives
     'ngConfirmClick',
     'hierarchyFields',
-    '4mValidation',
+    'validateServer',
+    'validatePassword',
 
     // Site Modules
     'pages',

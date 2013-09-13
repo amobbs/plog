@@ -56,6 +56,25 @@ Router::connect(
 
 
 /**
+ * Read My-Profile Options
+ * @SWG\Resource(
+ *      resourcePath="/users",
+ *      @SWG\Api(
+ *          path="/users/my-profile",
+ *          @SWG\Operation(
+ *              @SWG\Partial("users.my-profile.options"),
+ *              nickname="users.my-profile.options",
+ *              httpMethod="OPTIONS"
+ *          )
+ *      )
+ * )
+ */
+Router::connect(
+    '/users/my-profile',
+    array('controller' => 'Users', 'action' => 'myProfileOptions', '[method]' => 'OPTIONS')
+);
+
+/**
  * Read My-Profile
  * @SWG\Resource(
  *      resourcePath="/users",
@@ -71,7 +90,7 @@ Router::connect(
  */
 Router::connect(
     '/users/my-profile',
-    array('controller' => 'Users', 'action' => 'myProfile', '[method]' => 'GET')
+    array('controller' => 'Users', 'action' => 'myProfileRead', '[method]' => 'GET')
 );
 
 
@@ -91,9 +110,27 @@ Router::connect(
  */
 Router::connect(
     '/users/my-profile',
-    array('controller' => 'Users', 'action' => 'myProfile', '[method]' => 'POST')
+    array('controller' => 'Users', 'action' => 'myProfileUpdate', '[method]' => 'POST')
 );
 
+
+/**
+ * Read My-Notifications Options
+ * @SWG\Resource(
+ *      resourcePath="/users",
+ *      @SWG\Api(
+ *          path="/users/my-notifications",
+ *          @SWG\Operation(
+ *              @SWG\Partial("users.my-notifications.options"),
+ *              nickname="users.my-notifications.options",
+ *              httpMethod="OPTIONS"
+ *          )
+ *      )
+ * )
+ */
+Router::connect('/users/my-notifications',
+    array('controller' => 'Users', 'action' => 'myNotificationsOptions', '[method]' => 'OPTIONS')
+);
 
 /**
  * Read My-Notifications
@@ -110,7 +147,7 @@ Router::connect(
  * )
  */
 Router::connect('/users/my-notifications',
-    array('controller' => 'Users', 'action' => 'myNotifications', '[method]' => 'GET')
+    array('controller' => 'Users', 'action' => 'myNotificationsRead', '[method]' => 'GET')
 );
 
 
@@ -130,7 +167,7 @@ Router::connect('/users/my-notifications',
  */
 Router::connect(
     '/users/my-notifications',
-    array('controller' => 'Users', 'action' => 'myNotifications', '[method]' => 'POST')
+    array('controller' => 'Users', 'action' => 'myNotificationsUpdate', '[method]' => 'POST')
 );
 
 

@@ -5,10 +5,32 @@
  */
 
 App::uses('AppModel', 'Model');
+App::uses('Client', 'Model');
+
+/**
+ * Class User
+ * @property    Client      $Client
+ */
 
 class User extends AppModel
 {
     public $name = "User";
+
+
+    /**
+     * Constructor
+     * @param bool $id
+     * @param null $table
+     * @param null $ds
+     */
+    public function __construct($id = false, $table = null, $ds = null)
+    {
+        // Load associated classes
+        $this->Client = ClassRegistry::init('Client');
+
+        // Load parent construct
+        return parent::__construct($id = false, $table = null, $ds = null);
+    }
 
 
     /**
@@ -23,7 +45,7 @@ class User extends AppModel
         'company'       => array('type' => 'text'),
         'phoneNumber'   => array('type' => 'string', 'length'=>40),
         'role'          => array('type' => 'string'),
-        'client'        => array('type' => 'string'),
+        'client_id'        => array('type' => 'string'),
         'deleted'       => array('type' => 'boolean'),
         'notifications' => array('type' => null),
         'favouriteDashboards'   => array('type' => null),
@@ -148,8 +170,8 @@ class User extends AppModel
         'password'=>array(
             'password'=>array(
                 'required'=>true,
-                'rule'=>array('validatePassword'),
-                'message'=>'Must be a valid password',
+                'rule'=>array('minLength', 6),
+                'message'=>'Password must be at least 6 characters long.',
             )
         )
     );
@@ -205,7 +227,7 @@ class User extends AppModel
             ),
         );
 
-        return $this->find('first', array_merge( $options, $defaultOptions ));
+        return $this->find('first', array_merge( $defaultOptions, $options ));
     }
 
 
@@ -246,24 +268,104 @@ class User extends AppModel
     }
 
 
+    /**
+     * Validate fields "My Profile" form
+     * @returns     bool        True if valid
+     */
+    public function validatesMyProfile()
+    {
+        $rules = $this->validateUser;
+
+        // Optinally validate the password field(s) if supplied
+        if ( !empty($data['password']) )
+        {
+            $rules = array_merge($rules, $this->validatePassword);
+        }
+
+        // Apply rules to validator
+        $validator = $this->validator();
+        foreach ($rules as $field=>$rule)
+        {
+            $validator->add($field, $rule);
+        }
+
+        // Validate
+        $success = $validator->validates();
+
+        return $success;
+    }
+
+
+    /**
+     * Validate fields from "My Notifications" form
+     * @returns     bool        True if valid
+     */
+    public function validatesMyNotifications()
+    {
+        $rules = $this->validateNotifications;
+
+        // Apply rules to validator
+        $validator = $this->validator();
+        foreach ($rules as $field=>$rule)
+        {
+            $validator->add($field, $rule);
+        }
+
+        // Validate
+        $success = $validator->validates();
+
+        return $success;
+    }
+
+
+    /**
+     * Check the notifications options selected exist in the available options for this user.
+     * @param       $check
+     * @return      bool        True if the notification opts exist
+     */
     public function validateNotifications( $check )
     {
+        // Fetch all notifications that are available to this user
+        // TODO: Make this load the USER TO BE SAVED and pass it to the function
+        $this->Client->getNotificationOptionsAvailableToUser( array() );
+
+        // TODO: Validation code
+
         return true;
     }
 
+
+    /**
+     * Check if the chosen role actually exists
+     * @param   $check
+     * @return  bool        True if the role exists
+     */
     public function validateRole( $check )
     {
-        return true;
+        // Fetch roles
+        $roles = $this->getAvailableRoles();
+
+        // Check for the role existing
+        foreach ($roles as $role)
+        {
+            if ($role['id'] == $check['role'])
+                return true;
+        }
+
+        return false;
     }
 
-    public function validatePassword( $check )
-    {
-        return true;
-    }
 
+    /**
+     * Check if the the selected Client is a valid client
+     * @param       $check
+     * @return      bool        True if the client exists in the client list
+     */
     public function validateClient( $check )
     {
-        return true;
+        // Attempt to fetch the client and check
+        $client = $this->Client->getClientById( $check['client_id'] );
+        return (sizeof($client) > 0);
     }
 
 }
