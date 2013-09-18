@@ -237,15 +237,15 @@
 
 <!-- Hierarchy Fields -->
 <div class="span4 hierarchy-fields">
-    <div ng-repeat="group in groups" id="hf2">
+    <div ng-repeat="field in hierarchyFields" id="hf2">
         <div class="row-fluid">
             <div class="span12">
-                <legend>{{ group.name }}</legend>
+                <legend>{{ field.name }}</legend>
             </div>
         </div>
         <div class="row-fluid">
-            <div class="span6" ng-repeat="child in group.children">
-                <span hierarchy-fields="{{ child }}"></span>
+            <div class="span6" ng-repeat="child in field.children">
+                <span hierarchy-fields="{{ child }}" hierarchy-selected="{{ hierarchySelected }}"></span>
             </div>
         </div>
     </div>
