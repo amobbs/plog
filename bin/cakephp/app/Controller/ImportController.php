@@ -87,29 +87,29 @@ class ImportController extends AppController
                 'shortname' => 'aus',
                 'contact' => '',
                 'logprefix' => 'AUS',
-                'activationDate' => new DateTime('now'),
+                'activationDate' => new MongoDate(strtotime('now')),
                 'format' => $baseFormats,
                 'attributes' => array(),
             ),
             array(
                 'database' => 'mediahub',
                 'database_prefix' => 'mediahub',
-                'name' => 'mediahub',
-                'shortname' => '',
+                'name' => 'MediaHub',
+                'shortname' => 'MH',
                 'contact' => '',
                 'logprefix' => 'MH',
-                'activationDate' => new DateTime('now'),
+                'activationDate' => new  MongoDate(strtotime('now')),
                 'format' => $baseFormats,
                 'attributes' => array(),
             ),
             array(
                 'database' => 'mediahub',
                 'database_prefix' => 'sbs',
-                'name' => 'sbs',
-                'shortname' => '',
+                'name' => 'SBS',
+                'shortname' => 'SBS',
                 'contact' => '',
                 'logprefix' => 'SBS',
-                'activationDate' => new DateTime('now'),
+                'activationDate' => new  MongoDate(strtotime('now')),
                 'format' => $baseFormats,
                 'attributes' => array(),
             ),
@@ -117,10 +117,10 @@ class ImportController extends AppController
                 'database' => 'mediahub',
                 'database_prefix' => 'tvn',
                 'name' => 'TVN',
-                'shortname' => 'tvn',
+                'shortname' => 'TVN',
                 'contact' => '',
                 'logprefix' => 'TVN',
-                'activationDate' => new DateTime('now'),
+                'activationDate' => new  MongoDate(strtotime('now')),
                 'format' => $baseFormats,
                 'attributes' => array(),
             ),
@@ -131,7 +131,7 @@ class ImportController extends AppController
                 'shortname' => 'win',
                 'contact' => '',
                 'logprefix' => 'WIN',
-                'activationDate' => new DateTime('now'),
+                'activationDate' => new  MongoDate(strtotime('now')),
                 'format' => $baseFormats,
                 'attributes' => array(),
             ),
@@ -139,10 +139,10 @@ class ImportController extends AppController
                 'database' => 'preslog',
                 'database_prefix' => 'pres',
                 'name' => 'ABC',
-                'shortname' => 'abc',
+                'shortname' => 'ABC',
                 'contact' => '',
-                'logprefix' => 'abc',
-                'activationDate' => new DateTime('now'),
+                'logprefix' => 'ABC',
+                'activationDate' => new  MongoDate(strtotime('now')),
                 'format' => $baseFormats,
                 'attributes' => array(),
             ),
@@ -265,21 +265,6 @@ class ImportController extends AppController
             if($client['format'][$i]['name'] == 'Severity') $severityId = $i;
         }
 
-        //set options for select in format
-//        $sql = 'SELECT id, name, `order`, deleted FROM ' . $client['database_prefix'] . '_onairimpact ORDER BY `order`';
-//        if ($result = $this->mysqli->query($sql)) {
-//            $options = array();
-//            while ($row = $result->fetch_assoc()) {
-//                $options[] = array(
-//                    '_id' =>  new MongoId(),
-//                    'name' => $row['name'],
-//                    'order' => $row['order'],
-//                    'deleted' => $row['deleted'],
-//                    'old_id' => $row['id'],
-//                );
-//            }
-//            $client['format'][$onairImpactId]['data']['options'] = $options;
-//        }
         $sql = 'SELECT distinct impact FROM ' . $client['database_prefix'] . '_dailylog';
         if ($result = $this->mysqli->query($sql)) {
             $options = array();
@@ -319,51 +304,109 @@ class ImportController extends AppController
             'deleted' => '0',
             'children' => array(),
         );
+
+
         $networkCount = 0;
         $channelCount = 0;
-        $sql = 'SELECT network, displayOrder, id, channel_id, deleted, short_code FROM ' . $client['database_prefix'] . '_networks ORDER BY network, displayorder';
-        if ($result = $this->mysqli->query($sql)) {
-            while ($row = $result->fetch_assoc()) {
-                if (!isset($networks['children'][$row['network']])) {
-                    $networks['children'][$row['network']] = array(
+        //wins networks/channels are backwards
+        if ($client['name'] == 'WIN' || $client['name'] == 'MediaHub') {
+            $sql = 'SELECT id, name, displayorder, deleted FROM ' . $client['database_prefix'] . '_channels ORDER BY displayorder';
+            if ($result = $this->mysqli->query($sql)) {
+                while ($row = $result->fetch_assoc()) {
+                    $n = array(
                         '_id' => new MongoId(),
-                        'name' => mb_convert_encoding($row['network'], 'utf8'),
+                        'name' => mb_convert_encoding($row['name'], 'utf8'),
                         'deleted' => $row['deleted'],
                         'children' => array(),
                     );
+
+                    $networkSql = 'SELECT network, displayorder, id, channel_id, deleted FROM ' . $client['database_prefix'] . '_networks WHERE channel_id = ' . $row['id'] . ' order by displayorder';
+                    if ($nResult = $this->mysqli->query($networkSql)) {
+                        while ($nRow = $nResult->fetch_assoc()) {
+                            $n['children'][] = array(
+                                '_id' => new MongoId(),
+                                'name' => mb_convert_encoding($nRow['network'], 'utf8'),
+                                'deleted' => $nRow['deleted'],
+                                'children' => array(),
+                            );
+                            $channelCount++;
+                        }
+                    }
+                    $networks['children'][] = $n;
                     $networkCount++;
                 }
-
-                $channelSql = 'SELECT name, deleted FROM ' . $client['database_prefix'] . '_channels WHERE id = ' . $row['channel_id'] . ' ORDER BY displayorder';
-                if($cResult = $this->mysqli->query($channelSql)) {
-                    while($cRow = $cResult->fetch_assoc()) {
-                        $networks['children'][$row['network']]['children'][] = array(
+            }
+        } else {
+            $sql = 'SELECT network, displayOrder, id, channel_id, deleted, short_code FROM ' . $client['database_prefix'] . '_networks ORDER BY network, displayorder';
+            if ($result = $this->mysqli->query($sql)) {
+                while ($row = $result->fetch_assoc()) {
+                    if (!isset($networks['children'][$row['network']])) {
+                        $networks['children'][$row['network']] = array(
                             '_id' => new MongoId(),
-                            'name' => mb_convert_encoding($cRow['name'], 'utf8'),
-                            'deleted' => $cRow['deleted'],
+                            'name' => mb_convert_encoding($row['network'], 'utf8'),
+                            'deleted' => $row['deleted'],
+                            'children' => array(),
                         );
-                        $channelCount++;
+                        $networkCount++;
+                    }
+
+                    $channelSql = 'SELECT name, deleted FROM ' . $client['database_prefix'] . '_channels WHERE id = ' . $row['channel_id'] . ' ORDER BY displayorder';
+                    if($cResult = $this->mysqli->query($channelSql)) {
+                        while($cRow = $cResult->fetch_assoc()) {
+                            $networks['children'][$row['network']]['children'][] = array(
+                                '_id' => new MongoId(),
+                                'name' => mb_convert_encoding($cRow['name'], 'utf8'),
+                                'deleted' => $cRow['deleted'],
+                            );
+                            $channelCount++;
+                        }
                     }
                 }
             }
         }
-        $useStates = array('VIC', 'SA', 'WA', 'NT', 'QLD', 'NSW', 'ACT' ,'TAS');
-        $states = array(
-            '_id' => new MongoId(),
-            'name' => 'States',
-            'deleted' => '0',
-            'children' => array(),
-        );
-        foreach ($useStates as $state) {
-            $states['children'][] = array(
+
+        $attrs[] = $networks;
+        if ($client['name'] == 'ABC' || $client['name'] == 'SBS') {
+            $useStates = array('VIC', 'SA', 'WA', 'NT', 'QLD', 'NSW', 'ACT' ,'TAS');
+            $states = array(
                 '_id' => new MongoId(),
-                'name' => $state,
-                'deleted' => '0',
+                'name' => 'States',
+                'deleted' => 0,
                 'children' => array(),
             );
+            foreach ($useStates as $state) {
+                $states['children'][] = array(
+                    '_id' => new MongoId(),
+                    'name' => $state,
+                    'deleted' => '0',
+                    'children' => array(),
+                );
+            }
+            $attrs[] = $states;
         }
-        $attrs[] = $networks;
-        $attrs[] = $states;
+
+        if($client['name'] == 'ABC' || $client['name'] == 'MediaHub') {
+            $attrs[] = array(
+                '_id' => new MongoId(),
+                'name' => 'City / State',
+                'deleted' => 0,
+                'children' => array(
+                    array(
+                        '_id' => new MongoId(),
+                        'name' => 'City',
+                        'deleted' => 0,
+                        'children' => array(),
+                    ),
+                    array(
+                        '_id' => new MongoId(),
+                        'name' => 'State',
+                        'deleted' => 0,
+                        'children' => array(),
+                    ),
+                ),
+            );
+        }
+
 
         $client['attributes'] = $attrs;
         $client['_id'] = new MongoId();
@@ -405,6 +448,7 @@ class ImportController extends AppController
 
             $user =  array(
                 '_id' => new MongoId(),
+                'password' => Security::hash('', 'blowfish', false),
                 'email' => trim($parts[0]),
                 'firstName' => trim($parts[1]),
                 'lastName' => trim($parts[2]),
@@ -462,12 +506,7 @@ class ImportController extends AppController
         $logCount = 0;
 
         if($result = $this->mysqli->query($sql)) {
-            $hrid = 1;
             while ($row = $result->fetch_assoc()) {
-
-                //get any extra data we need
-                $datetime = new DateTime();
-                $datetime->setTimestamp(strtotime($row['logdate'] . ' ' . $row['logtime']));
 
                 $fields = array(
                     array(
@@ -479,7 +518,7 @@ class ImportController extends AppController
                     array(
                         'field_id' => $this->_getMongoIDFromFormatByName($client['format'], 'datetime'),
                         'data' => array(
-                            'datetime' => $datetime,
+                            'datetime' => new MongoDate(strtotime($row['logdate'] . ' ' . $row['logtime'])),
                         ),
                     ),
                     array(
@@ -527,28 +566,39 @@ class ImportController extends AppController
                     array(
                         'field_id' =>  $this->_getMongoIDFromFormatByName($client['format'], 'Entered Time'),
                         'data' => array(
-                            'datetime' => new DateTime(strtotime($row['enteredtimestamp'])),
+                            'datetime' => new MongoDate(strtotime($row['enteredtimestamp'])),
                         ),
                     ),
                     array(
                         'field_id' =>  $this->_getMongoIDFromFormatByName($client['format'], 'Cause'),
                         'data' => array(
-                            'text' => mb_convert_encoding($row['enteredtimestamp'], 'utf-8'),
+                            'text' => mb_convert_encoding($row['cause'], 'utf-8'),
                         ),
                     ),
                 );
 
 
                 $attr = array();
-//                if($row['vic'] != null) $attr[] = $this->_getMongoIdForAttr($client['attributes'], 'VIC');
-//                if($row['sa'] != null) $attr[] = $this->_getMongoIdForAttr($client['attributes'], 'SA');
-//                if($row['wa'] != null) $attr[] = $this->_getMongoIdForAttr($client['attributes'], 'WA');
-//                if($row['nt'] != null) $attr[] = $this->_getMongoIdForAttr($client['attributes'], 'NT');
-//                if($row['qld'] != null) $attr[] = $this->_getMongoIdForAttr($client['attributes'], 'QLD');
-//                if($row['nsw'] != null) $attr[] = $this->_getMongoIdForAttr($client['attributes'], 'NSW');
-//                if($row['act'] != null) $attr[] = $this->_getMongoIdForAttr($client['attributes'], 'ACT');
-//                if($row['tas'] != null) $attr[] = $this->_getMongoIdForAttr($client['attributes'], 'TAS');
+                //only abc and media hub use the spread (city/state)
+                if($client['name'] == 'ABC' || $client['name'] == 'MediaHub') {
+                    $spread = $row['spread'];
+                    if (strpos($spread, '1') > -1) //set city
+                        $attr[] = $this->_getMongoIdForAttr($client['attributes'], 'City');
+                    if (strpos($spread, '2') > -1) //set state
+                        $attr[] = $this->_getMongoIdForAttr($client['attributes'], 'State');
 
+                }
+
+                if ($client['name'] == 'ABC' || $client['name'] == 'SBS') {
+                    if($row['vic'] != null) $attr[] = $this->_getMongoIdForAttr($client['attributes'], 'VIC');
+                    if($row['sa'] != null) $attr[] = $this->_getMongoIdForAttr($client['attributes'], 'SA');
+                    if($row['wa'] != null) $attr[] = $this->_getMongoIdForAttr($client['attributes'], 'WA');
+                    if($row['nt'] != null) $attr[] = $this->_getMongoIdForAttr($client['attributes'], 'NT');
+                    if($row['qld'] != null) $attr[] = $this->_getMongoIdForAttr($client['attributes'], 'QLD');
+                    if($row['nsw'] != null) $attr[] = $this->_getMongoIdForAttr($client['attributes'], 'NSW');
+                    if($row['act'] != null) $attr[] = $this->_getMongoIdForAttr($client['attributes'], 'ACT');
+                    if($row['tas'] != null) $attr[] = $this->_getMongoIdForAttr($client['attributes'], 'TAS');
+                }
                 //general log object
                 $log = array(
                     '_id' => new MongoId(),
@@ -560,8 +610,8 @@ class ImportController extends AppController
                     'attributes' => $attr,
                     'version' => (int)$row['version'],
                     'client_id' => $client['_id'],
-                    'created' => $row['created'],
-                    'modified' => $row['modified'],
+                    'created' => new MongoDate(strtotime($row['created'])),
+                    'modified' => new MongoDate(strtotime($row['modified'])),
                 );
 
                 $this->Log->create($log);
