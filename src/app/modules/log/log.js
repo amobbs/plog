@@ -29,7 +29,60 @@ angular.module( 'Preslog.log', [
         });
     })
 
+    .directive('hierachyFields', function() {
+        return function(scope, element, attrs) {
+            scope.$watch(attrs.hierachyFields, function (value) {
+                drawHierachy(value);
+            });
 
+            function drawHierachy(fields) {
+                $(element).dynatree({
+                    generateIds: true,
+                    idPrefix: 'hf',
+                    imagePath: 'assets/vendor/dynatree/src/skin/',
+                    checkbox: true,
+                    selectMode: 3,
+                    onSelect: function(selected, dtnode) {
+
+                        scope.$apply(function() {
+                            var id = parseInt(dtnode.data.key, 10);
+
+                            if (selected && (scope.selectedIds.indexOf(id) == -1 )) {
+                                scope.selectedIds.push(id);
+                            } else if (!selected && (scope.selectedIds.indexOf(id) != -1)) {
+                                var index = scope.selectedIds.indexOf(id);
+                                scope.selectedIds.splice(index, 1);
+                            }
+                        });
+                    },
+                    children: parseHierachyToDyna(fields)
+                });
+            }
+
+            function parseHierachyToDyna(field) {
+                var dynaField = {};
+                var isInitiallySelected = (scope.selectedIds.indexOf(field.id) > -1);
+                if (field.deleted && isInitiallySelected) {
+                    return;
+                }
+                dynaField.title = field.name;
+                dynaField.expand = true;
+                dynaField.select = isInitiallySelected;
+                dynaField.key = field.id;
+                if (field.children) {
+                    dynaField.isFolder = (field.children.length > 0);
+                    dynaField.children = [];
+                    field.children.forEach(function(child) {
+                        dynaField.children.push(parseHierachyToDyna(child));
+                    });
+                }
+
+                return dynaField;
+            }
+
+
+        };
+    })
 /**
  * And of course we define a controller for our route.
  */

@@ -12,7 +12,7 @@ use JqlParser\JqlParser;
 
 class SearchController extends AppController
 {
-    public $uses = array('JqlParser');
+    public $uses = array('Search', 'JqlParser');
 
     /**
      * Search using the given query string

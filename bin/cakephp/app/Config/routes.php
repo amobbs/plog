@@ -48,6 +48,13 @@ Router::connect(
 );
 
 
+/**
+ * initial import script
+ */
+Router::connect(
+    '/import',
+    array('controller' => 'Import', 'action' => 'runImport')
+);
 
 /**
  * Load all plugin routes. See the CakePlugin documentation on
