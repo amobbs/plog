@@ -312,7 +312,7 @@ angular.module( 'Preslog.users', [
      * Admin: User: Edit
      */
     .controller( 'AdminUserEditCtrl', function UserAdminEditController( $scope, titleService, userSource, optionsSource, $location ) {
-        titleService.setTitle( 'Admin - Users ' );
+        titleService.setTitle( ['Edit User', 'Admin'] );
 
         /**
          * Init
