@@ -22,7 +22,7 @@ class Client extends AppModel
         'logPrefix'     => array('type' => 'string', 'length'=>4),
         'activationDate'=> array('type' => 'datetime'),
         'format'        => array('type' => null),
-
+        'attributes'    => array('type' => null),
         'created'       => array('type' => 'datetime'),
         'modified'      => array('type' => 'datetime'),
     );
