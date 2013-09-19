@@ -1,20 +1,14 @@
 /**
- * Each section of the site has its own module. It probably also has
- * submodules, though this boilerplate is too simple to demonstrate it. Within
- * `src/app/home`, however, could exist several additional folders representing
- * additional modules that would then be listed as dependencies of this one.
- * For example, a `note` section could have the submodules `note.create`,
- * `note.delete`, `note.edit`, etc.
- *
- * Regardless, so long as dependencies are managed correctly, the build process
- * will automatically take take of the rest.
- *
- * The dependencies block here is also where component dependencies should be
- * specified, as shown below.
+ * Home Module
+ * Provides a simple redirect on "/" to preset target locations.
  */
 angular.module( 'Preslog.home', [])
 
     .config(function(stateHelperProvider) {
+
+        /**
+         * Home State
+         */
         stateHelperProvider.addState('mainLayout.home', {
             url: '/',
             views: {
@@ -23,9 +17,44 @@ angular.module( 'Preslog.home', [])
                     templateUrl: 'modules/home/home.tpl.html'
                 }
             },
+
+            /**
+             * Resolve prior to state load
+             */
             resolve: {
+
+                // User must have permissions to access this resource
                 permissions: ['$q', 'userService', function($q, userService) {
-                    return userService.controllerPermission('single-client');
+                    return userService.checkAccessPermission('user');
+                }],
+
+                // Force a redirect. This isn't an actual page, just a redirect.
+                redirect: ['$q', 'userService', '$location', function($q, userService, $location) {
+
+                    // If no user, auth will be executed. Otherwise we get the role.
+                    var role = userService.getUser().role;
+
+                    // Default path
+                    var requestedPath = '/dashboard';
+
+                    // Certain roles have certain destinations
+                    switch( role ) {
+                        case 'supervisor':
+                            requestedPath = '/dashboards/to-be-released';
+                            break;
+                        case 'operator':
+                            requestedPath = '/log';
+                            break;
+                    }
+
+                    // Redirect
+                    $location.path(requestedPath);
+
+                    // Reject this state change as a matter of course.
+                    var defer = $q.deferred;
+                    defer.reject();
+                    return defer.promise;
+
                 }]
             }
         });
@@ -35,27 +64,8 @@ angular.module( 'Preslog.home', [])
     /**
      * Home Controller
      */
-    .controller( 'HomeCtrl', function HomeController( $scope, userService, $location ) {
-
-        // Load path depending on route if none established
-        // If no user, auth will be executed.
-        var role = userService.getUser().role;
-
-        // Direct to the appropriate role
-        switch( role ) {
-            case 'supervisor':
-                requestedPath = '/dashboards/to-be-released';
-                break;
-            case 'operator':
-                requestedPath = '/log';
-                break;
-            default:
-                requestedPath = '/dashboard';
-        }
-
-        // Redirect
-        $location(requestedPath);
-
+    .controller( 'HomeCtrl', function HomeController( $scope ) {
+        // Not a real thing
     })
 
 ;
