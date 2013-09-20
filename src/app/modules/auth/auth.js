@@ -17,6 +17,24 @@ angular.module( 'Preslog.auth', [
                     controller: 'AuthCtrl',
                     templateUrl: 'modules/auth/login.tpl.html'
                 }
+            },
+            resolve: {
+                loggedOut: ['$q', '$location', 'userService', function($q, $location, userService) {
+                    var defer = $q.defer();
+
+                    // If the user IS logged in, reject this action and redirect
+                    userService.login().then(function()
+                    {
+                        defer.reject();
+                        $location.path('/');
+                    }, function()
+                    {
+                        // Assuming the user isn't logged in, resolve as OK.
+                        defer.resolve();
+                    });
+
+                    return defer.promise;
+                }]
             }
         });
     })
@@ -78,7 +96,7 @@ angular.module( 'Preslog.auth', [
 /**
  * Controller
  */
-    .controller( 'AuthCtrl', function AuthController( $rootScope, $scope, titleService, userService ) {
+    .controller( 'AuthCtrl', function AuthController( $rootScope, $scope, $location, titleService, userService ) {
 
         // Title
         titleService.setTitle( 'Login' );
@@ -92,30 +110,21 @@ angular.module( 'Preslog.auth', [
             // Fire user login
             userService.login(user).then(function(ret) {
 
-                // OK?
-                if ( ret.login.success ) {
+                // Successful login
+                $rootScope.$broadcast('event:auth-loginConfirmed', user);
 
-                    console.log('ok!');
+            }, function(ret) {
 
-                    // Logged in!
-                    $rootScope.$broadcast('event:auth-loginConfirmed', user);
-                }
-                else {
+                // Failed login
+                $scope.errors = { message: ret.login.message};
 
-                    $scope.errors = { message: ret.login.message};
-
-                    for (var i in ret.login.data)
-                    {
-                        $scope.errors[i] = ret.login.data[i][Object.keys(ret.login.data[i])[0]];
-                    }
-
+                // Write error messages to fields
+                for (var i in ret.login.data)
+                {
+                    $scope.errors[i] = ret.login.data[i][Object.keys(ret.login.data[i])[0]];
                 }
 
             });
-
-
-
-
         };
     })
 

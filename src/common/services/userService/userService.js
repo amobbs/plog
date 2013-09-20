@@ -26,16 +26,15 @@ angular.module('userService', ['restangular'])
 
                 // If user is not set, attempt to login
                 if (! user) {
-                    service.login().then(function (ret) {
 
-                        // Login OK?
-                        if (user)
-                        {
-                            // Resolve this promise
-                            deferred.resolve(user);
-                            return;
-                        }
+                    // Attempt to login in order to fetch the user
+                    service.login().then(function () {
 
+                        // Login OK - Resolve this promise with the user variable set by login()
+                        deferred.resolve(user);
+
+                    }, function()
+                    {
                         // Abandon the promise, and fire the Auth-LoginRequired event
                         deferred.reject();
                         $rootScope.$broadcast('event:auth-loginRequired');
@@ -54,27 +53,38 @@ angular.module('userService', ['restangular'])
              * @param username
              * @param password
              */
-            login: function(user) {
+            login: function(userCredentials) {
                 var deferred = $q.defer();
 
-                // default user object
-                user = (user === undefined ? {} : {'User':user});
+                // Only try to login if we're not already logged in.
+                if (user === undefined)
+                {
+                    // setup default user object
+                    userCredentials = (userCredentials === undefined ? {} : {'User':userCredentials});
 
-                // Attempt to login
-                Restangular.all('users/login').post( user ).then(function (ret) {
+                    // Attempt to login
+                    Restangular.all('users/login').post( userCredentials ).then(function (ret) {
 
-                    // Login OK?
-                    if (ret.login.success)
-                    {
-                        // Save user details
-                        user = ret.login.user;
-                        permissions = ret.login.permissions;
-                    }
+                        // Login OK?
+                        if (ret.login.success)
+                        {
+                            // Save user details
+                            user = ret.login.user;
+                            permissions = ret.login.permissions;
 
-                    // resolve the promise
-                    // We always resolve this process, even in error cases.
-                    deferred.resolve(ret);
-                });
+                            // resolve the promise
+                            deferred.resolve();
+                        }
+
+                        // Reject the promose on failure
+                        deferred.reject();
+                    });
+
+                }
+                else
+                {
+                    deferred.resolve();
+                }
 
                 // Promise to complete this request
                 return deferred.promise;
@@ -162,50 +172,51 @@ angular.module('userService', ['restangular'])
             checkPermission: function( key ) {
                 var deferred = $q.defer();
 
-                // Ensures the user object is loaded, which populates permissions
-                getUser().then(function(ret) {
-                    checkPermissions( key );
+                // Need user data for this to work
+                service.getUser().then(function()
+                {
+                    // Permissions list must exist
+                    if (permissions === undefined)
+                    {
+                        deferred.resolve( false );
+                    }
+
+                    // Perform permissions check
+                    var isAllowed = (permissions.indexOf(key) !== -1);
+                    deferred.resolve( isAllowed );
                 });
 
+                // Return the promise
                 return deferred.promise;
             },
 
 
             /**
-             * Check for this permission on Controller access.
-             * If failed, deny the state change with an error.
+             * Check for this permission to access this resource
+             * If this fails, the auth-loginRequired event will be triggered.
              * @param   string      Permission to check
              */
-            controllerPermission: function( key ) {
+            checkAccessPermission: function( key ) {
                 var deferred = $q.defer();
 
-                // Ensures the user object is loaded, which populates permissions
-                getUser().then(function(user) {
-
-                    if (!checkPermissions( key ))
+                // Check the permissions as per normal
+                service.checkPermission( key ).then(function( result )
+                {
+                    if (result)
                     {
-                        $rootScope.$broadcast('event:auth-loginRequired');
-                        deferred.reject();
+                        deferred.resolve();
                     }
                     else
                     {
-                        deferred.resolve();
+                        // Failure to have permissions results in a 403 error
+                        $rootScope.$broadcast('event:error-unauthorised');
+                        deferred.reject();
                     }
                 });
 
                 return deferred.promise;
             }
 
-        };
-
-
-        /**
-         * Permissions check
-         * @param   key         String name of the permission
-         * @return  boolean     True if user had this permission access
-         */
-        var checkPermissions = function( key ) {
-            return (permissions.indexOf(key) !== -1);
         };
 
 
