@@ -364,7 +364,7 @@ class User extends AppModel
     public function validateClient( $check )
     {
         // Attempt to fetch the client and check
-        $client = $this->Client->getClientById( $check['client_id'] );
+        $client = $this->Client->findById( $check['client_id'] );
         return (sizeof($client) > 0);
     }
 

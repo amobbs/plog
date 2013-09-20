@@ -107,7 +107,7 @@ class Client extends AppModel
      * @param       string      ClientID
      * @return      array       Client
      */
-    public function getClientById( $id )
+    public function findById( $id )
     {
         // Fetch all client info
         return $this->find('first', array(

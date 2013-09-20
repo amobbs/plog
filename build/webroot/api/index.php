@@ -6,5 +6,7 @@
  */
 chdir(dirname(dirname(dirname(__DIR__))).DIRECTORY_SEPARATOR.'bin'.DIRECTORY_SEPARATOR.'cakephp'.DIRECTORY_SEPARATOR.'app');
 
+define('WEBROOT_DIR', dirname(__FILE__));
+
 // Begin
 require 'index.php';
