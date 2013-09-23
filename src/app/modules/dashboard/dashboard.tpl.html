@@ -2,7 +2,7 @@
 
     <div id="preslog_sidebar">
 
-        <h3>Preset Dashboards</h3>
+        <h3>{{ item.name }}</h3>
         <ul class="nav nav-tabs nav-stacked">
             <li><a href="/dashboard/log-list">Live Report<i class="icon-chevron-right"></i></a></li>
             <li><a href="/dashboard/log-list">Daily Logs<i class="icon-chevron-right"></i></a></li>
@@ -10,10 +10,8 @@
             <li><a href="/dashboard/log-list">To Be Released Logs<i class="icon-chevron-right"></i></a></li>
         </ul>
         <h3>Favourite Dashboards</h3>
-        <ul class="nav nav-tabs nav-stacked">
-            <li class="active"><a href="/dashboard/dashboard">Dashboard Example<i class="icon-chevron-right"></i></a></li>
-            <li><a href="/dashboard/dashboard">Name of another custom dashboard<i class="icon-chevron-right"></i></a></li>
-            <li><a href="/dashboard/dashboard">Dashboard galore<i class="icon-chevron-right"></i></a></li>
+        <ul class="nav nav-tabs nav-stacked" ng-repeat="item in favourites">
+            <li><a ng-href="/dashboard/{{ item.id }}">{{ item.name }}<i class="icon-chevron-right"></i></a></li>
         </ul>
         <h3>Add Favourite</h3>
         <div class="favourites-manager">
@@ -23,18 +21,19 @@
                 <option value="test">Reporting Box</option>
             </select>
         </div>
-
     </div>
 
-    <div class="container-fluid" id="preslog_content">
+    <div class="container-fluid " id="preslog_content">
         <div class="row-fluid">
+
             <div class="span8 dash-title">
-                <h1>Dashboard Example</h1>
+                <h1>{{ dashboard.name }}</h1>
                 </div>
             <div class="span4">
+
                 <div class="btn-group dash-controls pull-right">
                     <button class="btn" ng-click="dashboardAddWidget = true"><i class="icon icon-plus"></i> Add Widget</button>
-                    <button class="btn" ng-click="dashboardCreate = true"><i class="icon icon-pencil"></i> Create Dashboard </button>
+                    <button class="btn" ng-click="openCreateModal()" ><i class="icon icon-pencil"></i> Create Dashboard </button>
                     <button class="btn dropdown-toggle"><i class="icon icon-list-alt"></i> More <b class="caret"></b> </button>
                     <ul class="dropdown-menu">
                         <li><a href="#" ng-click="dashboardCreate = true"><i class="icon icon-edit"></i> Edit Dashboard </a></li>
@@ -46,9 +45,36 @@
             </div>
         </div>
 
-        <div class="row-fluid">
+        <div ng-repeat="widget in dashboard.widgets">
+            <div class="widget-box widget-movable">
+                <div class="widget-title">
+                        <span class="widget-icon">
+                            <i class="icon-signal"></i>
+                        </span>
+                    <h3>{{ widget.name }}</h3>
+                    <div class="widget-buttons">
+                        <div class="btn-group hover-show">
+                            <a class="btn btn-mini dropdown-toggle" data-toggle="dropdown" href="#">
+                                <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a tabindex="-1" href="#"><i class="icon icon-refresh"></i> Refresh</a></li>
+                                <li><a tabindex="-1" ng-click="dashboardWidgetEdit = true"><i class="icon icon-pencil"></i> Edit</a></li>
+                                <li><a><i class="icon icon-trash"></i> Delete</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="widget-content">
+                    <p>
+                        <chart value="widget.highcharts" type="widget.type" height="400"></chart>
+                    </p>
+                </div>
+            </div>
+        </div>
 
-            <div class="span4">
+        <div class="widget-area">
+            <div>
                 <div class="widget-box widget-movable">
                     <div class="widget-title">
                         <span class="widget-icon">
@@ -76,7 +102,7 @@
                 </div>
             </div>
 
-            <div class="span4">
+            <div>
                 <div class="widget-box widget-movable">
                     <div class="widget-title">
                         <span class="widget-icon">
@@ -102,7 +128,7 @@
                 </div>
             </div>
 
-            <div class="span4">
+            <div>
                 <div class="widget-box widget-movable">
                     <div class="widget-title">
                         <span class="widget-icon">
@@ -127,10 +153,8 @@
                     </div>
                 </div>
             </div>
-        </div>
+            <div>
 
-        <div class="row-fluid">
-            <div class="span12">
                 <div class="widget-box widget-movable">
                     <div class="widget-title">
                         <span class="widget-icon">
@@ -174,7 +198,7 @@
                                 <td><label>Program</label><div class="truncate">My Show Name Here</div></td>
                                 <td>
                                     <div popover-trigger="mouseenter" popover="12: ABC, DEF, GHI, JKL, MNO, PQR, STU, VWX, YZ">
-                                    <label>Networks</label><div class="truncate">12: Network List Goes here</div>
+                                        <label>Networks</label><div class="truncate">12: Network List Goes here</div>
                                     </div>
                                 </td>
                             </tr>
@@ -278,29 +302,20 @@
             </div>
         </div>
 
-    </div>
-</div>
 
 
-<!-- Add Dashboard Modal -->
-<div id="dashboard_create" modal="dashboardCreate" options="{backdropFade: true}" close="dashboardCreate = false" tabindex="-1" role="dialog">
-    <div class="modal-header">
-        <button type="button" class="close" ng-click="dashboardCreate = false" aria-hidden="true"><i class="icon icon-remove"></i></button>
-        <h3 id="myModalLabel">Create Dashboard</h3>
-    </div>
-    <div class="modal-body form-horizontal">
-        <div class="control-group">
-            <label class="control-label">Dashboard Name </label>
-            <div class="control">
-                <input type="text" placeholder="Dashboard Name..." value="" />
             </div>
         </div>
     </div>
-    <div class="modal-footer">
-        <button class="btn" data-dismiss="modal" aria-hidden="true" ng-click="dashboardCreate = false">Cancel</button>
-        <button class="btn btn-primary" ng-click="dashboardCreate = false">Create</button>
-    </div>
 </div>
+
+
+
+
+
+
+
+
 
 
 <!-- Add Widget Modal -->

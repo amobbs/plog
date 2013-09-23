@@ -8,7 +8,7 @@ use Swagger\Annotations as SWG;
 
 class DashboardsController extends AppController
 {
-    public $uses = array();
+    public $uses = array('User', 'Dashboard');
 
 
     /**
@@ -22,13 +22,47 @@ class DashboardsController extends AppController
      */
     public function listAllDashboards()
     {
-        // TODO
-        $this->set('todo', 'List Dashboards');
-        $this->set('data', $this->Dashboard->serializeDashboardForHighcharts());
-        $this->set('_serialize', array('todo', 'data'));
+        $this->set('preset', $this->listPresetDashboards());
+        $this->set('favourites', $this->listLoggedInFavouriteDashboards());
+        $this->set('dashboards', $this->Dashboard->serializeDashboardForHighcharts());
+        $this->set('_serialize', array('preset', 'favourites', 'dashboards'));
     }
 
 
+    /**
+     * given the logged in user list their favourite dashbaords
+     * @return array
+     */
+
+    private function listLoggedInFavouriteDashboards() {
+        $user = $this->User->findById(
+            $this->PreslogAuth->user('id'),
+            array('fields'=>array(
+                'dashboards',
+            ))
+        );
+
+        $fav = array();
+        foreach($user['User']['dashboards'] as $dashboardId) {
+            $dashboard = $this->Dashboard->findById(new MongoId($dashboardId));
+            $fav[] = array(
+                'id' => $dashboard['Dashboard']['id'],
+                'name' => $dashboard['Dashboard']['name'],
+            );
+        }
+
+        return $fav;
+    }
+
+    /**
+     * return a list of dashbaords that are preset by super-admin (everyone can see these)
+     * @return array
+     */
+    private function listPresetDashboards() {
+        $preset = array();
+
+        return $preset;
+    }
     /**
      * Create a new dashboard
      *
@@ -70,9 +104,52 @@ class DashboardsController extends AppController
      */
     public function editDashboard()
     {
-        // TODO
-        $this->set('todo', 'Edit Dashboard');
-        $this->set('_serialize', array('todo'));
+        $id = $this->request->params['pass'];
+        if ($this->request->is('get')) {
+            $dashboard = $this->Dashboard->findById($id[0]);
+
+//            for($i = 0; $i < sizeof($dashboard['Dashboard']['widgets']); $i++) {
+//                $dashboard['Dashboard']['widgets'][$i]['highcharts'] = json_decode($dashboard['Dashboard']['widgets'][$i]['highcharts']);
+//            }
+
+            $this->set('dashboard', $dashboard['Dashboard']);
+            $this->set('status', 'success');
+        } else if ($this->request->is('post')) {
+            if (!empty($id)) {
+                $this->Dashboard->save($this->request->data);
+                $this->set('dashboard', $this->request->data);
+                $this->set('status', 'saved');
+            } else {
+                $dashboard = array(
+                    '_id' => new MongoId(),
+                    'name' => $this->request->data['name'],
+                    'type' => 'static',
+                    'widgets' => array(
+                        array(
+                            '_id' => new MongoId(),
+                            'name' => 'widget 2',
+                            'type' => 'bar',
+                            'order' => 0,
+                            'highcharts' => $this->Dashboard->serializeDashboardForHighcharts(),
+                        )
+                    ),
+                    'shares' => array(),
+                );
+
+                for($i = 0; $i < sizeof($dashboard['widgets']); $i++) {
+                    $dashboard['widgets'][$i]['highcharts'] = json_decode($dashboard['widgets'][$i]['highcharts']);
+                }
+
+                $this->Dashboard->create($dashboard);
+                $this->Dashboard->save();
+
+                $this->set('dashboard',$dashboard);
+                $this->set('status', 'created');
+            }
+        }
+
+        $this->set('favourites', $this->listLoggedInFavouriteDashboards());
+        $this->set('_serialize', array('status', 'dashboard', 'favourites'));
     }
 
     /**
@@ -93,11 +170,12 @@ class DashboardsController extends AppController
      *      )
      * )
      */
-    public function deleteDashboard()
+    public function deleteDashboard($dashboardId)
     {
-        // TODO
-        $this->set('todo', 'Delete Dashboard');
-        $this->set('_serialize', array('todo'));
+        $this->Dashboard->delete($dashboardId);
+
+        $this->set('delete', 'success');
+        $this->set('_serialize', array('delete'));
     }
 
 
@@ -222,12 +300,11 @@ class DashboardsController extends AppController
      *      )
      * )
      */
-    public function exportDashboard()
+    public function exportDashboard($dashboardId)
     {
-        $dashboardId = $this->request->params['dashboard_id'];
-
-        $reportName = 'report_' . $dashboardId . '.docx';
-        $reportPath = $this->Dashboard->generateReport($reportName);
+        $dashboard = $this->Dashboard->findById($dashboardId);
+        $reportName = 'report_' . $dashboard['Dashboard']['name'] . '.docx';
+        $reportPath = $this->Dashboard->generateReport($dashboard, $reportName);
 
         $this->response->file($reportPath, array(
             'download' => true,
@@ -281,9 +358,8 @@ class DashboardsController extends AppController
      */
     public function listFavouriteDashboards()
     {
-        // TODO
-        $this->set('todo', 'List Favourite Dashboards');
-        $this->set('_serialize', array('todo'));
+        $this->set('favourites', $this->listLoggedInFavouriteDashboards());
+        $this->set('_serialize', array('favourites'));
     }
 
 
