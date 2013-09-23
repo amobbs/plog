@@ -6,15 +6,17 @@ angular.module( 'Preslog.auth', [
         'titleService'
     ])
 
-/**
- * Login Route
- */
     .config(function(stateHelperProvider) {
+
+
+        /**
+         * Login Route
+         */
         stateHelperProvider.addState('publicLayout.login', {
             url: '/login',
             views: {
                 "main@publicLayout": {
-                    controller: 'AuthCtrl',
+                    controller: 'AuthLoginCtrl',
                     templateUrl: 'modules/auth/login.tpl.html'
                 }
             },
@@ -34,6 +36,23 @@ angular.module( 'Preslog.auth', [
                     });
 
                     return defer.promise;
+                }]
+            }
+        });
+
+
+        /**
+         * Logout Route+Function
+         * Never resolves to a view, simply logs out the user and sends them to the homepage.s
+         */
+        stateHelperProvider.addState('mainLayout.logout', {
+            url: '/logout',
+            resolve: {
+                loggedOut: ['$q', '$location', 'userService', function($q, $location, userService) {
+                    userService.logout().then(function()
+                    {
+                        $location.path('/');
+                    });
                 }]
             }
         });
@@ -96,7 +115,7 @@ angular.module( 'Preslog.auth', [
 /**
  * Controller
  */
-    .controller( 'AuthCtrl', function AuthController( $rootScope, $scope, $location, titleService, userService ) {
+    .controller( 'AuthLoginCtrl', function AuthLoginController( $rootScope, $scope, $location, titleService, userService ) {
 
         // Title
         titleService.setTitle( 'Login' );
@@ -127,6 +146,5 @@ angular.module( 'Preslog.auth', [
             });
         };
     })
-
 ;
 

@@ -84,7 +84,7 @@ Router::connect(
 Router::connect(
     '/admin/clients/:id',
     array('controller' => 'Clients', 'action' => 'adminRead', '[method]' => 'GET'),
-    array('pass'=>array('id'), 'id'=>'[0-9]+')
+    array('pass'=>array('id'), 'id'=>'[0-9a-z]+')
 );
 
 
@@ -105,7 +105,7 @@ Router::connect(
 Router::connect(
     '/admin/clients/:id',
     array('controller' => 'Clients', 'action' => 'adminEdit', '[method]' => 'POST'),
-    array('pass'=>array('id'), 'id'=>'[0-9]+')
+    array('pass'=>array('id'), 'id'=>'[0-9a-z]+')
 );
 
 
@@ -126,7 +126,7 @@ Router::connect(
 Router::connect(
     '/admin/clients/:id',
     array('controller' => 'Clients', 'action' => 'adminDelete', '[method]' => 'DETELE'),
-    array('pass'=>array('id'), 'id'=>'[0-9]+')
+    array('pass'=>array('id'), 'id'=>'[0-9a-z]+')
 );
 
 
@@ -147,6 +147,6 @@ Router::connect(
 Router::connect(
     '/admin/clients/:id',
     array('controller' => 'Clients', 'action' => 'adminDuplicate', '[method]' => 'COPY'),
-    array('pass'=>array('id'), 'id'=>'[0-9]+')
+    array('pass'=>array('id'), 'id'=>'[0-9a-z]+')
 );
 

@@ -11,6 +11,9 @@ angular.module( 'Preslog.users', [
 
     .config(function(stateHelperProvider) {
 
+        /**
+         * My Profile
+         */
         stateHelperProvider.addState('mainLayout.myProfile', {
             url: '/my-profile',
             views: {
@@ -42,6 +45,9 @@ angular.module( 'Preslog.users', [
             }
         });
 
+        /**
+         * My Notifications
+         */
         stateHelperProvider.addState('mainLayout.myNotify', {
             url: '/my-notifications',
             views: {
@@ -73,6 +79,9 @@ angular.module( 'Preslog.users', [
             }
         });
 
+        /**
+         * Admin User List
+         */
         stateHelperProvider.addState('mainLayout.AdminUserList', {
             url: '/admin/users',
             views: {
@@ -83,8 +92,11 @@ angular.module( 'Preslog.users', [
             }
         });
 
+        /**
+         * Admin User Edit
+         */
         stateHelperProvider.addState('mainLayout.AdminUserEdit', {
-            url: '/admin/users/{user_id:[0-9a-z]+}',
+            url: '/admin/users/{user_id:[0-9a-z]*}',
             views: {
                 "main@mainLayout": {
                     controller: 'AdminUserEditCtrl',
@@ -92,18 +104,34 @@ angular.module( 'Preslog.users', [
                 }
             },
             resolve: {
+                // Fetch user and notification details
                 userSource: ['$q', 'Restangular', '$stateParams', function($q, Restangular, $stateParams) {
-                    // Fetch user and notify details
                     var deferred = $q.defer();
-                    Restangular.one('admin/users', $stateParams.user_id).get().then(function(user) {
-                        user.id = user.User._id;
-                        deferred.resolve(user);
-                    });
+
+                    // If loading a user
+                    if ($stateParams.user_id.length == 24)
+                    {
+                        Restangular.one('admin/users', $stateParams.user_id).get().then(function(user) {
+                            user.id = user.User._id;
+                            deferred.resolve(user);
+                        });
+                    }
+                    // Creating a user instead. Load a blank form.
+                    else
+                    {
+                        deferred.resolve({
+                            User:{
+                                id:'',
+                                deleted:false
+                            }
+                        });
+                    }
 
                     return deferred.promise;
                 }],
+
+                // Fetch edit opts
                 optionsSource: ['$q', 'Restangular', '$stateParams', function($q, Restangular, $stateParams) {
-                    // Fetch edit opts
                     var deferred = $q.defer();
                     Restangular.one('admin/users').options().then(function(options) {
                         deferred.resolve(options);
@@ -111,15 +139,6 @@ angular.module( 'Preslog.users', [
 
                     return deferred.promise;
                 }]
-            }
-        });
-
-        stateHelperProvider.addState('mainLayout.logout', {
-            url: '/logout',
-            views: {
-                "main@mainLayout": {
-                    controller: 'UserLogout'
-                }
             }
         });
 
@@ -436,16 +455,6 @@ angular.module( 'Preslog.users', [
 
     })
 
-    /**
-     * Logout
-     */
-    .controller( 'UserLogout', function UserAdminListController( $scope, Restangular, $location, userService ) {
-
-        userService.logout().then(function()
-        {
-            $location.path('/');
-        });
-    })
 
 ;
 

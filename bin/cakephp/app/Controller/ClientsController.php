@@ -8,7 +8,7 @@ use Swagger\Annotations as SWG;
 
 class ClientsController extends AppController
 {
-    public $uses = array();
+    public $uses = array('Client');
 
 
     /**
@@ -23,9 +23,28 @@ class ClientsController extends AppController
      */
     public function adminList()
     {
-        // TODO
-        $this->set('todo', 'Admin List');
-        $this->set('_serialize', array('todo'));
+        // Fetch all clients, with limited fields
+        $clients = $this->Client->find('all', array(
+            'fields'=>array(
+                'id',
+                'name',
+                'activationDate',
+                'created',
+                'deleted',
+            )
+        ));
+
+        // Flatten the array for simplicity
+        foreach ($clients as &$client) {
+            $client = $client['Client'];
+        }
+
+        // TODO: Attach stats to the individual clients
+        // TODO: Number of logs / Number of users
+
+        // Output
+        $this->set('clients', $clients);
+        $this->set('_serialize', array('clients'));
     }
 
 
@@ -65,17 +84,26 @@ class ClientsController extends AppController
      *      )
      * )
      */
-    public function adminRead()
+    public function adminRead( $id )
     {
-        // TODO
-        $this->set('todo', 'Admin Read');
-        $this->set('_serialize', array('todo'));
+        // Fetch user with all fields
+        $client = $this->Client->findById( $id );
+
+        // User must exist
+        if (!$client)
+        {
+            $this->errorNotFound(array('message'=>'Client could not be found'));
+        }
+
+        // Output
+        $this->set($client);
+        $this->set('_serialize', array_keys($client));
     }
 
 
     /**
      * Create a client
-     * @return JsonModel
+     * @param   id
      *
      * @SWG\Operation(
      *      partial="admin.clients.create",
@@ -98,17 +126,38 @@ class ClientsController extends AppController
      *      )
      * )
      */
-    public function adminEdit()
+    public function adminEdit( $id=null )
     {
-        // TODO
-        $this->set('todo', 'Admin Edit');
-        $this->set('_serialize', array('todo'));
+        // Fetch client data
+        $client = $this->request->data['Client'];
+
+        // If user has ID, make sure this is the one we save
+        if ($id)
+        {
+            $client['_id'] = $id;
+        }
+
+        // Apply data and validate before insert
+        $this->Client->set($client);
+        if ( !$this->Client->validatesAdminEdit() )
+        {
+            $this->errorBadRequest( array('data'=>$this->Client->validationErrors, 'message'=>'Validation failed') );
+        }
+
+        // Save
+        $ret = $this->Client->save( $client );
+
+
+        // Return success
+        $return = array('Success'=>$ret);
+        $this->set($return);
+        $this->set('_serialize', array_keys($return));
     }
 
 
     /**
      * Delete a given client
-     * @return JsonModel
+     * @param   id
      *
      * @SWG\Operation(
      *      partial="admin.clients.specific.delete",
@@ -125,17 +174,31 @@ class ClientsController extends AppController
      *      )
      * )
      */
-    public function adminDelete()
+    public function adminDelete( $id )
     {
-        // TODO
-        $this->set('todo', 'Admin Delete');
-        $this->set('_serialize', array('todo'));
+        // client must exist
+        if (!$this->Client->findById($id)) {
+            $this->errorNotFound('Client could not be found');
+        }
+
+        // Simple delete save
+        $client = array(
+            'id'=>$id,
+            'deleted'=>true,
+        );
+
+        // Delete
+        $this->Client->save( array('Client'=>$client) );
+
+        // OK Response
+        $this->set('success', true);
+        $this->set('_serialize', array('success'));
     }
 
 
     /**
      * Duplicate a given client
-     * @return JsonModel
+     * @param   id
      *
      * @SWG\Operation(
      *      partial="admin.clients.specific.duplicate",
@@ -152,11 +215,24 @@ class ClientsController extends AppController
      *      )
      * )
      */
-    public function adminDuplicate()
+    public function adminDuplicate( $id )
     {
-        // TODO
-        $this->set('todo', 'Admin Duplicate');
-        $this->set('_serialize', array('todo'));
+        // client must exist
+        if (!$clientSource = $this->Client->findById($id)) {
+            $this->errorNotFound('Client could not be found');
+        }
+
+        // Simple copy op
+        $client = $clientSource;
+        $client['activationDate'] = MongoDate( strtotime('+1 week') );
+        $client['name'] = $clientSource['Client']['name'].'_COPY';
+
+        // Delete
+        $result = $this->Client->save( array('Client'=>$client) );
+
+        // OK Response
+        $this->set('success', $result);
+        $this->set('_serialize', array('success'));
     }
 
 }

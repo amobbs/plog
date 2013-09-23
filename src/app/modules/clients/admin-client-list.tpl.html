@@ -1,0 +1,54 @@
+<div class="container-fluid" id="preslog_admin_users_index">
+    <div class="row-fluid">
+        <div class="span8">
+            <h1>Client Administration</h1>
+            <p>
+                The below table lists all client accounts in Preslog.
+                <br/>Client accounts represent types of logs which can be entered into Preslog.
+            </p>
+
+        </div>
+        <div class="span4 controls">
+            <div class="btn-group pull-right">
+                <a class="btn btn-info dropdown-toggle" data-toggle="dropdown" href="#">
+                    Actions
+                    <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a href="/admin/clients/"><i class="icon icon-plus"></i> Add New Client </a></li>
+                    <li><a href="" ng-click="toggleDeleted()"><i class="icon icon-eye-open"></i> {{ tableParams.filter.deleted === undefined && 'Hide' || 'Show' }} Deleted Clients </a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="row-fluid">
+        <div class="span12">
+            <table ng-table="tableParams" show-filter="true" class="table table-bordered table-condensed">
+                <tr ng-repeat="client in clients">
+                    <td title="'Logo'">
+                        {{client._id}}
+                    </td>
+                    <td title="'Client'" sortable="name" filter="{ 'name': 'text' }">
+                        {{client.name}}
+                    </td>
+                    <td title="'Activation Date'" sortable="activationDate" filter="{ 'activationDate': 'text' }">
+                        {{client.activationDate.sec}}
+                    </td>
+                    <td title="'Number of Logs'">
+                        <!-- TODO -->
+                        Not Available
+                    </td>
+                    <td title="'Number of Users'">
+                        <!-- TODO -->
+                        Not Available
+                    </td>
+                    <td title="'Actions'">
+                        <a class="btn btn-info" href="/admin/clients/{{client._id}}"> <i class="icon icon-edit"></i> Edit </a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+
