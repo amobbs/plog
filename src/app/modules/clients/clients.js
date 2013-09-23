@@ -160,6 +160,8 @@ angular.module( 'Preslog.clients', [
         // Client Data
         $scope.client = clientData.Client;
 
+        console.log($scope.client);
+
         // Options Data
         $scope.options = clientOptions;
 

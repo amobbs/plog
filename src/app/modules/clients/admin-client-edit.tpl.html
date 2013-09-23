@@ -22,7 +22,7 @@
                             </button>
                             <button type="button" class="btn btn-danger"
                                     ng-click="deleteClient()"
-                                    ng-show="{{client.id.length}} && !{{client.deleted}}"
+                                    ng-show="{{client.id.length && !client.deleted}}"
                                     ng-confirm-click="Are you sure you want to delete this client? All users assigned to this client will be unable to access Preslog if you do this.">
                                 <i class="icon icon-remove"></i>
                                 Delete Client
@@ -171,39 +171,43 @@
                     </div>
                     <div class="widget-content">
 
-                        <table class="table table-row-select table-admin-fields">
+                        <table class="table table-admin-fields">
                             <tr>
+                                <th>&nbsp;</th>
                                 <th>Field Name</th>
                                 <th>Type</th>
-                                <th></th>
+                                <th>Info</th>
+                                <th>&nbsp;</th>
                             </tr>
-                            <tr>
-                                <td>What has happened</td>
-                                <td>full-width multi-line text</td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td>Impact</td>
-                                <td>select box</td>
-                                <td>3 options</td>
-                            </tr>
-                            <tr>
-                                <td>etc..</td>
-                                <td>etc..</td>
-                                <td>etc..</td>
+                            <tr ng-repeat="field in client.format">
+                                <td class="order"><i class="icon icon-resize-vertical"></i></td>
+                                <td>{{ field.name }}</td>
+                                <td>{{ field.type }}</td>
+                                <td ng-switch on="field.type">
+                                    <span ng-switch-when="select">{{ field.data.options.length }} options</span>
+                                    <span ng-switch-when="select-severity">{{ field.data.options.length }} options</span>
+                                    <span ng-switch-when="select-impact">{{ field.data.options.length }} options</span>
+                                    <span ng-switch-default>&nbsp;</span>
+                                </td>
+                                <td>
+                                    <button class="btn btn-info"><i class="icon icon-edit"></i> Edit</button>
+                                </td>
                             </tr>
                             <tfoot>
                             <tr>
-                                <td><input type="text" placeholder="Name"></td>
+                                <td>&nbsp;</td>
                                 <td>
-                                    <select>
-                                        <option>Select Type...</option>
-                                        <option>Full-width Multi-line text</option>
-                                        <option>Full-width text</option>
-                                        <option>Select</option>
-                                        <option>Checkbox</option>
+                                    <input type="text" placeholder="Name..." ng-model="newField.name" />
+                                </td>
+                                <td>
+                                    <select id="input-newField-fieldType"
+                                    ng-model="newField.type"
+                                    name="newField-fieldType"
+                                    ng-options="o.id as o.name for o in options.fieldTypes"
+                                    required>
                                     </select>
                                 </td>
+                                <td>&nbsp;</td>
                                 <td>
                                     <button class="btn btn-primary"><i class="icon icon-plus"></i> Add</button>
                                 </td>
@@ -224,26 +228,26 @@
                         </div>
                         <div class="widget-content">
 
-                            <table class="table table-row-select table-admin-fields">
+                            <table class="table table-admin-fields">
                                 <tr>
+                                    <th>&nbsp;</th>
                                     <th>Name</th>
                                     <th>Children</th>
+                                    <th>&nbsp;</th>
                                 </tr>
-                                <tr>
-                                    <td>Networks</td>
-                                    <td>13</td>
-                                </tr>
-                                <tr>
-                                    <td>States</td>
-                                    <td>7</td>
-                                </tr>
-                                <tr>
-                                    <td>etc..</td>
-                                    <td>etc..</td>
+                                <tr ng-repeat="attribute in client.attributes">
+                                    <td class="order"><i class="icon icon-resize-vertical"></i></td>
+                                    <td>{{ attribute.name }}</td>
+                                    <td>{{ attribute.children.length }}</td>
+                                    <td>
+                                        <button class="btn btn-info"><i class="icon icon-edit"></i> Edit</button>
+                                    </td>
                                 </tr>
                                 <tfoot>
                                 <tr>
+                                    <td>&nbsp;</td>
                                     <td><input type="text" placeholder="Name.."></td>
+                                    <td>&nbsp;</td>
                                     <td>
                                         <button class="btn btn-primary"><i class="icon icon-plus"></i> Add</button>
                                     </td>
@@ -268,7 +272,7 @@
                             </button>
                             <button type="button" class="btn btn-danger"
                                     ng-click="deleteClient()"
-                                    ng-show="{{client.id.length}} && !{{client.deleted}}"
+                                    ng-show="{{client.id.length && !client.deleted}}"
                                     ng-confirm-click="Are you sure you want to delete this client? All users assigned to this client will be unable to access Preslog if you do this.">
                                 <i class="icon icon-remove"></i>
                                 Delete Client
