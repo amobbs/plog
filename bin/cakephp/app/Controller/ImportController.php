@@ -339,9 +339,10 @@ class ImportController extends AppController
         } else {
             $sql = 'SELECT network, displayOrder, id, channel_id, deleted, short_code FROM ' . $client['database_prefix'] . '_networks ORDER BY network, displayorder';
             if ($result = $this->mysqli->query($sql)) {
+               $networkChildren = array();
                 while ($row = $result->fetch_assoc()) {
-                    if (!isset($networks['children'][$row['network']])) {
-                        $networks['children'][$row['network']] = array(
+                    if (!isset($networkChildren[$row['network']])) {
+                        $networkChildren[$row['network']] = array(
                             '_id' => new MongoId(),
                             'name' => mb_convert_encoding($row['network'], 'utf8'),
                             'deleted' => $row['deleted'],
@@ -353,7 +354,7 @@ class ImportController extends AppController
                     $channelSql = 'SELECT name, deleted FROM ' . $client['database_prefix'] . '_channels WHERE id = ' . $row['channel_id'] . ' ORDER BY displayorder';
                     if($cResult = $this->mysqli->query($channelSql)) {
                         while($cRow = $cResult->fetch_assoc()) {
-                            $networks['children'][$row['network']]['children'][] = array(
+                            $networkChildren[$row['network']]['children'][] = array(
                                 '_id' => new MongoId(),
                                 'name' => mb_convert_encoding($cRow['name'], 'utf8'),
                                 'deleted' => $cRow['deleted'],
@@ -362,6 +363,7 @@ class ImportController extends AppController
                         }
                     }
                 }
+                $networks['children'] = array_values($networkChildren);
             }
         }
 
