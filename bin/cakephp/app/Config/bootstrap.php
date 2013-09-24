@@ -124,10 +124,6 @@ require_once('swagger.php');
 CakePlugin::load('Mongodb');
 App::load('Mongodb');
 
-/**
- * Configuration options
- */
-Configure::write(array('highcharts_export_server' => 'http://192.168.4.49:8080/highcharts-export-web/'));
 
 /**
  * Composer autoload workaround
@@ -141,3 +137,6 @@ require ROOT . '/Vendor/autoload.php';
 // See https://github.com/composer/composer/commit/c80cb76b9b5082ecc3e5b53b1050f76bb27b127b
 spl_autoload_unregister(array('App', 'load'));
 spl_autoload_register(array('App', 'load'), true, true);
+
+// Preslog Config
+require_once('preslog.php');

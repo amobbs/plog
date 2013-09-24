@@ -18,20 +18,34 @@
                     "reference": "mongoclient"
                 }
             }		
+		},
+		{
+			"type": "package",
+            "package": {
+                "name": "HighchartsPHP",
+                "version": "master",
+                "source": {
+                    "url": "https://github.com/highslide-software/highcharts.com",
+                    "type": "git",
+                    "reference": "v3.0.5"
+                }
+            }		
 		}
     ],
     "require": {
-        "pear-cakephp/cakephp": ">=2.4.0",
+        "pear-cakephp/cakephp": "=2.4.1",
 		"ichikaway/Mongodb": "master",
         "zircote/swagger-php": "dev-master",
-        "phpword/phpword": "*"
+        "phpword/phpword": "*",
+		"HighchartsPHP": "master"
     },
     "config": {
         "vendor-dir": "Vendor/"
     },
     "autoload": {
         "psr-0": {
-            "JqlParser": "Vendor/JqlParser"
+            "JqlParser": "Vendor/JqlParser",
+            "Preslog": "app/Libs"
         },
         "classmap": ["Vendor/HighchartsPHP/"]
     }

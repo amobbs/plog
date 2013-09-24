@@ -3,8 +3,19 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "0aff849a040a058489bc027ec6fc11ab",
+    "hash": "575dc6fbb7d653e86e0ea54003bb5ac1",
     "packages": [
+        {
+            "name": "HighchartsPHP",
+            "version": "master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/highslide-software/highcharts.com",
+                "reference": "v3.0.5"
+            },
+            "type": "library",
+            "time": "2013-08-23 11:55:01"
+        },
         {
             "name": "doctrine/annotations",
             "version": "v1.1.2",
@@ -218,12 +229,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/common.git",
-                "reference": "67c8d7ea5dfe93b758d21c9bcb1e7a831b3a9e54"
+                "reference": "d9dea98243c733ff589aab10e321de4f14a63ab4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/common/zipball/67c8d7ea5dfe93b758d21c9bcb1e7a831b3a9e54",
-                "reference": "67c8d7ea5dfe93b758d21c9bcb1e7a831b3a9e54",
+                "url": "https://api.github.com/repos/doctrine/common/zipball/d9dea98243c733ff589aab10e321de4f14a63ab4",
+                "reference": "d9dea98243c733ff589aab10e321de4f14a63ab4",
                 "shasum": ""
             },
             "require": {
@@ -284,7 +295,7 @@
                 "persistence",
                 "spl"
             ],
-            "time": "2013-09-07 10:21:05"
+            "time": "2013-09-16 09:32:54"
         },
         {
             "name": "doctrine/inflector",
@@ -423,10 +434,10 @@
         },
         {
             "name": "pear-pear.cakephp.org/CakePHP",
-            "version": "2.4.0",
+            "version": "2.4.1",
             "dist": {
                 "type": "file",
-                "url": "http://pear.cakephp.org/get/CakePHP-2.4.0.tgz",
+                "url": "http://pear.cakephp.org/get/CakePHP-2.4.1.tgz",
                 "reference": null,
                 "shasum": null
             },
@@ -434,7 +445,7 @@
                 "php": ">=5.2.8.0"
             },
             "replace": {
-                "pear-cakephp/cakephp": "== 2.4.0.0"
+                "pear-cakephp/cakephp": "== 2.4.1.0"
             },
             "type": "pear-library",
             "autoload": {
@@ -548,8 +559,7 @@
     ],
     "minimum-stability": "dev",
     "stability-flags": {
-        "zircote/swagger-php": 20,
-        "phpword/phpword": 20
+        "zircote/swagger-php": 20
     },
     "platform": [
 
