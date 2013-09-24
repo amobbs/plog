@@ -1,13 +1,11 @@
 <?php
 
+use Swagger\Swagger as Swagger;
+
 /**
  * Class DocsController
  * Provides API documentation via Swagger-PHP JSON interface
  */
-
-use Swagger\Swagger as Swagger;
-
-
 class DocsController extends AppController
 {
     public $uses = array();
@@ -27,7 +25,8 @@ class DocsController extends AppController
      * - Produces a specific resource if "resource" is specified.
      * - Produces a ResourceList if no "resource" is specified
      *
-     * @return string
+     * @param   string      Resource label
+     * @return   string
      */
     function generateDocumentation( $resource=null )
     {

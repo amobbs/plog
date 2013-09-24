@@ -42,7 +42,7 @@ Router::connect(
  * )
  */
 Router::connect(
-    '/search',
+    '/search/export',
     array('controller' => 'Search', 'action' => 'export', '[method]' => 'GET')
 );
 

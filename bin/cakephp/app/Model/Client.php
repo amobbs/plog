@@ -134,5 +134,28 @@ class Client extends AppModel
     }
 
 
+    /**
+     * Fetch options fields for this client.
+     * - Format
+     * - Attributes hierarchy
+     * @param   $client_id
+     * @return  array
+     */
+    public function getOptionsByClientId( $client_id )
+    {
+        $options = $this->find('all', array(
+            'conditions'=>array(
+                '_id'=>$client_id
+            ),
+            'fields'=>array(
+                'format',
+                'attributes'
+            ),
+        ));
+
+        return $options;
+    }
+
+
 
 }

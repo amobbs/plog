@@ -22,9 +22,9 @@ use Swagger\Annotations as SWG;
  * )
  */
 Router::connect(
-    '/logs/:id',
-    array('controller' => 'Logs', 'action' => 'edit', '[method]' => 'GET'),
-    array('pass'=>array('id'), 'id'=>'[0-9]+')
+    '/logs/:log_id',
+    array('controller' => 'Logs', 'action' => 'read', '[method]' => 'GET'),
+    array('pass'=>array('log_id'), 'log_id'=>'[0-9]+')
 );
 
 
@@ -45,7 +45,7 @@ Router::connect(
 Router::connect(
     '/logs/:id',
     array('controller' => 'Logs', 'action' => 'edit', '[method]' => 'POST'),
-    array('pass'=>array('id'), 'id'=>'[0-9]+')
+    array('pass'=>array('id'), 'id'=>'[0-9]*')
 );
 
 
@@ -87,4 +87,25 @@ Router::connect(
 Router::connect(
     '/logs',
     array('controller' => 'Logs', 'action' => 'edit', '[method]' => 'POST')
+);
+
+
+/**
+ * Logs: OPTIONS (log opts)
+ * @SWG\Resource(
+ *      resourcePath="/logs",
+ *      @SWG\Api(
+ *          path="/logs/{log_id}",
+ *          @SWG\Operation(
+ *              @SWG\Partial("logs.options"),
+ *              nickname="logs.options",
+ *              httpMethod="OPTIONS"
+ *          )
+ *      )
+ * )
+ */
+Router::connect(
+    '/logs/:id',
+    array('controller' => 'Logs', 'action' => 'options', '[method]' => 'OPTIONS'),
+    array('pass'=>array('id'), 'id'=>'[0-9]+')
 );

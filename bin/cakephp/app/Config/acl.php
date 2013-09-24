@@ -77,6 +77,8 @@ Configure::write('auth-acl', array(
         array('controller'=>'Clients',    'action'=>'adminEdit',          'permissions'=>array('user-manager')),
         array('controller'=>'Clients',    'action'=>'adminEditOptions',   'permissions'=>array('user-manager')),
 
+        // Logs TODO - make this correct
+        array('controller'=>'Logs',     'action'=>'*',                      'permissions'=>array('guest')),
 
 
         // TODO - DEBUG - DELETE ME - Super-Admin can do anything

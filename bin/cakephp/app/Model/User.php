@@ -368,4 +368,23 @@ class User extends AppModel
         return (sizeof($client) > 0);
     }
 
+
+    /**
+     * Fetch a list of users by the notifications they're interested in.
+     * Looks for users with any of the $keys and any of the $attributes specified.
+     * @param   array   $keys
+     * @param   array   $attributes
+     * @return  array
+     */
+    public function findUserByNotifications( $keys, $attributes )
+    {
+        $users = $this->find('all', array(
+            'conditions'=>array(
+                // TODO: Add $keys and $attributes conditions
+            )
+        ));
+
+        return $users;
+    }
+
 }
