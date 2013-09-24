@@ -76,6 +76,7 @@ module.exports = {
             'vendor/restangular/dist/restangular.js',
 
             'vendor/dynatree/dist/jquery.dynatree-1.2.4.js',
+            'vendor/jquery.shapeshift/core/jquery.shapeshift.js'
         ],
 
         /**

@@ -13,18 +13,50 @@
  * specified, as shown below.
  */
 angular.module( 'Preslog.dashboard', [
-        'titleService'
+        'titleService',
+        'ui.bootstrap'
     ])
 
 
     .config(function(stateHelperProvider) {
-        stateHelperProvider.addState('mainLayout.dashboard', {
+        stateHelperProvider.addState('mainLayout.dashboardList', {
             url: '/dashboard',
             views: {
                 "main@mainLayout": {
                     controller: 'DashboardCtrl',
                     templateUrl: 'modules/dashboard/dashboard.tpl.html'
                 }
+            },
+            resolve: {
+                source: ['$q', 'Restangular', '$stateParams', function($q, Restangular, $stateParams) {
+                    // Fetch dashboard
+                    var deferred = $q.defer();
+                    Restangular.one('dashboards').get().then(function(data) {
+                        deferred.resolve(data);
+                    });
+
+                    return deferred.promise;
+                }]
+            }
+        });
+        stateHelperProvider.addState('mainLayout.dashboard', {
+            url: '/dashboard/{dashboard_id:[0-9a-z]+}',
+            views: {
+                "main@mainLayout": {
+                    controller: 'DashboardCtrl',
+                    templateUrl: 'modules/dashboard/dashboard.tpl.html'
+                }
+            },
+            resolve: {
+                source: ['$q', 'Restangular', '$stateParams', function($q, Restangular, $stateParams) {
+                    // Fetch dashboard
+                    var deferred = $q.defer();
+                    Restangular.one('dashboards', $stateParams.dashboard_id).get().then(function(data) {
+                        deferred.resolve(data);
+                    });
+
+                    return deferred.promise;
+                }]
             }
         });
     })
@@ -33,14 +65,40 @@ angular.module( 'Preslog.dashboard', [
     /**
      * Dashboard Controller
      */
-    .controller( 'DashboardCtrl', function DashboardController( $scope, $http, $window, titleService ) {
+    .controller( 'DashboardCtrl', function DashboardController( $scope, $http, $window, $location, $modal, titleService, Restangular, source) {
         titleService.setTitle( 'Dashboard' );
 
-        $scope.id = 1;
+        $scope.id = '523b9faf09cc5e623f8b51da';
+        $scope.dashboard = source.dashbaord;
+        $scope.favourites = source.favourites;
+
+        $(".widget-area").shapeshift({
+            align: 'left'
+        });
 
         $scope.exportReport = function() {
             window.location = 'http://local.preslog/api/dashboards/' + $scope.id + '/export';
         };
+
+        $scope.openCreateModal = function () {
+            var createModal = $modal.open({
+                templateUrl: 'modules/dashboard/createModal/createModal.tpl.html',
+                controller: 'CreateModalCtrl'
+            });
+
+
+            createModal.result.then(function(name) {
+                var dashboard = Restangular.all('dashboards');
+                dashboard.post({'name' : name})
+                    .then(function(result) {
+                        $scope.dashboard = result.dashboard;
+                        $scope.id = result.dashboard._id.$id;
+                        $location.path('/dashboard/' + $scope.id);
+                    });
+            });
+        };
+
+
 
         $http.get("/assets/testchart.json").success(function(data) {
             $scope.basicAreaChart = data;
@@ -50,11 +108,21 @@ angular.module( 'Preslog.dashboard', [
 //            $scope.chart2 = data;
 //        });
 
-        $http.get("/api/dashboards").success(function(data) {
-            $scope.chart2 = JSON.parse(data.data);
-        });
+//        $http.get("/api/dashboards").success(function(data) {
+//            $scope.chart2 = JSON.parse(data.data);
+//        });
     })
 
+    .controller( 'CreateModalCtrl', function CreateModalController($scope, $modalInstance) {
+        $scope.ok = function() {
+            console.log($scope.hats);
+            $modalInstance.close($scope.hats);
+        };
+
+        $scope.cancel = function() {
+            $modalInstance.dismiss('cancel');
+        };
+    })
 
     .directive('chart', function () {
         return {
