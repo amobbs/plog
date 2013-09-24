@@ -1,11 +1,10 @@
 <?php
 
+use Swagger\Annotations as SWG;
+
 /**
  * Class DashboardController
  */
-
-use Swagger\Annotations as SWG;
-
 class DashboardsController extends AppController
 {
     public $uses = array();
