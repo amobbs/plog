@@ -9,6 +9,7 @@ angular.module('moduleManager', [
     'ui.bootstrap',
     'ui.select2',
     'restangular',
+    'ui.sortable',
 //    'queryBuilder',
     'stateHelper',
     'titleService',
@@ -33,6 +34,8 @@ angular.module('moduleManager', [
     'Preslog.home',
     'Preslog.log',
     'Preslog.search',
-    'Preslog.dashboard'
+    'Preslog.dashboard',
+    'Preslog.dashboard.dashboardModal',
+    'Preslog.dashboard.widgetModal'
 ]);
 

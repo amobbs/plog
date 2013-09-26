@@ -1,0 +1,22 @@
+<!-- Add Dashboard Modal -->
+<!--<div id="dashboard_create" modal="dashboardCreate" options="{backdropFade: true}" close="dashboardCreate = false" tabindex="-1" role="dialog">-->
+
+<div id="createDashboardModal">
+    <div class="modal-header">
+        <button type="button" class="close" ng-click="cancel()" aria-hidden="true"><i class="icon icon-remove"></i></button>
+        <h3 id="myModalLabel">Create Dashboard</h3>
+    </div>
+    <div class="modal-body form-horizontal">
+        <div class="control-group">
+            <label class="control-label">Dashboard Name </label>
+            <div class="control">
+                <input type="text" placeholder="Dashboard Name..." ng-model="name" required />
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true" ng-click="cancel()">Cancel</button>
+        <button class="btn btn-primary" ng-click="ok()">Create</button>
+    </div>
+</div>
+<!--</div>-->

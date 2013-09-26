@@ -14,7 +14,9 @@
  */
 angular.module( 'Preslog.dashboard', [
         'titleService',
-        'ui.bootstrap'
+        'ui.bootstrap',
+        'Preslog.dashboard.dashboardModal',
+        'Preslog.dashboard.widgetModal'
     ])
 
 
@@ -65,16 +67,121 @@ angular.module( 'Preslog.dashboard', [
     /**
      * Dashboard Controller
      */
-    .controller( 'DashboardCtrl', function DashboardController( $scope, $http, $window, $location, $modal, titleService, Restangular, source) {
+    .controller( 'DashboardCtrl', function DashboardController( $scope, $http, $window, $location, $timeout, $modal, titleService, Restangular, source) {
         titleService.setTitle( 'Dashboard' );
 
-        $scope.id = '523b9faf09cc5e623f8b51da';
-        $scope.dashboard = source.dashbaord;
+        console.log(source.dashboard);
+        $scope.id = source.dashboard.id;
+        $scope.dashboard = source.dashboard;
         $scope.favourites = source.favourites;
 
-        $(".widget-area").shapeshift({
-            align: 'left'
-        });
+        $scope.refreshTimers= [];
+        $scope.name = '';
+
+        $scope.sortableOptions = {
+            placeholder: 'placeholder',
+            items: '.widget',
+            revert: 150,
+            tolerance: 'pointer',
+            cursorAt: {
+                left: 10,
+                top: 10
+            },
+            start: function(event, ui) {
+                if (ui.item.hasClass('col3')) {
+                    ui.placeholder.css('width', '98%');
+                }
+            },
+            change: function(event, ui) {
+                ui.placeholder.before('\n').after('\n');
+            },
+            stop: function(event, ui) {
+                ui.item.before('\n').after('\n');
+            },
+            update: function(event, ui) {
+                var order = $(event.target).sortable("toArray");
+
+                for(var i = 0; i < order.length; i++) {
+                   for(var w = 0; w < $scope.dashboard.widgets.length; w++) {
+                       if ($scope.dashboard.widgets[w].id == order[i]) {
+                           $scope.dashboard.widgets[w].order = i;
+                       }
+                   }
+                }
+
+                Restangular.one('dashboards', $scope.id)
+                    .post('', {'widgets': $scope.dashboard.widgets})
+                    .then(function(data) {
+                        console.log('widget sort saved');
+                    }
+                );
+            }
+        };
+
+        $scope.deleteWidget = function(widgetId) {
+            Restangular.one('dashboards', $scope.id)
+                .one('widgets', widgetId)
+                .remove()
+                .then(function (result){
+                    console.log(result);
+                    for(var index = 0; index < $scope.dashboard.widgets.length; index++) {
+                        if ($scope.dashboard.widgets[index].id == widgetId) {
+                            $scope.dashboard.widgets.splice(index, 1);
+                            break;
+                        }
+                    }
+                });
+        };
+
+        $scope.refreshCallback = function(widgetId) { return function() { $scope.refreshWidget(widgetId); }; };
+        $scope.startWidgetRefresh = function() {
+            for(var wId in $scope.dashboard.widgets) {
+                var widget = $scope.dashboard.widgets[wId];
+                if (widget.data.refresh && widget.data.refresh > 0) {
+                    $scope.setRefreshTimer(widget.id, widget.data.refresh);
+                }
+            }
+        };
+
+        $scope.setRefreshTimer = function(widgetId, interval) {
+            var promise = $timeout($scope.refreshCallback(widgetId), (interval * 1000));
+
+            $scope.refreshTimers.push({
+                widgetId: widgetId,
+                promise: promise
+            });
+        };
+
+        $scope.updateRefreshTimer = function(widgetId, newInterval) {
+            if (newInterval > 0) {
+                for(var timeoutId in $scope.refreshTimers) {
+                    var timeout = $scope.refreshTimers[timeoutId];
+                    if (timeout.widgetId == widgetId) {
+                        $timeout.cancel(timeout.promise);
+                        $scope.setRefreshTimer(timeout.widgetId, newInterval);
+                        $scope.refreshTimers.splice(timeoutId, 1);
+                    }
+                }
+            }
+        };
+
+        $scope.refreshWidget = function(widgetId) {
+            Restangular.one('dashboards', $scope.id)
+                .one('widgets', widgetId)
+                .get()
+                .then(function(result) {
+                    if (result && result.widget) {
+                        for(var wId in $scope.dashboard.widgets) {
+                            var widget = $scope.dashboard.widgets[wId];
+                            if (widget.id == widgetId) {
+                                $scope.dashboard.widgets[wId] = result.widget;
+                                $scope.updateRefreshTimer(widgetId, result.widget.data.refresh);
+                                break;
+                            }
+                        }
+                    }
+                });
+        };
 
         $scope.exportReport = function() {
             window.location = 'http://local.preslog/api/dashboards/' + $scope.id + '/export';
@@ -82,46 +189,83 @@ angular.module( 'Preslog.dashboard', [
 
         $scope.openCreateModal = function () {
             var createModal = $modal.open({
-                templateUrl: 'modules/dashboard/createModal/createModal.tpl.html',
-                controller: 'CreateModalCtrl'
+                templateUrl: 'modules/dashboard/dashboardModal/createDashboardModal.tpl.html',
+                controller: 'DashboardModalCtrl'
             });
-
-
             createModal.result.then(function(name) {
                 var dashboard = Restangular.all('dashboards');
                 dashboard.post({'name' : name})
                     .then(function(result) {
                         $scope.dashboard = result.dashboard;
-                        $scope.id = result.dashboard._id.$id;
+                        $scope.id = result.dashboard.id;
                         $location.path('/dashboard/' + $scope.id);
                     });
             });
         };
 
-
-
-        $http.get("/assets/testchart.json").success(function(data) {
-            $scope.basicAreaChart = data;
-        });
-
-//        $http.get("/assets/testpie.json").success(function(data) {
-//            $scope.chart2 = data;
-//        });
-
-//        $http.get("/api/dashboards").success(function(data) {
-//            $scope.chart2 = JSON.parse(data.data);
-//        });
-    })
-
-    .controller( 'CreateModalCtrl', function CreateModalController($scope, $modalInstance) {
-        $scope.ok = function() {
-            console.log($scope.hats);
-            $modalInstance.close($scope.hats);
+        $scope.openAddWidgetModal = function() {
+            var addWidgetModal = $modal.open({
+                templateUrl: 'modules/dashboard/widgetModal/addWidgetModal.tpl.html',
+                controller: 'WidgetCtrl',
+                resolve: {
+                    widget: function() { return {}; }
+                }
+            });
+            addWidgetModal.result.then(function(data) {
+                Restangular.one('dashboards', $scope.id)
+                    .post('widgets', {'widget': data})
+                    .then(function(data) {
+                        $scope.dashboard.widgets.push(data.widget);
+                        $scope.openEditWidgetModal(data.widget);
+                    });
+            });
         };
 
-        $scope.cancel = function() {
-            $modalInstance.dismiss('cancel');
+        $scope.openEditWidgetModal = function(widget) {
+            var editWidgetModal = $modal.open({
+                templateUrl: $scope.getEditTemplate(widget.type),
+                controller: 'WidgetCtrl',
+                resolve: {
+                    widget: function() { return angular.copy(widget); }
+                }
+            });
+            editWidgetModal.result.then(function(data) {
+                Restangular.one('dashboards', $scope.id)
+                    .one('widgets', widget.id)
+                    .post('',{'widget': data})
+                    .then(function(result) {
+                        for(var index = 0; index < $scope.dashboard.widgets.length; index++) {
+                            if ($scope.dashboard.widgets[index].id == result.widget.id) {
+                                $scope.dashboard.widgets[index] = result.widget;
+                            }
+                        }
+                    });
+            });
         };
+
+        $scope.getEditTemplate = function(type) {
+            tmpl = 'modules/dashboard/widgetModal/edit';
+
+            switch(type.toLowerCase()) {
+                case 'bar':
+                case 'line':
+                    tmpl +=  'LineBarWidgetModal.tpl.html';
+                    break;
+                case 'pie':
+                    tmpl +=  'PieWidgetModal.tpl.html';
+                    break;
+                case 'list':
+                    tmpl +=  'ListWidgetModal.tpl.html';
+                    break;
+                default:
+                    tmpl +=  'LineWidgetModal.tpl.html';
+            }
+
+            return tmpl;
+        };
+
+
+        $scope.startWidgetRefresh();
     })
 
     .directive('chart', function () {
@@ -146,7 +290,7 @@ angular.module( 'Preslog.dashboard', [
 
                 //Update when charts data changes
                 scope.$watch(function() { return scope.chartData; }, function(value) {
-                    if(!value) {
+                    if(!value || typeof value == 'object') {
                         return;
                     }
                     // We need deep copy in order to NOT override original chart object.
@@ -154,6 +298,7 @@ angular.module( 'Preslog.dashboard', [
                     // our original renderTo will be the same
                     var deepCopy = true;
                     var newSettings = {};
+                    scope.chartData = JSON.parse(scope.chartData);
                     $.extend(deepCopy, newSettings, chartsDefaults, scope.chartData);
                     var chart = new Highcharts.Chart(newSettings);
                 });

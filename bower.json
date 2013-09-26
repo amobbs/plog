@@ -17,7 +17,8 @@
         "angular-highcharts-directive": "master",
         "dynatree": "~1.2.4",
         "ng-table": "https://github.com/esvit/ng-table.git#~v0.2.0",
-        "angularjs-modal-service": "master"
+        "angularjs-modal-service": "master",
+        "angular-ui-sortable": "master"
     },
     "dependencies": {}
 }
