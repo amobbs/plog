@@ -14,8 +14,9 @@ class Widget extends AppModel
 
     public function updateWidget($widget, $data) {
         if(isset($data['name'])) $widget['name'] = $data['name'];
-        if(isset($data['title'])) $widget['data']['title'] = $data['title'];
-        if(isset($data['query'])) $widget['data']['query'] = $data['query'];
+        if(isset($data['data']['title'])) $widget['data']['title'] = $data['data']['title'];
+        if(isset($data['data']['query'])) $widget['data']['query'] = $data['data']['query'];
+        if(isset($data['data']['refresh'])) $widget['data']['refresh'] = $data['data']['refresh'];
 
         return $widget;
     }

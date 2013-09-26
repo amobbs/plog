@@ -33,6 +33,7 @@ angular.module('moduleManager', [
     'Preslog.home',
     'Preslog.log',
     'Preslog.search',
-    'Preslog.dashboard'
+    'Preslog.dashboard',
+    'Preslog.dashboard.widgetModal'
 ]);
 

@@ -6,23 +6,28 @@ use Highchart;
 use MongoId;
 
 class Widget {
-    protected $id, $order, $name, $type, $data, $maxWidth = 1, $refreshInterval;
+    protected $id, $order, $name, $type, $data, $maxWidth = 1, $series = array();
 
     public function setId($id) { $this->id = $id; }
     public function setData($data) { $this->data = $data; }
     public function setOrder($order) { $this->order = $order; }
+    public function setSeries($series) { $this->series = $series; }
 
     public function __construct($data) {
         $this->id = isset($data['id']) ? new MongoId($data['id']): new MongoId();
         $this->name = isset($data['name']) ? $data['name'] : '';
         $this->order = isset($data['order']) ? $data['order'] : null;
-        $this->refreshInterval = isset($data['refresh']) ? $data['refresh'] : 0;
+        if (!is_array($this->data)) {
+            $this->data = array();
+        }
+
+
         if (isset($data['data'])) {
-            if (!is_array($this->data)) {
-                $this->data = array();
-            }
             $this->data['title'] = isset($data['data']['title']) ? $data['data']['title'] : '';
             $this->data['query'] = isset($data['data']['query']) ? $data['data']['query'] : '';
+            $this->data['refresh'] = isset($data['data']['refresh']) ? $data['data']['refresh'] : 0;
+        } else {
+            $this->data['title'] = '';
         }
     }
 
@@ -33,7 +38,6 @@ class Widget {
             'name' => $this->name,
             'type' => $this->type,
             'data' => $this->data,
-            'refresh' => $this->refreshInterval,
             'highcharts' => $this->toHighCharts(),
             'maxWidth' => $this->maxWidth,
         );

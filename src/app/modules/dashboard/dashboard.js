@@ -14,7 +14,8 @@
  */
 angular.module( 'Preslog.dashboard', [
         'titleService',
-        'ui.bootstrap'
+        'ui.bootstrap',
+        'Preslog.dashboard.widgetModal'
     ])
 
 
@@ -65,7 +66,7 @@ angular.module( 'Preslog.dashboard', [
     /**
      * Dashboard Controller
      */
-    .controller( 'DashboardCtrl', function DashboardController( $scope, $http, $window, $location, $timeout, $modal, createDialog, titleService, Restangular, source) {
+    .controller( 'DashboardCtrl', function DashboardController( $scope, $http, $window, $location, $timeout, $modal, titleService, Restangular, source) {
         titleService.setTitle( 'Dashboard' );
 
         console.log(source.dashboard);
@@ -110,7 +111,7 @@ angular.module( 'Preslog.dashboard', [
                 Restangular.one('dashboards', $scope.id)
                     .post('', {'widgets': $scope.dashboard.widgets})
                     .then(function(data) {
-                        console.log(data);
+                        console.log('widget sort saved');
                     }
                 );
             }
@@ -135,8 +136,8 @@ angular.module( 'Preslog.dashboard', [
         $scope.startWidgetRefresh = function() {
             for(var wId in $scope.dashboard.widgets) {
                 var widget = $scope.dashboard.widgets[wId];
-                if (widget.refresh && widget.refresh > 0) {
-                    $scope.setRefreshTimer(widget.id, widget.refresh);
+                if (widget.data.refresh && widget.data.refresh > 0) {
+                    $scope.setRefreshTimer(widget.id, widget.data.refresh);
                 }
             }
         };
@@ -151,12 +152,13 @@ angular.module( 'Preslog.dashboard', [
         };
 
         $scope.updateRefreshTimer = function(widgetId, newInterval) {
-            for(var timeoutId in $scope.refreshTimers) {
-                var timeout = $scope.refreshTimers[timeoutId];
-                if (timeout.widgetId == widgetId) {
-                    $timeout.cancel(timeout.promise);
-                    if (newInterval > 0) {
+            if (newInterval > 0) {
+                for(var timeoutId in $scope.refreshTimers) {
+                    var timeout = $scope.refreshTimers[timeoutId];
+                    if (timeout.widgetId == widgetId) {
+                        $timeout.cancel(timeout.promise);
                         $scope.setRefreshTimer(timeout.widgetId, newInterval);
+                        $scope.refreshTimers.splice(timeoutId, 1);
                     }
                 }
             }
@@ -172,7 +174,7 @@ angular.module( 'Preslog.dashboard', [
                             var widget = $scope.dashboard.widgets[wId];
                             if (widget.id == widgetId) {
                                 $scope.dashboard.widgets[wId] = result.widget;
-                                $scope.updateRefreshTimer(widgetId, result.widget.refresh);
+                                $scope.updateRefreshTimer(widgetId, result.widget.data.refresh);
                                 break;
                             }
                         }
@@ -223,7 +225,7 @@ angular.module( 'Preslog.dashboard', [
                 templateUrl: $scope.getEditTemplate(widget.type),
                 controller: 'WidgetCtrl',
                 resolve: {
-                    data: function() { return widget; }
+                    widget: function() { return widget; }
                 }
             });
             editWidgetModal.result.then(function(data) {
@@ -299,7 +301,7 @@ angular.module( 'Preslog.dashboard', [
 
                 //Update when charts data changes
                 scope.$watch(function() { return scope.chartData; }, function(value) {
-                    if(!value) {
+                    if(!value || typeof value == 'object') {
                         return;
                     }
                     // We need deep copy in order to NOT override original chart object.
@@ -307,6 +309,7 @@ angular.module( 'Preslog.dashboard', [
                     // our original renderTo will be the same
                     var deepCopy = true;
                     var newSettings = {};
+                    scope.chartData = JSON.parse(scope.chartData);
                     $.extend(deepCopy, newSettings, chartsDefaults, scope.chartData);
                     var chart = new Highcharts.Chart(newSettings);
                 });
