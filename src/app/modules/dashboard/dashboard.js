@@ -15,6 +15,7 @@
 angular.module( 'Preslog.dashboard', [
         'titleService',
         'ui.bootstrap',
+        'Preslog.dashboard.dashboardModal',
         'Preslog.dashboard.widgetModal'
     ])
 
@@ -188,8 +189,8 @@ angular.module( 'Preslog.dashboard', [
 
         $scope.openCreateModal = function () {
             var createModal = $modal.open({
-                templateUrl: 'modules/dashboard/createModal/createModal.tpl.html',
-                controller: 'CreateModalCtrl'
+                templateUrl: 'modules/dashboard/dashboardModal/createDashboardModal.tpl.html',
+                controller: 'DashboardModalCtrl'
             });
             createModal.result.then(function(name) {
                 var dashboard = Restangular.all('dashboards');
@@ -204,10 +205,10 @@ angular.module( 'Preslog.dashboard', [
 
         $scope.openAddWidgetModal = function() {
             var addWidgetModal = $modal.open({
-                templateUrl: 'modules/dashboard/WidgetModal/addWidgetModal.tpl.html',
+                templateUrl: 'modules/dashboard/widgetModal/addWidgetModal.tpl.html',
                 controller: 'WidgetCtrl',
                 resolve: {
-                    data: function() { return {}; }
+                    widget: function() { return {}; }
                 }
             });
             addWidgetModal.result.then(function(data) {
@@ -225,7 +226,7 @@ angular.module( 'Preslog.dashboard', [
                 templateUrl: $scope.getEditTemplate(widget.type),
                 controller: 'WidgetCtrl',
                 resolve: {
-                    widget: function() { return widget; }
+                    widget: function() { return angular.copy(widget); }
                 }
             });
             editWidgetModal.result.then(function(data) {
@@ -243,7 +244,7 @@ angular.module( 'Preslog.dashboard', [
         };
 
         $scope.getEditTemplate = function(type) {
-            tmpl = 'modules/dashboard/WidgetModal/edit';
+            tmpl = 'modules/dashboard/widgetModal/edit';
 
             switch(type.toLowerCase()) {
                 case 'bar':
@@ -265,18 +266,6 @@ angular.module( 'Preslog.dashboard', [
 
 
         $scope.startWidgetRefresh();
-
-        $http.get("/assets/testchart.json").success(function(data) {
-            $scope.basicAreaChart = data;
-        });
-
-//        $http.get("/assets/testpie.json").success(function(data) {
-//            $scope.chart2 = data;
-//        });
-
-//        $http.get("/api/dashboards").success(function(data) {
-//            $scope.chart2 = JSON.parse(data.data);
-//        });
     })
 
     .directive('chart', function () {
