@@ -68,16 +68,21 @@ angular.module('userService', ['restangular'])
                         // Login OK?
                         if (ret.login.success)
                         {
-                            // Save user details
+                            // Save user details to service
                             user = ret.login.user;
                             permissions = ret.login.permissions;
 
+                            // Push details to scopes
+                            $rootScope.global.user = user;
+                            $rootScope.global.userService = service;
+                            $rootScope.global.loggedIn = true;
+
                             // resolve the promise
-                            deferred.resolve();
+                            deferred.resolve(ret);
                         }
 
                         // Reject the promose on failure
-                        deferred.reject();
+                        deferred.reject(ret);
                     });
 
                 }
@@ -105,6 +110,11 @@ angular.module('userService', ['restangular'])
                     permissions = undefined;
                     clients = undefined;
                     dashboards = undefined;
+
+                    // Clear scope vars
+                    $rootScope.global.user = {};
+                    $rootScope.global.userService = this;
+                    $rootScope.global.loggedIn = false;
 
                     // complete request
                     deferred.resolve(ret);

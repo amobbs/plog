@@ -8,7 +8,7 @@ use Swagger\Annotations as SWG;
 
 class ClientsController extends AppController
 {
-    public $uses = array('Client');
+    public $uses = array('Client', 'Log');
 
 
     /**
@@ -60,9 +60,12 @@ class ClientsController extends AppController
      */
     public function adminEditOptions()
     {
-        // TODO
-        $this->set('todo', 'Admin Edit Options');
-        $this->set('_serialize', array('todo'));
+        // Fetch list of field types
+        $return['fieldTypes'] = $this->Log->getFieldTypes();
+
+        // return data
+        $this->set($return);
+        $this->set('_serialize', array_keys($return));
     }
 
 

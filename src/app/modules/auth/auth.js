@@ -69,10 +69,9 @@ angular.module( 'Preslog.auth', [
         }
 
         var requestedPath = null;
-        $rootScope.global.loggedIn = false;
+
+        // Will succeed if the users if logged in, otherwise will instigate the login process.
         userService.getUser().then(function (user) {
-            $rootScope.global.user = user;
-            $rootScope.global.loggedIn = true;
         });
 
         // On LoginRequired event; logout the user and go to /login
@@ -81,15 +80,16 @@ angular.module( 'Preslog.auth', [
             if ('/login' != path && '/' != path) {
                 requestedPath = path;
             }
-            $rootScope.global.loggedIn = false;
-            $rootScope.global.user = {};
+
+            // Logout this user properly
+            userService.logout();
+
+            // Redirect to login form
             $location.path('/login');
         });
 
         // On LoginConfirmed event; set the user, go back to requested path
         $rootScope.$on('event:auth-loginConfirmed', function (event, data) {
-            $rootScope.global.user = data;
-            $rootScope.global.loggedIn = true;
 
             // Send to requested page, otherwise go to Homepage which will redirect from there
             if (requestedPath === null) {
@@ -102,8 +102,6 @@ angular.module( 'Preslog.auth', [
 
         // Logout: Logout the user and broadcast this event (LoggedOut).
         $rootScope.global.logout = function () {
-            $rootScope.global.user = {};
-            $rootScope.global.loggedIn = false;
             userService.logout().then(function() {
                 $rootScope.$broadcast('event:auth-loggedOut');
                 $location.path('/login');
@@ -130,7 +128,7 @@ angular.module( 'Preslog.auth', [
             userService.login(user).then(function(ret) {
 
                 // Successful login
-                $rootScope.$broadcast('event:auth-loginConfirmed', user);
+                $rootScope.$broadcast('event:auth-loginConfirmed', ret.user);
 
             }, function(ret) {
 

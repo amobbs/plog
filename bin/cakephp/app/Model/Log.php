@@ -30,5 +30,25 @@ class Log extends AppModel
 
 
 
+    /**
+     * Fetch a list of field types from the config
+     */
+    public function getFieldTypes()
+    {
+        // Fetch list of field types
+        $fieldsList = Configure::read('Preslog.Fields');
+        $fieldMap = array();
+
+        // Get special options for these field types
+        foreach ($fieldsList as $key=>$field)
+        {
+            $fieldObj = $field->getProperties();
+            $fieldMap[ $fieldObj['alias'] ] = $fieldObj;
+        }
+
+        return $fieldMap;
+    }
+
+
 
 }

@@ -22,7 +22,15 @@ Configure::write('Preslog', array(
      * List of Field Types for Logs
      */
     'Fields' => array(
-
+        'loginfo'           => new \Preslog\Fields\Types\Loginfo,
+        'datetime'          => new \Preslog\Fields\Types\Datetime,
+        'duration'          => new \Preslog\Fields\Types\Duration,
+        'select'            => new \Preslog\Fields\Types\Select,
+        'select-impact'     => new \Preslog\Fields\Types\SelectImpact,
+        'select-severity'   => new \Preslog\Fields\Types\SelectSeverity,
+        'textarea'          => new \Preslog\Fields\Types\Textarea,
+        'textsmall'         => new \Preslog\Fields\Types\Textsmall,
+        'textbig'           => new \Preslog\Fields\Types\Textbig,
     ),
 
 
