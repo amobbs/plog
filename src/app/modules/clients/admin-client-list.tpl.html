@@ -27,7 +27,7 @@
             <table ng-table="tableParams" show-filter="true" class="table table-bordered table-condensed">
                 <tr ng-repeat="client in clients">
                     <td title="'Logo'">
-                        {{client._id}}
+                        <img src="/assets/clients/{{ client._id }}.png" width="68" height="20" alt="{{ client.name }}" />
                     </td>
                     <td title="'Client'" sortable="name" filter="{ 'name': 'text' }">
                         {{client.name}}

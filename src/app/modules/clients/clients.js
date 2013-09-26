@@ -5,7 +5,8 @@
 
 angular.module( 'Preslog.clients', [
         'titleService',
-        'ngTable'
+        'ngTable',
+        'ui.bootstrap'
     ])
 
     .config(function(stateHelperProvider) {
@@ -148,7 +149,7 @@ angular.module( 'Preslog.clients', [
     /**
      * Admin Client Edit
      */
-    .controller( 'AdminClientEditCtrl', function AdminClientEditController( $scope, titleService, clientData, clientOptions ) {
+    .controller( 'AdminClientEditCtrl', function AdminClientEditController( $scope, titleService, clientData, clientOptions, $filter, $modal ) {
 
         /**
          * Init
@@ -157,13 +158,15 @@ angular.module( 'Preslog.clients', [
         // Title
         titleService.setTitle( ['Clients', 'Admin'] );
 
-        // Client Data
+        // Client + Options Data
         $scope.client = clientData.Client;
-
-        console.log($scope.client);
-
-        // Options Data
         $scope.options = clientOptions;
+
+        // Page opts
+        $scope.newField = {};
+        $scope.showDeleted = false;
+        $scope.newGroup = {};
+        $scope.showDeletedGroups = false;
 
 
         /**
@@ -225,8 +228,318 @@ angular.module( 'Preslog.clients', [
 
             });
         };
+
+
+        /**
+         * Add Field
+         * Validates the form data and then opens an edit modal
+         */
+        $scope.addField = function()
+        {
+            // Fetch type of modal
+            var options = $.grep($scope.options.fieldTypes, function(e){ return e.alias === $scope.newField.type; });
+            options = options[0];
+
+            // Set up the field
+            var field = {
+                '_id': null,
+                'name': $scope.newField.name,
+                'type': $scope.newField.type,
+                'order': $scope.client.format.length,
+                'data': {},
+                'newField': true
+            };
+
+            // Open the Modal
+            var modal = $modal.open({
+                templateUrl: 'modules/clients/modals/admin-client-edit-field.tpl.html',
+                controller: 'AdminClientEditFieldCtrl',
+                resolve: {
+                    field: function() { return field; },
+                    index: function() { return null; },
+                    options: function() { return options; }
+                }
+            });
+
+
+            /**
+             * Modal Save
+             */
+            modal.result.then(function(ret) {
+
+                // remove marker
+                delete ret.field.newField;
+
+                // Append the new element
+                $scope.client.format.push(ret.field);
+
+                // Clear the field items
+                $scope.newField = {};
+            });
+
+        };
+
+
+        /**
+         * Edit Fields
+         * Opens a modal where the field content can be edited.
+         */
+        $scope.editField = function( field_id ) {
+
+            // Fetch the object in the array
+            var field = $.grep($scope.client.format, function(e){ return e._id === field_id; });
+            field = field[0];
+
+            // Get the array index of this item
+            var index = $scope.client.format.indexOf(field);
+
+            // Create a copt of the item so we break the binding
+            var fieldCopy = angular.copy(field);
+
+            // Fetch the type of field
+            var options = $.map($scope.options.fieldTypes, function(v,k){ if (v.alias == field.type) { return v; } });
+            options = options[0];
+
+            // Open the Modal
+            var modal = $modal.open({
+                templateUrl: 'modules/clients/modals/admin-client-edit-field.tpl.html',
+                controller: 'AdminClientEditFieldCtrl',
+                resolve: {
+                    field: function() { return fieldCopy; },
+                    index: function() { return index; },
+                    options: function() { return options; }
+                }
+            });
+
+
+            /**
+             * Modal Save
+             */
+            modal.result.then(function(ret) {
+
+                // Replace the element
+                $scope.client.format[ret.index] = ret.field;
+            },
+
+            /**
+             * Modal Dismiss
+             */
+            function()
+            {
+                // Do nothing on cancel
+            });
+
+        };
+
+
+
+        /**
+         * Add Attribute Group
+         */
+        $scope.addGroup = function()
+        {
+            // Set up the field
+            var group = {
+                '_id': null,
+                'name': $scope.newGroup.name,
+                'order': $scope.client.attributes.length,
+                'children': [],
+                'newGroup': true
+            };
+
+            // Open the Modal
+            var modal = $modal.open({
+                templateUrl: 'modules/clients/modals/admin-client-edit-attribute.tpl.html',
+                controller: 'AdminClientEditAttributeCtrl',
+                resolve: {
+                    group: function() { return group; },
+                    index: function() { return null; }
+                }
+            });
+
+
+            /**
+             * Modal Save
+             */
+            modal.result.then(function(ret) {
+
+                // remove marker
+                delete ret.group.newGroup;
+
+                // Append the new element
+                $scope.client.attributes.push(ret.group);
+
+                // Clear the field items
+                $scope.newGroup = {};
+            });
+
+        };
+
+        /**
+         * Edit Client Attributes (as groups)
+         * @param attribute_id
+         */
+        $scope.editGroup = function( group_id )
+        {
+            // Fetch the object in the array
+            var group = $.grep($scope.client.attributes, function(e){ return e._id === group_id; });
+            group = group[0];
+
+            // Get the array index of this item
+            var index = $scope.client.attributes.indexOf(group);
+
+            // Create a copt of the item so we break the binding
+            var groupCopy = angular.copy(group);
+
+            // Open the Modal
+            var modal = $modal.open({
+                templateUrl: 'modules/clients/modals/admin-client-edit-attribute.tpl.html',
+                controller: 'AdminClientEditAttributeCtrl',
+                resolve: {
+                    group: function() { return groupCopy; },
+                    index: function() { return index; }
+                }
+            });
+
+            /**
+             * Modal Save
+             */
+            modal.result.then(function(ret) {
+
+                // Replace the element
+                $scope.client.attributes[ret.index] = ret.group;
+            });
+
+        };
+
     })
 
+
+
+    /**
+     * Client Edit: Field Editor Modal
+     */
+    .controller( 'AdminClientEditFieldCtrl', function AdminClientEditFieldController( $scope, $modalInstance, field, options, index ) {
+
+        /**
+         * On Load
+         */
+
+        // Assign scope vars
+        $scope.index = index;
+        $scope.field = field;
+        $scope.options = options;
+        $scope.showDeleted = false;
+        $scope.newOption = {};
+
+
+        /**
+         * Add an option to Select items
+         */
+        $scope.addOption = function()
+        {
+            // Set up field
+            var option = $scope.newOption;
+            option._id = null;
+            option.deleted = false;
+            option.order = $scope.field.data.options.length;
+
+            // Put to array
+            $scope.field.data.options.push( option );
+
+            // Reset form
+            $scope.newOption = {};
+        };
+
+
+        /**
+         * Save changes
+         */
+        $scope.save = function()
+        {
+            // Close, and pass back the Field we've edited with the new changes.
+            $modalInstance.close({
+                'index':$scope.index,
+                'field':$scope.field
+            });
+        };
+
+
+        /**
+         * Delete field
+         */
+        $scope.remove = function()
+        {
+            // Set as deleted
+            $scope.field.deleted = true;
+
+            // Pass back changes
+            $modalInstance.close({
+                'index':$scope.index,
+                'field':$scope.field
+            });
+        };
+
+
+        /**
+         * Dismiss modal, cancelling changes
+         */
+        $scope.dismiss = function()
+        {
+            $modalInstance.dismiss();
+        };
+    })
+
+
+    /**
+     * Client Edit: Field Editor Modal
+     */
+    .controller( 'AdminClientEditAttributeCtrl', function AdminClientEditAttributeController( $scope, $modalInstance, group, index ) {
+
+        // Assign scope vars
+        $scope.index = index;
+        $scope.group = group;
+        $scope.showDeleted = false;
+
+
+        /**
+         * Save changes
+         */
+        $scope.save = function()
+        {
+            // Close, and pass back the Field we've edited with the new changes.
+            $modalInstance.close({
+                'index':$scope.index,
+                'group':$scope.group
+            });
+        };
+
+
+        /**
+         * Delete field
+         */
+        $scope.remove = function()
+        {
+            // Set as deleted
+            $scope.group.deleted = true;
+
+            // Pass back changes
+            $modalInstance.close({
+                'index':$scope.index,
+                'group':$scope.group
+            });
+        };
+
+
+        /**
+         * Dismiss modal, cancelling changes
+         */
+        $scope.dismiss = function()
+        {
+            $modalInstance.dismiss();
+        };
+
+    })
 
 ;
 
