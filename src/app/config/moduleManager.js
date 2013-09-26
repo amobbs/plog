@@ -23,6 +23,7 @@ angular.module('moduleManager', [
     'hierarchyFields',
     'validateServer',
     'validatePassword',
+    'permission',
 
     // Site Modules
     'pages',
