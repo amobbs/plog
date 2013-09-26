@@ -68,6 +68,7 @@ module.exports = {
             'vendor/angular-ui-router/release/angular-ui-router.js',
             'vendor/angular-ui-utils/modules/route/route.js',
             'vendor/angular-ui-select2/src/select2.js',
+            'vendor/angular-ui-sortable/src/sortable.js',
             'vendor/angular-resource-unstable/angular-resource.js',
             'vendor/angular-highcharts-directive/src/directives/highcharts.js',
             'vendor/ng-table/ng-table.js',
@@ -76,7 +77,7 @@ module.exports = {
             'vendor/restangular/dist/restangular.js',
 
             'vendor/dynatree/dist/jquery.dynatree-1.2.4.js',
-            'vendor/jquery.shapeshift/core/jquery.shapeshift.js'
+            'vendor/angularjs-modal-service/src/createDialog.js'
         ],
 
         /**

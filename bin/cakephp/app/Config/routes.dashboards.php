@@ -44,7 +44,7 @@ Router::connect(
 Router::connect(
     '/dashboards/:dashboard_id',
     array('controller' => 'Dashboards', 'action' => 'editDashboard', '[method]' => 'GET'),
-    array('pass'=>array('dashboard_id'), 'dashboard_id'=>'[0-9]+')
+    array('pass'=>array('dashboard_id'), 'dashboard_id'=>'[0-9a-z]+')
 );
 
 
@@ -65,7 +65,7 @@ Router::connect(
 Router::connect(
     '/dashboards/:dashboard_id',
     array('controller' => 'Dashboards', 'action' => 'editDashboard', '[method]' => 'POST'),
-    array('pass'=>array('dashboard_id'), 'dashboard_id'=>'[0-9]+')
+    array('pass'=>array('dashboard_id'), 'dashboard_id'=>'[0-9a-z]+')
 );
 
 
@@ -86,7 +86,7 @@ Router::connect(
 Router::connect(
     '/dashboards/:dashboard_id',
     array('controller' => 'Dashboards', 'action' => 'deleteDashboard', '[method]' => 'DELETE'),
-    array('pass'=>array('dashboard_id'), 'dashboard_id'=>'[0-9]+')
+    array('pass'=>array('dashboard_id'), 'dashboard_id'=>'[0-9a-z]+')
 );
 
 
@@ -107,7 +107,7 @@ Router::connect(
 Router::connect(
     '/dashboards/:dashboard_id/widgets',
     array('controller' => 'Dashboards', 'action' => 'editWidget', '[method]' => 'POST'),
-    array('pass'=>array('dashboard_id'), 'dashboard_id'=>'[0-9]+')
+    array('pass'=>array('dashboard_id'), 'dashboard_id'=>'[0-9a-z]+')
 );
 
 /**
@@ -127,7 +127,7 @@ Router::connect(
 Router::connect(
     '/dashboards/:dashboard_id/widgets/:widget_id',
     array('controller' => 'Dashboards', 'action' => 'editWidget', '[method]' => 'GET'),
-    array('pass'=>array('dashboard_id', 'widget_id'), 'dashboard_id'=>'[0-9]+', 'widget_id'=>'[0-9]+')
+    array('pass'=>array('dashboard_id', 'widget_id'), 'dashboard_id'=>'[0-9a-z]+', 'widget_id'=>'[0-9a-z]+')
 );
 
 
@@ -148,7 +148,7 @@ Router::connect(
 Router::connect(
     '/dashboards/:dashboard_id/widgets/:widget_id',
     array('controller' => 'Dashboards', 'action' => 'editWidget', '[method]' => 'POST'),
-    array('pass'=>array('dashboard_id', 'widget_id'), 'dashboard_id'=>'[0-9]+', 'widget_id'=>'[0-9]+')
+    array('pass'=>array('dashboard_id', 'widget_id'), 'dashboard_id'=>'[0-9a-z]+', 'widget_id'=>'[0-9a-z]+')
 );
 
 
@@ -168,8 +168,8 @@ Router::connect(
  */
 Router::connect(
     '/dashboards/:dashboard_id/widgets/:widget_id',
-    array('controller' => 'Dashboards', 'action' => 'editWidget', '[method]' => 'DELETE'),
-    array('pass'=>array('dashboard_id', 'widget_id'), 'dashboard_id'=>'[0-9]+', 'widget_id'=>'[0-9]+')
+    array('controller' => 'Dashboards', 'action' => 'deleteWidget', '[method]' => 'DELETE'),
+    array('pass'=>array('dashboard_id', 'widget_id'), 'dashboard_id'=>'[0-9a-z]+', 'widget_id'=>'[0-9a-z]+')
 );
 
 
@@ -190,7 +190,7 @@ Router::connect(
 Router::connect(
     '/dashboards/:dashboard_id/widgets/:widget_id/export',
     array('controller' => 'Dashboards', 'action' => 'exportWidget', '[method]' => 'GET'),
-    array('pass'=>array('dashboard_id', 'widget_id'), 'dashboard_id'=>'[0-9]+', 'widget_id'=>'[0-9]+')
+    array('pass'=>array('dashboard_id', 'widget_id'), 'dashboard_id'=>'[0-9a-z]+', 'widget_id'=>'[0-9a-z]+')
 );
 
 
@@ -211,7 +211,7 @@ Router::connect(
 Router::connect(
     '/dashboards/:dashboard_id/export',
     array('controller' => 'Dashboards', 'action' => 'exportDashboard', '[method]' => 'GET'),
-    array('pass'=>array('dashboard_id'), 'dashboard_id'=>'[0-9]+')
+    array('pass'=>array('dashboard_id'), 'dashboard_id'=>'[0-9a-z]+')
 );
 
 
@@ -332,5 +332,5 @@ Router::connect(
 Router::connect(
     '/widgets/:widget_type',
     array('controller' => 'Dashboards', 'action' => 'readWidgetOptions', '[method]' => 'GET'),
-    array('pass'=>array('widget_type'), 'widget_type'=>'[0-9]+')
+    array('pass'=>array('widget_type'), 'widget_type'=>'[0-9a-z]+')
 );

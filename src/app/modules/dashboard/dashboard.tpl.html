@@ -32,7 +32,7 @@
             <div class="span4">
 
                 <div class="btn-group dash-controls pull-right">
-                    <button class="btn" ng-click="dashboardAddWidget = true"><i class="icon icon-plus"></i> Add Widget</button>
+                    <button class="btn" ng-click="openAddWidgetModal()"><i class="icon icon-plus"></i> Add Widget</button>
                     <button class="btn" ng-click="openCreateModal()" ><i class="icon icon-pencil"></i> Create Dashboard </button>
                     <button class="btn dropdown-toggle"><i class="icon icon-list-alt"></i> More <b class="caret"></b> </button>
                     <ul class="dropdown-menu">
@@ -45,370 +45,176 @@
             </div>
         </div>
 
-        <div ng-repeat="widget in dashboard.widgets">
-            <div class="widget-box widget-movable">
-                <div class="widget-title">
-                        <span class="widget-icon">
-                            <i class="icon-signal"></i>
-                        </span>
-                    <h3>{{ widget.name }}</h3>
-                    <div class="widget-buttons">
-                        <div class="btn-group hover-show">
-                            <a class="btn btn-mini dropdown-toggle" data-toggle="dropdown" href="#">
-                                <span class="caret"></span>
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li><a tabindex="-1" href="#"><i class="icon icon-refresh"></i> Refresh</a></li>
-                                <li><a tabindex="-1" ng-click="dashboardWidgetEdit = true"><i class="icon icon-pencil"></i> Edit</a></li>
-                                <li><a><i class="icon icon-trash"></i> Delete</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <div class="widget-content">
-                    <p>
-                        <chart value="widget.highcharts" type="widget.type" height="400"></chart>
-                    </p>
-                </div>
-            </div>
-        </div>
 
-        <div class="widget-area">
-            <div>
-                <div class="widget-box widget-movable">
-                    <div class="widget-title">
-                        <span class="widget-icon">
-                            <i class="icon-signal"></i>
-                        </span>
-                        <h3>This is a widget</h3>
-                        <div class="widget-buttons">
-                            <div class="btn-group hover-show">
-                                <a class="btn btn-mini dropdown-toggle" data-toggle="dropdown" href="#">
-                                    <span class="caret"></span>
-                                </a>
-                                <ul class="dropdown-menu">
-                                    <li><a tabindex="-1" href="#"><i class="icon icon-refresh"></i> Refresh</a></li>
-                                    <li><a tabindex="-1" ng-click="dashboardWidgetEdit = true"><i class="icon icon-pencil"></i> Edit</a></li>
-                                    <li><a><i class="icon icon-trash"></i> Delete</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="widget-content">
-                        <p>
-                            <chart value="basicAreaChart" type="area" height="400"></chart>
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <div>
-                <div class="widget-box widget-movable">
-                    <div class="widget-title">
-                        <span class="widget-icon">
-                            <i class="icon-signal"></i>
-                        </span>
-                        <h3>Custom title</h3>
-                        <div class="widget-buttons">
-                            <div class="btn-group hover-show">
-                                <a class="btn btn-mini dropdown-toggle" data-toggle="dropdown" href="#">
-                                    <span class="caret"></span>
-                                </a>
-                                <ul class="dropdown-menu">
-                                    <li><a tabindex="-1" href="#"><i class="icon icon-refresh"></i> Refresh</a></li>
-                                    <li><a tabindex="-1" ng-click="dashboardWidgetEdit = true"><i class="icon icon-pencil"></i> Edit</a></li>
-                                    <li><a><i class="icon icon-trash"></i> Delete</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="widget-content">
-                        <p><chart value="chart2" height="400"></chart></p>
-                    </div>
-                </div>
-            </div>
-
-            <div>
-                <div class="widget-box widget-movable">
-                    <div class="widget-title">
-                        <span class="widget-icon">
-                            <i class="icon-signal"></i>
-                        </span>
-                        <h3>Really rather long custom title which should wrap onto a new line just because we need to see it</h3>
-                        <div class="widget-buttons">
-                            <div class="btn-group hover-show">
-                                <a class="btn btn-mini dropdown-toggle" data-toggle="dropdown" href="#">
-                                    <span class="caret"></span>
-                                </a>
-                                <ul class="dropdown-menu">
-                                    <li><a tabindex="-1" href="#"><i class="icon icon-refresh"></i> Refresh</a></li>
-                                    <li><a tabindex="-1" ng-click="dashboardWidgetEdit = true"><i class="icon icon-pencil"></i> Edit</a></li>
-                                    <li><a><i class="icon icon-trash"></i> Delete</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="widget-content">
-                        <p><img src="/assets/img/placeholder/graph3.png" /></p>
-                    </div>
-                </div>
-            </div>
-            <div>
-
-                <div class="widget-box widget-movable">
-                    <div class="widget-title">
-                        <span class="widget-icon">
-                            <i class="icon-signal"></i>
-                        </span>
-                        <h3>Widget for Logs</h3>
-                        <div class="widget-buttons">
-                            <div class="btn-group hover-show">
-                                <a class="btn btn-mini dropdown-toggle" data-toggle="dropdown" href="#">
-                                    <span class="caret"></span>
-                                </a>
-                                <ul class="dropdown-menu">
-                                    <li><a tabindex="-1" href="#"><i class="icon icon-refresh"></i> Refresh</a></li>
-                                    <li><a tabindex="-1" ng-click="dashboardWidgetEdit = true"><i class="icon icon-pencil"></i> Edit</a></li>
-                                    <li><a tabindex="-1"><i class="icon icon-download-alt"></i> Export data to XLS</a></li>
-                                    <li><a><i class="icon icon-trash"></i> Delete</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="widget-content">
-
-                        <div class="row-fluid">
-                            <div class="span6">
-                                <p>Showing <strong>3</strong> of <strong>3</strong> logs</p>
-                            </div>
-                            <div class="span6 text-right">
-                                <div class="control-group control-horizontal">
-                                    <label class="control-label">Order By</label>
-                                    <select>
-                                        <option>Created</option>
-                                    </select>
+        <div class="row-fluid">
+            <ul id="widget-area" ui-sortable="sortableOptions" ng-model="dashboard.widgets">
+                <li class="widget" ng-repeat="widget in dashboard.widgets" ng-class="{col3: widget.maxWidth == 3}" id="{{ widget.id }}">
+                    <div class="widget-box widget-movable">
+                        <div class="widget-title">
+                            <span class="widget-icon">
+                                <i class="icon-signal"></i>
+                            </span>
+                            <h3>{{ widget.name }}</h3>
+                            <div class="widget-buttons">
+                                <div class="btn-group hover-show">
+                                    <a class="btn btn-mini dropdown-toggle" data-toggle="dropdown" href="#">
+                                        <span class="caret"></span>
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li><a tabindex="-1" href="#"><i class="icon icon-refresh"></i> Refresh</a></li>
+                                        <li><a tabindex="-1" ng-click="openEditWidgetModal(widget)"><i class="icon icon-pencil"></i> Edit</a></li>
+                                        <li><a tabindex="-1" ng-click="deleteWidget(widget.id)" ng-show="{{widget.id !== null && !widget.deleted}}" ng-confirm-click="Are you sure you want to delete this widget?"><i class="icon icon-remove"></i> Delete widget</a></li>
+                                    </ul>
                                 </div>
                             </div>
                         </div>
-
-                        <table class="table table-condensed log-list">
-                            <tbody onclick="parent.location='/log'">
-                            <tr>
-                                <td><label>Log ID</label><div class="truncate">1234</div></td>
-                                <td><label>Program</label><div class="truncate">My Show Name Here</div></td>
-                                <td>
-                                    <div popover-trigger="mouseenter" popover="12: ABC, DEF, GHI, JKL, MNO, PQR, STU, VWX, YZ">
-                                        <label>Networks</label><div class="truncate">12: Network List Goes here</div>
+                        <div class="widget-content">
+                            <div ng-switch on="widget.type">
+                                <div ng-switch-when="list">
+                                    <div class="row-fluid">
+                                        <div class="span6">
+                                            <p>Showing <strong>3</strong> of <strong>3</strong> logs</p>
+                                        </div>
+                                        <div class="span6 text-right">
+                                            <div class="control-group control-horizontal">
+                                                <label class="control-label">Order By</label>
+                                                <select>
+                                                    <option>Created</option>
+                                                </select>
+                                            </div>
+                                        </div>
                                     </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><label>Date</label><div class="truncate">88-88-8888 88:88:88</div></td>
-                                <td>
-                                    <div popover-trigger="mouseenter" popover="This will show the long descripton which is otherwise unavailable in the truncated version below.">
-                                        <label>Description</label><div class="truncate">This is a long description This is a long description <br/> This is a long description This is a long description</div>
+
+                                    <table class="table table-condensed log-list">
+                                        <tbody onclick="parent.location='/log'">
+                                        <tr>
+                                            <td><label>Log ID</label><div class="truncate">1234</div></td>
+                                            <td><label>Program</label><div class="truncate">My Show Name Here</div></td>
+                                            <td>
+                                                <div popover-trigger="mouseenter" popover="12: ABC, DEF, GHI, JKL, MNO, PQR, STU, VWX, YZ">
+                                                    <label>Networks</label><div class="truncate">12: Network List Goes here</div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><label>Date</label><div class="truncate">88-88-8888 88:88:88</div></td>
+                                            <td>
+                                                <div popover-trigger="mouseenter" popover="This will show the long descripton which is otherwise unavailable in the truncated version below.">
+                                                    <label>Description</label><div class="truncate">This is a long description This is a long description <br/> This is a long description This is a long description</div>
+                                                </div>
+                                            </td>
+                                            <td><label>Details</label><div class="truncate">This is a long details item</div></td>
+                                        </tr>
+                                        <tr>
+                                            <td><label>Duration</label><div class="truncate">1h 57m 3s</div></td>
+                                            <td><label>Asset ID</label><div class="truncate">ABC23456789</div></td>
+                                            <td><label>Logged By</label><div class="truncate">Dave Newson</div></td>
+                                        </tr>
+                                        <tr>
+                                            <td><label>Effect</label><div class="truncate">Commercial Hotlist (CHL)</div></td>
+                                            <td><label>Cause</label><div class="truncate">Asset Failed to Arrive</div></td>
+                                            <td><label>Accountability</label><div class="truncate">Unresolved</div></td>
+                                        </tr>
+                                        <tr>
+                                            <td><label>Severity</label><div class="truncate">Level 1</div></td>
+                                            <td><label>Impact</label><div class="truncate">NEGATIVE (OUTAGE)</div></td>
+                                            <td><label>Status</label><div class="truncate">Unresolved</div></td>
+                                        </tr>
+                                        </tbody>
+                                        <tbody onclick="parent.location='/log'">
+                                        <tr>
+                                            <td><label>Log ID</label><div class="truncate">1234</div></td>
+                                            <td><label>Program</label><div class="truncate">My Show Name Here</div></td>
+                                            <td>
+                                                <div popover-trigger="mouseenter" popover="12: ABC, DEF, GHI, JKL, MNO, PQR, STU, VWX, YZ">
+                                                    <label>Networks</label><div class="truncate">12: Network List Goes here</div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><label>Date</label><div class="truncate">88-88-8888 88:88:88</div></td>
+                                            <td>
+                                                <div popover-trigger="mouseenter" popover="This will show the long descripton which is otherwise unavailable in the truncated version below.">
+                                                    <label>Description</label><div class="truncate">This is a long description This is a long description <br/> This is a long description This is a long description</div>
+                                                </div>
+                                            </td>
+                                            <td><label>Details</label><div class="truncate">This is a long details item</div></td>
+                                        </tr>
+                                        <tr>
+                                            <td><label>Duration</label><div class="truncate">1h 57m 3s</div></td>
+                                            <td><label>Asset ID</label><div class="truncate">ABC23456789</div></td>
+                                            <td><label>Logged By</label><div class="truncate">Dave Newson</div></td>
+                                        </tr>
+                                        <tr>
+                                            <td><label>Effect</label><div class="truncate">Commercial Hotlist (CHL)</div></td>
+                                            <td><label>Cause</label><div class="truncate">Asset Failed to Arrive</div></td>
+                                            <td><label>Accountability</label><div class="truncate">Unresolved</div></td>
+                                        </tr>
+                                        <tr>
+                                            <td><label>Severity</label><div class="truncate">Level 1</div></td>
+                                            <td><label>Impact</label><div class="truncate">NEGATIVE (OUTAGE)</div></td>
+                                            <td><label>Status</label><div class="truncate">Unresolved</div></td>
+                                        </tr>
+                                        </tbody>
+                                        <tbody onclick="parent.location='/log'">
+                                        <tr>
+                                            <td><label>Log ID</label><div class="truncate">1234</div></td>
+                                            <td><label>Program</label><div class="truncate">My Show Name Here</div></td>
+                                            <td>
+                                                <div popover-trigger="mouseenter" popover="12: ABC, DEF, GHI, JKL, MNO, PQR, STU, VWX, YZ">
+                                                    <label>Networks</label><div class="truncate">12: Network List Goes here</div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><label>Date</label><div class="truncate">88-88-8888 88:88:88</div></td>
+                                            <td>
+                                                <div popover-trigger="mouseenter" popover="This will show the long descripton which is otherwise unavailable in the truncated version below.">
+                                                    <label>Description</label><div class="truncate">This is a long description This is a long description <br/> This is a long description This is a long description</div>
+                                                </div>
+                                            </td>
+                                            <td><label>Details</label><div class="truncate">This is a long details item</div></td>
+                                        </tr>
+                                        <tr>
+                                            <td><label>Duration</label><div class="truncate">1h 57m 3s</div></td>
+                                            <td><label>Asset ID</label><div class="truncate">ABC23456789</div></td>
+                                            <td><label>Logged By</label><div class="truncate">Dave Newson</div></td>
+                                        </tr>
+                                        <tr>
+                                            <td><label>Effect</label><div class="truncate">Commercial Hotlist (CHL)</div></td>
+                                            <td><label>Cause</label><div class="truncate">Asset Failed to Arrive</div></td>
+                                            <td><label>Accountability</label><div class="truncate">Unresolved</div></td>
+                                        </tr>
+                                        <tr>
+                                            <td><label>Severity</label><div class="truncate">Level 1</div></td>
+                                            <td><label>Impact</label><div class="truncate">NEGATIVE (OUTAGE)</div></td>
+                                            <td><label>Status</label><div class="truncate">Unresolved</div></td>
+                                        </tr>
+                                        </tbody>
+
+                                    </table>
+
+
+                                    <div class="pagination pagination-centered">
+                                        <ul>
+                                            <li class="disabled"><a href="#">&laquo;</a></li>
+                                            <li class="active"><a href="#">1</a></li>
+                                            <li><a href="#">2</a></li>
+                                            <li><a href="#">3</a></li>
+                                            <li><a href="#">4</a></li>
+                                            <li><a href="#">&raquo;</a></li>
+                                        </ul>
                                     </div>
-                                </td>
-                                <td><label>Details</label><div class="truncate">This is a long details item</div></td>
-                            </tr>
-                            <tr>
-                                <td><label>Duration</label><div class="truncate">1h 57m 3s</div></td>
-                                <td><label>Asset ID</label><div class="truncate">ABC23456789</div></td>
-                                <td><label>Logged By</label><div class="truncate">Dave Newson</div></td>
-                            </tr>
-                            <tr>
-                                <td><label>Effect</label><div class="truncate">Commercial Hotlist (CHL)</div></td>
-                                <td><label>Cause</label><div class="truncate">Asset Failed to Arrive</div></td>
-                                <td><label>Accountability</label><div class="truncate">Unresolved</div></td>
-                            </tr>
-                            <tr>
-                                <td><label>Severity</label><div class="truncate">Level 1</div></td>
-                                <td><label>Impact</label><div class="truncate">NEGATIVE (OUTAGE)</div></td>
-                                <td><label>Status</label><div class="truncate">Unresolved</div></td>
-                            </tr>
-                            </tbody>
 
-                            <tbody onclick="parent.location='/log'">
-                            <tr>
-                                <td><label>Log ID</label><div>1234</div></td>
-                                <td><label>Program</label><div>My Show Name Here</div></td>
-                                <td><label>Networks</label><div>Network List Goes here</div></td>
-                            </tr>
-                            <tr>
-                                <td><label>Date</label><div>88-88-8888 88:88:88</div></td>
-                                <td><label>Description</label><div class="truncate">This is a long description This is a long description <br/> This is a long description This is a long description</div></td>
-                                <td><label>Details</label><div>This is a long details item</div></td>
-                            </tr>
-                            <tr>
-                                <td><label>Duration</label><div>1h 57m 3s</div></td>
-                                <td><label>Asset ID</label><div>ABC23456789</div></td>
-                                <td><label>Logged By</label><div>Dave Newson</div></td>
-                            </tr>
-                            <tr>
-                                <td><label>Effect</label><div>Commercial Hotlist (CHL)</div></td>
-                                <td><label>Cause</label><div>Asset Failed to Arrive</div></td>
-                                <td><label>Accountability</label><div>Unresolved</div></td>
-                            </tr>
-                            <tr>
-                                <td><label>Severity</label><div>Level 1</div></td>
-                                <td><label>Impact</label><div>NEGATIVE (OUTAGE)</div></td>
-                                <td><label>Status</label><div>Unresolved</div></td>
-                            </tr>
-                            </tbody>
-
-                            <tbody onclick="parent.location='/log'">
-                            <tr>
-                                <td><label>Log ID</label><div>1234</div></td>
-                                <td><label>Program</label><div>My Show Name Here</div></td>
-                                <td><label>Networks</label><div>Network List Goes here</div></td>
-                            </tr>
-                            <tr>
-                                <td><label>Date</label><div>88-88-8888 88:88:88</div></td>
-                                <td><label>Description</label><div class="truncate">This is a long description This is a long description <br/> This is a long description This is a long description</div></td>
-                                <td><label>Details</label><div>This is a long details item</div></td>
-                            </tr>
-                            <tr>
-                                <td><label>Duration</label><div>1h 57m 3s</div></td>
-                                <td><label>Asset ID</label><div>ABC23456789</div></td>
-                                <td><label>Logged By</label><div>Dave Newson</div></td>
-                            </tr>
-                            <tr>
-                                <td><label>Effect</label><div>Commercial Hotlist (CHL)</div></td>
-                                <td><label>Cause</label><div>Asset Failed to Arrive</div></td>
-                                <td><label>Accountability</label><div>Unresolved</div></td>
-                            </tr>
-                            <tr>
-                                <td><label>Severity</label><div>Level 1</div></td>
-                                <td><label>Impact</label><div>NEGATIVE (OUTAGE)</div></td>
-                                <td><label>Status</label><div>Unresolved</div></td>
-                            </tr>
-                            </tbody>
-                        </table>
-
-
-                        <div class="pagination pagination-centered">
-                            <ul>
-                                <li class="disabled"><a href="#">&laquo;</a></li>
-                                <li class="active"><a href="#">1</a></li>
-                                <li><a href="#">2</a></li>
-                                <li><a href="#">3</a></li>
-                                <li><a href="#">4</a></li>
-                                <li><a href="#">&raquo;</a></li>
-                            </ul>
+                                </div>
+                                <chart ng-switch-default value="widget.highcharts" type="widget.type" height="400"></chart>
+                            </div>
                         </div>
-
                     </div>
-                </div>
-            </div>
-        </div>
+                </li>
+            </ul>
 
-
-
-            </div>
         </div>
     </div>
 </div>
 
-
-
-
-
-
-
-
-
-
-<!-- Add Widget Modal -->
-<div id="dashboard_add_widget" modal="dashboardAddWidget" options="{backdropFade: true}" close="dashboardAddWidget = false" tabindex="-1" role="dialog">
-    <div class="modal-header">
-        <button type="button" class="close" ng-click="dashboardAddWidget = false" aria-hidden="true"><i class="icon icon-remove"></i></button>
-        <h3 id="myModalLabel">Add Widget</h3>
-    </div>
-    <div class="modal-body">
-        <p>Select a widget</p>
-
-        <table class="table table-widget-select" ng-click="dashboardAddWidget = false">
-            <tr>
-                <td>
-                    <img src="/assets/img/placeholder/graph2.png" width="150">
-                </td>
-                <td>
-                    <strong>Pie Chart</strong>
-                    <p>Useful for showing quantities comparing two attributes</p>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <img src="/assets/img/placeholder/graph1.png" width="150">
-                </td>
-                <td>
-                    <strong>Line Graph</strong>
-                    <p>Blah blah helpful text here</p>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <img src="/assets/img/placeholder/graph1.png" width="150">
-                </td>
-                <td>
-                    <strong>Line Graph</strong>
-                    <p>Blah blah helpful text here</p>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <img src="/assets/img/placeholder/graph1.png" width="150">
-                </td>
-                <td>
-                    <strong>Line Graph</strong>
-                    <p>Blah blah helpful text here</p>
-                </td>
-            </tr>
-        </table>
-
-    </div>
-    <div class="modal-footer">
-        <button class="btn" data-dismiss="modal" aria-hidden="true" ng-click="dashboardAddWidget = false">Cancel</button>
-    </div>
-</div>
-
-
-<!-- Edit Widget -->
-<div id="dashboard_edit_widget" modal="dashboardWidgetEdit" options="{backdropFade: true}" close="dashboardWidgetEdit = false" tabindex="-1" role="dialog">
-    <div class="modal-header">
-        <button type="button" class="close" ng-click="dashboardWidgetEdit = false" aria-hidden="true"><i class="icon icon-remove"></i></button>
-        <h3 id="myModalLabel">Edit Widget</h3>
-    </div>
-    <div class="modal-body form-horizontal">
-        <div class="control-group">
-            <label class="control-label">Title </label>
-            <div class="control">
-                <input type="text" placeholder="Title..." value="" />
-            </div>
-        </div>
-        <div class="control-group">
-            <label class="control-label">Search Query</label>
-            <div class="control">
-                <textarea placeholder="Filter...">
-                </textarea>
-            </div>
-        </div>
-
-        <div class="control-group">
-            <label class="control-label">X Axis </label>
-            <div class="control">
-                <select></select>
-            </div>
-        </div>
-        <div class="control-group">
-            <label class="control-label">Y Axis </label>
-            <div class="control">
-                <select></select>
-            </div>
-        </div>
-    </div>
-    <div class="modal-footer">
-        <button class="btn btn-danger" data-dismiss="modal" aria-hidden="true" ng-click="dashboardWidgetEdit = false">Cancel</button>
-        <button class="btn btn-success" ng-click="dashboardWidgetEdit = false">Save</button>
-    </div>
-</div>

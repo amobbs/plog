@@ -1,0 +1,56 @@
+<div class="modal-header">
+    <button type="button" class="close" ng-click="cancel()" aria-hidden="true"><i class="icon icon-remove"></i></button>
+    <h3 id="myModalLabel">Add Widget</h3>
+</div>
+<div class="modal-body">
+    <div class="control-group">
+        <label class="control-label">Widget Name </label>
+        <div class="control">
+            <input type="text" placeholder="Widget Name..." ng-model="data.name" />
+        </div>
+    </div>
+
+    <p>Select a widget</p>
+
+    <table class="table table-widget-select">
+        <tr ng-click="addChart('Pie')">
+            <td>
+                <img src="/assets/img/placeholder/graph2.png" width="150">
+            </td>
+            <td>
+                <strong>Pie Chart</strong>
+                <p>Useful for showing quantities comparing two attributes</p>
+            </td>
+        </tr>
+        <tr ng-click="addChart('Line')">
+            <td>
+                <img src="/assets/img/placeholder/graph1.png" width="150">
+            </td>
+            <td>
+                <strong>Line Graph</strong>
+                <p>Blah blah helpful text here</p>
+            </td>
+        </tr>
+        <tr ng-click="addChart('Bar')">
+            <td>
+                <img src="/assets/img/placeholder/graph1.png" width="150">
+            </td>
+            <td>
+                <strong>Bar Graph</strong>
+                <p>Blah blah helpful text here</p>
+            </td>
+        </tr>
+        <tr ng-click="addChart('List')">
+            <td>
+                <img src="/assets/img/placeholder/graph1.png" width="150">
+            </td>
+            <td>
+                <strong>Log List</strong>
+                <p>Blah blah helpful text here</p>
+            </td>
+        </tr>
+    </table>
+</div>
+<div class="modal-footer">
+    <button class="btn" data-dismiss="modal" aria-hidden="true" ng-click="cancel()">Cancel</button>
+</div>

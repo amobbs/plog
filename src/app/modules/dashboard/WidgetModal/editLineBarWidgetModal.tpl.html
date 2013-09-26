@@ -1,0 +1,47 @@
+<div class="modal-header">
+    <button type="button" class="close" ng-click="cancel()" aria-hidden="true"><i class="icon icon-remove"></i></button>
+    <h3 id="myModalLabel">Edit Line Widget</h3>
+</div>
+<div class="modal-body form-horizontal" id="editModalWidget">
+    <div class="control-group">
+        <label class="control-label">Name </label>
+        <div class="control">
+            <input type="text" placeholder="Name..." value="" ng-model="data.data.name"/>
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label">Title </label>
+        <div class="control">
+            <input type="text" placeholder="Title..." value="" ng-model="data.data.title"/>
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label">Search Query</label>
+        <div class="control">
+            <textarea placeholder="Filter..." ng-model="data.data.query"></textarea>
+        </div>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label">X Axis </label>
+        <div class="control">
+            <select></select>
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label">Y Axis </label>
+        <div class="control">
+            <select></select>
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label">Refresh Interval </label>
+        <div class="control">
+            <input placeholder="Seconds..." ng-model="data.data.refresh" />
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button class="btn" data-dismiss="modal" aria-hidden="true" ng-click="cancel()">Cancel</button>
+    <button class="btn btn-primary" ng-click="saveWidget()">Save</button>
+</div>

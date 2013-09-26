@@ -65,16 +65,120 @@ angular.module( 'Preslog.dashboard', [
     /**
      * Dashboard Controller
      */
-    .controller( 'DashboardCtrl', function DashboardController( $scope, $http, $window, $location, $modal, titleService, Restangular, source) {
+    .controller( 'DashboardCtrl', function DashboardController( $scope, $http, $window, $location, $timeout, $modal, createDialog, titleService, Restangular, source) {
         titleService.setTitle( 'Dashboard' );
 
-        $scope.id = '523b9faf09cc5e623f8b51da';
-        $scope.dashboard = source.dashbaord;
+        console.log(source.dashboard);
+        $scope.id = source.dashboard.id;
+        $scope.dashboard = source.dashboard;
         $scope.favourites = source.favourites;
 
-        $(".widget-area").shapeshift({
-            align: 'left'
-        });
+        $scope.refreshTimers= [];
+        $scope.name = '';
+
+        $scope.sortableOptions = {
+            placeholder: 'placeholder',
+            items: '.widget',
+            revert: 150,
+            tolerance: 'pointer',
+            cursorAt: {
+                left: 10,
+                top: 10
+            },
+            start: function(event, ui) {
+                if (ui.item.hasClass('col3')) {
+                    ui.placeholder.css('width', '98%');
+                }
+            },
+            change: function(event, ui) {
+                ui.placeholder.before('\n').after('\n');
+            },
+            stop: function(event, ui) {
+                ui.item.before('\n').after('\n');
+            },
+            update: function(event, ui) {
+                var order = $(event.target).sortable("toArray");
+
+                for(var i = 0; i < order.length; i++) {
+                   for(var w = 0; w < $scope.dashboard.widgets.length; w++) {
+                       if ($scope.dashboard.widgets[w].id == order[i]) {
+                           $scope.dashboard.widgets[w].order = i;
+                       }
+                   }
+                }
+
+                Restangular.one('dashboards', $scope.id)
+                    .post('', {'widgets': $scope.dashboard.widgets})
+                    .then(function(data) {
+                        console.log(data);
+                    }
+                );
+            }
+        };
+
+        $scope.deleteWidget = function(widgetId) {
+            Restangular.one('dashboards', $scope.id)
+                .one('widgets', widgetId)
+                .remove()
+                .then(function (result){
+                    console.log(result);
+                    for(var index = 0; index < $scope.dashboard.widgets.length; index++) {
+                        if ($scope.dashboard.widgets[index].id == widgetId) {
+                            $scope.dashboard.widgets.splice(index, 1);
+                            break;
+                        }
+                    }
+                });
+        };
+
+        $scope.refreshCallback = function(widgetId) { return function() { $scope.refreshWidget(widgetId); }; };
+        $scope.startWidgetRefresh = function() {
+            for(var wId in $scope.dashboard.widgets) {
+                var widget = $scope.dashboard.widgets[wId];
+                if (widget.refresh && widget.refresh > 0) {
+                    $scope.setRefreshTimer(widget.id, widget.refresh);
+                }
+            }
+        };
+
+        $scope.setRefreshTimer = function(widgetId, interval) {
+            var promise = $timeout($scope.refreshCallback(widgetId), (interval * 1000));
+
+            $scope.refreshTimers.push({
+                widgetId: widgetId,
+                promise: promise
+            });
+        };
+
+        $scope.updateRefreshTimer = function(widgetId, newInterval) {
+            for(var timeoutId in $scope.refreshTimers) {
+                var timeout = $scope.refreshTimers[timeoutId];
+                if (timeout.widgetId == widgetId) {
+                    $timeout.cancel(timeout.promise);
+                    if (newInterval > 0) {
+                        $scope.setRefreshTimer(timeout.widgetId, newInterval);
+                    }
+                }
+            }
+        };
+
+        $scope.refreshWidget = function(widgetId) {
+            Restangular.one('dashboards', $scope.id)
+                .one('widgets', widgetId)
+                .get()
+                .then(function(result) {
+                    if (result && result.widget) {
+                        for(var wId in $scope.dashboard.widgets) {
+                            var widget = $scope.dashboard.widgets[wId];
+                            if (widget.id == widgetId) {
+                                $scope.dashboard.widgets[wId] = result.widget;
+                                $scope.updateRefreshTimer(widgetId, result.widget.refresh);
+                                break;
+                            }
+                        }
+                    }
+                });
+        };
 
         $scope.exportReport = function() {
             window.location = 'http://local.preslog/api/dashboards/' + $scope.id + '/export';
@@ -85,20 +189,80 @@ angular.module( 'Preslog.dashboard', [
                 templateUrl: 'modules/dashboard/createModal/createModal.tpl.html',
                 controller: 'CreateModalCtrl'
             });
-
-
             createModal.result.then(function(name) {
                 var dashboard = Restangular.all('dashboards');
                 dashboard.post({'name' : name})
                     .then(function(result) {
                         $scope.dashboard = result.dashboard;
-                        $scope.id = result.dashboard._id.$id;
+                        $scope.id = result.dashboard.id;
                         $location.path('/dashboard/' + $scope.id);
                     });
             });
         };
 
+        $scope.openAddWidgetModal = function() {
+            var addWidgetModal = $modal.open({
+                templateUrl: 'modules/dashboard/WidgetModal/addWidgetModal.tpl.html',
+                controller: 'WidgetCtrl',
+                resolve: {
+                    data: function() { return {}; }
+                }
+            });
+            addWidgetModal.result.then(function(data) {
+                Restangular.one('dashboards', $scope.id)
+                    .post('widgets', {'widget': data})
+                    .then(function(data) {
+                        $scope.dashboard.widgets.push(data.widget);
+                        $scope.openEditWidgetModal(data.widget);
+                    });
+            });
+        };
 
+        $scope.openEditWidgetModal = function(widget) {
+            var editWidgetModal = $modal.open({
+                templateUrl: $scope.getEditTemplate(widget.type),
+                controller: 'WidgetCtrl',
+                resolve: {
+                    data: function() { return widget; }
+                }
+            });
+            editWidgetModal.result.then(function(data) {
+                Restangular.one('dashboards', $scope.id)
+                    .one('widgets', widget.id)
+                    .post('',{'widget': data})
+                    .then(function(result) {
+                        for(var index = 0; index < $scope.dashboard.widgets.length; index++) {
+                            if ($scope.dashboard.widgets[index].id == result.widget.id) {
+                                $scope.dashboard.widgets[index] = result.widget;
+                            }
+                        }
+                    });
+            });
+        };
+
+        $scope.getEditTemplate = function(type) {
+            tmpl = 'modules/dashboard/WidgetModal/edit';
+
+            switch(type.toLowerCase()) {
+                case 'bar':
+                case 'line':
+                    tmpl +=  'LineBarWidgetModal.tpl.html';
+                    break;
+                case 'pie':
+                    tmpl +=  'PieWidgetModal.tpl.html';
+                    break;
+                case 'list':
+                    tmpl +=  'ListWidgetModal.tpl.html';
+                    break;
+                default:
+                    tmpl +=  'LineWidgetModal.tpl.html';
+            }
+
+            return tmpl;
+        };
+
+
+        $scope.startWidgetRefresh();
 
         $http.get("/assets/testchart.json").success(function(data) {
             $scope.basicAreaChart = data;
@@ -111,17 +275,6 @@ angular.module( 'Preslog.dashboard', [
 //        $http.get("/api/dashboards").success(function(data) {
 //            $scope.chart2 = JSON.parse(data.data);
 //        });
-    })
-
-    .controller( 'CreateModalCtrl', function CreateModalController($scope, $modalInstance) {
-        $scope.ok = function() {
-            console.log($scope.hats);
-            $modalInstance.close($scope.hats);
-        };
-
-        $scope.cancel = function() {
-            $modalInstance.dismiss('cancel');
-        };
     })
 
     .directive('chart', function () {

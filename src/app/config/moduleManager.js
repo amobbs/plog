@@ -9,6 +9,7 @@ angular.module('moduleManager', [
     'ui.bootstrap',
     'ui.select2',
     'restangular',
+    'ui.sortable',
 //    'queryBuilder',
     'stateHelper',
     'titleService',

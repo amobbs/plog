@@ -1,13 +1,15 @@
 <?php
 
+
 use Swagger\Annotations as SWG;
+use Preslog\Widgets\WidgetFactory;
 
 /**
  * Class DashboardController
  */
 class DashboardsController extends AppController
 {
-    public $uses = array('User', 'Dashboard');
+    public $uses = array('User', 'Dashboard', 'Widget');
 
 
     /**
@@ -42,12 +44,14 @@ class DashboardsController extends AppController
         );
 
         $fav = array();
-        foreach($user['User']['dashboards'] as $dashboardId) {
-            $dashboard = $this->Dashboard->findById(new MongoId($dashboardId));
-            $fav[] = array(
-                'id' => $dashboard['Dashboard']['id'],
-                'name' => $dashboard['Dashboard']['name'],
-            );
+        if (isset($user['User']['dashboards'])) {
+            foreach($user['User'] as $dashboardId) {
+                $dashboard = $this->Dashboard->findById(new MongoId($dashboardId));
+                $fav[] = array(
+                    'id' => $dashboard['Dashboard']['id'],
+                    'name' => $dashboard['Dashboard']['name'],
+                );
+            }
         }
 
         return $fav;
@@ -103,52 +107,61 @@ class DashboardsController extends AppController
      */
     public function editDashboard()
     {
-        $id = $this->request->params['pass'];
-        if ($this->request->is('get')) {
-            $dashboard = $this->Dashboard->findById($id[0]);
-
-//            for($i = 0; $i < sizeof($dashboard['Dashboard']['widgets']); $i++) {
-//                $dashboard['Dashboard']['widgets'][$i]['highcharts'] = json_decode($dashboard['Dashboard']['widgets'][$i]['highcharts']);
-//            }
-
-            $this->set('dashboard', $dashboard['Dashboard']);
+        $id = isset($this->request->params['pass'][0]) ? $this->request->params['pass'][0] : "";
+        if ($this->request->is('get')) { //read dashboard
+            $dashboard = $this->Dashboard->findById($id);
+            $this->set('dashboard', $this->Dashboard->toArray($dashboard['Dashboard']));
             $this->set('status', 'success');
         } else if ($this->request->is('post')) {
-            if (!empty($id)) {
-                $this->Dashboard->save($this->request->data);
-                $this->set('dashboard', $this->request->data);
+            if (!empty($id)) { //edit dashboard
+                if(isset($this->request->data['widgets'])) { //just update the widgets
+                    $this->updateDashboardWidgets($id, $this->request->data['widgets']);
+                    $dashboard = $this->Dashboard->findById($id);
+                } else { //update all the values
+                    $dashboard = $this->Dashboard->findById($id);
+                    $this->Dashboard->save($this->request->data);
+                 //   $dashboard = $this->Dashboard->findById($this->request->data['id']);
+                }
+
+                $this->set('dashboard', $this->Dashboard->toArray($dashboard['Dashboard']));
                 $this->set('status', 'saved');
-            } else {
+            } else { //new dashboard
                 $dashboard = array(
                     '_id' => new MongoId(),
                     'name' => $this->request->data['name'],
                     'type' => 'static',
-                    'widgets' => array(
-                        array(
-                            '_id' => new MongoId(),
-                            'name' => 'widget 2',
-                            'type' => 'bar',
-                            'order' => 0,
-                            'highcharts' => $this->Dashboard->serializeDashboardForHighcharts(),
-                        )
-                    ),
+                    'widgets' => array(),
                     'shares' => array(),
                 );
-
-                for($i = 0; $i < sizeof($dashboard['widgets']); $i++) {
-                    $dashboard['widgets'][$i]['highcharts'] = json_decode($dashboard['widgets'][$i]['highcharts']);
-                }
-
                 $this->Dashboard->create($dashboard);
                 $this->Dashboard->save();
 
-                $this->set('dashboard',$dashboard);
+                $dashboard = $this->Dashboard->findById($dashboard['_id']);
+                $this->set('dashboard', $this->Dashboard->toArray($dashboard['Dashboard']));
                 $this->set('status', 'created');
             }
         }
 
         $this->set('favourites', $this->listLoggedInFavouriteDashboards());
         $this->set('_serialize', array('status', 'dashboard', 'favourites'));
+    }
+
+    private function updateDashboardWidgets($id, $widgets) {
+        $dashboard = array(
+            'id' => new MongoId($id),
+            'widgets' => array(),
+        );
+        foreach($widgets as $widget) {
+            $widgetObject = WidgetFactory::createWidget($widget);
+            $widgetObject->setId(new MongoId($widget['id']));
+            $dashboard['widgets'][] = $widgetObject->toArray();
+        }
+
+        $this->Dashboard->save($dashboard, false, array(
+            'id',
+            'widgets',
+        ));
+        return $dashboard;
     }
 
     /**
@@ -171,7 +184,7 @@ class DashboardsController extends AppController
      */
     public function deleteDashboard($dashboardId)
     {
-        $this->Dashboard->delete($dashboardId);
+        $this->Dashboard->delete(new MongoId($dashboardId));
 
         $this->set('delete', 'success');
         $this->set('_serialize', array('delete'));
@@ -242,9 +255,52 @@ class DashboardsController extends AppController
      */
     public function editWidget()
     {
-        // TODO
-        $this->set('todo', 'Edit Widget');
-        $this->set('_serialize', array('todo'));
+        $dashboard = $this->Dashboard->findById(new MongoId($this->request->params['dashboard_id']));
+        $dashboard = $dashboard['Dashboard'];
+        $success = false;
+
+        $serialize = array('success');
+        $widget = null;
+        if ($this->request->is('post'))
+        {
+            if (!isset( $this->request->params['widget_id'])) { //create widget
+                $widget = $this->createWidget($this->request->data['widget']);
+                $dashboard['widgets'][] = $widget->toArray();
+                $this->Dashboard->save($dashboard);
+                $this->set('widget', $widget->toArray());
+                $serialize[] = 'widget';
+
+                $success = true;
+            } else { //edit widget
+                $widgetArrayId = $this->Dashboard->findWidgetArrayId($dashboard, $this->request->params['widget_id']);
+                $dashboard['widgets'][$widgetArrayId] = $this->Widget->updateWidget($dashboard['widgets'][$widgetArrayId], $this->request->data['widget']);
+                $this->Dashboard->save($dashboard);
+                $widget = WidgetFactory::createWidget($dashboard['widgets'][$widgetArrayId]);
+
+                $this->Dashboard->save($dashboard);
+                $this->set('widget', $widget->toArray());
+                $serialize[] = 'widget';
+
+                $success= true;
+            }
+        }
+
+        if ($this->request->is('get')) { //read widget
+            $widgetArrayId = $this->Dashboard->findWidgetArrayId($dashboard, $this->request->params['widget_id']);
+            $widget = WidgetFactory::createWidget($dashboard['widgets'][$widgetArrayId]);
+            $this->set('widget', $widget->toArray());
+            $serialize[] = 'widget';
+        }
+
+        $this->set('success', $success);
+        $this->set('_serialize', $serialize);
+    }
+
+    private function createWidget($data) {
+        if (!isset($data['name'])) $data['name'] = 'Widget';
+        $widget = WidgetFactory::createWidget($data);
+        $widget->setId(new MongoId());
+        return $widget;
     }
 
 
@@ -273,11 +329,20 @@ class DashboardsController extends AppController
      *      )
      * )
      */
-    public function deleteWidget()
+    public function deleteWidget($dashboardId, $widgetId)
     {
-        // TODO
-        $this->set('todo', 'Delete widget');
-        $this->set('_serialize', array('todo'));
+        $dashboard = $this->Dashboard->findById(new MongoId($dashboardId));
+        foreach($dashboard['Dashboard']['widgets'] as $key => $widget) {
+            if ($dashboard['Dashboard']['widgets'][$key]['id'] == $widgetId) {
+                unset($dashboard['Dashboard']['widgets'][$key]);
+                break;
+            }
+        }
+
+        $this->Dashboard->save($dashboard);
+        $this->set('success', true);
+        $this->set('dashboard', $dashboard['Dashboard']);
+        $this->set('_serialize', array('success', 'dashboard'));
     }
 
 
