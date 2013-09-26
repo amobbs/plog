@@ -55,16 +55,21 @@ class PieWidget extends Widget {
 //            'borderWidth' => 0
 //        );
 
-
-        $chart->series[] = array(
-            'type' => 'pie',
-            'name' => '',
-            'data' => array(
-                array('a', 1),
-                array('b', 2),
-                array('c', 1),
+        $chart->series = array(
+            array(
+                'type' => 'pie',
+                'name' => '',
+                'data' => array(),
             ),
         );
+
+        foreach($this->series as $dataPoint) {
+            $chart->series[0]['data'][] = array(
+                $dataPoint['name'],
+                $dataPoint['data'][0],
+            );
+        }
+
         if (empty($this->data)) {
             $chart->series[0]['name'] = 'no data';
         }

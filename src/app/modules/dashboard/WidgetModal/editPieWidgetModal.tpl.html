@@ -1,6 +1,6 @@
 <div class="modal-header">
     <button type="button" class="close" ng-click="cancel()" aria-hidden="true"><i class="icon icon-remove"></i></button>
-    <h3 id="myModalLabel">Edit Line Widget</h3>
+    <h3 id="myModalLabel">Edit Pie Widget</h3>
 </div>
 <div class="modal-body form-horizontal" id="editModalWidget">
     <div class="control-group">
@@ -18,13 +18,13 @@
     <div class="control-group">
         <label class="control-label">Search Query</label>
         <div class="control">
-            <textarea placeholder="Filter..." ng-model="widget.data.query"></textarea>
+            <textarea placeholder="Filter..." ng-model="widget.data.query" required></textarea>
         </div>
     </div>
     <div class="control-group">
         <label class="control-label">Refresh Interval </label>
         <div class="control">
-            <input placeholder="Seconds..." ng-model="widget.data.refresh" />
+            <input placeholder="Seconds..." ng-model="widget.data.refresh" integer/>
         </div>
     </div>
 </div>

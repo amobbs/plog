@@ -190,7 +190,10 @@ angular.module( 'Preslog.dashboard', [
         $scope.openCreateModal = function () {
             var createModal = $modal.open({
                 templateUrl: 'modules/dashboard/dashboardModal/createDashboardModal.tpl.html',
-                controller: 'DashboardModalCtrl'
+                controller: 'DashboardModalCtrl',
+                resolve: {
+                    name: function() { return ''; }
+                }
             });
             createModal.result.then(function(name) {
                 var dashboard = Restangular.all('dashboards');
@@ -199,6 +202,23 @@ angular.module( 'Preslog.dashboard', [
                         $scope.dashboard = result.dashboard;
                         $scope.id = result.dashboard.id;
                         $location.path('/dashboard/' + $scope.id);
+                    });
+            });
+        };
+
+        $scope.openEditDashboardModal = function() {
+            var editModal = $modal.open({
+                templateUrl: 'modules/dashboard/dashboardModal/createDashboardModal.tpl.html',
+                controller: 'DashboardModalCtrl',
+                resolve: {
+                    name: function() { return $scope.dashboard.name; }
+                }
+            });
+            editModal.result.then(function(name) {
+                Restangular.one('dashboards', $scope.id)
+                    .post('', {'name': name})
+                    .then(function(result) {
+                        $scope.dashboard.name = name;
                     });
             });
         };

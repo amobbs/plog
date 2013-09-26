@@ -109,13 +109,35 @@ class Dashboard extends AppModel
         fclose($f);
     }
 
+    public function getChartImageLocal($chartOptions, $tmpFilename) {
+        $jsonFile = TMP . $tmpFilename . '.json';
+        $outFile = TMP . $tmpFilename;
+
+        $optionsFile = fopen($jsonFile, 'w');
+        fwrite($optionsFile, $chartOptions);
+        fclose($optionsFile);
+
+        $phantomjs = '/root/highcharts/phantomjs-1.9.2-linux-x86_64/bin/phantomjs';
+        $convertScript = '/tmp/phantomjs/highcharts-convert.js';
+
+
+        $command = $phantomjs . ' ' . $convertScript . '  -infile ' . $jsonFile . ' -outfile ' . $outFile . ' -scale 1 -width 500 -constr Chart';
+        $result = exec($command);
+    }
+
     public function generateReport($dashboard, $reportName)
     {
         $phpWord = new PHPWord();
         $section= $phpWord->createSection();
-        $imageFilename = 'chart1.png';
-        $this->getChartImage($this->serializeDashboardForHighcharts(), $imageFilename);
-        $section->addImage(TMP . $imageFilename);
+
+        $dashboardObject = $this->toArray($dashboard);
+        $salt = md5(date('Y-m-d h:s'));
+        foreach($dashboardObject['widgets'] as $key => $widget) {
+            $unique = substr(md5($widget['name']), 0, 6);
+            $imageFilename = $salt .$unique . '.png';
+            $this->getChartImageLocal($widget['highcharts'], $imageFilename);
+            $section->addImage(TMP . $imageFilename);
+        }
 
         $objWriter = PHPWord_IOFactory::createWriter($phpWord, 'Word2007');
         $objWriter->save(TMP . $reportName);
