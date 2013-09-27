@@ -144,11 +144,9 @@ class LogsController extends AppController
     public function read( $id )
     {
         // TODO
-        $this->LogNotification->issueNotifications( array() );
-        die();
 
         // Fetch log from DB
-        $log = array($id);
+        $log = $this->Log->findByHrid( $id );
 
         // Validate: does this log exist
         if (false)
@@ -194,7 +192,7 @@ class LogsController extends AppController
      *      )
      * )
      */
-    public function getOptions()
+    public function options()
     {
         // TODO
 
