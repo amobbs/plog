@@ -117,10 +117,12 @@ class DashboardsController extends AppController
                 if(isset($this->request->data['widgets'])) { //just update the widgets
                     $this->updateDashboardWidgets($id, $this->request->data['widgets']);
                     $dashboard = $this->Dashboard->findById($id);
-                } else { //update all the values
+                } else { //update the name
                     $dashboard = $this->Dashboard->findById($id);
-                    $this->Dashboard->save($this->request->data);
-                 //   $dashboard = $this->Dashboard->findById($this->request->data['id']);
+                    $dashboard['Dashboard']['name'] = $this->request->data['name'];
+                    $this->Dashboard->save($dashboard['Dashboard']);
+                    $this->set('dashboard', $this->Dashboard->toArray($dashboard['Dashboard']));
+                    $this->set('status', 'success');
                 }
 
                 $this->set('dashboard', $this->Dashboard->toArray($dashboard['Dashboard']));
@@ -368,7 +370,7 @@ class DashboardsController extends AppController
     {
         $dashboard = $this->Dashboard->findById($dashboardId);
         $reportName = 'report_' . $dashboard['Dashboard']['name'] . '.docx';
-        $reportPath = $this->Dashboard->generateReport($dashboard, $reportName);
+        $reportPath = $this->Dashboard->generateReport($dashboard['Dashboard'], $reportName);
 
         $this->response->file($reportPath, array(
             'download' => true,

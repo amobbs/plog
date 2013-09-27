@@ -1,6 +1,6 @@
 angular.module('Preslog.dashboard.dashboardModal', [])
-    .controller('DashboardModalCtrl', function ($scope, $modalInstance) {
-        $scope.name = '';
+    .controller('DashboardModalCtrl', function ($scope, $modalInstance, name) {
+        $scope.name = name;
 
         $scope.ok = function() {
             $modalInstance.close($scope.name);
