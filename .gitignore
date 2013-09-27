@@ -12,6 +12,10 @@ build/webroot/*
 bin/webroot/*
 !bin/webroot/api
 
+// Ignore vendor .get directories
+*/Vendor/**/.git
+
+
 // Package Managed directories ignored
 node_modules/
 vendor/*
