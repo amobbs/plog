@@ -236,4 +236,14 @@ class Client extends AppModel
     }
 
 
+    /**
+     * Fetch the logo path for this client
+     * @param   array       $client         Client data
+     * @return  string
+     */
+    public function getLogoPath( $client )
+    {
+        return '/assets/clients/'.(string) $client['_id'].'/logo.png';
+    }
+
 }

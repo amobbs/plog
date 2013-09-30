@@ -1,9 +1,11 @@
 <div class="span6 group-date control-group">
-    <label class="control-label label-date">Date</label>
+    <label class="control-label label-date">{{options.name}}</label>
     <div class="controls controls-date">
         <input
                 type="text"
-                ng-model="log.data.datetime"
+                id="field_{{options._id}}_date"
+                name="field_{{options._id}_date}"
+                ng-model="log.data.datetime.sec"
                 required
                 validate-server
                 />
@@ -12,7 +14,9 @@
     <div class="controls controls-time">
         <input
                 type="text"
-                ng-model="log.data.datetime"
+                id="field_{{options._id}}_time"
+                name="field_{{options._id}}_time"
+                ng-model="log.data.datetime.sec"
                 required
                 validate-server
                 />

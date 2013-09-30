@@ -27,7 +27,7 @@
             <table ng-table="tableParams" show-filter="true" class="table table-bordered table-condensed">
                 <tr ng-repeat="client in clients">
                     <td title="'Logo'">
-                        <img src="/assets/clients/{{ client._id }}.png" width="68" height="20" alt="{{ client.name }}" />
+                        <img src="{{client.logo}}" width="68" height="20" alt="{{ client.name }}" />
                     </td>
                     <td title="'Client'" sortable="name" filter="{ 'name': 'text' }">
                         {{client.name}}
@@ -36,12 +36,10 @@
                         {{client.activationDate.sec}}
                     </td>
                     <td title="'Number of Logs'">
-                        <!-- TODO -->
-                        Not Available
+                        {{ client.stats.numLogs }}
                     </td>
                     <td title="'Number of Users'">
-                        <!-- TODO -->
-                        Not Available
+                        {{ client.stats.numUsers }}
                     </td>
                     <td title="'Actions'">
                         <a class="btn btn-info" href="/admin/clients/{{client._id}}"> <i class="icon icon-edit"></i> Edit </a>

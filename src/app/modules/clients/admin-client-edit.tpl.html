@@ -67,7 +67,7 @@
 
                         <label class="control-label" for="inputLogo"><span ng-show="client.id">Change </span>Logo</label>
                         <div class="controls">
-                            <img ng-show="client._id" src="/assets/clients/{{ client._id }}.png" width="68" height="20" />
+                            <img ng-show="client._id" src="{{ client.logo }}" width="68" height="20" />
                             <br/>
                             <input type="file"
                                    id="inputLogo"

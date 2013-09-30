@@ -41,9 +41,10 @@ class LogsController extends AppController
      */
     public function edit( $id = null )
     {
-        // TODO
-
+        // Get log data
         $log = $this->request->data['Log'];
+
+        // TODO
 
         //  If we have an ID, we need to validate the original log first before it can be updated
         if ( !empty($id) )
@@ -115,7 +116,8 @@ class LogsController extends AppController
         $ret = $this->Log->save( $log );
 
         // Notifications: Issue Email and SMS notifications relevant to this logs update.
-        $this->LogNotification->issueNotifications( $log );
+        // TODO
+        //$this->LogNotification->issueNotifications( $log );
 
         // Return success
         $return = array('Success'=>$ret);
