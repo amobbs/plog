@@ -157,5 +157,24 @@ class Client extends AppModel
     }
 
 
+    /**
+     * Fetch client by the given $id, returning just the Options used for Edit.
+     * @param   ClientID        $id
+     * @return  array
+     */
+    public function getLogOptionsById( $id )
+    {
+        // Get the client
+        $client = $this->findById( $id );
+
+        // Get options fields from client
+        $options = array(
+            'fields'        => $client['Client']['format'],
+            'attributes'    => $client['Client']['attributes'],
+        );
+
+        return $options;
+    }
+
 
 }

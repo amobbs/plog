@@ -10,7 +10,7 @@ use Swagger\Annotations as SWG;
  */
 class LogsController extends AppController
 {
-    public $uses = array('Log');
+    public $uses = array('Log', 'Client');
 
     public $components = array('LogNotification');
 
@@ -192,23 +192,32 @@ class LogsController extends AppController
      *      )
      * )
      */
-    public function options()
+    public function options( $id=null )
     {
-        // TODO
+        // TODO: Load the default Client, because no log was specified
+        if (!empty($id))
+        {
+            $log = $this->Log->findByHrid( $id );
+            $clientId = (string) $log['Log']['client_id'];
+        }
+        else
+        {
+            $clientId = trigger_error('TODO', E_USER_ERROR);
+        }
 
         // Load: Log format from specific Client
-        $options = array();
+        $options = $this->Client->getLogOptionsById( $clientId );
 
         // Validate: Do we NOT have permissions to see the Accountability types?
         if (false)
         {
+            // TODO
             unset( $options['accountability_field'] );
             unset( $options['status_field'] );
         }
 
-
-        // OK Response
-        $this->set('options', $options);
+        // Return options
+        $this->set($options);
         $this->set('_serialize', array_keys($options));
     }
 

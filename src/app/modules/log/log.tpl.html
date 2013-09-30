@@ -7,7 +7,8 @@
                 <span class="icon-bar"></span>
             </a>
 
-            <h2>Log # P00001234</h2>
+            <h2 ng-show="{{log._id}}">Log # {{ log.hrid }}</h2>
+            <h2 ng-show="{{!log._id}}">Create Log</h2>
 
             <div class="nav-collapse collapse navbar-responsive-collapse">
                 <ul class="nav pull-right">
@@ -24,8 +25,7 @@
 <div class="container-fluid" id="preslog_log_entry">
 <div class="row-fluid">
 <div class="span8 form-horizontal log-fields">
-
-    <log-element ng-repeat="field in log.fields" content="field"></log-element>
+    <log-fields data="log.fields" fields="options.fields"></log-fields>
 </div>
 
 

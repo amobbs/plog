@@ -25,7 +25,7 @@ angular.module('moduleManager', [
     'validateServer',
     'validatePassword',
     'permission',
-    'logElement',
+    'logFields',
 
     // Site Modules
     'pages',
