@@ -38,8 +38,7 @@
             </div>
         </div>
         <div class="row-fluid">
-            <div class="span6" ng-repeat="child in field.children">
-                <span hierarchy-fields="{{ child }}" hierarchy-selected="{{ hierarchySelected }}"></span>
+            <div class="span6" hierarchy-fields="{{ field }}" hierarchy-selected="{{ hierarchySelected }}" hide-deleted="true" drag-and-drop="false" allow-edit="false">
             </div>
         </div>
     </div>
