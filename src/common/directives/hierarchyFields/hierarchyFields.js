@@ -99,6 +99,8 @@ angular.module('hierarchyFields', [])
                             onDrop: function(node, sourceNode, hitMode, ui, draggable) {
                                 //move the node in the tree for display
                                 sourceNode.move(node, hitMode);
+                                var nodeKey = node.data.key.replace('_', ''); //get rid of _ added by dynaTree
+                                var sourceNodeKey = sourceNode.data.key.replace('_', ''); //get rid of _ added by dynaTree
 
                                 //find where the nodes are now
                                 var movingFrom = {};
@@ -107,26 +109,34 @@ angular.module('hierarchyFields', [])
                                 var movingToIndex = -1;
                                 for (var i in scope.hierarchyFields) {
                                     //remember where the sourceNode is
-                                    if (scope.hierarchyFields[i]._id == sourceNode.data.key) {
+                                    if (scope.hierarchyFields[i]._id == sourceNodeKey) {
                                         movingFrom = scope.hierarchyFields;
                                         movingFromIndex = i;
                                     }
                                     //remember where the node is
-                                    if (scope.hierarchyFields[i]._id == node.data.key) {
-                                        movingTo = scope.hierarchyFields;
+                                    if (scope.hierarchyFields[i]._id == nodeKey) {
+                                        if (hitMode == 'over') {
+                                            movingTo = scope.hierarchyFields[i];
+                                        } else {
+                                            movingTo = scope.hierarchyFields;
+                                        }
                                         movingToIndex = i;
                                     }
 
                                     for(var c in scope.hierarchyFields[i].children) {
                                         //remember where the sourceNode is
-                                        if (scope.hierarchyFields[i].children[c]._id == sourceNode.data.key) {
+                                        if (scope.hierarchyFields[i].children[c]._id == sourceNodeKey) {
                                             movingFrom = scope.hierarchyFields[i];
                                             movingFromIndex = c;
                                         }
 
                                         //remember where the node is
-                                        if (scope.hierarchyFields[i].children[c]._id == node.data.key) {
-                                            movingTo = scope.hierarchyFields[i];
+                                        if (scope.hierarchyFields[i].children[c]._id == nodeKey) {
+                                            if (hitMode == 'over') {
+                                                movingTo = scope.hierarchyFields[i].children[c];
+                                            } else {
+                                                movingTo = scope.hierarchyFields[i];
+                                            }
                                             movingToIndex = c;
                                         }
                                     }

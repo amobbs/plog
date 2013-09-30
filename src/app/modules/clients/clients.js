@@ -500,14 +500,14 @@ angular.module( 'Preslog.clients', [
         $scope.index = index;
         $scope.group = group;
         $scope.showDeleted = false;
-        $scope.withSelectedAction = 'Delete';
-        $scope.selectionActions = ['Do nothing', 'Delete'];
+        $scope.withSelectedAction = 'Set Deleted';
+        $scope.selectionActions = ['Do nothing', 'Set Deleted'];
 
         // list of nodes selected in hierarchy fields
         $scope.hierarchySelected = [];
 
         //used as a counter for temp keys when adding attrabutes to list but not committing to api yet
-        $scope.newId = 0;
+        $scope.newId = 10;
 
         $scope.newAttrName = '';
 
@@ -515,9 +515,14 @@ angular.module( 'Preslog.clients', [
          * when writing out group to hierarchy field directive the $id value in the object is lost.
          */
         $scope.fixGroupIds = function() {
-            if ($scope.group._id.$id) {
+            if ($scope.group._id == null && $scope.group.children.length === 0) {
+                return;
+            }
+
+            if ($scope.group._id != null && $scope.group._id.$id) {
                 $scope.group._id = $scope.group._id.$id;
             }
+
             for(var child in $scope.group.children) {
                 if ($scope.group.children[child]._id.$id) {
                     $scope.group.children[child]._id = $scope.group.children[child]._id.$id;
@@ -526,6 +531,8 @@ angular.module( 'Preslog.clients', [
                             $scope.group.children[child].children[subChild]._id = $scope.group.children[child].children[subChild]._id.$id;
                         }
                     }
+                } else if ($scope.group.children[child]._id !== undefined && !isNaN($scope.group.children[child]._id)) {
+                    $scope.newId = parseInt($scope.group.children[child]._id, 10) + 1;
                 }
             }
         };
@@ -536,16 +543,20 @@ angular.module( 'Preslog.clients', [
          */
         $scope.save = function()
         {
-            if ($scope.withSelectedAction == 'Delete') {
-                //find selected ids
+            if ($scope.withSelectedAction == 'Set Deleted') {
+                //find selected ids and mark as deleted also undelete any that are no longer selected
                 for(var itemId in $scope.group.children) {
                     if ($scope.hierarchySelected.indexOf($scope.group.children[itemId]._id) != -1) {
                         $scope.group.children[itemId].deleted = true;
+                    } else {
+                        $scope.group.children[itemId].deleted = false;
                     }
                     //dont forget to check the children
                     for(var subItemId in $scope.group.children[itemId].children) {
                         if ($scope.hierarchySelected.indexOf($scope.group.children[itemId].children[subItemId]._id) != -1) {
                             $scope.group.children[itemId].children[subItemId].deleted = true;
+                        } else {
+                            $scope.group.children[itemId].children[subItemId].deleted = false;
                         }
                     }
                 }
@@ -561,7 +572,10 @@ angular.module( 'Preslog.clients', [
         $scope.addAttr = function() {
             var field = {
                 name: $scope.newAttrName,
-                _id: $scope.newId++ //we need an id so when the modal is reloaded but has not been saved yet we can see the added elements
+                _id: $scope.newId++ + "", //we need an id so when the modal is reloaded but has not been saved yet we can see the added elements,
+                deleted: false,
+                children: [],
+                newChild: true
             };
 
             $scope.group.children.push(field);

@@ -27,6 +27,61 @@ class Client extends AppModel
         'modified'      => array('type' => 'datetime'),
     );
 
+    /**
+     * convert any id's into mongo id's and add any missing id's
+     * @param array $options
+     *
+     * @return bool|void
+     */
+    public function beforeSave($options = array()) {
+        //TODO clean up this horrible code
+        $client = $this->data['Client'];
+        if (!($client['_id'] instanceof MongoId)) {
+            if ($client['_id'] == null || (isset($client['newGroup']) && $client['newGroup'])) {
+                $client['_id'] = new MongoId();
+            } else {
+                $client['_id'] = new MongoId($client['_id']);
+            }
+        }
+
+
+        $groups = [];
+        //check all the attributes
+        foreach ($client['attributes'] as $group) {
+            if ($group['_id'] == null || (isset($group['newGroup']) && $group['newChild']) || strlen($group['_id']) != 24) {
+                $group['_id'] = new MongoId();
+            } else {
+                $group['_id'] = new MongoId($group['_id']);
+            }
+            $children = [];
+            foreach($group['children'] as $child) {
+                if (!($child['_id'] instanceof MongoId)) {
+                    if ($child['_id'] == null || (isset($child['newGroup']) && $child['newChild']) || strlen($child['_id']) != 24) {
+                        $child['_id'] = new MongoId();
+                    } else {
+                        $child['_id'] = new MongoId($child['_id']);
+                    }
+                }
+                $subChildren = [];
+                foreach($child['children'] as $subChild) {
+                    if (!($subChild['_id'] instanceof MongoId)) {
+                        if ($subChild['_id'] == null || (isset($subChild['newGroup']) && $subChild['newChild']) || strlen($subChild['_id']) != 24) {
+                            $subChild['_id'] = new MongoId();
+                        } else {
+                            $subChild['_id'] = new MongoId($subChild['_id']);
+                        }
+                    }
+                    $subChildren[] = $subChild;
+                }
+                $child['children'] = $subChildren;
+                $children[] = $child;
+            }
+            $group['children'] = $children;
+            $groups[] = $group;
+        }
+        $client['attributes'] = $groups;
+        $this->data['Client'] = $client;
+    }
 
     /**
      * Fetch the notifications for clients
@@ -154,6 +209,10 @@ class Client extends AppModel
         ));
 
         return $options;
+    }
+
+    public function validatesAdminEdit() {
+        return true;
     }
 
 
