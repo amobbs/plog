@@ -25,7 +25,7 @@ class DashboardsController extends AppController
     {
         $this->set('preset', $this->listPresetDashboards());
         $this->set('favourites', $this->listLoggedInFavouriteDashboards());
-        $this->set('dashboards', $this->Dashboard->serializeDashboardForHighcharts());
+        $this->set('dashboards', ''); //$this->Dashboard->serializeDashboardForHighcharts());
         $this->set('_serialize', array('preset', 'favourites', 'dashboards'));
     }
 
@@ -110,6 +110,9 @@ class DashboardsController extends AppController
         $id = isset($this->request->params['pass'][0]) ? $this->request->params['pass'][0] : "";
         if ($this->request->is('get')) { //read dashboard
             $dashboard = $this->Dashboard->findById($id);
+            if (empty($dashboard)) {
+                throw new Exception('dashboard not found in database');
+            }
             $this->set('dashboard', $this->Dashboard->toArray($dashboard['Dashboard']));
             $this->set('status', 'success');
         } else if ($this->request->is('post')) {

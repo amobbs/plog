@@ -49,16 +49,20 @@ class Dashboard extends AppModel
         'modified'      => array('type' => 'datetime'),
     );
 
-//    public function findById( $id, $options = array() )
-//    {
-//        $defaultOptions = array(
-//            'conditions'=>array(
-//                'id'=>$id
-//            ),
-//        );
-//
-//        return $this->find('first', array_merge( $defaultOptions, $options ));
-//    }
+    /**
+     * Fetch the requested client by their ID
+     * @param       string      ClientID
+     * @return      array       Client
+     */
+    public function findById( $id )
+    {
+        // Fetch all client info
+        return $this->find('first', array(
+            'conditions'=>array(
+                'id'=>$id
+            )
+        ));
+    }
 
     public function findWidgetArrayId($dashboard, $widgetId) {
         foreach($dashboard['widgets'] as $key => $widget) { //find the widget in the dashboard
@@ -73,7 +77,7 @@ class Dashboard extends AppModel
 
     public function toArray($dashboard) {
         $parsed = array();
-        $parsed['id'] = (String)$dashboard['id'];
+        $parsed['id'] = (String)$dashboard['_id'];
         $parsed['name'] = $dashboard['name'];
         $parsed['type'] = $dashboard['type'];
         $parsed['widgets'] = array();
