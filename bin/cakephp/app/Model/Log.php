@@ -50,5 +50,20 @@ class Log extends AppModel
     }
 
 
+    /**
+     * Fetch the log by the HRID
+     * @param   int     $hrid       Human readable ID
+     * @return  array               Log
+     */
+    public function findByHrid( $hrid )
+    {
+        // Fetch all client info
+        return $this->find('first', array(
+            'conditions'=>array(
+                'hrid'=>$hrid
+            )
+        ));
+    }
+
 
 }

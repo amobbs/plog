@@ -1,39 +1,95 @@
 /**
- * Each section of the site has its own module. It probably also has
- * submodules, though this boilerplate is too simple to demonstrate it. Within
- * `src/app/home`, however, could exist several additional folders representing
- * additional modules that would then be listed as dependencies of this one.
- * For example, a `note` section could have the submodules `note.create`,
- * `note.delete`, `note.edit`, etc.
- *
- * Regardless, so long as dependencies are managed correctly, the build process
- * will automatically take take of the rest.
- *
- * The dependencies block here is also where component dependencies should be
- * specified, as shown below.
+ * Preslog Log Module
  */
 angular.module( 'Preslog.log', [
         'titleService',
         'hierarchyFields'
     ])
 
+    /**
+     * Restangular for Logs
+     */
+    .factory('LogRestangular', function (Restangular) {
+        return Restangular.withConfig(function (RestangularConfigurer) {
+            RestangularConfigurer.setRestangularFields({
+                id: 'Log._id'
+            });
+        });
+    })
+
+
     .config(function(stateHelperProvider) {
+
+        /**
+         * Log Editor
+         */
         stateHelperProvider.addState('mainLayout.log', {
-            url: '/log',
+            url: '/logs/{log_id:[0-9]*}',
             views: {
                 "main@mainLayout": {
                     controller: 'LogCtrl',
                     templateUrl: 'modules/log/log.tpl.html'
                 }
+            },
+            resolve: {
+
+                // Load log data
+                logData: ['$q', 'LogRestangular', '$stateParams', function($q, LogRestangular, $stateParams) {
+                    var deferred = $q.defer();
+
+                    // If editing an existing log
+                    if ($stateParams.log_id !== undefined) {
+                        LogRestangular.one('logs', $stateParams.log_id).get().then(function(log) {
+                            deferred.resolve(log);
+                        });
+                    }
+                    // Creating a log instead - set up base log object.
+                    else {
+                        deferred.resolve({
+                            Log: {
+                                _id: null,
+                                deleted: false,
+                                newLog: true
+                            }
+                        });
+                    }
+
+                    return deferred.promise;
+                }],
+
+                // Load log options
+                logOptions: ['$q', 'Restangular', '$stateParams', function($q, Restangular, $stateParams) {
+                    var deferred = $q.defer();
+
+                    var request = Restangular.one('logs');
+
+                    if ($stateParams.log_id !== undefined) {
+                        request = Restangular.one('logs', $stateParams.log_id);
+                    }
+
+                    request.options().then(function(options) {
+                        deferred.resolve(options);
+                    });
+                    return deferred.promise;
+                }]
+
             }
         });
+
     })
 
 /**
  * And of course we define a controller for our route.
  */
-    .controller( 'LogCtrl', function LogController( $scope, titleService ) {
-        titleService.setTitle( 'Log' );
+    .controller( 'LogCtrl', function LogController( $scope, titleService, logData, logOptions, LogRestangular ) {
+
+        // Set title
+        titleService.setTitle( 'Create Log' );
+
+        // Apply to scope
+        $scope.log = logData.Log;
+        $scope.options = logOptions;
+
 
         $scope.hierarchySelected = [1,2];
         $scope.hierarchyFields = [

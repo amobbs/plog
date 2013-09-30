@@ -43,9 +43,9 @@ Router::connect(
  * )
  */
 Router::connect(
-    '/logs/:id',
+    '/logs/:log_id',
     array('controller' => 'Logs', 'action' => 'edit', '[method]' => 'POST'),
-    array('pass'=>array('id'), 'id'=>'[0-9]*')
+    array('pass'=>array('log_id'), 'log_id'=>'[0-9]*')
 );
 
 
@@ -64,9 +64,9 @@ Router::connect(
  * )
  */
 Router::connect(
-    '/logs/:id',
+    '/logs/:log_id',
     array('controller' => 'Logs', 'action' => 'delete', '[method]' => 'DELETE'),
-    array('pass'=>array('id'), 'id'=>'[0-9]+')
+    array('pass'=>array('log_id'), 'log_id'=>'[0-9]+')
 );
 
 
@@ -105,7 +105,7 @@ Router::connect(
  * )
  */
 Router::connect(
-    '/logs/:id',
+    '/logs/:log_id',
     array('controller' => 'Logs', 'action' => 'options', '[method]' => 'OPTIONS'),
-    array('pass'=>array('id'), 'id'=>'[0-9]+')
+    array('pass'=>array('log_id'), 'log_id'=>'[0-9]*')
 );

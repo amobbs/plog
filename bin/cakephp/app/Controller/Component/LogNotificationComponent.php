@@ -11,6 +11,21 @@ class LogNotificationComponent extends Component
 {
     protected $controller;
 
+    /**
+     * Initialize Component
+     * - Prepare required models
+     *
+     * @param Controller $controller
+     */
+    public function initialize(Controller $controller)
+    {
+        // Get Models
+        $this->User = ClassRegistry::init('User');
+
+        // Parent Init
+        parent::initialize($controller);
+    }
+
 
     /**
      * Issues notifications
