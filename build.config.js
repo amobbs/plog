@@ -91,8 +91,7 @@ module.exports = {
          * CSS files to be explicitly included in the concatenated CSS
          */
         css: [
-            'vendor/select2/select2.css',
-            'vendor/dynatree/src/skin/ui.dynatree.css',
+            'vendor/select2/select2.css'
         ],
 
         /**

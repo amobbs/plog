@@ -10,21 +10,27 @@ class Client extends AppModel
 {
     public $name = "Client";
 
+    public $actsAs = array('Mongodb.Schema');
 
     /**
      * @var array   Schema definition for this document
      */
     public $mongoSchema = array(
-        '_id'           => array('type' => 'string', 'length'=>40, 'primary' => true),
+        '_id'           => array('type' => 'string', 'length'=>40, 'primary' => true, 'mongoType'=>'MongoId'),
         'name'          => array('type' => 'string', 'length'=>255),
         'shortName'     => array('type' => 'string', 'length'=>4),
         'contact'       => array('type' => 'text'),
         'logPrefix'     => array('type' => 'string', 'length'=>4),
-        'activationDate'=> array('type' => 'datetime'),
-        'format'        => array('type' => null),
-        'attributes'    => array('type' => null),
-        'created'       => array('type' => 'datetime'),
-        'modified'      => array('type' => 'datetime'),
+        'activationDate'=> array('type' => 'datetime', 'mongoType'=>'MongoDate'),
+        'format'        => array(
+            '_id'           => array('type' => 'string', 'length'=>40, 'mongoType'=>'MongoId'),
+            'order'         => array('type'=>'int'),
+            'name'          => array('type'=>'string', 'length'=>255),
+            'data'          => array(null),
+        ),
+        'attributes'    => array(null),
+        'created'       => array('type' => 'datetime', 'mongoType'=>'MongoDate'),
+        'modified'      => array('type' => 'datetime', 'mongoType'=>'MongoDate'),
     );
 
     /**

@@ -33,8 +33,8 @@ class Dashboard extends AppModel
         '_id'           => array('type' => 'string', 'length'=>40, 'primary' => true),
         'name'          => array('type' => 'string', 'length'=>255),
         'type'          => array('type' => 'string', 'length'=>64),
-        'widgets'       => array('type' => null),
-        'shares'        => array('type' => null),
+        'widgets'       => array(null),
+        'shares'        => array(null),
 
         'email'         => array('type' => 'string', 'length'=>255),
         'password'      => array('type' => 'string'),
@@ -44,7 +44,7 @@ class Dashboard extends AppModel
         'client'        => array('type' => 'string'),
         'deleted'       => array('type' => 'boolean'),
 
-        'favouriteDashboards'   => array('type' => null),
+        'favouriteDashboards'   => array(null),
         'created'       => array('type' => 'datetime'),
         'modified'      => array('type' => 'datetime'),
     );

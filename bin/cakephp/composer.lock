@@ -13,8 +13,7 @@
                 "url": "https://github.com/highslide-software/highcharts.com",
                 "reference": "v3.0.5"
             },
-            "type": "library",
-            "time": "2013-08-23 11:55:01"
+            "type": "library"
         },
         {
             "name": "doctrine/annotations",

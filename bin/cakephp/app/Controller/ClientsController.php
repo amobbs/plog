@@ -101,7 +101,7 @@ class ClientsController extends AppController
         $client = $this->Client->findById( $id );
 
         // Get Logo
-        $client['Client']['logo'] = $this->Client->getLogoPath($client);
+        $client['Client']['logo'] = $this->Client->getLogoPath($client['Client']);
 
         // User must exist
         if (!$client)
