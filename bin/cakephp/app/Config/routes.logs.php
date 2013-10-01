@@ -109,3 +109,7 @@ Router::connect(
     array('controller' => 'Logs', 'action' => 'options', '[method]' => 'OPTIONS'),
     array('pass'=>array('log_id'), 'log_id'=>'[0-9]*')
 );
+Router::connect(
+    '/logs',
+    array('controller' => 'Logs', 'action' => 'options', '[method]' => 'OPTIONS')
+);

@@ -38,7 +38,7 @@ angular.module( 'Preslog.log', [
                     var deferred = $q.defer();
 
                     // If editing an existing log
-                    if ($stateParams.log_id !== undefined) {
+                    if ($stateParams.log_id) {
                         LogRestangular.one('logs', $stateParams.log_id).get().then(function(log) {
                             deferred.resolve(log);
                         });
@@ -63,7 +63,7 @@ angular.module( 'Preslog.log', [
 
                     var request = Restangular.one('logs');
 
-                    if ($stateParams.log_id !== undefined) {
+                    if ($stateParams.log_id) {
                         request = Restangular.one('logs', $stateParams.log_id);
                     }
 

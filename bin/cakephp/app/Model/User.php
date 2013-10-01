@@ -16,6 +16,8 @@ class User extends AppModel
 {
     public $name = "User";
 
+    public $actsAs = array('Mongodb.Schema');
+
 
     /**
      * Constructor
@@ -37,7 +39,7 @@ class User extends AppModel
      * @var array   Schema definition for this document
      */
     public $mongoSchema = array(
-        '_id'           => array('type' => 'string', 'length'=>40, 'primary' => true),
+        '_id'           => array('type' => 'string', 'length'=>40, 'primary' => true, 'mongoType'=>'MongoId'),
         'firstName'     => array('type' => 'string', 'length'=>255),
         'lastName'      => array('type' => 'string', 'length'=>255),
         'email'         => array('type' => 'string', 'length'=>255),
@@ -49,8 +51,8 @@ class User extends AppModel
         'deleted'       => array('type' => 'boolean'),
         'notifications' => array('type' => null),
         'favouriteDashboards'   => array('type' => null),
-        'created'       => array('type' => 'datetime'),
-        'modified'      => array('type' => 'datetime'),
+        'created'       => array('type' => 'datetime', 'mongoType'=>'MongoDate'),
+        'modified'      => array('type' => 'datetime', 'mongoType'=>'MongoDate'),
     );
 
 

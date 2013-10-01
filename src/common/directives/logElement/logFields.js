@@ -57,11 +57,7 @@ angular.module('logFields', [])
                 field = scope.fields[i];
 
                 // Fetch the data from the data array by the ID of the field
-                var data = $.map( scope.data, function(v,k){ if (v.field_id.$id == field._id.$id) { return v; } });
-
-                console.log(data);
-                console.log(field);
-                console.log('--');
+                var data = $.map( scope.data, function(v,k){ if (v.field_id == field._id) { return v; } });
 
                 // Validate: Do we need to display this field?
                 // Skip if it's deleted and does not contain data.
