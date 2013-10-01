@@ -3,9 +3,13 @@
  */
 
 angular.module( 'Preslog.auth', [
-        'titleService'
+        'titleService',
+        'ui.bootstrap'
     ])
 
+    /**
+     * Setup
+     */
     .config(function(stateHelperProvider) {
 
 
@@ -59,10 +63,10 @@ angular.module( 'Preslog.auth', [
     })
 
 
-/**
- * Executed at startup
- * - Checks users authentication
- */
+    /**
+     * Executed at startup
+     * - Checks users authentication
+     */
     .run(function ($rootScope, $location, Restangular, userService) {
         if (typeof $rootScope.global === 'undefined') {
             $rootScope.global = {};
@@ -110,10 +114,10 @@ angular.module( 'Preslog.auth', [
     })
 
 
-/**
- * Controller
- */
-    .controller( 'AuthLoginCtrl', function AuthLoginController( $rootScope, $scope, $location, titleService, userService ) {
+    /**
+     * Controller
+     */
+    .controller( 'AuthLoginCtrl', function AuthLoginController( $rootScope, $scope, $location, titleService, userService, $modal ) {
 
         // Title
         titleService.setTitle( 'Login' );
@@ -143,6 +147,46 @@ angular.module( 'Preslog.auth', [
 
             });
         };
+
+
+        /**
+         * Forgotten Password
+         */
+        $scope.forgottenPassword = function()
+        {
+            // Open the Modal
+            var modal = $modal.open({
+                templateUrl: 'modules/auth/forgotten-password.tpl.html',
+                controller: 'AuthLoginForgottenPasswordCtrl'
+            });
+        };
+
+    })
+
+
+    /**
+     *
+     */
+    .controller( 'AuthLoginForgottenPasswordCtrl', function AuthLoginController( $rootScope, $scope, $location, userService, $modalInstance ) {
+
+        /**
+         * Ok
+         */
+        $scope.ok = function()
+        {
+            console.log($scope.email);
+            $modalInstance.dismiss();
+        };
+
+
+        /**
+         * Cancel
+         */
+        $scope.cancel = function()
+        {
+            $modalInstance.dismiss();
+        };
+
     })
 ;
 

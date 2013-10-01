@@ -259,20 +259,5 @@
             </div>
         </div>
 
-
-        <div class="row-fluid">
-            <div class="offset1 span11">
-
-                <!-- Save -->
-                <div class="control-group">
-                    <div class="controls">
-                        <button type="submit" class="btn btn-success" ng-disabled="userForm.$invalid"><i class="icon icon-ok"></i> Save Changes</button>
-                        <button type="button" class="btn btn-danger" ng-show="{{user._id !== null && !user.deleted}}" ng-click="deleteUser()" ng-confirm-click="Are you sure you want to delete this user?"><i class="icon icon-remove"></i> Delete User</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
     </div>
-
 </form>

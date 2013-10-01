@@ -3,7 +3,7 @@
 
     <div class="hero-unit">
         <div class="logo">
-            <img src="http://placehold.it/800x250" alt="Mediahub Preslog">
+            <img src="/assets/img/layout/logo-large.png" alt="Mediahub Preslog">
             <p>MediaHub Presentation Fault Logging System</p>
         </div>
     </div>
@@ -31,15 +31,15 @@
                             <label class="control-label" for="inputEmail">Email Address</label>
                             <div class="controls">
                                 <input type="email" id="inputEmail" placeholder="Email Address" ng-model="user.email" required>
-                                <br/><span class="help-inline">{{errors.email}}&nbsp;</span>
                             </div>
                         </div>
                         <div class="control-group" ng-class="{error:errors.password}">
                             <label class="control-label" for="inputPassword">Password</label>
                             <div class="controls">
                                 <input type="password" id="inputPassword" placeholder="Password" ng-model="user.password" required>
-                                <br/><span class="help-inline">{{errors.password}}&nbsp;</span>
+                                <span class="help-block forgotten-password"><a href="#" ng-click="forgottenPassword()">Forgotten your password?</a></span>
                             </div>
+
                         </div>
                         <div class="control-group">
                             <div class="controls">
