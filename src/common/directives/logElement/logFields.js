@@ -102,7 +102,7 @@ angular.module('logFields', [])
                 tpl = $compile(tpl)(tplScope);
 
                 // Start a new row if the width is out of range
-                if (currentWidth >= 1 || currentWidth === null)
+                if (currentWidth + type.width > 1 || currentWidth === null)
                 {
                     // Store current
                     if (rowElement !== null)

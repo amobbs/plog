@@ -1,24 +1,24 @@
     <div class="span6">
         <label class="control-label">Created</label>
         <div class="controls input-fill">
-            <input type="text" disabled value="88-88-8888 88:88:88" />
+            <input type="text" disabled value="{{log.data.created.sec}}" />
         </div>
         <br />
         <label class="control-label">Created by</label>
         <div class="controls input-fill">
-            <input type="text" disabled value="Dave Newson" />
+            <input type="text" disabled value="{{log.data.created_by}}" />
         </div>
 
     </div>
     <div class="span6">
         <label class="control-label">Modified</label>
         <div class="controls controls-modified">
-            <input class="input-date" type="text" disabled value="88-88-8888 88:88:88" />
-            V <input class="input-version" type="text" disabled value="3" />
+            <input class="input-date" type="text" disabled value="{{log.data.modified.sec}}" />
+            V <input class="input-version" type="text" disabled value="{{log.data.version}}" />
         </div>
         <br />
         <label class="control-label">Modified by</label>
         <div class="controls input-fill">
-            <input type="text" disabled value="Dave Newson" />
+            <input type="text" disabled value="{{log.data.modified_by}}" />
         </div>
     </div>

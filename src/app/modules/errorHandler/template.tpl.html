@@ -9,8 +9,17 @@
                     <div class="span12">
                         <h3>{{ErrorHandlerCtrl.title}}</h3>
                         <h4>{{ErrorHandlerCtrl.message}}</h4>
-                        <p>Error Data</p>
-                        <pre>{{ErrorHandlerCtrl.details}}</pre>
+
+                        <p>
+                            Please go back and try again.
+                            <br/> If this issue persists, please notify the system administrator.
+                        </p>
+
+                        <div ng-show="ErrorHandlerCtrl.details">
+                            <h4>Error Data</h4>
+                            <pre>{{ErrorHandlerCtrl.details}}</pre>
+                        </div>
+
                     </div>
                 </div>
             </div>

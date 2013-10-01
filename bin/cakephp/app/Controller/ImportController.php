@@ -17,22 +17,21 @@ class ImportController extends AppController
     }
 
     function runImport() {
+
+        set_time_limit(0);
+
         $startTime = microtime(true);
         $this->_log('-starting import script at ' . date('Y-m-d H:s'));
 
+
+
         //clean mongodb
-        if($this->Client->deleteAll(true)
-            && $this->Log->deleteAll(true)
-            && $this->User->deleteAll(true)
-        ) {
-            $this->_log('-mongodb cleaned');
-        } else {
-            $this->_log('--FAILED - to clean mongo');
-            $this->set('import', 'incomplete');
-            $this->set('log', $this->arrayLog);
-            $this->set('_serialize', array('import', 'log'));
-            return;
-        }
+        $mongo = $this->Log->getDataSource();
+        $mongo->truncate('clients');
+        $mongo->truncate('logs');
+        $mongo->truncate('users');
+
+        $this->_log('-mongodb cleaned');
 
         //setup where we want to get the data
         $importDetails = $this->_initDetails();
@@ -412,6 +411,7 @@ class ImportController extends AppController
 
 
         $client['attributes'] = $attrs;
+        $client['deleted'] = false;
         $client['_id'] = new MongoId();
         $returnClient = $client;
 
@@ -421,7 +421,6 @@ class ImportController extends AppController
         unset($client['database_prefix']);
         foreach($client['format'] as $formatKey => $formatValue) {
             foreach($formatValue as $key => $val) {
-                $client['format'][$formatKey]['_id'] = new MongoId();
                 if (substr($key, 0, 4) == 'old_')
                     unset($client['format'][$formatKey][$key]);
             }

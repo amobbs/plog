@@ -1,6 +1,9 @@
 <div class="span6">
-    <label class="control-label">Asset ID</label>
+    <label class="control-label" for="input_{{options._id}}">{{options.name}} </label>
     <div class="controls input-fill">
-        <input type="text" value="ABC123456" />
+        <input type="text" placeholder="{{options.data.placeholder}}"
+               id="input_{{options._id}}"
+               ng-model="log.data.text"
+                />
     </div>
 </div>
