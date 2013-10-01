@@ -103,7 +103,7 @@ angular.module( 'Preslog.dashboard', [
 
                 for(var i = 0; i < order.length; i++) {
                    for(var w = 0; w < $scope.dashboard.widgets.length; w++) {
-                       if ($scope.dashboard.widgets[w].id == order[i]) {
+                       if ($scope.dashboard.widgets[w]._id == order[i]) {
                            $scope.dashboard.widgets[w].order = i;
                        }
                    }
