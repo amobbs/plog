@@ -33,7 +33,7 @@ angular.module( 'Preslog.dashboard', [
                 source: ['$q', 'Restangular', '$stateParams', function($q, Restangular, $stateParams) {
                     // Fetch dashboard
                     var deferred = $q.defer();
-                    Restangular.one('dashboards').get().then(function(data) {
+                    Restangular.one('dashboards', '5244e28309cc5eeb498b4567').get().then(function(data) {
                         deferred.resolve(data);
                     });
 
@@ -125,8 +125,9 @@ angular.module( 'Preslog.dashboard', [
                 .then(function (result){
                     console.log(result);
                     for(var index = 0; index < $scope.dashboard.widgets.length; index++) {
-                        if ($scope.dashboard.widgets[index].id == widgetId) {
+                        if ($scope.dashboard.widgets[index]._id == widgetId) {
                             $scope.dashboard.widgets.splice(index, 1);
+                            $scope.updateRefreshTimer(widgetId, 0);
                             break;
                         }
                     }
@@ -138,7 +139,7 @@ angular.module( 'Preslog.dashboard', [
             for(var wId in $scope.dashboard.widgets) {
                 var widget = $scope.dashboard.widgets[wId];
                 if (widget.data.refresh && widget.data.refresh > 0) {
-                    $scope.setRefreshTimer(widget.id, widget.data.refresh);
+                    $scope.setRefreshTimer(widget._id, widget.data.refresh);
                 }
             }
         };
@@ -173,7 +174,7 @@ angular.module( 'Preslog.dashboard', [
                     if (result && result.widget) {
                         for(var wId in $scope.dashboard.widgets) {
                             var widget = $scope.dashboard.widgets[wId];
-                            if (widget.id == widgetId) {
+                            if (widget._id == widgetId) {
                                 $scope.dashboard.widgets[wId] = result.widget;
                                 $scope.updateRefreshTimer(widgetId, result.widget.data.refresh);
                                 break;

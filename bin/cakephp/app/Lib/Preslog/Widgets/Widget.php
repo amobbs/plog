@@ -17,7 +17,7 @@ class Widget {
     public function getQuery() { return $this->query; }
 
     public function __construct($data) {
-        $this->id = isset($data['id']) ? new MongoId($data['id']): new MongoId();
+        $this->id = isset($data['_id']) ? new MongoId($data['_id']): new MongoId();
         $this->name = isset($data['name']) ? $data['name'] : '';
         $this->order = isset($data['order']) ? $data['order'] : null;
         //$this->query = isset($data['query']) ? $data['query'] : null;
