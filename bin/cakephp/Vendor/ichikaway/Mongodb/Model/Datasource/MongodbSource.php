@@ -26,6 +26,7 @@
 
 App::uses('DboSource', 'Model/Datasource');
 App::uses('SchemalessBehavior', 'Mongodb.Model/Behavior');
+App::uses('SchemaBehavior', 'Mongodb.Model/Behavior');
 
 /**
  * MongoDB Source
@@ -383,19 +384,34 @@ class MongodbSource extends DboSource {
  * @access public
  */
 	public function describe(&$Model, $field = null) {
-		$Model->primaryKey = '_id';
-		$schema = array();
+
+
+        // Is the schema supplied on the model?
 		if (!empty($Model->mongoSchema) && is_array($Model->mongoSchema)) {
-			$schema = $Model->mongoSchema;
-			return $schema + array('_id' => $this->_defaultSchema['_id']);
+
+            // $Model->primaryKey will be loaded from the Schema on Behaviour::setup().
+            $Model->Behaviors->load('Mongodb.Schema');
+
+            // Pass schema
+            $schema = $Model->mongoSchema;
+			return $schema;
+
+        // Schema is not supplied. Infer it via Schemaless behaviour
 		} elseif ($this->isConnected() && is_a($Model, 'Model') && !empty($Model->Behaviors)) {
-			$Model->Behaviors->attach('Mongodb.Schemaless');
-			if (!$Model->data) {
+			$Model->Behaviors->load('Mongodb.Schemaless');
+
+            // Primary key is always _id on schemaless
+            $Model->primaryKey = '_id';
+
+            // Derive the data if the data exists
+            if (!$Model->data) {
 				if ($this->_db->selectCollection($Model->table)->count()) {
 					return $this->deriveSchemaFromData($Model, $this->_db->selectCollection($Model->table)->findOne());
 				}
 			}
 		}
+
+        // Attempt to derive the schema without the database
 		return $this->deriveSchemaFromData($Model);
 	}
 
@@ -470,6 +486,7 @@ class MongodbSource extends DboSource {
 			$this->logQuery("db.{$Model->useTable}.insert( :data , true)", compact('data'));
 		}
 
+        // If we saved data ..
 		if (!empty($return) && $return === true) {
 
 			$id = $data['_id'];
@@ -988,31 +1005,46 @@ class MongodbSource extends DboSource {
 
 		$this->_prepareLogQuery($Model); // just sets a timer
 		if (empty($modify)) {
+
+            // Count
 			if ($Model->findQueryType === 'count' && $fields == array('count' => true)) {
-				$count = $this->_db
+
+                // Fetch
+                $count = $this->_db
 					->selectCollection($Model->table)
 					->count($conditions);
-				if ($this->fullDebug) {
+
+                // Log
+                if ($this->fullDebug) {
 					$this->logQuery("db.{$Model->useTable}.count( :conditions )",
 						compact('conditions', 'count')
 					);
 				}
+
+                // return
 				return array(array($Model->alias => array('count' => $count)));
 			}
 
+            // Find by query
 			$return = $this->_db
 				->selectCollection($Model->table)
 				->find($conditions, $fields)
 				->sort($order)
 				->limit($limit)
 				->skip($offset);
+
+            // Debug
 			if ($this->fullDebug) {
 				$count = $return->count(true);
 				$this->logQuery("db.{$Model->useTable}.find( :conditions, :fields ).sort( :order ).limit( :limit ).skip( :offset )",
 					compact('conditions', 'fields', 'order', 'limit', 'offset', 'count')
 				);
 			}
+
+        // Find and Modify
 		} else {
+
+            // Opts
 			$options = array_filter(array(
 				'findandmodify' => $Model->table,
 				'query' => $conditions,
@@ -1023,39 +1055,44 @@ class MongodbSource extends DboSource {
 				'fields' => $fields,
 				'upsert' => !empty($upsert)
 			));
+
+            // Find and Modify
 			$return = $this->_db
 				->command($options);
+
+            // Debug
 			if ($this->fullDebug) {
 				if ($return['ok']) {
-					$count = 1;
-					if ($this->config['set_string_id'] && !empty($return['value']['_id']) && is_object($return['value']['_id'])) {
-						$return['value']['_id'] = $return['value']['_id']->__toString();
-					}
-					$return[][$Model->alias] = $return['value'];
+					$count = $return->count(true);
 				} else {
 					$count = 0;
 				}
+
+                // Log
 				$this->logQuery("db.runCommand( :options )",
 					array('options' => array_filter($options), 'count' => $count)
 				);
 			}
 		}
 
+        // Count?
 		if ($Model->findQueryType === 'count') {
 			return array(array($Model->alias => array('count' => $return->count())));
 		}
 
+        // is Object?
+        // Increment objects into data blocks
 		if (is_object($return)) {
 			$_return = array();
 			while ($return->hasNext()) {
 				$mongodata = $return->getNext();
-				if ($this->config['set_string_id'] && !empty($mongodata['_id']) && is_object($mongodata['_id'])) {
-					$mongodata['_id'] = $mongodata['_id']->__toString();
-				}
+
+                // Add to return block
 				$_return[][$Model->alias] = $mongodata;
 			}
 			return $_return;
 		}
+
 		return $return;
 	}
 
@@ -1418,3 +1455,5 @@ function MongoDbDateFormatter($date = null) {
 	}
 	return new MongoDate();
 }
+
+

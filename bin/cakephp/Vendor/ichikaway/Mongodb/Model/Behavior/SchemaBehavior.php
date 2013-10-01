@@ -65,7 +65,7 @@ class SchemaBehavior extends ModelBehavior {
     public function beforeSave( Model $model, $options = array() )
     {
         // Convert data types for save
-        $this->extractModel( $this->data, $model->mongoSchema);
+        $this->extractModel( $model->data[ $model->name ], $model->mongoSchema);
 
         return true;
     }
@@ -93,8 +93,14 @@ class SchemaBehavior extends ModelBehavior {
     /**
      * From Database to Model
      */
-    public function hydrateModel( array &$doc, array $schema )
+    public function hydrateModel( &$doc, array $schema )
     {
+        // Skip non-arrays
+        if (!is_array($doc))
+        {
+            return;
+        }
+
         // Check for numeric array keys
         $numericKeys = array_filter(array_keys($doc), 'is_int');
 
@@ -114,6 +120,12 @@ class SchemaBehavior extends ModelBehavior {
         {
             // Null types are ignores. These are dynamic schemas
             if ($fieldOptions === null)
+            {
+                continue;
+            }
+
+            // Skip fields that don't exist
+            if (!isset( $doc[$fieldKey] ))
             {
                 continue;
             }
@@ -140,7 +152,7 @@ class SchemaBehavior extends ModelBehavior {
             // MongoDate
             if ($fieldOptions['mongoType'] == 'MongoDate')
             {
-                $doc[$fieldKey] = date('Y-M-d h:i:s', $doc[$fieldKey]->sec);
+                $doc[$fieldKey] = date('Y-m-d h:i:s', $doc[$fieldKey]->sec);
             }
         }
     }
@@ -151,6 +163,12 @@ class SchemaBehavior extends ModelBehavior {
      */
     public function extractModel( &$doc, $schema )
     {
+        // Non-arrays are not processed
+        if ( !is_array($doc) )
+        {
+            return;
+        }
+
         // Check for numeric array keys
         $numericKeys = array_filter(array_keys($doc), 'is_int');
 
@@ -170,6 +188,12 @@ class SchemaBehavior extends ModelBehavior {
         {
             // Null types are ignores. These are dynamic schemas
             if ($fieldOptions === null)
+            {
+                continue;
+            }
+
+            // Skip fields that don't exist
+            if (!isset( $doc[$fieldKey] ))
             {
                 continue;
             }
