@@ -12,6 +12,7 @@ class ImportController extends AppController
     private $logTotal = 0;
 
     private function _log($msg) {
+        CakeLog::write('activity', $msg);
         $this->arrayLog[] = $msg;
     }
 
@@ -171,14 +172,14 @@ class ImportController extends AppController
             array(
                 '_id' => null,
                 'order' => $order++,
-                'type' => 'text',
+                'type' => 'textarea',
                 'name' => 'Program',
                 'data' => array('placeholder' => '?'),
             ),
             array(
                 '_id' => null,
                 'order' => $order++,
-                'type' => 'text',
+                'type' => 'textarea',
                 'name' => 'Asset ID',
                 'data' => array('placeholder' => '?'),
             ),
@@ -197,21 +198,21 @@ class ImportController extends AppController
             array(
                 '_id' => null,
                 'order' => $order++,
-                'type' => 'text',
+                'type' => 'textarea',
                 'name' => 'What happened?', //description
                 'data' => array('placeholder' => '?'),
             ),
             array(
                 '_id' => null,
                 'order' => $order++,
-                'type' => 'text',
+                'type' => 'textarea',
                 'name' => 'Why it happened', //details
                 'data' => array('seconds' => '?'),
             ),
             array(
                 '_id' => null,
                 'order' => $order++,
-                'type' => 'text',
+                'type' => 'textarea',
                 'name' => 'What action taken', //cause?
                 'data' => array('placeholder' => '?'),
             ),
@@ -244,7 +245,7 @@ class ImportController extends AppController
             array(
                 '_id' => null,
                 'order' => $order++,
-                'type' => 'text',
+                'type' => 'textarea',
                 'name' => 'Cause',
                 'data' => array(
                     'placeholder' => '?',
@@ -274,7 +275,7 @@ class ImportController extends AppController
                     '_id' =>  new MongoId(),
                     'name' => mb_convert_encoding($row['impact'], 'utf8'),
                     'order' => $i++,
-                    'deleted' => '0',
+                    'deleted' => false,
                     'old_id' => $row['impact'], //used to find attr later
                 );
             }
@@ -289,7 +290,7 @@ class ImportController extends AppController
                     '_id' =>  new MongoId(),
                     'name' => mb_convert_encoding($row['severity'], 'utf8'),
                     'order' => $row['order'],
-                    'deleted' => $row['deleted'],
+                    'deleted' => (bool)$row['deleted'],
                     'old_id' => $row['id'],
                 );
             }
@@ -301,7 +302,7 @@ class ImportController extends AppController
         $networks = array(
             '_id' => new MongoId(),
             'name' => 'Networks',
-            'deleted' => '0',
+            'deleted' => false,
             'children' => array(),
         );
 
@@ -316,7 +317,7 @@ class ImportController extends AppController
                     $n = array(
                         '_id' => new MongoId(),
                         'name' => mb_convert_encoding($row['name'], 'utf8'),
-                        'deleted' => $row['deleted'],
+                        'deleted' => (bool)$row['deleted'],
                         'children' => array(),
                     );
 
@@ -326,7 +327,7 @@ class ImportController extends AppController
                             $n['children'][] = array(
                                 '_id' => new MongoId(),
                                 'name' => mb_convert_encoding($nRow['network'], 'utf8'),
-                                'deleted' => $nRow['deleted'],
+                                'deleted' => (bool)$nRow['deleted'],
                                 'children' => array(),
                             );
                             $channelCount++;
@@ -345,7 +346,7 @@ class ImportController extends AppController
                         $networkChildren[$row['network']] = array(
                             '_id' => new MongoId(),
                             'name' => mb_convert_encoding($row['network'], 'utf8'),
-                            'deleted' => $row['deleted'],
+                            'deleted' => (bool)$row['deleted'],
                             'children' => array(),
                         );
                         $networkCount++;
@@ -357,7 +358,7 @@ class ImportController extends AppController
                             $networkChildren[$row['network']]['children'][] = array(
                                 '_id' => new MongoId(),
                                 'name' => mb_convert_encoding($cRow['name'], 'utf8'),
-                                'deleted' => $cRow['deleted'],
+                                'deleted' => (bool)$cRow['deleted'],
                             );
                             $channelCount++;
                         }
@@ -373,14 +374,14 @@ class ImportController extends AppController
             $states = array(
                 '_id' => new MongoId(),
                 'name' => 'States',
-                'deleted' => 0,
+                'deleted' => false,
                 'children' => array(),
             );
             foreach ($useStates as $state) {
                 $states['children'][] = array(
                     '_id' => new MongoId(),
                     'name' => $state,
-                    'deleted' => '0',
+                    'deleted' => false,
                     'children' => array(),
                 );
             }
@@ -391,18 +392,18 @@ class ImportController extends AppController
             $attrs[] = array(
                 '_id' => new MongoId(),
                 'name' => 'City / State',
-                'deleted' => 0,
+                'deleted' => false,
                 'children' => array(
                     array(
                         '_id' => new MongoId(),
                         'name' => 'City',
-                        'deleted' => 0,
+                        'deleted' => false,
                         'children' => array(),
                     ),
                     array(
                         '_id' => new MongoId(),
                         'name' => 'State',
-                        'deleted' => 0,
+                        'deleted' => false,
                         'children' => array(),
                     ),
                 ),
@@ -420,6 +421,7 @@ class ImportController extends AppController
         unset($client['database_prefix']);
         foreach($client['format'] as $formatKey => $formatValue) {
             foreach($formatValue as $key => $val) {
+                $client['format'][$formatKey]['_id'] = new MongoId();
                 if (substr($key, 0, 4) == 'old_')
                     unset($client['format'][$formatKey][$key]);
             }
@@ -435,7 +437,7 @@ class ImportController extends AppController
     private function _createUsers($clients) {
         $this->_log('-importing users');
 
-        $csvFile = TMP . 'users.csv';
+        $csvFile = TMP . 'users_20130930.csv';
 
         $file = fopen($csvFile, 'r');
 
@@ -443,36 +445,39 @@ class ImportController extends AppController
         while (($line = fgets($file)) !== false) {
             $parts = explode(',', $line);
 
-            if ($parts[0] == 'email') //ignore column headers
+            if ($parts[0] == 'email' || empty($parts[0])) //ignore column headers and blank lines
                 continue;
             if (sizeof($parts) < 7)
                 continue;
 
             $user =  array(
                 '_id' => new MongoId(),
-                'password' => Security::hash('', 'blowfish', false),
-                'email' => trim($parts[0]),
-                'firstName' => trim($parts[1]),
-                'lastName' => trim($parts[2]),
-                'company' => trim($parts[3]),
-                'phoneNumber' => trim($parts[4]),
-                'role' => trim($parts[6]),
+                'password' => Security::hash('nopassword', 'blowfish', false),
+                'email' => mb_convert_encoding(trim($parts[0]), 'utf8'),
+                'firstName' => mb_convert_encoding(trim($parts[1]), 'utf8'),
+                'lastName' => mb_convert_encoding(trim($parts[2]), 'utf8'),
+                'company' => mb_convert_encoding(trim($parts[3]), 'utf8'),
+                'phoneNumber' => mb_convert_encoding(trim($parts[4]), 'utf8'),
+                'role' => mb_convert_encoding(trim($parts[6]), 'utf8'),
             );
 
-            $user['deleted'] = trim($parts[5]);
+            //all users are active according to data sent from mediahub
+            $user['deleted'] = false;
 
-            if (isset($parts[7])) { //TODO convert name to mongo id
-                $user['clientid'] = trim($parts[7]);
-            }
+            //TODO ignore for now, csv has not been helpfull
+//            if (isset($parts[7])) { //TODO convert name to mongo id
+//                $user['clientid'] = trim($parts[7]);
+//            }
 
-            $alias = array();
-            if(sizeof($parts) > 8) {
-                for($i = 8; $i < sizeof($parts); $i++) {
-                    $a = preg_replace('/"/', '', trim($parts[$i]));
-                    $alias[] = $a;
-                }
-                $user['alias'] = $alias;
-            }
+            //TODO ignoring alias as not provided by media hub
+//            $alias = array();
+//            if(sizeof($parts) > 8) {
+//                for($i = 8; $i < sizeof($parts); $i++) {
+//                    $a = preg_replace('/"/', '', trim($parts[$i]));
+//                    $alias[] = $a;
+//                }
+//                $user['alias'] = $alias;
+//            }
 
             $this->User->create($user);
             $this->User->save();
@@ -500,7 +505,7 @@ class ImportController extends AppController
 
     private function _createLogs($client, $users) {
         $this->_log('creating logs for ' . $client['name']);
-        $sql = 'SELECT lognum as hrid, logdate, logtime, duration, cause, impact, description, details, loggedby as user_id,
+        $sql = 'SELECT lognum as hrid, logdate, logtime, duration, cause, impact, description, details, loggedby,
          program, enteredtimestamp, action, severity, impairment, created, modified, version, vic, sa, wa, nt, qld, nsw,
          act, tas, spread, assetid
          FROM ' . $client['database_prefix'] . '_dailylog ORDER BY created ASC';
@@ -510,11 +515,26 @@ class ImportController extends AppController
         if($result = $this->mysqli->query($sql)) {
             while ($row = $result->fetch_assoc()) {
 
+                $modifiedBy = '';
+                if ((int)$row['version'] == 1) {
+                    $modifiedBy = $row['loggedby'];
+                }
+
                 $fields = array(
+                    array(
+                        'field_id' => $this->_getMongoIDFromFormatByName($client['format'], 'loginfo'),
+                        'data' => array(
+                            'created' => new MongoDate(strtotime($row['created'])),
+                            'createdBy' => $row['loggedby'],
+                            'modified' => new MongoDate(strtotime($row['modified'])),
+                            'modifiedBy' => $modifiedBy,
+                            'version' => (int)$row['version']
+                        ),
+                    ),
                     array(
                         'field_id' => $this->_getMongoIDFromFormatByName($client['format'], 'Duration'),
                         'data' => array(
-                            'seconds' => $row['duration'],
+                            'seconds' => intval($row['duration']),
                         ),
                     ),
                     array(
@@ -562,7 +582,7 @@ class ImportController extends AppController
                     array(
                         'field_id' =>  $this->_getMongoIDFromFormatByName($client['format'], 'Severity'),
                         'data' => array(
-                            'text' => $this->_getMongoIdForOptionInSelect($client['format'], 'Severity', $row['severity']),
+                            'selected' => $this->_getMongoIdForOptionInSelect($client['format'], 'Severity', $row['severity']),
                         ),
                     ),
                     array(
@@ -607,7 +627,7 @@ class ImportController extends AppController
                     'hrid' => $row['hrid'],
                     'created_user_id' => 'TODO!!!!!!',
                     'modified_user_id' => null,
-                    'deleted' => '0',
+                    'deleted' => false,
                     'fields' => $fields,
                     'attributes' => $attr,
                     'version' => (int)$row['version'],
@@ -616,14 +636,16 @@ class ImportController extends AppController
                     'modified' => new MongoDate(strtotime($row['modified'])),
                 );
 
+
+                $this->_log("saving log - count: " . $this->logTotal . ' id: ' . $row['hrid'] .  ' for: ' . $client['name']);
                 $this->Log->create($log);
                 $this->Log->save();
                 $logCount++;
+                $this->logTotal++;
             }
 
         }
 
-        $this->logTotal += $logCount;
         $this->_log("$logCount logs added for " . $client['name']);
     }
 
