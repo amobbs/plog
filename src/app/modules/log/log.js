@@ -90,6 +90,22 @@ angular.module( 'Preslog.log', [
         $scope.log = logData.Log;
         $scope.options = logOptions;
 
+        $scope.attributesDisplay = function(children) {
+            var columns = [[], []];
+            var colSize1 = Math.floor(children.length / 2);
+
+            for(var i = 0; i < children.length; i++)
+            {
+                if (i < colSize1) {
+                    columns[0].push(children[i]);
+                } else {
+                    columns[1].push(children[i]);
+                }
+            }
+
+            return columns;
+        };
+
 
         $scope.saveLog = function()
         {
