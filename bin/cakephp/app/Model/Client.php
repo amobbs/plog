@@ -216,5 +216,34 @@ class Client extends AppModel
     }
 
 
+    /**
+     * Fetch client by the given $id, returning just the Options used for Edit.
+     * @param   ClientID        $id
+     * @return  array
+     */
+    public function getLogOptionsById( $id )
+    {
+        // Get the client
+        $client = $this->findById( $id );
+
+        // Get options fields from client
+        $options = array(
+            'fields'        => $client['Client']['format'],
+            'attributes'    => $client['Client']['attributes'],
+        );
+
+        return $options;
+    }
+
+
+    /**
+     * Fetch the logo path for this client
+     * @param   array       $client         Client data
+     * @return  string
+     */
+    public function getLogoPath( $client )
+    {
+        return '/assets/clients/'.(string) $client['_id'].'/logo.png';
+    }
 
 }

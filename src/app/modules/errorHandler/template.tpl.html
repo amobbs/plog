@@ -1,26 +1,22 @@
-<div class="row-fluid">
-    <div class="span4 offset4">
-        <div class="well well-impressed">
-            <div class="well-header">
-                <h4>Oops! There was an error :(</h4>
+<div class="container">
+    <div class="row-fluid">
+        <div class="modal span12" style="position: relative; top: 20px; left: auto; right: auto; margin: 0 auto 20px;">
+            <div class="modal-header">
+                <h3>Fatal Error</h3>
             </div>
-            <div class="well-content">
+            <div class="modal-body">
                 <div class="row-fluid">
                     <div class="span12">
                         <h3>{{ErrorHandlerCtrl.title}}</h3>
-                        <p>{{ErrorHandlerCtrl.message}}</p>
+                        <h4>{{ErrorHandlerCtrl.message}}</h4>
+                        <p>Error Data</p>
                         <pre>{{ErrorHandlerCtrl.details}}</pre>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="navbar navbar-modal">
-            <ul class="nav">
-                <li>
-                    <a ng-click="ErrorHandlerCtrl.goBack()">Go Back</a>
-                </li>
-            </ul>
+            <div class="modal-footer">
+                <a ng-click="ErrorHandlerCtrl.goBack()" class="btn btn-warning"><i class="icon icon-arrow-left"></i> Go Back</a>
+            </div>
         </div>
     </div>
 </div>
-

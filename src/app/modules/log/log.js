@@ -12,7 +12,7 @@ angular.module( 'Preslog.log', [
     .factory('LogRestangular', function (Restangular) {
         return Restangular.withConfig(function (RestangularConfigurer) {
             RestangularConfigurer.setRestangularFields({
-                id: 'Log._id'
+                id: 'Log.hrid'
             });
         });
     })
@@ -91,39 +91,44 @@ angular.module( 'Preslog.log', [
         $scope.options = logOptions;
 
 
-        $scope.hierarchySelected = [1,2];
-        $scope.hierarchyFields = [
-            {
-                id: 1, name: "Networks", deleted: false, children: [
-                {id: 2, name:"ABC", deleted: false, children: [
-                    {id: 3, name: "ABC", deleted: false},
-                    {id: 4, name: "ABC 2", deleted: false},
-                    {id: 5, name: "ABC 3", deleted: false},
-                    {id: 6, name: "ABC News", deleted: false}
-                ]},
-                {id: 7, name:"WIN", deleted: false, children: [
-                    {id: 8, name: "Win", deleted: false}
-                ]},
-                {id: 9, name:"Blah1", deleted: false, children: [
-                    {id: 10, name: "Win", deleted: false}
-                ]},
-                {id: 11, name:"Blah1", deleted: false, children: [
-                    {id: 12, name: "Win", deleted: false}
-                ]}
-            ]
-            },
-            {
-                id: 13, name: "States", deleted: false, children: [
-                {id: 14, name: "", deleted: false, children: [
-                    {id: 15, name: 'NSW', deleted: false},
-                    {id: 16, name: 'VIC', deleted: false},
-                    {id: 17, name: 'QLD', deleted: false},
-                    {id: 18, name: 'WA', deleted: false}
-                ]
-                }
-            ]
+        $scope.saveLog = function()
+        {
+            // Will not submit without validation passing
+            if ( $scope.logForm.$invalid ) {
+                alert('Your submission is not valid. Please check for errors.');
+                return false;
             }
-        ];
+
+            // Data Fudge
+            logData.Log = $scope.log;
+
+            // Submit
+            logData.post().then(
+
+                // On success
+                function()
+                {
+                    // Redirect to homepage
+                    $location.path('/');
+                },
+
+                // On failure
+                function(response)
+                {
+                    // Extrapolate all fields to the scope
+                    $scope.validation = response.data.data;
+
+                    // If field exists, mark is as invalid
+                    for (var i in $scope.validation)
+                    {
+                        if ($scope.logForm[i] !== undefined) {
+                            $scope.logForm[i].$setValidity('validateServer', false);
+                        }
+                    }
+
+                }
+            );
+        };
 
     })
 

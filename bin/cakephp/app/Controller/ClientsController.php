@@ -36,11 +36,19 @@ class ClientsController extends AppController
 
         // Flatten the array for simplicity
         foreach ($clients as &$client) {
-            $client = $client['Client'];
-        }
 
-        // TODO: Attach stats to the individual clients
-        // TODO: Number of logs / Number of users
+            // Truncate the structure a little
+            $client = $client['Client'];
+
+            // Get the Logo
+            $client['logo'] = $this->Client->getLogoPath($client);
+
+            // TODO: Attach num_logs stats to the individual clients
+            $client['stats']['numLogs'] = "Not Available";
+
+            // TODO: Number of logs / Number of users
+            $client['stats']['numUsers'] = "Not Available";
+        }
 
         // Output
         $this->set('clients', $clients);
@@ -91,6 +99,9 @@ class ClientsController extends AppController
     {
         // Fetch user with all fields
         $client = $this->Client->findById( $id );
+
+        // Get Logo
+        $client['Client']['logo'] = $this->Client->getLogoPath($client);
 
         // User must exist
         if (!$client)

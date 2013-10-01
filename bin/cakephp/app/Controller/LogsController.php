@@ -10,7 +10,7 @@ use Swagger\Annotations as SWG;
  */
 class LogsController extends AppController
 {
-    public $uses = array('Log');
+    public $uses = array('Log', 'Client');
 
     public $components = array('LogNotification');
 
@@ -41,9 +41,10 @@ class LogsController extends AppController
      */
     public function edit( $id = null )
     {
-        // TODO
-
+        // Get log data
         $log = $this->request->data['Log'];
+
+        // TODO
 
         //  If we have an ID, we need to validate the original log first before it can be updated
         if ( !empty($id) )
@@ -115,7 +116,8 @@ class LogsController extends AppController
         $ret = $this->Log->save( $log );
 
         // Notifications: Issue Email and SMS notifications relevant to this logs update.
-        $this->LogNotification->issueNotifications( $log );
+        // TODO
+        //$this->LogNotification->issueNotifications( $log );
 
         // Return success
         $return = array('Success'=>$ret);
@@ -192,23 +194,32 @@ class LogsController extends AppController
      *      )
      * )
      */
-    public function options()
+    public function options( $id=null )
     {
-        // TODO
+        // TODO: Load the default Client, because no log was specified
+        if (!empty($id))
+        {
+            $log = $this->Log->findByHrid( $id );
+            $clientId = (string) $log['Log']['client_id'];
+        }
+        else
+        {
+            $clientId = trigger_error('TODO', E_USER_ERROR);
+        }
 
         // Load: Log format from specific Client
-        $options = array();
+        $options = $this->Client->getLogOptionsById( $clientId );
 
         // Validate: Do we NOT have permissions to see the Accountability types?
         if (false)
         {
+            // TODO
             unset( $options['accountability_field'] );
             unset( $options['status_field'] );
         }
 
-
-        // OK Response
-        $this->set('options', $options);
+        // Return options
+        $this->set($options);
         $this->set('_serialize', array_keys($options));
     }
 

@@ -1,0 +1,12 @@
+<div class="span6 control-group" ng-class="{error: userForm.firstName.$invalid}">
+    <label class="control-label" for="input_{{options._id}}">{{ options.name }}</label>
+    <div class="controls">
+        <select id="input_{{options._id}}"
+                ng-model="log.data.selected"
+                name="input_{{options._id}}"
+                ng-options="o._id as o.name for o in options.data.options"
+                required
+                validate-server>
+        </select>
+    </div>
+</div>
