@@ -42,8 +42,9 @@
                             <legend>{{ group.name }}</legend>
                         </div>
                     </div>
-                    <div class="row-fluid">
-                        <div class="span6" hierarchy-fields="group.children" hierarchy-selected="log.attributes" hide-deleted="true" drag-and-drop="false" allow-edit="false"></div>
+                    <div class="row-fluid" >
+                        <div class="span6" hierarchy-fields="attributesDisplay(group.children)[0]" hierarchy-selected="log.attributes" hide-deleted="true" drag-and-drop="false" allow-edit="false"></div>
+                        <div class="span6" hierarchy-fields="attributesDisplay(group.children)[1]" hierarchy-selected="log.attributes" hide-deleted="true" drag-and-drop="false" allow-edit="false"></div>
                     </div>
                 </div>
 

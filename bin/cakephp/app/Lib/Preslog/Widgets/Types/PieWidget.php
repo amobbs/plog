@@ -22,8 +22,7 @@ class PieWidget extends Widget {
             array(
                 '$match' => array(
                     "created" => array('$gt' => new MongoDate(strtotime("2012-01-01T00:00:00.0Z")), '$lt' => new MongoDate(strtotime("2012-12-01T00:00:00.0Z"))),
-                    '_id' => new MongoId('524a42bddf81d178120031a0'),
-                    'fields.field_id' => new MongoId('524a42bddf81d17812003195')
+                    '_id' => new MongoId('524a42bddf81d178120031a0')
                  )
             ),
 	        array(

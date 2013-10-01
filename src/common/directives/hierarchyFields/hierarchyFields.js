@@ -239,9 +239,8 @@ angular.module('hierarchyFields', [])
 
                         dynaField.title = fields[i].name;
                         dynaField.expand = false;
-                        dynaField.key = fields[i]._id;
+                        dynaField.key = fields[i]._id.$id;
                         if (fields[i].children && (fields[i].children.length > 0)) {
-
                             dynaField.expand = true;
                             dynaField.isFolder = true;
                             dynaField.children = [];
