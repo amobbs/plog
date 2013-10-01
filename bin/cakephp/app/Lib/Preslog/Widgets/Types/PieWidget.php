@@ -3,6 +3,8 @@
 namespace Preslog\Widgets\Types;
 
 use Highchart;
+use MongoDate;
+use MongoId;
 use Preslog\Widgets\Widget;
 
 class PieWidget extends Widget {
@@ -15,6 +17,22 @@ class PieWidget extends Widget {
             }
             $this->data['x'] = isset($data['x']) ? $data['x'] : '';
         }
+
+        $this->query = array(
+            array(
+                '$match' => array(
+                    "created" => array('$gt' => new MongoDate(strtotime("2012-01-01T00:00:00.0Z")), '$lt' => new MongoDate(strtotime("2012-12-01T00:00:00.0Z"))),
+                    '_id' => new MongoId('524a42bddf81d178120031a0'),
+                    'fields.field_id' => new MongoId('524a42bddf81d17812003195')
+                 )
+            ),
+	        array(
+                '$group' => array(
+                    '_id' => '$fields.data.text',
+                    'count' => array('$sum' =>  1)
+                )
+            )
+        );
 
         parent::__construct($data);
     }
@@ -55,6 +73,7 @@ class PieWidget extends Widget {
 //            'borderWidth' => 0
 //        );
 
+
         $chart->series = array(
             array(
                 'type' => 'pie',
@@ -63,16 +82,18 @@ class PieWidget extends Widget {
             ),
         );
 
-        foreach($this->series as $dataPoint) {
-            $chart->series[0]['data'][] = array(
-                $dataPoint['name'],
-                $dataPoint['data'][0],
-            );
+        if (isset($this->series['result'])) {
+            foreach($this->series['result'] as $dataPoint) {
+                $chart->series[0]['data'][] = array(
+                    $dataPoint['_id'],
+                    $dataPoint['count'],
+                );
+            }
         }
 
-        if (empty($this->data)) {
-            $chart->series[0]['name'] = 'no data';
-        }
+//        if (empty($this->data)) {
+//            $chart->series[0]['name'] = 'no data';
+//        }
 
         return $chart->renderOptions();
     }

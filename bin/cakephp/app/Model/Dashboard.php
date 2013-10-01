@@ -59,7 +59,7 @@ class Dashboard extends AppModel
         // Fetch all client info
         return $this->find('first', array(
             'conditions'=>array(
-                'id'=>$id
+                '_id'=>$id
             )
         ));
     }
@@ -67,7 +67,7 @@ class Dashboard extends AppModel
     public function findWidgetArrayId($dashboard, $widgetId) {
         foreach($dashboard['widgets'] as $key => $widget) { //find the widget in the dashboard
             $w = $dashboard['widgets'][$key];
-            if ($widgetId == (String)$w['id']) {
+            if ($widgetId == (String)$w['_id']) {
                 return $key;
             }
         }
@@ -85,7 +85,8 @@ class Dashboard extends AppModel
             $widgetObject = null;
             if(!($widget instanceof Widget)) {
                 $widgetObject = WidgetFactory::createWidget($widget);
-                $widgetObject->setId(new MongoId($widget['id']));
+                $widgetObject->setId(new MongoId($widget['_id']));
+                $widgetObject->setSeries($this->getDataForWidget($widgetObject->getQuery()));
             } else {
                 $widgetObject = $widget;
             }
@@ -147,5 +148,24 @@ class Dashboard extends AppModel
         $objWriter->save(TMP . $reportName);
 
         return TMP . $reportName;
+    }
+
+    public function getDataForWidget($mongoQuery) {
+        $data = array();
+
+        $mongo = $this->getMongoDb();
+//        //get the mongo id related to a clients format
+//        foreach($mongoQuery['$group'] as $el) {
+//            if (isset($el['stupid_format'])) {
+//                $clients = $mongo->selectCollection('clients')->find(array('format.name'));
+//                foreach($clients as $client) {
+//
+//                }
+//            }
+//        }
+
+        $data = $mongo->selectCollection('logs')->aggregate($mongoQuery);
+
+        return $data;
     }
 }

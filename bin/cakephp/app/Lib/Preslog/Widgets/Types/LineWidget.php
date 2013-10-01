@@ -3,6 +3,8 @@
 namespace Preslog\Widgets\Types;
 
 use Highchart;
+use MongoDate;
+use MongoId;
 use Preslog\Widgets\Widget;
 
 class LineWidget extends Widget {
@@ -25,6 +27,36 @@ class LineWidget extends Widget {
             $this->data['y']['label'] = isset($data['y']['label']) ? $data['y']['label'] : '';
             $this->data['y']['fieldId'] = isset($data['y']['field_id']) ? $data['y']['field_id'] : '';
         }
+
+        $created = '2013-01-01';
+
+        $this->query = array(
+            array(
+                '$match' => array(
+                    "created" => array('$gt' => new MongoDate(strtotime("2012-01-01T00:00:00.0Z")), '$lt' => new MongoDate(strtotime("2012-12-01T00:00:00.0Z"))),
+                )
+            ),
+            array(
+                '$project' => array(
+                    'created' => array(
+                        'month' => array('$month' => '$created'),
+                        'year' => array('$year' =>  '$created'),
+                    ),
+                )
+            ),
+            array(
+                '$group' => array(
+                    '_id' => '$created',
+                    'count' => array('$sum' => 1),
+                ),
+            ),
+            array(
+                '$sort' => array(
+                    "_id.year" => 1,
+                    "_id.month" =>  1,
+                ),
+            ),
+        );
 
         parent::__construct($data);
     }
@@ -59,6 +91,22 @@ class LineWidget extends Widget {
             ),
         );
 
+        //TODO remove this and make more generic
+        $categories = array();
+        $series = array(
+            'name' => 'faults',
+            'data' => array(),
+        );
+        if (isset($this->series['result'])) {
+            foreach($this->series['result'] as $value) {
+                $categories[] = $value['_id']['month'] . '/' . substr($value['_id']['year'], 2,2);
+                $series['data'][] = $value['count'];
+            }
+        }
+        //TODO remove ^^^
+
+        $chart->xAxis->categories = $categories;
+
         $yLabel = isset($this->data['y']['label']) ? $this->data['y']['label'] : 'no data';
         $chart->yAxis = array(
             'title' => array(
@@ -81,7 +129,7 @@ class LineWidget extends Widget {
                 ),
             );
         } else {
-            $chart->series = $this->series;
+            $chart->series = array($series);
         }
 
 //            $chart->series[] = array(

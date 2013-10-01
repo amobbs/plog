@@ -9,7 +9,7 @@ use Preslog\Widgets\WidgetFactory;
  */
 class DashboardsController extends AppController
 {
-    public $uses = array('User', 'Dashboard', 'Widget');
+    public $uses = array('User', 'Dashboard', 'Widget', 'Log');
 
 
     /**
@@ -153,17 +153,17 @@ class DashboardsController extends AppController
 
     private function updateDashboardWidgets($id, $widgets) {
         $dashboard = array(
-            'id' => new MongoId($id),
+            '_id' => new MongoId($id),
             'widgets' => array(),
         );
         foreach($widgets as $widget) {
             $widgetObject = WidgetFactory::createWidget($widget);
-            $widgetObject->setId(new MongoId($widget['id']));
+            $widgetObject->setId(new MongoId($widget['_id']));
             $dashboard['widgets'][] = $widgetObject->toArray();
         }
 
         $this->Dashboard->save($dashboard, false, array(
-            'id',
+            '_id',
             'widgets',
         ));
         return $dashboard;
@@ -305,6 +305,11 @@ class DashboardsController extends AppController
         if (!isset($data['name'])) $data['name'] = 'Widget';
         $widget = WidgetFactory::createWidget($data);
         $widget->setId(new MongoId());
+        //TODO remove this and replace with jql parser stuff
+        //from query get data and save into series on widget;
+        $widget->setSeries($this->Dashboard->getDataForWidget($widget->getQuery()));
+
+
         return $widget;
     }
 
