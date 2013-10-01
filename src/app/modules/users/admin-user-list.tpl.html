@@ -10,6 +10,7 @@
         <div class="span4 controls">
             <div class="btn-group pull-right">
                 <a class="btn btn-info dropdown-toggle" data-toggle="dropdown" href="#">
+                    <i class="icon icon-cog"></i>
                     Actions
                     <span class="caret"></span>
                 </a>
@@ -25,23 +26,23 @@
 
             <table ng-table="tableParams" show-filter="true" class="table table-bordered table-condensed">
                 <tr ng-repeat="user in users">
-                    <td title="'First Name'" sortable="firstName" filter="{ 'firstName': 'text' }">
+                    <td data-title="'First Name'" sortable="firstName" filter="{ 'firstName': 'text' }">
                         {{user.firstName}}
                     </td>
-                    <td title="'Last Name'" sortable="lastName" filter="{ 'lastName': 'text' }">
+                    <td data-title="'Last Name'" sortable="lastName" filter="{ 'lastName': 'text' }">
                         {{user.lastName}}
                     </td>
-                    <td title="'Client'" sortable="client" filter="{ 'client': 'text' }">
-                        {{user.client}}
+                    <td data-title="'Company'" sortable="company" filter="{ 'company': 'text' }">
+                        {{user.company}}
                     </td>
-                    <td title="'Email'" sortable="email" filter="{ 'email': 'text' }">
+                    <td data-title="'Email'" sortable="email" filter="{ 'email': 'text' }">
                         {{user.email}}
                     </td>
-                    <td title="'Role'" sortable="role" filter="{ 'role': 'text' }">
+                    <td data-title="'Role'" sortable="role" filter="{ 'role': 'text' }">
                         {{user.role}}
                     </td>
-                    <td title="'Actions'" sortable="role" filter="{ 'role': 'text' }">
-                        <a class="btn btn-info" href="/admin/users/{{user._id}}"> <i class="icon icon-edit"></i> Edit </a>
+                    <td title="'Actions'" filter="{ 'action': 'button' }" class="actions">
+                        <a class="btn btn-block btn-info" href="/admin/users/{{user._id}}"><i class="icon icon-edit"></i> Edit</a>
                     </td>
                 </tr>
             </table>

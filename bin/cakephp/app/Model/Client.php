@@ -5,6 +5,7 @@
  */
 
 App::uses('AppModel', 'Model');
+App::uses('Client', 'Model');
 
 class Client extends AppModel
 {
@@ -32,6 +33,7 @@ class Client extends AppModel
         'created'       => array('type' => 'datetime', 'mongoType'=>'MongoDate'),
         'modified'      => array('type' => 'datetime', 'mongoType'=>'MongoDate'),
     );
+
 
     /**
      * convert any id's into mongo id's and add any missing id's
@@ -91,47 +93,79 @@ class Client extends AppModel
 
     /**
      * Fetch the notifications for clients
-     * Limits the Client list to those specified in the Ids array, if set.
-     * @param       string      Id
+     * If UserID is specified
+     * @param       string      UserId
      * @return      array       Notification structure
      */
-    public function getNotificationsList( $ids=null )
+    public function getNotificationsList( $userId=null )
     {
-        // TODO: Make this run off client data
+        $this->User = ClassRegistry::init('User');
 
-        $notify = array(
-            'clients'=>array(
-                'name'=>'one',
-                'id'=>1,
-                'severities'=>array(
-                    array(
-                        'name'=>'Sev 1',
-                        'id'=>'1',
-                    ),
-                    array(
-                        'name'=>'Sev 2',
-                        'id'=>'2',
-                    )
+        // Basic conditions for search
+        $conditions = array('deleted'=>false);
+
+        // If the UserID is present, establish the find conditions
+        if ( !empty($userId) )
+        {
+            // Fetch the user
+            $user = $this->User->find('first', array(
+                'conditions'=>array(
+                    '_id'=>$userId
                 ),
-                'attributes'=>array(
-                    array(
-                        'id'=>'1234',
-                        'name'=>'Networks',
-                        'deleted'=>false,
-                        'children'=>array(
-                            array(
-                                'id'=>'1',
-                                'name'=>'test',
-                                'deleted'=>false,
-                                'children'=>array()
-                            )
-                        )
-                    ),
+                'fields'=>array(
+                    'role',
+                    'client_id'
                 )
-            )
-        );
+            ));
 
-        return $notify;
+            // Error on nothing to respond with
+            if (!sizeof($user))
+            {
+                return false;
+            }
+
+            // Check the permission for single-client. If we get that, we limit on the client_id.
+            if (false)
+            {
+                $conditions['_id'] = $user['client_id'];
+            }
+        }
+
+        // Fetch the client(s) available
+        $clients = $this->find('all', array(
+            'conditions'=>$conditions,
+            'fields'=>array(
+                '_id',
+                'name',
+                'attributes'
+            )
+        ));
+
+        // Get the notification types
+        $notifyTypes = Configure::read('Preslog.Notifications');
+        $types = array();
+
+        foreach ($notifyTypes as $type)
+        {
+            $types[] = array(
+                'name'=>$type->getName(),
+                'id'=>$type->getKey(),
+            );
+        }
+
+        // make the list!
+        $ret = array('clients'=>array());
+        foreach ($clients as $client)
+        {
+            // Make the client object
+            $client = $client['Client'];
+            $client['types'] = $types;
+
+            // collate to array
+            $ret['clients'][] = $client;
+        }
+
+        return $ret;
     }
 
 
@@ -176,22 +210,6 @@ class Client extends AppModel
                 'id'=>$id
             )
         ));
-    }
-
-
-    /**
-     * Get notifications available to this specific user
-     * @param   array       User Object
-     * @return  array       Notification options
-     */
-    public function getNotificationOptionsAvailableToUser( $user )
-    {
-        // TODO
-        // if user has "single-client" as a permission, use user[client_id] as a lookup for the client
-        // else: fetch all clients that aren't deleted.
-
-        // Return the hierachy
-        return array();
     }
 
 

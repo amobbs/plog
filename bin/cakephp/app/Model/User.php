@@ -329,7 +329,7 @@ class User extends AppModel
     {
         // Fetch all notifications that are available to this user
         // TODO: Make this load the USER TO BE SAVED and pass it to the function
-        $this->Client->getNotificationOptionsAvailableToUser( array() );
+        $this->Client->getNotificationsList( array() );
 
         // TODO: Validation code
 

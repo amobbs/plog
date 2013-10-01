@@ -196,7 +196,7 @@ Router::connect(
  * @SWG\Resource(
  *      resourcePath="/admin",
  *      @SWG\Api(
- *          path="/admin/users",
+ *          path="/admin/users/{user_id}",
  *          @SWG\Operation(
  *              @SWG\Partial("admin.users.options"),
  *              nickname="admin.users.options",
@@ -206,8 +206,9 @@ Router::connect(
  * )
  */
 Router::connect(
-    '/admin/users',
-    array('controller' => 'Users', 'action' => 'adminEditOptions', '[method]' => 'OPTIONS')
+    '/admin/users/:user_id',
+    array('controller' => 'Users', 'action' => 'adminEditOptions', '[method]' => 'OPTIONS'),
+    array('pass'=>array('user_id'), 'user_id'=>'[0-9a-z]*')
 );
 
 

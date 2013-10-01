@@ -159,7 +159,7 @@ class UsersController extends AppController
     {
         // Fetch user with all fields
         $user = $this->User->findById(
-            $this->PreslogAuth->user('id'),
+            $this->PreslogAuth->user('_id'),
             array('fields'=>array(
                 'firstName',
                 'lastName',
@@ -210,7 +210,6 @@ class UsersController extends AppController
 
         // Save limited fields
         $ret = $this->User->save( $user, false, array(
-            'id',
             'firstName',
             'lastName',
             'email',
@@ -218,7 +217,6 @@ class UsersController extends AppController
             'company',
             'phoneNumber',
         ));
-
 
         // Return success
         $return = array('Success'=>$ret);
@@ -238,8 +236,11 @@ class UsersController extends AppController
      */
     public function myNotificationsOptions()
     {
-        // Get all clients and attributes
-        $options['notifications'] = $this->Client->getNotificationsList();
+        // This users ID
+        $userId = $this->PreslogAuth->user('_id');
+
+        // Get notifications this user can see
+        $options['notifications'] = $this->Client->getNotificationsList( $userId );
 
         // Output
         $this->set($options);
@@ -260,7 +261,7 @@ class UsersController extends AppController
     {
         // Fetch user with all fields
         $user = $this->User->findById(
-            $this->PreslogAuth->user('id'),
+            $this->PreslogAuth->user('_id'),
             array('fields'=>array(
                 'notifications',
             ))
@@ -293,7 +294,7 @@ class UsersController extends AppController
         $user = $this->request->data['User'];
 
         // Set the ID to the current user
-        $user['_id'] = $this->PreslogAuth->user('id');
+        $user['_id'] = $this->PreslogAuth->user('_id');
 
         // Apply data and validate before insert
         $this->User->set($user);
@@ -361,7 +362,7 @@ class UsersController extends AppController
      *      notes="User must be an Administrator"
      * )
      */
-    public function adminEditOptions()
+    public function adminEditOptions( $userId=null )
     {
         $options = array();
 
@@ -372,7 +373,7 @@ class UsersController extends AppController
         $options['clients'] = $this->Client->getClientsAsOptions();
 
         // Get all clients and attributes
-        $options['notifications'] = $this->Client->getNotificationsList();
+        $options['notifications'] = $this->Client->getNotificationsList( $userId );
 
         // Output
         $this->set($options);

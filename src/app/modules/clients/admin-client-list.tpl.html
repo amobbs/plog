@@ -11,6 +11,7 @@
         <div class="span4 controls">
             <div class="btn-group pull-right">
                 <a class="btn btn-info dropdown-toggle" data-toggle="dropdown" href="#">
+                    <i class="icon icon-cog"></i>
                     Actions
                     <span class="caret"></span>
                 </a>
@@ -26,23 +27,23 @@
         <div class="span12">
             <table ng-table="tableParams" show-filter="true" class="table table-bordered table-condensed">
                 <tr ng-repeat="client in clients">
-                    <td title="'Logo'">
+                    <td data-title="'Logo'">
                         <img src="{{client.logo}}" width="68" height="20" alt="{{ client.name }}" />
                     </td>
-                    <td title="'Client'" sortable="name" filter="{ 'name': 'text' }">
+                    <td data-title="'Client'" sortable="name" filter="{ 'name': 'text' }">
                         {{client.name}}
                     </td>
-                    <td title="'Activation Date'" sortable="activationDate" filter="{ 'activationDate': 'text' }">
+                    <td data-title="'Activation Date'" sortable="activationDate">
                         {{client.activationDate}}
                     </td>
-                    <td title="'Number of Logs'">
+                    <td data-title="'Number of Logs'">
                         {{ client.stats.numLogs }}
                     </td>
-                    <td title="'Number of Users'">
+                    <td data-title="'Number of Users'">
                         {{ client.stats.numUsers }}
                     </td>
-                    <td title="'Actions'">
-                        <a class="btn btn-info" href="/admin/clients/{{client._id}}"> <i class="icon icon-edit"></i> Edit </a>
+                    <td data-title="'Actions'" filter="{ 'action': 'button' }">
+                        <a class="btn btn-block btn-info" href="/admin/clients/{{client._id}}"> <i class="icon icon-edit"></i> Edit </a>
                     </td>
                 </tr>
             </table>

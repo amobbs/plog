@@ -2,27 +2,19 @@
     <div class="row-fluid">
         <div class="modal span12" style="position: relative; top: 20px; left: auto; right: auto; margin: 0 auto 20px;">
             <div class="modal-header">
-                <h3>Fatal Error</h3>
+                <h3>{{ErrorHandlerCtrl.title}}</h3>
             </div>
             <div class="modal-body">
-                <div class="row-fluid">
-                    <div class="span12">
-                        <h3>{{ErrorHandlerCtrl.title}}</h3>
-                        <h4>{{ErrorHandlerCtrl.message}}</h4>
-
-                        <p>
-                            Please go back and try again.
-                            <br/> If this issue persists, please notify the system administrator.
-                        </p>
-
-                        <div ng-show="ErrorHandlerCtrl.details">
-                            <h4>Error Data</h4>
-                            <pre>{{ErrorHandlerCtrl.details}}</pre>
-                        </div>
-
+                        <h3>{{ErrorHandlerCtrl.message}}</h3>
+                        <p>Please go back and try again.</p>
+                        <p>If this issue persists, please contact the system administrator.</p>
+                        <p>&nbsp;</p>
+                        <accordion close-others="oneAtATime" ng-show="ErrorHandlerCtrl.details">
+                            <accordion-group heading="Raw Error Data">
+                                <pre>{{ErrorHandlerCtrl.details}}</pre>
+                            </accordion-group>
+                        </accordion>
                     </div>
-                </div>
-            </div>
             <div class="modal-footer">
                 <a ng-click="ErrorHandlerCtrl.goBack()" class="btn btn-warning"><i class="icon icon-arrow-left"></i> Go Back</a>
             </div>

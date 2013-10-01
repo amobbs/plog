@@ -70,8 +70,8 @@
                         <p>Send alerts for logs which are..</p>
                         <div class="control-group">
                             <div class="controls">
-                                <label class="checkbox" ng-repeat="severity in client.severities">
-                                    <input type="checkbox" ng-model="user.notifications.clients[client.id].severity[severity.id]"> {{severity.name}}
+                                <label class="checkbox" ng-repeat="type in client.types">
+                                    <input type="checkbox" ng-model="user.notifications.clients[client.id].type[type.id]"> {{type.name}}
                                 </label>
                             </div>
                         </div>
@@ -85,7 +85,7 @@
                             </div>
                             <div class="row-fluid">
                                 <div class="span6" ng-repeat="child in group.children">
-                                    <span hierarchy-fields="{{child}}" hierarchy-selected="{{user.notifications.clients[client.id].attributes}}"></span>
+                                    <span hierarchy-fields="child" hierarchy-selected="user.notifications.clients[client._id].attributes"></span>
                                 </div>
                             </div>
                         </div>

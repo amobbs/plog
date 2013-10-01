@@ -89,6 +89,18 @@ angular.module( 'Preslog.users', [
                     controller: 'AdminUserListCtrl',
                     templateUrl: 'modules/users/admin-user-list.tpl.html'
                 }
+            },
+            resolve: {
+                userData: ['$q', 'Restangular', function($q, Restangular) {
+                    var deferred = $q.defer();
+
+                    // Fetch user list
+                    Restangular.all('admin/users').getList().then(function (data) {
+                        deferred.resolve(data);
+                    });
+
+                    return deferred.promise;
+                }]
             }
         });
 
@@ -256,7 +268,7 @@ angular.module( 'Preslog.users', [
     /**
      * Admin: User: List
      */
-    .controller( 'AdminUserListCtrl', function UserAdminListController( $scope, titleService, ngTableParams, Restangular, $filter ) {
+    .controller( 'AdminUserListCtrl', function UserAdminListController( $scope, userData, titleService, ngTableParams, Restangular, $filter ) {
 
         // Set page title
         titleService.setTitle( ['Users', 'Admin'] );
@@ -274,42 +286,24 @@ angular.module( 'Preslog.users', [
             }
         });
 
-        // Fetch users, then instigate table watcher
-        Restangular.all('admin/users').getList().then(function (data) {
-            $scope.loading = false;
+        // Get user data and put to scope
+        $scope.allUsers = userData.users;
 
-            $scope.allUsers = data.users;
+        // Watch table and perform actions
+        $scope.$watch('tableParams', function(params) {
 
-            // Some simple data processing
-            for (var i = 0; i < $scope.allUsers.length ; i++) {
-                // Enforce "deleted". False if not set
-                if ($scope.allUsers[i].deleted === undefined) { $scope.allUsers[i].deleted = false; }
-                $scope.allUsers[i].deleted = $scope.allUsers[i].deleted ? 'true' : 'false';
-            }
+            // Filter and order
+            var orderedData = params.filter ? $filter('filter')($scope.allUsers, params.filter) : $scope.allUsers;
 
-            var tmp = $scope.allUsers;
-            $scope.allUsers = [];
+            // set total for pagination
+            params.total = orderedData.length;
 
-            for (var j = 0; j < tmp.length ; j++) {
-                $scope.allUsers[j] = tmp[j];
-            }
-
-            // Watch table and perform actions
-            $scope.$watch('tableParams', function(params) {
-
-                // Filter and order
-                var orderedData = params.filter ? $filter('filter')($scope.allUsers, params.filter) : $scope.allUsers;
-
-                // set total for pagination
-                params.total = orderedData.length;
-
-                // slice array data on pages
-                $scope.users = orderedData.slice(
-                    (params.page - 1) * params.count,
-                    params.page * params.count
-                );
-            }, true);
-        });
+            // slice array data on pages
+            $scope.users = orderedData.slice(
+                (params.page - 1) * params.count,
+                params.page * params.count
+            );
+        }, true);
 
 
         /**
