@@ -293,6 +293,7 @@ class DashboardsController extends AppController
         if ($this->request->is('get')) { //read widget
             $widgetArrayId = $this->Dashboard->findWidgetArrayId($dashboard, $this->request->params['widget_id']);
             $widget = WidgetFactory::createWidget($dashboard['widgets'][$widgetArrayId]);
+            $widget->setSeries($this->Dashboard->getDataForWidget($widget->getQuery()));
             $this->set('widget', $widget->toArray());
             $serialize[] = 'widget';
         }
@@ -342,14 +343,15 @@ class DashboardsController extends AppController
     public function deleteWidget($dashboardId, $widgetId)
     {
         $dashboard = $this->Dashboard->findById(new MongoId($dashboardId));
+        $dashboard['Dashboard']['_id'] = new MongoId($dashboardId);
         foreach($dashboard['Dashboard']['widgets'] as $key => $widget) {
-            if ($dashboard['Dashboard']['widgets'][$key]['id'] == $widgetId) {
+            if ($dashboard['Dashboard']['widgets'][$key]['_id'] == $widgetId) {
                 unset($dashboard['Dashboard']['widgets'][$key]);
                 break;
             }
         }
 
-        $this->Dashboard->save($dashboard);
+        $this->Dashboard->save($dashboard['Dashboard']);
         $this->set('success', true);
         $this->set('dashboard', $dashboard['Dashboard']);
         $this->set('_serialize', array('success', 'dashboard'));
