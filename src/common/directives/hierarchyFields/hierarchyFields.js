@@ -56,7 +56,7 @@ angular.module('hierarchyFields', [])
                             });
                         },
                         onDblClick: function(node, event) {
-                            if (allowEdit === true) {
+                            if (allowEdit.toLowerCase() === "true") {
                                 editNode(node);
                             }
                             return false;
