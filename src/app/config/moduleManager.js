@@ -30,6 +30,7 @@ angular.module('moduleManager', [
     // Site Modules
     'pages',
     'Preslog.auth',
+    'Preslog.nav',
     'Preslog.users',
     'Preslog.clients',
     'Preslog.home',

@@ -116,7 +116,7 @@ class LogsController extends AppController
         $ret = $this->Log->save( $log );
 
         // Notifications: Issue Email and SMS notifications relevant to this logs update.
-        // TODO
+        // TODO: Enable this when notifications are better
         //$this->LogNotification->issueNotifications( $log );
 
         // Return success
@@ -151,7 +151,7 @@ class LogsController extends AppController
         $log = $this->Log->findByHrid( $id );
 
         // Validate: does this log exist
-        if (false)
+        if (!sizeof($log))
         {
             $this->errorNotFound(array('message'=>'Log could not be found'));
         }
@@ -200,11 +200,19 @@ class LogsController extends AppController
         if (!empty($id))
         {
             $log = $this->Log->findByHrid( $id );
+
+            // Validate: Does log exist?
+            if (!sizeof($log))
+            {
+                $this->errorNotFound(array('message'=>'Log could not be found'));
+            }
+
             $clientId = (string) $log['Log']['client_id'];
         }
         else
         {
-            $clientId = trigger_error('TODO', E_USER_ERROR);
+            // Fetch the current client ID that's been selected.
+            $clientId = $this->User->selectedClient();
         }
 
         // Load: Log format from specific Client

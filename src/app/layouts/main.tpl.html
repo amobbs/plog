@@ -1,4 +1,4 @@
-<nav class="navbar navbar-inverse navbar-fixed-top" id="preslog_nav">
+<nav class="navbar navbar-inverse navbar-fixed-top" id="preslog_nav" ng-controller="NavCtrl">
     <div class="navbar-inner">
         <div class="container-fluid">
             <a class="btn btn-navbar" data-toggle="collapse" data-target=".navbar-responsive-collapse">
@@ -6,17 +6,19 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </a>
-            <a class="brand" href="/"><img src="/assets/img/layout/logo.png" alt="Mediahub Australia" /></a>
+            <a class="brand" href="/">
+                <img src="/assets/img/layout/logo.png" alt="Mediahub Australia" />
+                <img ng-show="{{global.clients.length < 2}}" title="{{client.name}}" src="{{client.logo}}" />
+            </a>
 
             <div class="nav-collapse collapse navbar-responsive-collapse">
                 <ul class="nav">
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><img src="/assets/clients/win/logo.png"> <b class="caret"></b></a>
+                    <li class="dropdown" ng-show="{{global.clients.length > 1}}">
+                        <a href="#" title="{{client.name}}" class="dropdown-toggle" data-toggle="dropdown"><img alt="{{client.name}}" src="{{client.logo}}"> <b class="caret"></b></a>
                         <ul class="dropdown-menu">
-                            <li><a href="#"><img src="/assets/clients/sbs/logo.png"></a></li>
-                            <li><a href="#"><img src="/assets/clients/tvn/logo.png"></a></li>
-                            <li><a href="#"><img src="/assets/clients/abc/logo.png"></a></li>
-                            <li><a href="#"><img src="/assets/clients/mediahub/logo.png"></a></li>
+                            <li ng-repeat="client in global.clients">
+                                <a href="#" ng-click="switchClient( client._id );" title="{{ client.name }}"><img alt="{{ client.name }}" src="{{ client.logo }}"></a>
+                            </li>
                         </ul>
                     </li>
                     <li class="divider-vertical"></li>
