@@ -46,8 +46,8 @@ class PieWidget extends Widget {
 
         $chart->chart = array(
             'type' => 'pie',
-            'marginRight' => 25,
-            'marginBottom' => 25
+            'marginRight' => 0,
+            'marginBottom' => 0
         );
 
         $chart->plotOptions = array(
