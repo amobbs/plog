@@ -1,8 +1,6 @@
 <div id="preslog_dashboard">
 
     <div id="preslog_sidebar">
-
-        <h3>{{ item.name }}</h3>
         <ul class="nav nav-tabs nav-stacked">
             <li><a href="/dashboard/log-list">Live Report<i class="icon-chevron-right"></i></a></li>
             <li><a href="/dashboard/log-list">Daily Logs<i class="icon-chevron-right"></i></a></li>
@@ -11,6 +9,9 @@
         </ul>
 
         <h3>Favourite Dashboards</h3>
+        <ul class="nav nav-tabs nav-stacked">
+            <li><a href="/dashboard/">Dash A<i class="icon-chevron-right"></i></a></li>
+        </ul>
         <ul class="nav nav-tabs nav-stacked" ng-repeat="item in favourites">
             <li><a ng-href="/dashboard/{{ item.id }}">{{ item.name }}<i class="icon-chevron-right"></i></a></li>
         </ul>

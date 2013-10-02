@@ -92,6 +92,9 @@ angular.module( 'Preslog.log', [
 
         $scope.attributesDisplay = function(children) {
             var columns = [[], []];
+            if (children.length === 0) {
+                return columns;
+            }
             var colSize1 = Math.floor(children.length / 2);
 
             for(var i = 0; i < children.length; i++)
