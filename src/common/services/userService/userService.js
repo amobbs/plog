@@ -71,9 +71,11 @@ angular.module('userService', ['restangular'])
                             // Save user details to service
                             user = ret.login.user;
                             permissions = ret.login.permissions;
+                            clients = ret.login.clients;
 
                             // Push details to scopes
                             $rootScope.global.user = user;
+                            $rootScope.global.clients = clients;
                             $rootScope.global.userService = service;
                             $rootScope.global.loggedIn = true;
 

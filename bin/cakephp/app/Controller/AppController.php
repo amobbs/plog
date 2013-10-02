@@ -132,7 +132,7 @@ class AppController extends Controller {
         // Use Blowfish (bcrypt)
         // Set Form fields are email and password
         $this->PreslogAuth->authenticate = array(
-            'Form'=>array(
+            'Preslog'=>array(
                 'passwordHasher'=>'blowfish',
                 'fields'=>array(
                     'username'=>'email',
@@ -147,12 +147,12 @@ class AppController extends Controller {
 
     /**
      * Check if the user is authorised on this resource
-     * We can also call $this->isAuthorised against a specific permission
+     * We can also call $this->isAuthorised against a specific permission or specific userRole
      */
-    function isAuthorized( $permission=null )
+    function isAuthorized( $permission=null, $userRole=null )
     {
-        // Get the users role
-        $userRole = $this->PreslogAuth->user('role');
+        // Get the users role from PreslogAuth if not supplied
+        $userRole = ($userRole ? $userRole : $this->PreslogAuth->user('role'));
 
         // Load the ACL configuration
         $config = Configure::read('auth-acl');

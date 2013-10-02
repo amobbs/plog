@@ -66,12 +66,7 @@ class UsersController extends AppController
         if (array_key_exists('User', $this->request->data))
         {
             // Try to login with form validation
-            if( $this->PreslogAuth->login() )
-            {
-                // Do magical i-just-logged-on things
-                //$this->Session->write('Auth.User.group', $this->PreslogAuth->user());     NO LONGER REQUIRED
-            }
-            else
+            if( !$this->PreslogAuth->login() )
             {
                 $response['message'] = 'Invalid username or password.';
             }
@@ -90,11 +85,34 @@ class UsersController extends AppController
             $user = $this->PreslogAuth->User();
             $permissions = $this->PreslogAuth->getUserPermissions();
 
+            // Get list of accessible clients, where available
+            $conditions = array('deleted'=>false);
+            if ( $this->isAuthorized('single-client') )
+            {
+                $conditions['_id'] = $user['client_id'];
+            }
+
+            $clients = $this->Client->find('all', array(
+                'conditions'=>$conditions,
+                'fields'=>array(
+                    '_id',
+                    'name',
+                )
+            ));
+
+            // Flatten
+            foreach ($clients as $k=>$client)
+            {
+                $client['Client']['logo'] = $this->Client->getLogoPath($client['Client']);
+                $clients[$k] = $client['Client'];
+            }
+
             // Override error response with success response!
             $response = array(
-                'success' => true,
-                'user' => $user,
-                'permissions' => $permissions
+                'success' => true,                  // Went Ok
+                'user' => $user,                    // User Info
+                'permissions' => $permissions,      // User Permissions
+                'clients' => $clients,              // Accessible client list
             );
         }
 
