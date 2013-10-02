@@ -81,19 +81,19 @@ class PieWidget extends Widget {
         $chart->series = array(
             array(
                 'type' => 'pie',
-                'name' => '',
-                'data' => array(),
+                'name' => 'no Data',
+                'data' => array(1,2,3),
             ),
         );
 
-        if (isset($this->series['result'])) {
-            foreach($this->series['result'] as $dataPoint) {
-                $chart->series[0]['data'][] = array(
-                    $dataPoint['_id'],
-                    $dataPoint['count'],
-                );
-            }
-        }
+//        if (isset($this->series['result'])) {
+//            foreach($this->series['result'] as $dataPoint) {
+//                $chart->series[0]['data'][] = array(
+//                    $dataPoint['_id'],
+//                    $dataPoint['count'],
+//                );
+//            }
+//        }
 
 //        if (empty($this->data)) {
 //            $chart->series[0]['name'] = 'no data';
