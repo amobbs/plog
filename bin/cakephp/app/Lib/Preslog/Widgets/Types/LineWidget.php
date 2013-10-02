@@ -77,11 +77,9 @@ class LineWidget extends Widget {
 
 
         $chart->legend = array(
-            'layout' => 'vertical',
             'align' => 'center',
             'verticalAlign' => 'bottom',
-            'layout' => 'horizontal',
-            'borderWidth' => 0
+            'borderWidth' => 0,
         );
 
         $xLabel = isset($this->data['x']['label']) ? $this->data['x']['label'] : 'no data';

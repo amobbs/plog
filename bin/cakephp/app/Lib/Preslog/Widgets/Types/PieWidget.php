@@ -25,9 +25,14 @@ class PieWidget extends Widget {
                     '_id' => new MongoId('524a42bddf81d178120031a0')
                  )
             ),
+            array(
+                '$project' => array(
+                    'cause' => '$fields.data.name'
+                ),
+            ),
 	        array(
                 '$group' => array(
-                    '_id' => '$fields.data.text',
+                    '_id' => '$cause',
                     'count' => array('$sum' =>  1)
                 )
             )

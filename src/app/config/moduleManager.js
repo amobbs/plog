@@ -35,6 +35,7 @@ angular.module('moduleManager', [
     'Preslog.home',
     'Preslog.log',
     'Preslog.search',
+    'Preslog.search.sqlModal',
     'Preslog.dashboard',
     'Preslog.dashboard.dashboardModal',
     'Preslog.dashboard.widgetModal'
