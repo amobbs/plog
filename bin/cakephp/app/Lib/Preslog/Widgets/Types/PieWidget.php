@@ -25,9 +25,14 @@ class PieWidget extends Widget {
                     '_id' => new MongoId('524a42bddf81d178120031a0')
                  )
             ),
+            array(
+                '$project' => array(
+                    'cause' => '$fields.data.name'
+                ),
+            ),
 	        array(
                 '$group' => array(
-                    '_id' => '$fields.data.text',
+                    '_id' => '$cause',
                     'count' => array('$sum' =>  1)
                 )
             )
@@ -76,19 +81,19 @@ class PieWidget extends Widget {
         $chart->series = array(
             array(
                 'type' => 'pie',
-                'name' => '',
-                'data' => array(),
+                'name' => 'no Data',
+                'data' => array(1,2,3),
             ),
         );
 
-        if (isset($this->series['result'])) {
-            foreach($this->series['result'] as $dataPoint) {
-                $chart->series[0]['data'][] = array(
-                    $dataPoint['_id'],
-                    $dataPoint['count'],
-                );
-            }
-        }
+//        if (isset($this->series['result'])) {
+//            foreach($this->series['result'] as $dataPoint) {
+//                $chart->series[0]['data'][] = array(
+//                    $dataPoint['_id'],
+//                    $dataPoint['count'],
+//                );
+//            }
+//        }
 
 //        if (empty($this->data)) {
 //            $chart->series[0]['name'] = 'no data';

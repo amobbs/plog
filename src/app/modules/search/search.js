@@ -13,7 +13,8 @@
  * specified, as shown below.
  */
 angular.module( 'Preslog.search', [
-        'titleService'
+        'titleService',
+        'Preslog.search.sqlModal'
     ])
 
     .config(function(stateHelperProvider) {
@@ -31,11 +32,11 @@ angular.module( 'Preslog.search', [
 /**
  * And of course we define a controller for our route.
  */
-    .controller( 'SearchCtrl', function LogController( $scope, $http, titleService, Restangular ) {
+    .controller( 'SearchCtrl', function LogController( $scope, $http, $modal, titleService, Restangular ) {
        titleService.setTitle( 'Search' );
 
        // $scope.jql = '(created > startofweek[] AND created < startofday[-1d]) AND operator not in ("jim", "pete") AND (duration > 1d AND duration < 1d10m) ';
-        $scope.jql = 'id=1 and (id = 2 or (id = 3 or id = 3.1)) and name = 4 and (id =5 or id =6) and id =7';
+        $scope.jql = 'id=1 and (id = 2 or (id = 3 or id = 3.1))';
         $scope.sql = 'SELECT * FROM "LOGS" WHERE "ID" = ?';
 
         $scope.args = ['1'];
@@ -250,18 +251,31 @@ angular.module( 'Preslog.search', [
         };
 
        $scope.jqlToSql = function() {
-           if ($scope.jql === "") {
-               return;
-           }
-           Restangular.one('search/wizard/params').get({jql : $scope.jql}).then(function(data) {
-               if (data) {
-                   $scope.sql = data.sql;
-                   $scope.args = data.args;
-               }
-           });
-       };
-    })
+           Restangular.one('search/wizard/params')
+               .get({jql : $scope.jql})
+               .then(function(data) {
+                   if (data) {
+                       $scope.sql = data.sql;
+                       $scope.args = data.args;
 
+                       var modal = $modal.open({
+                           templateUrl: 'modules/search/queryModal/sqlQueryModal.tpl.html',
+                           controller: 'SqlModalCtrl',
+                           resolve: {
+                                sql: function() { return $scope.sql; },
+                                args: function() { return $scope.args; }
+                           }
+                       });
+                       modal.result.then(function(jql) {
+
+                       });
+
+                   }
+               });
+
+       };
+
+    })
     .directive('redQueryBuilder', ['$timeout', 'Restangular',
         function($timeout, Restangular) {
             return {
