@@ -59,7 +59,7 @@ class LogNotificationComponent extends Component
 
         // Skim all types and the selected attributes for this Log, and get all the users who care.
         // TODO
-        $users = $this->User->findUserByNotifications($keys, $log['attributes']);
+        $users = $this->User->findUsersByNotifications($keys, $log['attributes']);
 
         // Nobody interested?
         if (!sizeof($users))

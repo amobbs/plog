@@ -157,9 +157,17 @@ class UsersController extends AppController
      */
     public function myProfileRead()
     {
+        $userId = $this->PreslogAuth->user('_id');
+
+        // Safeguard peoples info!
+        if (!$userId)
+        {
+            $this->errorGeneric(array('message'=>'Error loading current users details.'));
+        }
+
         // Fetch user with all fields
         $user = $this->User->findById(
-            $this->PreslogAuth->user('_id'),
+            $userId,
             array('fields'=>array(
                 'firstName',
                 'lastName',
@@ -201,6 +209,12 @@ class UsersController extends AppController
         // Force the user ID to be the current user
         $user['_id'] = $this->PreslogAuth->user('_id');
 
+        // Safeguard peoples info!
+        if (!$user['_id'])
+        {
+            $this->errorGeneric(array('message'=>'Error loading current users details.'));
+        }
+
         // Apply data and validate before insert
         $this->User->set($user);
         if ( !$this->User->validatesMyProfile() )
@@ -239,6 +253,12 @@ class UsersController extends AppController
         // This users ID
         $userId = $this->PreslogAuth->user('_id');
 
+        // Safeguard peoples info!
+        if (!$userId)
+        {
+            $this->errorGeneric(array('message'=>'Error loading current users details.'));
+        }
+
         // Get notifications this user can see
         $options['notifications'] = $this->Client->getNotificationsList( $userId );
 
@@ -259,9 +279,18 @@ class UsersController extends AppController
      */
     public function myNotificationsRead()
     {
+        // Force the user ID to be the current user
+        $userId = $this->PreslogAuth->user('_id');
+
+        // Safeguard peoples info!
+        if (!$userId)
+        {
+            $this->errorGeneric(array('message'=>'Error loading current users details.'));
+        }
+
         // Fetch user with all fields
         $user = $this->User->findById(
-            $this->PreslogAuth->user('_id'),
+            $userId,
             array('fields'=>array(
                 'notifications',
             ))
@@ -296,6 +325,12 @@ class UsersController extends AppController
         // Set the ID to the current user
         $user['_id'] = $this->PreslogAuth->user('_id');
 
+        // Safeguard peoples info!
+        if (!$user['_id'])
+        {
+            $this->errorGeneric(array('message'=>'Error loading current users details.'));
+        }
+
         // Apply data and validate before insert
         $this->User->set($user);
         if ( !$this->User->validatesMyNotifications() )
@@ -313,6 +348,7 @@ class UsersController extends AppController
         $this->set($return);
         $this->set('_serialize', array_keys($return));
     }
+
 
     /**
      * List all users with partial details

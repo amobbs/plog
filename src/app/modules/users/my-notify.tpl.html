@@ -35,7 +35,7 @@
                     <div class="controls">
                         <input type="checkbox"
                                id="inputNotifyEmail"
-                               ng-model="user.notifications.types.email" />
+                               ng-model="user.notifications.methods.email" />
                     </div>
                 </div>
                 <div class="control-group">
@@ -43,7 +43,7 @@
                     <div class="controls">
                         <input type="checkbox"
                                id="inputNotifyPhone"
-                               ng-model="user.notifications.types.phone"
+                               ng-model="user.notifications.methods.sms"
                                tooltip-placement="right"
                                tooltip="SMS Notifications can issued for high severity events." />
                     </div>
@@ -71,7 +71,7 @@
                         <div class="control-group">
                             <div class="controls">
                                 <label class="checkbox" ng-repeat="type in client.types">
-                                    <input type="checkbox" ng-model="user.notifications.clients[client.id].type[type.id]"> {{type.name}}
+                                    <input type="checkbox" ng-model="user.notifications.clients[client._id].type[type.id]"> {{type.name}}
                                 </label>
                             </div>
                         </div>
@@ -84,8 +84,8 @@
                                 </div>
                             </div>
                             <div class="row-fluid">
-                                <div class="span6" ng-repeat="child in group.children">
-                                    <span hierarchy-fields="child" hierarchy-selected="user.notifications.clients[client._id].attributes"></span>
+                                <div class="span6" >
+                                    <div hierarchy-fields="group.children" hierarchy-selected="user.notifications.clients[client._id].attributes"></div>
                                 </div>
                             </div>
                         </div>

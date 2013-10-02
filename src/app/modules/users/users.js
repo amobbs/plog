@@ -145,7 +145,7 @@ angular.module( 'Preslog.users', [
                 // Fetch edit opts
                 optionsSource: ['$q', 'Restangular', '$stateParams', function($q, Restangular, $stateParams) {
                     var deferred = $q.defer();
-                    Restangular.one('admin/users').options().then(function(options) {
+                    Restangular.one('admin/users', $stateParams.user_id).options().then(function(options) {
                         deferred.resolve(options);
                     });
 
@@ -397,55 +397,6 @@ angular.module( 'Preslog.users', [
 
             });
         };
-
-
-        $scope.user.notifications = {};
-        $scope.user.notifications.clients = [];
-        $scope.user.notifications.clients['1'] = {};
-        $scope.user.notifications.clients['1'].severity = [];
-        $scope.user.notifications.clients['1'].attributes = [4,5];
-
-        $scope.fields = {};
-        $scope.fields.notifications = {};
-        $scope.fields.notifications.clients = [
-            {
-                'name':'ONE',
-                'id': 1,
-                'severities':
-                [
-                    {
-                        'name':'Severity 1',
-                        'id':'1'
-                    },
-                    {
-                        'name':'Severity 2',
-                        'id':'2'
-                    }
-                ],
-                'attributes':
-                [
-                    {
-                        id: 1, name: "Networks", deleted: false, children: [
-                            {id: 2, name:"ABC", deleted: false, children: [
-                                {id: 3, name: "ABC", deleted: false},
-                                {id: 4, name: "ABC 2", deleted: false},
-                                {id: 5, name: "ABC 3", deleted: false},
-                                {id: 6, name: "ABC News", deleted: false}
-                            ]},
-                            {id: 7, name:"WIN", deleted: false, children: [
-                                {id: 8, name: "Win", deleted: false}
-                            ]},
-                            {id: 9, name:"Blah", deleted: false, children: [
-                                {id: 10, name: "Win", deleted: false}
-                            ]},
-                            {id: 11, name:"Blah", deleted: false, children: [
-                                {id: 12, name: "Win", deleted: false}
-                            ]}
-                        ]
-                    }
-                ]
-            }
-        ];
 
     })
 

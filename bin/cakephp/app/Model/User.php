@@ -378,7 +378,7 @@ class User extends AppModel
      * @param   array   $attributes
      * @return  array
      */
-    public function findUserByNotifications( $keys, $attributes )
+    public function findUsersByNotifications( $keys, $attributes )
     {
         $users = $this->find('all', array(
             'conditions'=>array(
