@@ -9,7 +9,7 @@ use Preslog\Widgets\WidgetFactory;
  */
 class DashboardsController extends AppController
 {
-    public $uses = array('User', 'Dashboard', 'Widget', 'Log');
+    public $uses = array('User', 'Dashboard', 'Widget', 'Log', 'Client');
 
 
     /**
@@ -147,8 +147,12 @@ class DashboardsController extends AppController
             }
         }
 
+        //TODO remove this and make sure we only send a list of clients to admin users.
+        $clients = $this->Client->find('all');
+        $this->set('clients', $clients);
+
         $this->set('favourites', $this->listLoggedInFavouriteDashboards());
-        $this->set('_serialize', array('status', 'dashboard', 'favourites'));
+        $this->set('_serialize', array('status', 'dashboard', 'favourites', 'clients'));
     }
 
     private function updateDashboardWidgets($id, $widgets) {
@@ -281,6 +285,7 @@ class DashboardsController extends AppController
                 $dashboard['widgets'][$widgetArrayId] = $this->Widget->updateWidget($dashboard['widgets'][$widgetArrayId], $this->request->data['widget']);
                 $this->Dashboard->save($dashboard);
                 $widget = WidgetFactory::createWidget($dashboard['widgets'][$widgetArrayId]);
+                $widget->setSeries($this->Dashboard->getDataForWidget($widget->getQuery()));
 
                 $this->Dashboard->save($dashboard);
                 $this->set('widget', $widget->toArray());

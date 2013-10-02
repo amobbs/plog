@@ -74,6 +74,7 @@ angular.module( 'Preslog.dashboard', [
         $scope.id = source.dashboard.id;
         $scope.dashboard = source.dashboard;
         $scope.favourites = source.favourites;
+        $scope.clients = source.clients;
 
         $scope.refreshTimers= [];
         $scope.name = '';
@@ -154,16 +155,21 @@ angular.module( 'Preslog.dashboard', [
         };
 
         $scope.updateRefreshTimer = function(widgetId, newInterval) {
-            if (newInterval > 0) {
-                for(var timeoutId in $scope.refreshTimers) {
-                    var timeout = $scope.refreshTimers[timeoutId];
-                    if (timeout.widgetId == widgetId) {
-                        $timeout.cancel(timeout.promise);
+            for(var timeoutId in $scope.refreshTimers) {
+                var timeout = $scope.refreshTimers[timeoutId];
+                if (timeout.widgetId == widgetId) {
+                    $timeout.cancel(timeout.promise);
+                    if (newInterval > 0) {
                         $scope.setRefreshTimer(timeout.widgetId, newInterval);
                         $scope.refreshTimers.splice(timeoutId, 1);
                     }
+                    //we found the timer so nothing left to do
+                    return;
                 }
             }
+
+            //add new times
+            $scope.setRefreshTimer(widgetId, newInterval);
         };
 
         $scope.refreshWidget = function(widgetId) {
@@ -193,7 +199,9 @@ angular.module( 'Preslog.dashboard', [
                 templateUrl: 'modules/dashboard/dashboardModal/createDashboardModal.tpl.html',
                 controller: 'DashboardModalCtrl',
                 resolve: {
-                    name: function() { return ''; }
+                    name: function() { return ''; },
+                    isCreate: function() { return true; },
+                    clients: function() { return $scope.splitClients(); }
                 }
             });
             createModal.result.then(function(name) {
@@ -212,7 +220,9 @@ angular.module( 'Preslog.dashboard', [
                 templateUrl: 'modules/dashboard/dashboardModal/createDashboardModal.tpl.html',
                 controller: 'DashboardModalCtrl',
                 resolve: {
-                    name: function() { return $scope.dashboard.name; }
+                    name: function() { return $scope.dashboard.name; },
+                    isCreate: function() { return false; },
+                    clients: function() { return []; }
                 }
             });
             editModal.result.then(function(name) {
@@ -252,12 +262,13 @@ angular.module( 'Preslog.dashboard', [
             });
             editWidgetModal.result.then(function(data) {
                 Restangular.one('dashboards', $scope.id)
-                    .one('widgets', widget.id)
+                    .one('widgets', widget._id)
                     .post('',{'widget': data})
                     .then(function(result) {
                         for(var index = 0; index < $scope.dashboard.widgets.length; index++) {
-                            if ($scope.dashboard.widgets[index].id == result.widget.id) {
+                            if ($scope.dashboard.widgets[index]._id == result.widget._id) {
                                 $scope.dashboard.widgets[index] = result.widget;
+                                $scope.updateRefreshTimer(result.widget._id, result.widget.data.refresh);
                             }
                         }
                     });
@@ -283,6 +294,26 @@ angular.module( 'Preslog.dashboard', [
             }
 
             return tmpl;
+        };
+
+        $scope.splitClients = function() {
+            if ($scope.clients.length === 0) {
+                return [];
+            }
+
+            var columns = [[], []];
+            var colSize1 = Math.floor($scope.clients.length / 2);
+
+            for(var i = 0; i < $scope.clients.length; i++)
+            {
+                if (i < colSize1) {
+                    columns[0].push($scope.clients[i]);
+                } else {
+                    columns[1].push($scope.clients[i]);
+                }
+            }
+
+            return columns;
         };
 
 
