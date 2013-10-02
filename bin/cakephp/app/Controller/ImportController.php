@@ -250,6 +250,32 @@ class ImportController extends AppController
                     'placeholder' => '?',
                 ),
             ),
+            array(
+
+                '_id' => null,
+                'order' => $order++,
+                'type' => 'select',
+                'name' => 'Accountability',
+                'data' => array(
+                    'placeholder' => '?',
+                    'options' => array(
+                        '?'
+                    ),
+                ),
+            ),
+            array(
+
+                '_id' => null,
+                'order' => $order++,
+                'type' => 'select',
+                'name' => 'Status',
+                'data' => array(
+                    'placeholder' => '?',
+                    'options' => array(
+                        '?'
+                    ),
+                ),
+            ),
         );
 
         return $baseFormats;
@@ -258,11 +284,15 @@ class ImportController extends AppController
     private function _createClient($client) {
         $onairImpactId = -1;
         $severityId = -1;
+        $accountabilityId = -1;
+        $statusId = -1;
         //loop through format and set new mongo_ids
         for($i =0; $i < sizeof($client['format']); $i++) {
             $client['format'][$i]['_id'] = new MongoId();
             if($client['format'][$i]['name'] == 'On-Air Impact') $onairImpactId = $i;
             if($client['format'][$i]['name'] == 'Severity') $severityId = $i;
+            if($client['format'][$i]['name'] == 'Accountability') $accountabilityId = $i;
+            if($client['format'][$i]['name'] == 'Status') $statusId = $i;
         }
 
         $sql = 'SELECT distinct impact FROM ' . $client['database_prefix'] . '_dailylog';
@@ -295,6 +325,38 @@ class ImportController extends AppController
             }
             $client['format'][$severityId]['data']['options'] = $options;
         }
+
+        $sql = "SELECT id, name, order, deleted FROM " . $client['database_prefix'] . '_accountability ORDER BY `order`';
+        if ($result = $this->mysqli->query($sql)) {
+            $options = array();
+            while ($row = $result->fetch_assoc()) {
+                $options[] = array(
+                    '_id' =>  new MongoId(),
+                    'name' => mb_convert_encoding($row['name'], 'utf8'),
+                    'order' => $row['order'],
+                    'deleted' => (bool)$row['deleted'],
+                    'old_id' => $row['id'],
+                );
+            }
+            $client['format'][$accountabilityId]['data']['options'] = $options;
+        }
+
+        $sql = "SELECT id, name FROM " . $client['database_prefix'] . '_status';
+        if ($result = $this->mysqli->query($sql)) {
+            $options = array();
+            $order = 0;
+            while ($row = $result->fetch_assoc()) {
+                $options[] = array(
+                    '_id' =>  new MongoId(),
+                    'name' => mb_convert_encoding($row['name'], 'utf8'),
+                    'order' => $order++,
+                    'deleted' => false,
+                    'old_id' => $row['id'],
+                );
+            }
+            $client['format'][$statusId]['data']['options'] = $options;
+        }
+
 
         $attrs = array();
 
@@ -471,10 +533,18 @@ class ImportController extends AppController
             //all users are active according to data sent from mediahub
             $user['deleted'] = false;
 
-            //TODO ignore for now, csv has not been helpfull
-//            if (isset($parts[7])) { //TODO convert name to mongo id
-//                $user['clientid'] = trim($parts[7]);
-//            }
+            if (isset($parts[7])) { //TODO convert name to mongo id
+                $clientId = null;
+                foreach($clients as $client) {
+                    if (strtolower($client['name']) == strtolower($user['company'])) {
+                        $user['client_id'] = $client['_id'];
+                        $user['clients'][] = array(
+                            'client_id' => $client['_id'],
+                            'attributes' => array(),
+                        );
+                    }
+                }
+            }
 
             //TODO ignoring alias as not provided by media hub
 //            $alias = array();
@@ -602,6 +672,18 @@ class ImportController extends AppController
                         'field_id' =>  $this->_getMongoIDFromFormatByName($client['format'], 'Cause'),
                         'data' => array(
                             'text' => mb_convert_encoding($row['cause'], 'utf-8'),
+                        ),
+                    ),
+                    array(
+                        'field_id' =>  $this->_getMongoIDFromFormatByName($client['format'], 'Accountability'),
+                        'data' => array(
+                            'selected' => $this->_getMongoIdForOptionInSelect($client['format'], 'Accountability', $row['accountability']),
+                        ),
+                    ),
+                    array(
+                        'field_id' =>  $this->_getMongoIDFromFormatByName($client['format'], 'status'),
+                        'data' => array(
+                            'selected' => $this->_getMongoIdForOptionInSelect($client['format'], 'Status', $row['status']),
                         ),
                     ),
                 );

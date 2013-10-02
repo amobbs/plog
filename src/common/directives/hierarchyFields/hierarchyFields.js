@@ -21,6 +21,11 @@ angular.module('hierarchyFields', [])
             // Create link with the element
             link: function(scope, element, attrs) {
 
+                //make sure the hierachy select field is an array
+                if (!scope.hierarchySelected) {
+                    scope.hierarchySelected = [];
+                }
+
                 // Draw the hierarchy on scope change
                 scope.$watch(scope.hierarchyFields, function () {
                     drawHierarchy(scope.hierarchyFields, scope.hideDeleted, scope.dragAndDrop, scope.allowEdit);
@@ -51,7 +56,7 @@ angular.module('hierarchyFields', [])
                             });
                         },
                         onDblClick: function(node, event) {
-                            if (allowEdit) {
+                            if (allowEdit === true) {
                                 editNode(node);
                             }
                             return false;
