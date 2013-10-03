@@ -653,7 +653,7 @@ class ImportController extends AppController
                     array(
                         'field_id' =>  $this->_getMongoIDFromFormatByName($client['format'], 'What action taken'),
                         'data' => array(
-                            'selected' => mb_convert_encoding($row['action'], 'utf-8'),
+                            'text' => mb_convert_encoding($row['action'], 'utf-8'),
                         ),
                     ),
                     array(
