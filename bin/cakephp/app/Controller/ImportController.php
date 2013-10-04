@@ -23,6 +23,11 @@ class ImportController extends AppController
         $startTime = microtime(true);
         $this->_log('-starting import script at ' . date('Y-m-d H:s'));
 
+        // clear mongos schemas
+        $this->Client->mongoSchema  = array();
+        $this->Log->mongoSchema     = array();
+        $this->User->mongoSchema    = array();
+
 
 
         //clean mongodb
@@ -326,7 +331,7 @@ class ImportController extends AppController
             $client['format'][$severityId]['data']['options'] = $options;
         }
 
-        $sql = "SELECT id, name, order, deleted FROM " . $client['database_prefix'] . '_accountability ORDER BY `order`';
+        $sql = "SELECT id, name, `order`, deleted FROM " . $client['database_prefix'] . '_accountability ORDER BY `order`';
         if ($result = $this->mysqli->query($sql)) {
             $options = array();
             while ($row = $result->fetch_assoc()) {
@@ -584,7 +589,7 @@ class ImportController extends AppController
         $this->_log('creating logs for ' . $client['name']);
         $sql = 'SELECT lognum as hrid, logdate, logtime, duration, cause, impact, description, details, loggedby,
          program, enteredtimestamp, action, severity, impairment, created, modified, version, vic, sa, wa, nt, qld, nsw,
-         act, tas, spread, assetid
+         act, tas, spread, assetid, accountability, status
          FROM ' . $client['database_prefix'] . '_dailylog ORDER BY created ASC';
 
         $logCount = 0;
@@ -681,7 +686,7 @@ class ImportController extends AppController
                         ),
                     ),
                     array(
-                        'field_id' =>  $this->_getMongoIDFromFormatByName($client['format'], 'status'),
+                        'field_id' =>  $this->_getMongoIDFromFormatByName($client['format'], 'Status'),
                         'data' => array(
                             'selected' => $this->_getMongoIdForOptionInSelect($client['format'], 'Status', $row['status']),
                         ),
@@ -748,6 +753,12 @@ class ImportController extends AppController
     }
 
     private function _getMongoIdForOptionInSelect($formats, $name, $id) {
+
+        if (empty($id))
+        {
+            return '';
+        }
+
         foreach($formats as $format) {
             if ($format['name'] == $name) {
                 if (isset($format['data']['options'])) {
