@@ -524,7 +524,7 @@ class ImportController extends AppController
                 'lastName' => mb_convert_encoding(trim($parts[2]), 'utf8'),
                 'company' => mb_convert_encoding(trim($parts[3]), 'utf8'),
                 'phoneNumber' => mb_convert_encoding(trim($parts[4]), 'utf8'),
-                'role' => mb_convert_encoding(trim($parts[6]), 'utf8'),
+                'role' => strtolower(mb_convert_encoding(trim($parts[6]), 'utf8')),
                 'dashboards' => array(),
                 'notifications' => array(
                     'types' => array(

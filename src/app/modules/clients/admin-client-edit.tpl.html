@@ -145,7 +145,7 @@
                             <input type="text"
                                    id="inputActivationDate"
                                    name="activationDate"
-                                   placeholder="Click to select date.."
+                                   placeholder="YYYY-MM-DD.."
                                    ng-model="client.activationDate"
                                    required
                                    validate-server
@@ -188,51 +188,54 @@
             <div class="widget-content">
                 <form name="newFieldForm">
                     <table class="table table-admin-fields">
-                        <tr>
-                            <th>&nbsp;</th>
-                            <th>Field Name</th>
-                            <th>Type</th>
-                            <th>Info</th>
-                            <th class="actions">&nbsp;</th>
-                        </tr>
-                        <tr ng-repeat="field in client.format" ng-show="!field.deleted || showDeleted == true">
-                            <td class="order"><i class="icon icon-resize-vertical"></i></td>
-                            <td>{{ field.name }}</td>
-                            <td>{{ options.fieldTypes[field.type].name }}</td>
-                            <td ng-switch on="field.type">
-                                <span ng-switch-when="select">{{ field.data.options.length }} options</span>
-                                <span ng-switch-when="select-severity">{{ field.data.options.length }} options</span>
-                                <span ng-switch-when="select-impact">{{ field.data.options.length }} options</span>
-                                <span ng-switch-default>&nbsp;</span>
-                            </td>
-                            <td>
-                                <button ng-show="!field.deleted" class="btn btn-block btn-info" ng-click="editField( field._id )"><i class="icon icon-edit"></i> Edit</button>
-                                <button ng-show="field.deleted" class="btn btn-block btn-warning" ng-click="field.deleted = false"><i class="icon icon-plus"></i> Restore</button>
-                            </td>
-                        </tr>
+                        <thead>
+                            <tr>
+                                <th>&nbsp;</th>
+                                <th>Field Name</th>
+                                <th>Type</th>
+                                <th>Info</th>
+                                <th class="actions">&nbsp;</th>
+                            </tr>
+                        </thead>
+                        <tbody ui-sortable="fieldSortableOptions">
+                            <tr ng-repeat="field in client.format" ng-show="!field.deleted || showDeleted == true">
+                                <td class="order"><i class="icon icon-resize-vertical"></i></td>
+                                <td>{{ field.name }}</td>
+                                <td>{{ options.fieldTypes[field.type].name }}</td>
+                                <td ng-switch on="field.type">
+                                    <span ng-switch-when="select">{{ field.data.options.length }} options</span>
+                                    <span ng-switch-when="select-severity">{{ field.data.options.length }} options</span>
+                                    <span ng-switch-when="select-impact">{{ field.data.options.length }} options</span>
+                                    <span ng-switch-default>&nbsp;</span>
+                                </td>
+                                <td>
+                                    <button ng-show="!field.deleted" class="btn btn-block btn-info" ng-click="editField( field._id )"><i class="icon icon-edit"></i> Edit</button>
+                                    <button ng-show="field.deleted" class="btn btn-block btn-warning" ng-click="field.deleted = false"><i class="icon icon-plus"></i> Restore</button>
+                                </td>
+                            </tr>
+                        </tbody>
                         <tfoot>
-
-                        <tr>
-                            <td>&nbsp;</td>
-                            <td>
-                                <input type="text"
-                                       placeholder="Name..."
-                                       ng-model="newField.name"
-                                       required />
-                            </td>
-                            <td>
-                                <select id="input-newField-fieldType"
-                                    ng-model="newField.type"
-                                    name="newField-fieldType"
-                                    ng-options="option.alias as option.name for (key, option) in options.fieldTypes"
-                                    required>
-                                </select>
-                            </td>
-                            <td>&nbsp;</td>
-                            <td>
-                                <button class="btn btn-block btn-primary" ng-click="addField()" ng-disabled="!newFieldForm.$valid"><i class="icon icon-plus"></i> Add</button>
-                            </td>
-                        </tr>
+                            <tr>
+                                <td>&nbsp;</td>
+                                <td>
+                                    <input type="text"
+                                           placeholder="Name..."
+                                           ng-model="newField.name"
+                                           required />
+                                </td>
+                                <td>
+                                    <select id="input-newField-fieldType"
+                                        ng-model="newField.type"
+                                        name="newField-fieldType"
+                                        ng-options="option.alias as option.name for (key, option) in options.fieldTypes"
+                                        required>
+                                    </select>
+                                </td>
+                                <td>&nbsp;</td>
+                                <td>
+                                    <button class="btn btn-block btn-primary" ng-click="addField()" ng-disabled="!newFieldForm.$valid"><i class="icon icon-plus"></i> Add</button>
+                                </td>
+                            </tr>
                         </tfoot>
                     </table>
                 </form>
@@ -260,37 +263,41 @@
             <div class="widget-content">
                 <form name="newAttributeForm">
                     <table class="table table-admin-fields">
-                        <tr>
-                            <th>&nbsp;</th>
-                            <th>Group Name</th>
-                            <th>Children</th>
-                            <th class="actions">&nbsp;</th>
-                        </tr>
-                        <tr ng-repeat="group in client.attributes" ng-show="!group.deleted || showDeletedGroups">
-                            <td class="order"><i class="icon icon-resize-vertical"></i></td>
-                            <td>{{ group.name }}</td>
-                            <td>{{ group.children.length }}</td>
-                            <td>
-                                <button ng-show="!group.deleted" class="btn btn-block btn-info" ng-click="editGroup( group._id )"><i class="icon icon-edit"></i> Edit</button>
-                                <button ng-show="group.deleted" class="btn btn-block btn-warning" ng-click="group.deleted = false"><i class="icon icon-plus"></i> Restore</button>
-                            </td>
-                        </tr>
+                        <thead>
+                            <tr>
+                                <th>&nbsp;</th>
+                                <th>Group Name</th>
+                                <th>Children</th>
+                                <th class="actions">&nbsp;</th>
+                            </tr>
+                        </thead>
+                        <tbody ui-sortable="attributeSortableOptions">
+                            <tr ng-repeat="group in client.attributes" ng-show="!group.deleted || showDeletedGroups">
+                                <td class="order"><i class="icon icon-resize-vertical"></i></td>
+                                <td>{{ group.name }}</td>
+                                <td>{{ group.children.length }}</td>
+                                <td>
+                                    <button ng-show="!group.deleted" class="btn btn-block btn-info" ng-click="editGroup( group._id )"><i class="icon icon-edit"></i> Edit</button>
+                                    <button ng-show="group.deleted" class="btn btn-block btn-warning" ng-click="group.deleted = false"><i class="icon icon-plus"></i> Restore</button>
+                                </td>
+                            </tr>
+                        </tbody>
                         <tfoot>
-                        <tr>
-                            <td>&nbsp;</td>
-                            <td>
-                                <form name="newGroupForm">
-                                <input type="text"
-                                       placeholder="Name.."
-                                       ng-model="newGroup.name"
-                                       required />
-                                </form>
-                            </td>
-                            <td>&nbsp;</td>
-                            <td>
-                                <button class="btn btn-block btn-primary" ng-click="addGroup()" ng-disabled="!newGroupForm.$valid"><i class="icon icon-plus"></i> Add</button>
-                            </td>
-                        </tr>
+                            <tr>
+                                <td>&nbsp;</td>
+                                <td>
+                                    <form name="newGroupForm">
+                                    <input type="text"
+                                           placeholder="Name.."
+                                           ng-model="newGroup.name"
+                                           required />
+                                    </form>
+                                </td>
+                                <td>&nbsp;</td>
+                                <td>
+                                    <button class="btn btn-block btn-primary" ng-click="addGroup()" ng-disabled="!newGroupForm.$valid"><i class="icon icon-plus"></i> Add</button>
+                                </td>
+                            </tr>
                         </tfoot>
                     </table>
                 </form>

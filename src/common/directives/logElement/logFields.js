@@ -34,7 +34,10 @@ angular.module('logFields', [])
         var linker = function( scope, element, attrs, ctrl ) {
 
             // TODO: DELETE ME
-            console.log(scope);
+            if (scope.data === undefined)
+            {
+                scope.data = [];
+            }
 
             // Sort the FIELDS data into the correct order.
             scope.fields = scope.fields.sort(function(a,b) {

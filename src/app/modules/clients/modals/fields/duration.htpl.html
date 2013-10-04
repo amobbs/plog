@@ -1,0 +1,16 @@
+<!-- Duration field -->
+<form name="fieldForm" id="admin_client_edit_field" class="form-horizontal" ng-show="field.type === 'duration'">
+    <div class="control-group" ng-class="{error: fieldForm.name.$dirty && fieldForm.name.$invalid && fieldForm.name.$dirty}">
+        <label class="control-label" for="inputName">Human Readable Name</label>
+        <div class="controls">
+            <input type="text"
+                   id="inputName"
+                   name="name"
+                   placeholder="Name.."
+                   ng-model="field.name"
+                   required
+                    />
+            <span class="help-inline" ng-show="fieldForm.name.$dirty && fieldForm.name.$invalid && fieldForm.name.$error.required">Must not be empty.</span>
+        </div>
+    </div>
+</form>
