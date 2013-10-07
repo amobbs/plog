@@ -1,14 +1,15 @@
 <?php
 
-namespace JqlParser\JqlFunction;
+namespace Preslog\JqlParser\JqlFunction;
 
 
-class EndOfWeekFunction extends JqlFunction {
+class StartOfDayFunction extends JqlFunction{
+
     /**
      * construtor
      */
     public function __construct() {
-        parent::_construct('endofweek');
+        parent::_construct('startofday');
     }
 
     /**
@@ -20,13 +21,12 @@ class EndOfWeekFunction extends JqlFunction {
      * @return int|void
      */
     public function execute($args = null) {
-        $date = mktime(23, 59, 59, date('n'), date('j'), date('y'));
+        $date = mktime(0, 0, 0, date('n'), date('j'), date('y'));
         if ($args != null || empty($args)) {
             $date = $this->_convertValueToTimestamp($args);
         }
 
-        $dayOfWeek = date('w', $date);
-
-        return mktime(23, 59, 59, date('n', $date), date('j', $date) + (6 - $dayOfWeek), date('y', $date));
+        return mktime(0, 0, 0, date('n', $date), date('j', $date), date('y', $date));
     }
+
 }

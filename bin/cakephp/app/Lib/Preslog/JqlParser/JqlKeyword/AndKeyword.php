@@ -7,7 +7,7 @@
  * To change this template use File | Settings | File Templates.
  */
 
-namespace JqlParser\JqlKeyword;
+namespace Preslog\JqlParser\JqlKeyword;
 
 
 class AndKeyword extends JqlKeyword{

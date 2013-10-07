@@ -2,20 +2,21 @@
 /**
  * Created by JetBrains PhpStorm.
  * User: kieran.yates
- * Date: 8/30/13
- * Time: 10:38 AM
+ * Date: 9/2/13
+ * Time: 3:07 PM
  * To change this template use File | Settings | File Templates.
  */
 
-namespace JqlParser\JqlOperator;
+namespace Preslog\JqlParser\JqlOperator;
 
 
-class GreaterThanOperator extends JqlOperator {
+class LessThanOperator extends JqlOperator {
 
     /**
      * constructor
      */
     public function __construct() {
-        parent::_construct('>', '>', '$gt', false);
+        parent::_construct('<', '<', '$lt', false);
     }
+
 }

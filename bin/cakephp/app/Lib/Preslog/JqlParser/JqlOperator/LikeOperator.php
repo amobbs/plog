@@ -7,7 +7,7 @@
  * To change this template use File | Settings | File Templates.
  */
 
-namespace JqlParser\JqlOperator;
+namespace Preslog\JqlParser\JqlOperator;
 
 
 class LikeOperator extends JqlOperator{

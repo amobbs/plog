@@ -1,8 +1,8 @@
 <?php
-namespace JqlParser;
+namespace Preslog\JqlParser;
 
-use JqlParser\JqlFunction\JqlFunction;
-use JqlParser\JqlOperator\JqlOperator;
+use Preslog\JqlParser\JqlFunction\JqlFunction;
+use Preslog\JqlParser\JqlOperator\JqlOperator;
 
 class Clause {
     private $_unparsedClause;
@@ -36,11 +36,24 @@ class Clause {
     }
 
     public function getMongoCriteria() {
-        $doc = "$this->_field  : ";
+        $value = $this->getFunctionEvaluated($this->_operator->formatValueForJql($this->_value));
+
+        //some mongo operators (line $in) requires a subobject, others like '=' are inline.
+        if ($this->_operator instanceof JqlOperator && !$this->_operator->getMongoInline()) {
+            $value = array($this->_operator->getMongoSymbol() => $value);
+        }
+
+        return array(
+            $this->_field => $value,
+        );
+    }
+
+    public function getMongoCriteriaAsString() {
+        $doc = "'$this->_field'  : ";
 
         $value = $this->getFunctionEvaluated($this->_operator->formatValueForJql($this->_value));
         if ($this->_operator->getMongoInline()) {
-            $doc .= " $value";
+            $doc .= " '$value'";
         } elseif ($this->_operator instanceof JqlOperator) {
             $doc .= ' { ' . $this->_operator->getMongoSymbol() . " : $value }";
         }
@@ -51,7 +64,7 @@ class Clause {
     private function _populateFields() {
         $parts = $this->_explodeClause($this->_originallyJql);
 
-        $this->_field = $this->_stripTableName($parts['field']);
+        $this->_field = strtolower($this->_stripTableName($parts['field']));
         $this->_operator = $this->_findOperator($parts['operator']);
         $this->_value = $parts['value'];
     }

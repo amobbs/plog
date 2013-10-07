@@ -1,14 +1,14 @@
 <?php
 
-namespace JqlParser\JqlFunction;
+namespace Preslog\JqlParser\JqlFunction;
 
 
-class EndOfMonthFunction extends JqlFunction {
+class EndOfDayFunction extends JqlFunction {
     /**
      * construtor
      */
     public function __construct() {
-        parent::_construct('endofmonth');
+        parent::_construct('endofday');
     }
 
     /**
@@ -25,6 +25,6 @@ class EndOfMonthFunction extends JqlFunction {
             $date = $this->_convertValueToTimestamp($args);
         }
 
-        return mktime(23, 59, 59, date('n', $date), date('t', $date), date('y', $date));
+        return mktime(23, 59, 59, date('n', $date), date('j', $date), date('y', $date));
     }
 }

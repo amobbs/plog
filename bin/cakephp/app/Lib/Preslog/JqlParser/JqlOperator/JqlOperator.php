@@ -1,5 +1,5 @@
 <?php
-namespace JqlParser\JqlOperator;
+namespace Preslog\JqlParser\JqlOperator;
 
 class JqlOperator {
 

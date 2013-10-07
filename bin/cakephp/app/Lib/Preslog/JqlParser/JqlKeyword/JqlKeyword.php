@@ -1,6 +1,6 @@
 <?php
 
-namespace JqlParser\JqlKeyword;
+namespace Preslog\JqlParser\JqlKeyword;
 
 class JqlKeyword {
 

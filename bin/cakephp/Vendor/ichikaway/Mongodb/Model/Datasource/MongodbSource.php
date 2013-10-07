@@ -1362,6 +1362,11 @@ class MongodbSource extends DboSource {
 		}
 	}
 
+    //TODO remove this is just here for testing
+    public function toString($args) {
+        return $this->_stringify($args);
+    }
+
 /**
  * stringify method
  *

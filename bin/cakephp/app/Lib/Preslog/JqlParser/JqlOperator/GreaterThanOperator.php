@@ -2,20 +2,20 @@
 /**
  * Created by JetBrains PhpStorm.
  * User: kieran.yates
- * Date: 9/2/13
- * Time: 2:22 PM
+ * Date: 8/30/13
+ * Time: 10:38 AM
  * To change this template use File | Settings | File Templates.
  */
 
-namespace JqlParser\JqlOperator;
+namespace Preslog\JqlParser\JqlOperator;
 
 
-class NotInOperator extends JqlOperator {
+class GreaterThanOperator extends JqlOperator {
 
     /**
      * constructor
      */
     public function __construct() {
-        parent::_construct('NOT IN', 'NOT IN', '', true);
+        parent::_construct('>', '>', '$gt', false);
     }
 }

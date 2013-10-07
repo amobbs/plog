@@ -70,8 +70,7 @@ angular.module( 'Preslog.dashboard', [
     .controller( 'DashboardCtrl', function DashboardController( $scope, $http, $window, $location, $timeout, $modal, titleService, Restangular, source) {
         titleService.setTitle( 'Dashboard' );
 
-        console.log(source.dashboard);
-        $scope.id = source.dashboard.id;
+        $scope.id = source.dashboard.id; //mongoid for dashboard
         $scope.dashboard = source.dashboard;
         $scope.favourites = source.favourites;
         $scope.clients = source.clients;
@@ -79,6 +78,7 @@ angular.module( 'Preslog.dashboard', [
         $scope.refreshTimers= [];
         $scope.name = '';
 
+        //move the widgets around
         $scope.sortableOptions = {
             placeholder: 'placeholder',
             items: '.widget',
@@ -190,10 +190,12 @@ angular.module( 'Preslog.dashboard', [
                 });
         };
 
+        //download a docx version of this dashboard
         $scope.exportReport = function() {
             window.location = 'http://local.preslog/api/dashboards/' + $scope.id + '/export';
         };
 
+        //create new dashboard
         $scope.openCreateModal = function () {
             var createModal = $modal.open({
                 templateUrl: 'modules/dashboard/dashboardModal/createDashboardModal.tpl.html',
@@ -215,6 +217,7 @@ angular.module( 'Preslog.dashboard', [
             });
         };
 
+        //edit dashboard
         $scope.openEditDashboardModal = function() {
             var editModal = $modal.open({
                 templateUrl: 'modules/dashboard/dashboardModal/createDashboardModal.tpl.html',
@@ -275,6 +278,7 @@ angular.module( 'Preslog.dashboard', [
             });
         };
 
+        //each widget has its own edit template
         $scope.getEditTemplate = function(type) {
             tmpl = 'modules/dashboard/widgetModal/edit';
 
@@ -315,6 +319,39 @@ angular.module( 'Preslog.dashboard', [
 
             return columns;
         };
+
+        //log list widget
+        $scope.logWidgetParams = {
+            page: 1,
+            total: 0,
+            perPageOptions: [3, 5, 10, 20],
+            perPage: 3,
+            sorting: {
+                name: 'created'
+            },
+            query: '',
+            logs: [],
+            lastUpdated: new Date()
+        };
+
+        $scope.$watch('logWidgetParams', function(params) {
+            if ($scope.jql.length  === 0) {
+                return;
+            }
+
+            var offset = (($scope.logWidgetParams.page - 1) * $scope.logWidgetParams.perPage);
+            if ($scope.logWidgetParams.page === 1) {
+                offset = 0;
+            }
+            Restangular.one('search').get({query: $scope.jql, limit: $scope.logWidgetParams.perPage, start: offset}).then(function(result) {
+                console.log(result);
+                $scope.results = result;
+                var params = angular.copy($scope.logWidgetParams);
+                params.total = result.total;
+                params.logs = result.logs;
+                $scope.logWidgetParams = params;
+            });
+        }, true);
 
 
         $scope.startWidgetRefresh();

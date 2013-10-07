@@ -389,4 +389,20 @@ class User extends AppModel
         return $users;
     }
 
+    /**
+     * Given an array of user id's Return a list of users from the database
+     * @param $userIds
+     *
+     * @return array
+     */
+    public function listUsersByIds($userIds) {
+        return $this->find('all', array(
+            'conditions' => array(
+                '_id' => array(
+                    '$in' => $userIds,
+                ),
+            ),
+        ));
+    }
+
 }

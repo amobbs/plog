@@ -1,9 +1,9 @@
 <?php
 
-namespace JqlParser;
+namespace Preslog\JqlParser;
 
-use JqlParser\JqlFunction\JqlFunction as JqlFunction;
-use JqlParser\JqlKeyword\JqlKeyword;
+use Preslog\JqlParser\JqlFunction\JqlFunction as JqlFunction;
+use Preslog\JqlParser\JqlKeyword\JqlKeyword;
 
 class JqlParser {
 
@@ -68,6 +68,7 @@ class JqlParser {
     }
 
     public function setSqlFromJql($jql) {
+        $jql = strtoupper($jql);
         $this->_jql = $jql;
 
         $this->_expression = $this->_seperateIntoGroups($jql, true);
@@ -80,12 +81,47 @@ class JqlParser {
     }
 
     public function getMongoCriteria() {
-        return '{ ' . $this->_buildMongoCriteria($this->_expression) . ' }';
+        return $this->_buildMongoCriteria($this->_expression);
     }
 
     private function _buildMongoCriteria($expression) {
         if ($expression instanceof Clause) {
-            return '{ ' . $expression->getMongoCriteria() . ' }';
+            return $expression->getMongoCriteria();
+        }
+
+        $conditions = array();
+        foreach($expression as $keyword => $clause) {
+            $keyword = $this->_findKeyword($keyword);
+            $subClauses = $this->_buildMongoCriteria($clause);
+
+            if ($keyword instanceof JqlKeyword) {
+                return array(
+                    $keyword->getMongoSymbol() => $subClauses,
+                );
+            }
+
+            if (is_array($clause)) {
+                foreach ($clause as $subKeyWord => $subClauses) {
+                    $subKeyWordObj = $this->_findKeyword($subKeyWord);
+                    $conditions[] = array(
+                        $subKeyWordObj->getMongoSymbol() => $this->_buildMongoCriteria($subClauses),
+                    );
+                }
+            } else {
+                $conditions[] = $clause->getMongoCriteria();
+            }
+        }
+
+        return $conditions;
+    }
+
+    public function getMongoCriteriaAsString() {
+        return '{ ' . $this->_buildMongoCriteria($this->_expression) . ' }';
+    }
+
+    private function _buildMongoCriteriaAsString($expression) {
+        if ($expression instanceof Clause) {
+            return $expression->getMongoCriteria();
         }
 
         $doc = '';
@@ -94,13 +130,13 @@ class JqlParser {
             $subClauses = $this->_buildMongoCriteria($clause);
 
             if ($keyword instanceof JqlKeyword) {
-                return $keyword->getMongoSymbol() . ' : {' . $this->_buildMongoCriteria($clause)  .' }';
+                return "'" . $keyword->getMongoSymbol() . "' : {" . $this->_buildMongoCriteria($clause)  .' }';
             }
 
             if (is_array($clause)) {
                 foreach ($clause as $subKeyWord => $subClauses) {
                     $subKeyWordObj = $this->_findKeyword($subKeyWord);
-                    $doc .= ' ' . $subKeyWordObj->getMongoSymbol() . ' : ' . $this->_buildMongoCriteria($subClauses) . ' ';
+                    $doc .= " '" . $subKeyWordObj->getMongoSymbol() . "' : '" . $this->_buildMongoCriteria($subClauses) . "' ";
                 }
             } else {
                 $doc .= '{ '. $clause->getMongoCriteria() . ' }, ';

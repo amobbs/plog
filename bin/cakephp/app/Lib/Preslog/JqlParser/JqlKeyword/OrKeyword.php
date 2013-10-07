@@ -3,20 +3,16 @@
  * Created by JetBrains PhpStorm.
  * User: kieran.yates
  * Date: 9/2/13
- * Time: 3:07 PM
+ * Time: 1:54 PM
  * To change this template use File | Settings | File Templates.
  */
 
-namespace JqlParser\JqlOperator;
+namespace Preslog\JqlParser\JqlKeyword;
 
 
-class LessThanOperator extends JqlOperator {
+class OrKeyword extends JqlKeyword{
 
-    /**
-     * constructor
-     */
     public function __construct() {
-        parent::_construct('<', '<', '$lt', false);
+        parent::__construct(' OR ', ' OR ', '$or');
     }
-
 }

@@ -36,10 +36,32 @@ angular.module( 'Preslog.search', [
        titleService.setTitle( 'Search' );
 
        // $scope.jql = '(created > startofweek[] AND created < startofday[-1d]) AND operator not in ("jim", "pete") AND (duration > 1d AND duration < 1d10m) ';
-        $scope.jql = 'id=1 and (id = 2 or (id = 3 or id = 3.1))';
+        //$scope.jql = 'id=1 and (id = 2 or (id = 3 or id = 3.1))';
+        $scope.jql = 'hrid=1 or hrid=1234';
         $scope.sql = 'SELECT * FROM "LOGS" WHERE "ID" = ?';
 
         $scope.args = ['1'];
+        $scope.results = {
+            data: [],
+            fields: []
+        };
+
+        $scope.logWidgetParams = {
+            page: 1,
+            total: 0,
+            perPageOptions: [3, 5, 10, 20],
+            perPage: 3,
+            sorting: {
+                name: 'created'
+            },
+            query: '',
+            logs: [],
+            lastUpdated: new Date()
+        };
+
+        $scope.$watch('logWidgetParams', function(params) {
+            $scope.search();
+        }, true);
 
         $scope.queryMeta = function() {
             return {
@@ -232,9 +254,27 @@ angular.module( 'Preslog.search', [
             };
         };
 
+        $scope.doSearch = function() {
+            $scope.logWidgetParams.page = 1;
+            $scope.search();
+        };
+
         $scope.search = function() {
-            Restangular.one('search').get({jql: $scope.jql}).then(function(logs) {
-                console.log(logs);
+            if ($scope.jql.length  === 0) {
+                return;
+            }
+
+            var offset = (($scope.logWidgetParams.page - 1) * $scope.logWidgetParams.perPage);
+            if ($scope.logWidgetParams.page === 1) {
+                offset = 0;
+            }
+            Restangular.one('search').get({query: $scope.jql, limit: $scope.logWidgetParams.perPage, start: offset}).then(function(result) {
+                console.log(result);
+                $scope.results = result;
+                var params = angular.copy($scope.logWidgetParams);
+                params.total = result.total;
+                params.logs = result.logs;
+                $scope.logWidgetParams = params;
             });
         };
 

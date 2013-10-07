@@ -65,5 +65,21 @@ class Log extends AppModel
         ));
     }
 
+    /**
+     * fetch a list of logs based on mongo find
+     */
+    public function findByMongoCriteria($criteria, $start, $limit, $orderBy) {
 
+        return $this->find('all', array(
+            'conditions' => $criteria,
+            'limit' => $limit,
+            'offset' => $start,
+        ));
+    }
+
+    public function countByMongoCriteria($criteria) {
+        return $this->find('count', array(
+            'conditions' => $criteria,
+        ));
+    }
 }

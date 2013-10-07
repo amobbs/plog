@@ -1,6 +1,6 @@
 <?php
 
-namespace JqlParser\JqlFunction;
+namespace Preslog\JqlParser\JqlFunction;
 
 
 class StartOfWeekFunction extends JqlFunction {

@@ -44,7 +44,6 @@
     },
     "autoload": {
         "psr-0": {
-            "JqlParser": "Vendor/JqlParser",
             "Preslog": "app/Lib"
         },
         "classmap": ["Vendor/HighchartsPHP/"]

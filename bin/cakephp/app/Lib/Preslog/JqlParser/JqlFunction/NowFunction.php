@@ -7,7 +7,7 @@
  * To change this template use File | Settings | File Templates.
  */
 
-namespace JqlParser\JqlFunction;
+namespace Preslog\JqlParser\JqlFunction;
 
 
 class NowFunction extends JqlFunction{
