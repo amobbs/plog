@@ -1,0 +1,29 @@
+<!-- Text Field -->
+
+    <div class="control-group" ng-class="{error: fieldForm.name.$dirty && fieldForm.name.$invalid && fieldForm.name.$dirty}">
+        <label class="control-label" for="inputName">Human Readable Name</label>
+        <div class="controls">
+            <input type="text"
+                   id="inputName"
+                   name="name"
+                   placeholder="Name.."
+                   ng-model="field.name"
+                   required
+                    />
+            <span class="help-inline" ng-show="fieldForm.name.$dirty && fieldForm.name.$invalid && fieldForm.name.$error.required">Must not be empty.</span>
+        </div>
+    </div>
+
+    <div class="control-group" ng-class="{error: fieldForm.placeholder.$dirty && fieldForm.placeholder.$invalid && fieldForm.placeholder.$dirty}">
+        <label class="control-label" for="inputPlaceholder">Placeholder Text</label>
+        <div class="controls">
+            <input type="text"
+                   id="inputPlaceholder"
+                   name="name"
+                   placeholder="Placeholder text.."
+                   ng-model="field.data.placeholder"
+                   required
+                    />
+            <span class="help-inline" ng-show="fieldForm.placeholder.$dirty && fieldForm.placeholder.$invalid && fieldForm.placeholder.$error.required">Must not be empty.</span>
+        </div>
+    </div>

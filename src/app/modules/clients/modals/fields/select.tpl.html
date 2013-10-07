@@ -1,0 +1,61 @@
+<!-- Select Field -->
+    <div class="control-group" ng-class="{error: fieldForm.name.$dirty && fieldForm.name.$invalid && fieldForm.name.$dirty}">
+        <label class="control-label" for="inputName">Human Readable Name</label>
+        <div class="controls">
+            <input type="text"
+                   id="inputName"
+                   name="name"
+                   placeholder="Name.."
+                   ng-model="field.name"
+                   required
+                    />
+            <span class="help-inline" ng-show="fieldForm.name.$dirty && fieldForm.name.$invalid && fieldForm.name.$error.required">Must not be empty.</span>
+        </div>
+    </div>
+
+    <div class="control-group" ng-class="{error: fieldForm.placeholder.$dirty && fieldForm.placeholder.$invalid && fieldForm.placeholder.$dirty}">
+        <label class="control-label" for="inputPlaceholder">Placeholder Text</label>
+        <div class="controls">
+            <input type="text"
+                   id="inputPlaceholder"
+                   name="placeholder"
+                   placeholder="Placeholder text.."
+                   ng-model="field.data.placeholder"
+                   required
+                    />
+            <span class="help-inline" ng-show="fieldForm.placeholder.$dirty && fieldForm.placeholder.$invalid && fieldForm.placeholder.$error.required">Must not be empty.</span>
+        </div>
+    </div>
+
+    <h3>Field Options</h3>
+
+    <table class="table table-condensed table-admin-fields">
+        <tr>
+            <th>&nbsp;</th>
+            <th>Name</th>
+            <th><button class="btn" ng-click="showDeleted = !showDeleted"><i class="icon icon-eye-open"></i> {{ showDeleted && 'Hide' || 'Show' }} Deleted Options</button></th>
+        </tr>
+        <tr ng-repeat="option in field.data.options" ng-show="option.deleted == false || showDeleted == true">
+            <td class="order">
+                <i class="icon icon-resize-vertical"></i>
+            </td>
+            <td>
+                <input type="text" ng-model="option.name" placeholder="Name..." />
+            </td>
+            <td>
+                <button ng-show="option.deleted == false" class="btn btn-danger" ng-confirm-click="Deleting this item will prevent it being selected in new logs. Existing logs will retain their selection of this item. Are you sure?" ng-click="option.deleted = 1"><i class="icon icon-remove"></i> Delete</button>
+                <button ng-show="option.deleted == true" class="btn btn-warning" ng-confirm-click="Restoring this option will make it available for new logs. Are you sure?" ng-click="option.deleted = 0"><i class="icon icon-plus"></i> Restore</button>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                &nbsp;
+            </td>
+            <td>
+                <input type="text" ng-model="newOption.name" placeholder="Name..." />
+            </td>
+            <td>
+                <button class="btn btn-primary" ng-click="addOption()"><i class="icon icon-plus"></i> Add Option</button>
+            </td>
+        </tr>
+    </table>

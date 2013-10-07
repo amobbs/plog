@@ -6,7 +6,8 @@
 angular.module( 'Preslog.clients', [
         'titleService',
         'ngTable',
-        'ui.bootstrap'
+        'ui.bootstrap',
+        'ui.sortable'
     ])
 
     .config(function(stateHelperProvider) {
@@ -168,6 +169,29 @@ angular.module( 'Preslog.clients', [
         $scope.newGroup = {};
         $scope.showDeletedGroups = false;
 
+        // Sortable options on Fields
+        $scope.fieldSortableOptions = {
+            update: function(e, ui) {
+                // Resolve order of items to data
+                for (var i in $scope.client.format)
+                {
+                    $scope.client.format[i].order = i;
+                }
+            },
+            handle: '.order'
+        };
+
+        // Sortable options on Attributes
+        $scope.attributeSortableOptions = {
+            change: function(e, ui) {
+                // Resolve order of items to data
+                for (var i in $scope.client.attributes)
+                {
+                    $scope.client.attributes[i].order = i;
+                }
+            },
+            handle: '.order'
+        };
 
         /**
          * Save Client
@@ -438,11 +462,17 @@ angular.module( 'Preslog.clients', [
          */
         $scope.addOption = function()
         {
+            // Set empty array for options if options not set
+            if ($scope.field.data.options === undefined)
+            {
+                $scope.field.data.options = [];
+            }
+
             // Set up field
             var option = $scope.newOption;
             option._id = null;
             option.deleted = false;
-            option.order = $scope.field.data.options.length;
+            option.order = $scope.field.data.length;
 
             // Put to array
             $scope.field.data.options.push( option );

@@ -22,17 +22,27 @@
         border: none 0px;
     }
 
-    tbody tr:hover
+    tbody
     {
-        td
+        tr:hover
         {
-            background: #eee;
-            cursor: default;
+            td
+            {
+                background: #eee;
+                cursor: default;
+            }
+
+            td.order i
+            {
+                visibility: visible;
+            }
         }
 
-        td.order i
+        .ui-sortable-placeholder
         {
-            visibility: visible;
+            height: 47px;
+            border-top: 1px solid grey;
+            background: #eee;
         }
     }
 
