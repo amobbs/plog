@@ -33,6 +33,7 @@ angular.module('moduleManager', [
     'Preslog.auth',
     'Preslog.nav',
     'Preslog.users',
+    'Preslog.usersAdmin',
     'Preslog.clients',
     'Preslog.home',
     'Preslog.log',

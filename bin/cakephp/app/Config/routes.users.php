@@ -167,7 +167,7 @@ Router::connect('/users/my-notifications',
  */
 Router::connect(
     '/users/my-notifications',
-    array('controller' => 'Users', 'action' => 'myNotificationsUpdate', '[method]' => 'POST')
+    array('controller' => 'Users', 'action' => 'myNotificationsEdit', '[method]' => 'POST')
 );
 
 
@@ -247,9 +247,9 @@ Router::connect(
  * )
  */
 Router::connect(
-    '/admin/users/:id',
+    '/admin/users/:user_id',
     array('controller' => 'Users', 'action' => 'adminRead', '[method]' => 'GET'),
-    array('pass'=>array('id'), 'id'=>'[0-9a-z]+')
+    array('pass'=>array('user_id'), 'user_id'=>'[0-9a-z]+')
 );
 
 
@@ -268,9 +268,9 @@ Router::connect(
  * )
  */
 Router::connect(
-    '/admin/users/:id',
+    '/admin/users/:user_id',
     array('controller' => 'Users', 'action' => 'adminEdit', '[method]' => 'POST'),
-    array('pass'=>array('id'), 'id'=>'[0-9a-z]+')
+    array('pass'=>array('user_id'), 'user_id'=>'[0-9a-z]+')
 );
 
 
@@ -289,9 +289,9 @@ Router::connect(
  * )
  */
 Router::connect(
-    '/admin/users/:id',
+    '/admin/users/:user_id',
     array('controller' => 'Users', 'action' => 'adminDelete', '[method]' => 'DELETE'),
-    array('pass'=>array('id'), 'id'=>'[0-9a-z]+')
+    array('pass'=>array('user_id'), 'user_id'=>'[0-9a-z]+')
 );
 
 
