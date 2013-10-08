@@ -220,7 +220,7 @@ class SchemaBehavior extends ModelBehavior {
             // MongoDate
             if ($fieldOptions['mongoType'] == 'MongoDate')
             {
-                $doc[$fieldKey] = new MongoDate( $doc[$fieldKey] );
+                $doc[$fieldKey] = new MongoDate( strtotime($doc[$fieldKey]) );
             }
         }
     }
