@@ -10,6 +10,7 @@ use Swagger\Annotations as SWG;
 /**
  * Class UsersController
  * @property User $User
+ * @property Client $Client
  */
 
 class UsersController extends AppController

@@ -17,14 +17,14 @@ class Client extends AppModel
      * @var array   Schema definition for this document
      */
     public $mongoSchema = array(
-        '_id'           => array('type' => 'string', 'length'=>40, 'primary' => true, 'mongoType'=>'MongoId'),
+        '_id'           => array('type' => 'string', 'length'=>24, 'primary' => true, 'mongoType'=>'MongoId'),
         'name'          => array('type' => 'string', 'length'=>255),
         'shortName'     => array('type' => 'string', 'length'=>4),
-        'contact'       => array('type' => 'text'),
-        'logPrefix'     => array('type' => 'string', 'length'=>4),
+        'contact'       => array('type' => 'string', 'length'=>255),
+        'logPrefix'     => array('type' => 'string', 'length'=>6),
         'activationDate'=> array('type' => 'datetime', 'mongoType'=>'MongoDate'),
         'format'        => array(
-            '_id'           => array('type' => 'string', 'length'=>40, 'mongoType'=>'MongoId'),
+            '_id'           => array('type' => 'string', 'length'=>24, 'mongoType'=>'MongoId'),
             'order'         => array('type'=>'int'),
             'name'          => array('type'=>'string', 'length'=>255),
             'data'          => array(null),
@@ -180,7 +180,7 @@ class Client extends AppModel
         // Get all clients and the fields we care for
         $clients = $this->find('all', array(
             'fields'=>array(
-                'id',
+                '_id',
                 'name',
                 'deleted'
             )

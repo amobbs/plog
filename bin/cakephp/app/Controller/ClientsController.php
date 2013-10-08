@@ -100,14 +100,17 @@ class ClientsController extends AppController
         // Fetch user with all fields
         $client = $this->Client->findById( $id );
 
-        // Get Logo
-        $client['Client']['logo'] = $this->Client->getLogoPath($client['Client']);
-
         // User must exist
         if (!$client)
         {
             $this->errorNotFound(array('message'=>'Client could not be found'));
         }
+
+        // Get Logo
+        $client['Client']['logo'] = $this->Client->getLogoPath($client['Client']);
+
+        // Truncate the activation date
+        $client['Client']['activationDate'] = date('Y-m-d', strtotime($client['Client']['activationDate']));
 
         // Output
         $this->set($client);
@@ -160,7 +163,6 @@ class ClientsController extends AppController
 
         // Save
         $ret = $this->Client->save( $client );
-
 
         // Return success
         $return = array('Success'=>$ret);

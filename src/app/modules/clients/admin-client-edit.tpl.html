@@ -1,5 +1,5 @@
 <!-- Client Details -->
-<form name="clientForm" ng-submit="saveClient()" id="admin_client_edit">
+<form name="clientForm" ng-submit="saveClient()" id="admin_client_edit" validate-server="serverErrors">
 
     <nav class="navbar navbar-fixed-top" id="preslog_sub_nav">
         <div class="navbar-inner">
@@ -46,7 +46,7 @@
                 <div class="widget-content form-horizontal">
 
                     <!-- Company Name -->
-                    <div class="control-group" ng-class="{error: clientForm.name.$dirty && clientForm.name.$invalid && clientForm.name.$dirty}">
+                    <div class="control-group" ng-class="{error: clientForm.name.$dirty && clientForm.name.$invalid}">
                         <label class="control-label" for="inputName">Client Name</label>
                         <div class="controls">
                             <input type="text"
@@ -55,10 +55,9 @@
                                    placeholder="Company Name.."
                                    ng-model="client.name"
                                    required
-                                   validate-server
                                     />
                             <span class="help-inline" ng-show="clientForm.name.$dirty && clientForm.name.$invalid && clientForm.name.$error.required">Must not be empty.</span>
-                            <span class="help-inline" ng-show="clientForm.name.$dirty && clientForm.name.$invalid && clientForm.name.$error.validateServer" ng-bind="validation.name"></span>
+                            <span class="help-inline" ng-show="clientForm.name.$error.validateServer" ng-bind="serverErrors.name"></span>
                         </div>
                     </div>
 
@@ -76,12 +75,12 @@
                                    tooltip="Displayed on the Client Selection tab.
                                             Must be 68x20 pixel PNG."
                                     />
-                            <span class="help-inline" ng-show="clientForm.logo.$dirty && clientForm.name.$invalid && clientForm.logo.$error.validateServer" ng-bind="validation.logo"></span>
+                            <span class="help-inline" ng-show="clientForm.logo.$error.validateServer" ng-bind="serverErrors.logo"></span>
                         </div>
                     </div>
 
                     <!-- Short-hand name -->
-                    <div class="control-group" ng-class="{error: clientForm.shortName.$dirty && clientForm.shortName.$invalid && clientForm.shortName.$invalid}">
+                    <div class="control-group" ng-class="{error: clientForm.shortName.$dirty && clientForm.shortName.$invalid}">
                         <label class="control-label" for="inputShortName">Short-hand Name</label>
                         <div class="controls">
                             <input type="text"
@@ -91,19 +90,18 @@
                                    ng-model="client.shortName"
                                    ng-maxlength="6"
                                    required
-                                   validate-server
                                    tooltip-placement="right"
                                    tooltip="Short names are used in locations where space is at a premium, such as SMS notifications."
                             />
                             <span class="help-inline" ng-show="clientForm.shortName.$dirty && clientForm.shortName.$invalid && clientForm.shortName.$error.required">Must not be empty.</span>
                             <span class="help-inline" ng-show="clientForm.shortName.$dirty && clientForm.shortName.$invalid && clientForm.shortName.$error.maxlength">Must only contain up to 6 characters.</span>
-                            <span class="help-inline" ng-show="clientForm.shortName.$dirty && clientForm.shortName.$invalid && clientForm.shortName.$error.validateServer" ng-bind="validation.shortName"></span>
+                            <span class="help-inline" ng-show="clientForm.shortName.$error.validateServer" ng-bind="serverErrors.shortName"></span>
                         </div>
                     </div>
 
 
                     <!-- Log Prefix -->
-                    <div class="control-group" ng-class="{error: clientForm.logPrefix.$dirty && clientForm.logPrefix.$invalid && clientForm.logPrefix.$invalid}">
+                    <div class="control-group" ng-class="{error: clientForm.logPrefix.$dirty && clientForm.logPrefix.$invalid}">
                         <label class="control-label" for="inputLogPrefix">Log Prefix</label>
                         <div class="controls">
                             <input type="text"
@@ -113,13 +111,12 @@
                                    ng-model="client.logPrefix"
                                    required
                                    ng-pattern="/^[a-zA-Z]{1,6}$/"
-                                   validate-server
                                    tooltip-placement="right"
                                    tooltip="The Log Prefix is attached to the beginning of all Log IDs."
                                     />
                             <span class="help-inline" ng-show="clientForm.logPrefix.$dirty && clientForm.logPrefix.$invalid && clientForm.logPrefix.$error.required">Must not be empty.</span>
                             <span class="help-inline" ng-show="clientForm.logPrefix.$dirty && clientForm.logPrefix.$invalid && clientForm.logPrefix.$error.pattern">May only contain up to 6 letters.</span>
-                            <span class="help-inline" ng-show="clientForm.logPrefix.$dirty && clientForm.logPrefix.$invalid && clientForm.logPrefix.$error.validateServer" ng-bind="validation.logPrefix"></span>
+                            <span class="help-inline" ng-show="clientForm.logPrefix.$error.validateServer" ng-bind="serverErrors.logPrefix"></span>
                         </div>
                     </div>
 
@@ -134,7 +131,7 @@
                                     name="contact"
                                     ng-model="client.contact"
                                     ></textarea>
-                            <span class="help-inline" ng-show="clientForm.contact.$dirty && clientForm.contact.$invalid && clientForm.contact.$error.validateServer" ng-bind="validation.contact"></span>
+                            <span class="help-inline" ng-show="clientForm.contact.$error.validateServer" ng-bind="serverErrors.contact"></span>
                         </div>
                     </div>
 
@@ -148,7 +145,6 @@
                                    placeholder="YYYY-MM-DD.."
                                    ng-model="client.activationDate"
                                    required
-                                   validate-server
                                    ng-pattern="/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/"
                                    tooltip-placement="right"
                                    tooltip="The Activation Date controls when this client will become accessible to users.
@@ -156,7 +152,7 @@
                                             Any users assigned directly to an inactive client will not be able to login while the client is inactive."
                                     />
                             <span class="help-inline" ng-show="clientForm.activationDate.$dirty && clientForm.activationDate.$invalid && clientForm.activationDate.$error.required">Must not be empty.</span>
-                            <span class="help-inline" ng-show="clientForm.activationDate.$dirty && clientForm.activationDate.$invalid && clientForm.activationDate.$error.validateServer" ng-bind="validation.activationDate"></span>
+                            <span class="help-inline" ng-show="clientForm.activationDate.$error.validateServer" ng-bind="serverErrors.activationDate"></span>
                             <span class="help-inline" ng-show="clientForm.activationDate.$dirty && clientForm.activationDate.$invalid && clientForm.activationDate.$error.pattern">Must be formatted as YYYY-MM-DD</span>
                         </div>
                     </div>

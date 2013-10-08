@@ -1,5 +1,5 @@
 <!-- User Details -->
-<form name="userForm" ng-submit="saveUser()" id="admin_client_edit">
+<form name="userForm" ng-submit="saveUser()" id="admin_client_edit" validate-server="serverErrors">
 
     <nav class="navbar navbar-fixed-top" id="preslog_sub_nav">
         <div class="navbar-inner">
@@ -31,7 +31,7 @@
                 <p>Use the form below to modify the users details.</p>
 
                 <!-- Names -->
-                <div class="control-group" ng-class="{error: userForm.firstName.$dirty && userForm.firstName.$invalid && userForm.firstName.$invalid}">
+                <div class="control-group" ng-class="{error: userForm.firstName.$invalid}">
                     <label class="control-label" for="inputFirstname">First Name</label>
                     <div class="controls">
                         <input type="text"
@@ -40,12 +40,12 @@
                                placeholder="First name.."
                                ng-model="user.firstName"
                                required
-                               validate-server />
+                               />
                         <span class="help-inline" ng-show="userForm.firstName.$dirty && userForm.firstName.$invalid && userForm.firstName.$error.required">You must supply a first name.</span>
-                        <span class="help-inline" ng-show="userForm.firstName.$dirty && userForm.firstName.$invalid && userForm.firstName.$error.validateServer" ng-bind="validation.firstName"></span>
+                        <span class="help-inline" ng-show="userForm.firstName.$error.validateServer" ng-bind="serverErrors.firstName"></span>
                     </div>
                 </div>
-                <div class="control-group" ng-class="{error: userForm.lastName.$dirty && userForm.lastName.$invalid && userForm.lastName.$invalid}">
+                <div class="control-group" ng-class="{error: userForm.lastName.$invalid}">
                     <label class="control-label" for="inputLastname">Last Name</label>
                     <div class="controls">
                         <input type="text"
@@ -54,14 +54,14 @@
                                placeholder="Last name.."
                                ng-model="user.lastName"
                                required
-                               validate-server />
+                               />
                         <span class="help-inline" ng-show="userForm.lastName.$dirty && userForm.lastName.$invalid && userForm.lastName.$error.required">You must supply a last name.</span>
-                        <span class="help-inline" ng-show="userForm.lastName.$dirty && userForm.lastName.$invalid && userForm.lastName.$error.validateServer" ng-bind="validation.lastName"></span>
+                        <span class="help-inline" ng-show="userForm.lastName.$error.validateServer" ng-bind="serverErrors.lastName"></span>
                     </div>
                 </div>
 
                 <!-- Contact -->
-                <div class="control-group" ng-class="{error: userForm.email.$dirty && userForm.email.$invalid && userForm.email.$invalid}">
+                <div class="control-group" ng-class="{error: userForm.email.$invalid}">
                     <label class="control-label" for="inputEmail">Email Address</label>
                     <div class="controls">
                         <input type="email"
@@ -71,16 +71,16 @@
                                ng-model="user.email"
                                tooltip="Email address changes by administrators do not require confirmation by users and will be applied immediately."
                                tooltip-placement="right"
-                               validate-server />
+                               />
                         <span class="help-inline" ng-show="userForm.email.$dirty && userForm.email.$invalid && userForm.email.$error.required">You must supply an email address.</span>
                         <span class="help-inline" ng-show="userForm.email.$dirty && userForm.email.$invalid && userForm.email.$error.email">Email address in invalid.</span>
-                        <span class="help-inline" ng-show="userForm.email.$dirty && userForm.email.$invalid && userForm.email.$error.validateServer" ng-bind="validation.email"></span>
+                        <span class="help-inline" ng-show="userForm.email.$error.validateServer" ng-bind="serverErrors.email"></span>
                     </div>
                 </div>
 
 
                 <!-- Passwords -->
-                <div class="control-group" ng-class="{error: userForm.passwordConfirm.$dirty && userForm.passwordConfirm.$invalid && userForm.passwordConfirm.$invalid}">
+                <div class="control-group" ng-class="{error: userForm.passwordConfirm.$invalid}">
                     <label class="control-label" for="inputPassword">Password</label>
                     <div class="controls">
                         <input type="text"
@@ -88,12 +88,12 @@
                                name="password"
                                placeholder="enter new password.."
                                ng-model="user.password"
-                               validate-server />
+                               />
                         <span class="help-inline" ng-show="userForm.passwordConfirm.$dirty && userForm.passwordConfirm.$invalid && userForm.passwordConfirm.$error.validatePassword">Passwords do not match</span>
-                        <span class="help-inline" ng-show="userForm.passwordConfirm.$dirty && userForm.passwordConfirm.$invalid && userForm.password.$error.validateServer" ng-bind="validation.password"></span>
+                        <span class="help-inline" ng-show="userForm.password.$error.validateServer" ng-bind="serverErrors.password"></span>
                     </div>
                 </div>
-                <div class="control-group" ng-class="{error: userForm.passwordConfirm.$dirty && userForm.passwordConfirm.$invalid && userForm.passwordConfirm.$invalid}">
+                <div class="control-group" ng-class="{error: userForm.passwordConfirm.$invalid}">
                     <label class="control-label" for="inputPassword2">Confirm Password</label>
                     <div class="controls">
                         <input type="text"
@@ -107,7 +107,7 @@
                 </div>
 
                 <!-- Company -->
-                <div class="control-group" ng-class="{error: userForm.company.$dirty && userForm.company.$invalid && userForm.company.$invalid}">
+                <div class="control-group" ng-class="{error: userForm.company.$invalid}">
                     <label class="control-label" for="inputCompany">Company</label>
                     <div class="controls">
                         <input type="text"
@@ -115,13 +115,13 @@
                                name="company"
                                placeholder="Company.."
                                ng-model="user.company"
-                               validate-server />
-                        <span class="help-inline" ng-show=" userForm.company.$dirty && userForm.company.$invalid && userForm.company.$error.validateServer" ng-bind="validation.company"></span>
+                               />
+                        <span class="help-inline" ng-show="userForm.company.$error.validateServer" ng-bind="serverErrors.company"></span>
                     </div>
                 </div>
 
                 <!-- Phone Number -->
-                <div class="control-group" ng-class="{error: userForm.phoneNumber.$dirty && userForm.phoneNumber.$invalid && userForm.phoneNumber.$invalid}">
+                <div class="control-group" ng-class="{error: userForm.phoneNumber.$invalid}">
                     <label class="control-label" for="inputPhoneNumber">Phone Number</label>
                     <div class="controls">
                         <input type="text"
@@ -130,16 +130,15 @@
                                placeholder="eg. 0412345678.."
                                ng-model="user.phoneNumber"
                                ng-pattern="/([0-9]+)/"
-                               validate-server
                                tooltip-placement="right"
                                tooltip="Phone Numbers can be used to send instant notifications." />
                         <span class="help-inline" ng-show="userForm.phoneNumber.$dirty && userForm.phoneNumber.$invalid && userForm.phoneNumber.$error.pattern">Phone numbers may only contain numbers</span>
-                        <span class="help-inline" ng-show="userForm.phoneNumber.$dirty && userForm.phoneNumber.$invalid && userForm.phoneNumber.$error.validateServer" ng-bind="validation.phoneNumber"></span>
+                        <span class="help-inline" ng-show="userForm.phoneNumber.$error.validateServer" ng-bind="serverErrors.phoneNumber"></span>
                     </div>
                 </div>
 
                 <!-- Role -->
-                <div class="control-group" ng-class="{error: userForm.role.$dirty && userForm.role.$invalid && userForm.role.$invalid}">
+                <div class="control-group" ng-class="{error: userForm.role.$invalid}">
                     <label class="control-label" for="inputRole">Role</label>
                     <div class="controls">
                         <select id="inputRole"
@@ -147,15 +146,15 @@
                                 name="role"
                                 ng-options="o.id as o.name for o in options.roles"
                                 required
-                                validate-server>
+                                >
                         </select>
                         <span class="help-inline" ng-show="userForm.role.$dirty && userForm.role.$invalid && userForm.role.$error.required">A role must be selected</span>
-                        <span class="help-inline" ng-show="userForm.role.$dirty && userForm.role.$invalid && userForm.role.$error.validateServer" ng-bind="validation.role"></span>
+                        <span class="help-inline" ng-show="userForm.role.$error.validateServer" ng-bind="serverErrors.role"></span>
                     </div>
                 </div>
 
                 <!-- Client ID -->
-                <div class="control-group" ng-class="{error: userForm.client_id.$dirty && userForm.client_id.$invalid && userForm.client_id.$invalid}">
+                <div class="control-group" ng-class="{error: userForm.client_id.$invalid}">
                     <label class="control-label" for="inputClient">Default Client</label>
                     <div class="controls">
                         <select id="inputClient"
@@ -163,22 +162,22 @@
                                 name="client_id"
                                 ng-options="o._id as o.name for o in options.clients"
                                 required
-                                validate-server>
+                                >
                         </select>
                         <span class="help-inline" ng-show="userForm.client_id.$dirty && userForm.client_id.$invalid && userForm.client_id.$error.required">A client must be selected</span>
-                        <span class="help-inline" ng-show="userForm.client_id.$dirty && userForm.client_id.$invalid && userForm.client_id.$error.validateServer" ng-bind="validation.client_id"></span>
+                        <span class="help-inline" ng-show="userForm.client_id.$error.validateServer" ng-bind="serverErrors.client_id"></span>
                     </div>
                 </div>
 
                 <!-- Deleted - Only visible when the user has been removed -->
-                <div class="control-group" ng-show="{{user.deleted}}" ng-class="{error: userForm.deleted.$dirty && userForm.deleted.$invalid && userForm.deleted.$invalid}">
+                <div class="control-group" ng-show="{{user.deleted}}" ng-class="{error: userForm.deleted.$invalid}">
                     <label class="control-label" for="inputNotifyEmail">Deleted</label>
                     <div class="controls">
                         <input type="checkbox"
                                id="inputDeleted"
                                ng-model="user.deleted" />
                         <span class="help-inline">Uncheck and save to restore this users account.</span>
-                        <span class="help-inline" ng-show="userForm.deleted.$dirty && userForm.deleted.$invalid && userForm.deleted.$error.validateServer" ng-bind="validation.deleted"></span>
+                        <span class="help-inline" ng-show="userForm.deleted.$error.validateServer" ng-bind="serverErrors.deleted"></span>
                     </div>
                 </div>
 

@@ -172,6 +172,12 @@ angular.module( 'Preslog.users', [
          */
         $scope.saveProfile = function()
         {
+            // Clear flash message
+            $scope.flashMessage = {
+                error: false,
+                success: false
+            };
+
             // Will not submit without validation passing
             if ( $scope.userForm.$invalid ) {
                 alert('Your submission is not valid. Please check for errors.');
@@ -187,24 +193,18 @@ angular.module( 'Preslog.users', [
                 // On success
                 function()
                 {
-                    // Redirect to user list
-                    $location.path('/my-profile');
+                    // Show a success message
+                    $scope.flashMessage.success = true;
                 },
 
                 // On failure
                 function(response)
                 {
+                    // Show an error message
+                    $scope.flashMessage.error = true;
+
                     // Extrapolate all fields to the scope
-                    $scope.validation = response.data.data;
-
-                    // If field exists, mark is as invalid
-                    for (var i in $scope.validation)
-                    {
-                        if ($scope.userForm[i] !== undefined) {
-                            $scope.userForm[i].$setValidity('validateServer', false);
-                        }
-                    }
-
+                    $scope.serverErrors = response.data.data;
                 }
             );
         };
@@ -226,6 +226,12 @@ angular.module( 'Preslog.users', [
          */
         $scope.saveNotifications = function()
         {
+            // Clear flash message
+            $scope.flashMessage = {
+                error: false,
+                success: false
+            };
+
             // Will not submit without validation passing
             if ( $scope.userForm.$invalid ) {
                 alert('Your submission is not valid. Please check for errors.');
@@ -241,24 +247,18 @@ angular.module( 'Preslog.users', [
                 // On success
                 function()
                 {
-                    // Redirect to user list
-                    $location.path('/my-notifications');
+                    // Flash
+                    $scope.flashMessage.success = true;
                 },
 
                 // On failure
                 function(response)
                 {
+                    // Flash
+                    $scope.flashMessage.error = true;
+
                     // Extrapolate all fields to the scope
-                    $scope.validation = response.data.data;
-
-                    // If field exists, mark is as invalid
-                    for (var i in $scope.validation)
-                    {
-                        if ($scope.userForm[i] !== undefined) {
-                            $scope.userForm[i].$setValidity('validateServer', false);
-                        }
-                    }
-
+                    $scope.serverErrors = response.data.data;
                 }
             );
         };
@@ -366,16 +366,7 @@ angular.module( 'Preslog.users', [
                 function(response)
                 {
                     // Extrapolate all fields to the scope
-                    $scope.validation = response.data.data;
-
-                    // If field exists, mark is as invalid
-                    for (var i in $scope.validation)
-                    {
-                        if ($scope.userForm[i] !== undefined) {
-                            $scope.userForm[i].$setValidity('validateServer', false);
-                        }
-                    }
-
+                    $scope.serverErrors = response.data.data;
                 }
             );
         };
