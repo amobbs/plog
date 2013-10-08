@@ -293,3 +293,23 @@ Router::connect(
     array('controller' => 'Users', 'action' => 'adminDelete', '[method]' => 'DELETE'),
     array('pass'=>array('id'), 'id'=>'[0-9a-z]+')
 );
+
+
+/**
+ * Users.ResetPassword.Email: POST (Request a password reset by email)
+ * @SWG\Resource(
+ *      resourcePath="/users",
+ *      @SWG\Api(
+ *          path="/users/reset-password/email",
+ *          @SWG\Operation(
+ *              @SWG\Partial("users.reset-password.email"),
+ *              nickname="users.reset-password.email",
+ *              httpMethod="POST"
+ *          )
+ *      )
+ * )
+ */
+Router::connect(
+    '/users/reset-password/email',
+    array('controller' => 'Users', 'action' => 'resetPasswordEmail', '[method]' => 'POST')
+);

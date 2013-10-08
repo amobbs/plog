@@ -4,6 +4,7 @@
  */
 
 App::uses('AppController', 'Controller');
+App::uses('CakeEmail', 'Network/Email');
 use Swagger\Annotations as SWG;
 
 /**
@@ -567,4 +568,110 @@ class UsersController extends AppController
     }
 
 
+
+    /**
+     * Send a password reset email
+     *
+     * @SWG\Operation(
+     *      partial="users.reset-password.email",
+     *      summary="Send a password reset email to the requested user",
+     *      notes="Any user can make this request. Email address must exist in the system. Email will be sent to the requested address.",
+     *      @SWG\Parameters(
+     *          @SWG\Parameter(
+     *              name="email",
+     *              paramType="form",
+     *              dataType="string",
+     *              required="true",
+     *              description="Email address"
+     *          )
+     *      )
+     * )
+     */
+    public function resetPasswordEmail()
+    {
+        // Fetch requested email address
+        $emailAddress = $this->request->data('email');
+
+        // Validate: Email is valid?
+        if (!$emailAddress)
+        {
+            $this->errorBadRequest(array('message'=>'You must supply a valid email address.'));
+        }
+
+        // Find the user
+        $user = $this->User->find('first', array('conditions'=>array(
+            'email'=>$emailAddress
+        )));
+
+        // Error if user doesn't exist
+        if (empty($user))
+        {
+            $this->errorBadRequest(array('message'=>'There are no users with the email address you specified.'));
+        }
+
+        // Create a token for the reset
+        $token = 123;
+
+        // Save the token
+        $user['password-token'] = $token;
+        $this->User->save($user);
+
+        // Author email to the user for their reset
+        $email = new CakeEmail('default');
+        $email->to($user['email'], $user['firstName'].' '.$user['lastName']);
+        $email->subject('Password Reset');
+        $email->viewVars(array('user' => $user));
+        $email->helpers(array('Html'));
+        $email->template('password-reset');
+
+        // Send the email
+        $email->send();
+
+        // Send OK to user
+        $this->set('success', true);
+        $this->set('_serialize', array('success'));
+    }
+
+
+    /**
+     * Send a password reset email
+     *
+     * @SWG\Operation(
+     *      partial="users.reset-password",
+     *      summary="Change the users password, using the supplied token",
+     *      notes="Any user can make this request. Token must exist in the system under a user.",
+     *      @SWG\Parameters(
+     *          @SWG\Parameter(
+     *              name="token",
+     *              paramType="form",
+     *              dataType="string",
+     *              required="true",
+     *              description="Password reset token"
+     *          )
+     *      )
+     * )
+     */
+    public function resetPassword()
+    {
+        // Find the user by their token
+        $user = array();
+
+        // User or token doesn't exist? Error.
+        if (empty($user))
+        {
+            $this->errorBadRequest(array('message'=>'Invalid password reset token. Please try again.'));
+        }
+
+        // encrypt the new password
+        $password = 123;
+
+        // Save the new password over this user and remove the existing token
+        $user['password'] = $password;
+        $user['password-token'] = null;
+        $this->User->save($user);
+
+        // Report success
+        $this->set('success', true);
+        $this->set('_serialize', array('success'));
+    }
 }

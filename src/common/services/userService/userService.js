@@ -227,6 +227,30 @@ angular.module('userService', ['restangular'])
                 });
 
                 return deferred.promise;
+            },
+
+
+            /**
+             * Instigate a request for Forgotten Password
+             * @param   string      Email address for reset
+             */
+            forgottenPassword: function( email ) {
+                var deferred = $q.defer();
+
+                // Try to get the OK message
+                Restangular.all('users/reset-password/email').getList().then(function (ret) {
+
+                });
+            },
+
+
+            /**
+             * Perform a password reset using the Token and new Password.
+             * @param   string      newPassword
+             * @param   string      token
+             */
+            resetPassword: function( newPassword, token ) {
+
             }
 
         };

@@ -25,6 +25,7 @@ angular.module( 'Preslog.auth', [
                 }
             },
             resolve: {
+                // User must be logged out to access Login
                 loggedOut: ['$q', '$location', 'userService', function($q, $location, userService) {
                     var defer = $q.defer();
 
@@ -38,6 +39,24 @@ angular.module( 'Preslog.auth', [
                         // Assuming the user isn't logged in, resolve as OK.
                         defer.resolve();
                     });
+
+                    return defer.promise;
+                }],
+                // Process any password reset request
+                resetPasswordToken: ['$q', '$location', 'userService', function($q, $location, userService) {
+                    var defer = $q.defer();
+
+                    // If we have a reset token...
+                    if ($location.search()['token'] !== undefined)
+                    {
+                        // Resolve with the token
+                        defer.resolve( $location.search()['token'] );
+                    }
+                    else
+                    {
+                        // False for this item
+                        defer.resolve( false );
+                    }
 
                     return defer.promise;
                 }]
@@ -117,7 +136,7 @@ angular.module( 'Preslog.auth', [
     /**
      * Controller
      */
-    .controller( 'AuthLoginCtrl', function AuthLoginController( $rootScope, $scope, $location, titleService, userService, $modal ) {
+    .controller( 'AuthLoginCtrl', function AuthLoginController( $rootScope, $scope, $location, titleService, userService, $modal, resetPasswordToken ) {
 
         // Title
         titleService.setTitle( 'Login' );
@@ -157,15 +176,31 @@ angular.module( 'Preslog.auth', [
             // Open the Modal
             var modal = $modal.open({
                 templateUrl: 'modules/auth/forgotten-password.tpl.html',
-                controller: 'AuthLoginForgottenPasswordCtrl'
+                controller: 'AuthLoginForgottenPasswordCtrl',
+                resolve: {}
             });
         };
+
+
+        // If the token is present, fire the Modal on display
+        if (resetPasswordToken !== false)
+        {
+            // Open the Modal
+            var modal = $modal.open({
+                backdrop: 'static',
+                templateUrl: 'modules/auth/reset-password.tpl.html',
+                controller: 'AuthLoginResetPasswordCtrl',
+                resolve: {
+                    token: function() { return resetPasswordToken; }
+                }
+            });
+        }
 
     })
 
 
     /**
-     *
+     * Forgotten Password Modal Controller
      */
     .controller( 'AuthLoginForgottenPasswordCtrl', function AuthLoginController( $rootScope, $scope, $location, userService, $modalInstance ) {
 
@@ -176,6 +211,52 @@ angular.module( 'Preslog.auth', [
         {
             console.log($scope.email);
             $modalInstance.dismiss();
+        };
+
+
+        /**
+         * Cancel
+         */
+        $scope.cancel = function()
+        {
+            $modalInstance.dismiss();
+        };
+
+    })
+
+
+    /**
+     * Reset Password Modal Controller
+     */
+    .controller( 'AuthLoginResetPasswordCtrl', function AuthLoginController( $rootScope, $scope, $location, userService, $modalInstance, token ) {
+
+        // Set up empty form
+        $scope.user = {
+            'password':'',
+            'passwordConfirm':''
+        };
+
+
+        /**
+         * Ok - reset password request
+         */
+        $scope.ok = function()
+        {
+            // Perform reset
+            userService.resetPassword( $scope.user.password, token).then(
+
+                // Success
+                function(ret)
+                {
+                    $modalInstance.dismiss();
+                },
+
+                // Failure
+                function(ret)
+                {
+
+                }
+            );
         };
 
 
