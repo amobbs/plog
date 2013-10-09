@@ -9,7 +9,6 @@ return array(
     'Swagger' => array($vendorDir . '/zircote/swagger-php/library'),
     'Preslog' => array($baseDir . '/app/Lib'),
     'PHPWord' => array($vendorDir . '/phpword/phpword/Library'),
-    'JqlParser' => array($vendorDir . '/JqlParser'),
     'Doctrine\\Common\\Lexer\\' => array($vendorDir . '/doctrine/lexer/lib'),
     'Doctrine\\Common\\Inflector\\' => array($vendorDir . '/doctrine/inflector/lib'),
     'Doctrine\\Common\\Collections\\' => array($vendorDir . '/doctrine/collections/lib'),

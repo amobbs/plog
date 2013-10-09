@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "340a74b4eafc37c8ddb79f36d16a4c84",
+    "hash": "78af4b1316cec4ab9b96a320e951ec18",
     "packages": [
         {
             "name": "HighchartsPHP",
@@ -499,12 +499,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/zircote/swagger-php.git",
-                "reference": "4336e34ee5e44a0f77c1e9324614ad70a069e35a"
+                "reference": "3bafe9c448e15bff85b9b73281af6ce5725f0250"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zircote/swagger-php/zipball/4336e34ee5e44a0f77c1e9324614ad70a069e35a",
-                "reference": "4336e34ee5e44a0f77c1e9324614ad70a069e35a",
+                "url": "https://api.github.com/repos/zircote/swagger-php/zipball/3bafe9c448e15bff85b9b73281af6ce5725f0250",
+                "reference": "3bafe9c448e15bff85b9b73281af6ce5725f0250",
                 "shasum": ""
             },
             "require": {
@@ -547,7 +547,7 @@
                 "json",
                 "service discovery"
             ],
-            "time": "2013-09-02 00:35:29"
+            "time": "2013-10-08 15:23:14"
         }
     ],
     "packages-dev": [

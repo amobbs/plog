@@ -5,7 +5,7 @@ class DATABASE_CONFIG {
         'datasource' => 'Mongodb.MongodbSource',
         'persistent' => 'true',
 
-        'host' => 'localhost',
+        'host' => '192.168.4.125',
         'database' => 'preslog',
         'port' => 27017,
 
@@ -15,8 +15,8 @@ class DATABASE_CONFIG {
         'password' => 'root',
 
         'replicaset' => array(
-            'host' => 'mongodb://root:root@localhost:27017',
-          'options' => array('connect' => true,  'readPreference' => 'primary')
+            'host' => 'mongodb://root:root@192.168.4.125:27017',
+            'options' => array('connect' => true,  'readPreference' => 'primary')
         ),
 
     );

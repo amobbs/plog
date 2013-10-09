@@ -133,7 +133,7 @@ class AppController extends Controller {
         // Set Form fields are email and password
         $this->PreslogAuth->authenticate = array(
             'Preslog'=>array(
-                'passwordHasher'=>'blowfish',
+                'passwordHasher'=>'Blowfish',
                 'fields'=>array(
                     'username'=>'email',
                     'password'=>'password',

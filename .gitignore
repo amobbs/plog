@@ -9,6 +9,8 @@ build/webroot/*
 
 // Bin webroot
 // - track Api
+bin/cakephp/Vendor/*
+bin/cakephp/app/tmp/*
 bin/webroot/*
 !bin/webroot/api
 
