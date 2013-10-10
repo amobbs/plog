@@ -24,7 +24,7 @@ class NowFunction extends JqlFunction{
      * @param $args - no arguments
      */
     public function execute($args = null) {
-        return mktime(date('H'), date('i'), date('s'), date('n'), date('j'), date('Y'));
+        return "ISODate('" . date('Y-m-d H:m:s') . "')"; //mktime(date('H'), date('i'), date('s'), date('n'), date('j'), date('Y'));
     }
 
 }

@@ -2,6 +2,7 @@
 
 namespace Preslog\Widgets\Types;
 
+use Configure;
 use Highchart;
 use MongoDate;
 use MongoId;
@@ -10,58 +11,48 @@ use Preslog\Widgets\Widget;
 class LineWidget extends Widget {
 
     public function __construct($data) {
+        //widget type specific info
         $this->type = 'line';
-        if (!is_array($this->data)) {
-            $this->data = array();
+        $this->aggregate = true;
+
+        //info for this instance of the widget
+        if (!is_array($this->details)) {
+            $this->details = array();
         }
 
-        $this->data['x'] = array();
-        $this->data['y'] = array();
+        $this->details['xAxis'] = array();
+        $this->details['yAxis'] = array();
 
-        if (isset($data['data'])) {
+        if (isset($data['details'])) {
 
-            $this->data['x']['label'] = isset($data['x']['label']) ? $data['x']['label'] : '';
-            $this->data['x']['fieldId'] = isset($data['x']['field_id']) ? $data['x']['field_id'] : '';
-            $this->data['x']['showTrend'] = isset($data['x']['showTrend']) ? $data['x']['showTred'] : false;
-
-            $this->data['y']['label'] = isset($data['y']['label']) ? $data['y']['label'] : '';
-            $this->data['y']['fieldId'] = isset($data['y']['field_id']) ? $data['y']['field_id'] : '';
+            $this->details['xAxis'] = isset($data['details']['xAxis']) ? $data['details']['xAxis'] : '';
+            $this->details['yAxis'] = isset($data['details']['yAxis']) ? $data['details']['yAxis'] : '';
+            $this->details['series'] = isset($data['details']['series']) ? $data['details']['series'] : '';
         }
 
-        $created = '2013-01-01';
-
-        $this->query = array(
-            array(
-                '$match' => array(
-                    "created" => array('$gt' => new MongoDate(strtotime("2012-01-01T00:00:00.0Z")), '$lt' => new MongoDate(strtotime("2012-12-01T00:00:00.0Z"))),
-                )
+        $fields = Configure::Read('Preslog')['Fields'];
+        $this->options = array(
+            'xAxis' => array(
+                array('fieldType' => $fields['datetime']),
+                array('fieldType' => 'created'),
+                array('fieldType' => 'modified'),
             ),
-            array(
-                '$project' => array(
-                    'created' => array(
-                        'month' => array('$month' => '$created'),
-                        'year' => array('$year' =>  '$created'),
-                    ),
-                )
+            'yAxis' => array(
+                array('fieldType' => 'count'),
+                array('fieldType' => $fields['duration']),
             ),
-            array(
-                '$group' => array(
-                    '_id' => '$created',
-                    'count' => array('$sum' => 1),
-                ),
-            ),
-            array(
-                '$sort' => array(
-                    "_id.year" => 1,
-                    "_id.month" =>  1,
-                ),
+            'series' => array(
+                array('fieldType' => 'client'),
+                array('fieldType' => $fields['select']),
+                array('fieldType' => $fields['select-impact']),
+                array('fieldType' => $fields['select-severity']),
             ),
         );
 
         parent::__construct($data);
     }
 
-    public function toHighCharts() {
+    public function getDisplayData() {
         $chart = new Highchart();
 
         $chart->chart = array(
@@ -71,7 +62,7 @@ class LineWidget extends Widget {
         );
 
         $chart->title = array(
-            'text' => $this->data['title'],
+            'text' => isset($this->details['title']) ? $this->details['title'] : '',
             'x' => - 20,
         );
 
@@ -82,30 +73,46 @@ class LineWidget extends Widget {
             'borderWidth' => 0,
         );
 
-        $xLabel = isset($this->data['x']['label']) ? $this->data['x']['label'] : 'no data';
+        $xLabel = '';
+        foreach($this->options['xAxis'] as $option) {
+            if ($option['id'] == $this->details['xAxis']) {
+                $xLabel = $option['name'];
+            }
+        }
+
         $chart->xAxis = array(
             'title' => array(
                 'text' => $xLabel,
             ),
         );
 
-        //TODO remove this and make more generic
-        $categories = array();
-        $series = array(
-            'name' => 'faults',
-            'data' => array(),
-        );
-        if (isset($this->series['result'])) {
-            foreach($this->series['result'] as $value) {
-                $categories[] = $value['_id']['month'] . '/' . substr($value['_id']['year'], 2,2);
-                $series['data'][] = $value['count'];
+        $yLabel = '';
+        foreach($this->options['yAxis'] as $option) {
+            if ($option['id'] == $this->details['yAxis']) {
+                $yLabel = $option['name'];
             }
         }
-        //TODO remove ^^^
+
+        $categorieData = array();
+        $seriesData = array();
+
+        foreach($this->series as $point) {
+            $seriesId = (string)$point['series'];
+            if (!isset($seriesData[$seriesId])) {
+                $seriesData[$seriesId] = array(
+                    'name' => $seriesId,
+                    'data' => array(),
+                );
+            }
+            $categorieData[$point['xAxis']['hour']] = $point['xAxis']['hour']; //TODO fix this put the format somewhere
+            $seriesData[$seriesId]['data'][] = $point['yAxis'];
+        }
+
+        $series = array_values($seriesData);
+        $categories = array_values($categorieData);
 
         $chart->xAxis->categories = $categories;
 
-        $yLabel = isset($this->data['y']['label']) ? $this->data['y']['label'] : 'no data';
         $chart->yAxis = array(
             'title' => array(
                 'text' => $yLabel,
@@ -127,7 +134,7 @@ class LineWidget extends Widget {
                 ),
             );
         } else {
-            $chart->series = array($series);
+            $chart->series = $series;
         }
 
 //            $chart->series[] = array(

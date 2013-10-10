@@ -320,40 +320,52 @@ angular.module( 'Preslog.dashboard', [
             return columns;
         };
 
-        //log list widget
-        $scope.logWidgetParams = {
-            page: 1,
-            total: 0,
-            perPageOptions: [3, 5, 10, 20],
-            perPage: 3,
-            sorting: {
-                name: 'created'
-            },
-            query: '',
-            logs: [],
-            lastUpdated: new Date()
+        $scope.setUpLogList = function() {
+
+            for(var w in $scope.dashboard.widgets) {
+                var widget = $scope.dashboard.widgets[w];
+
+                if (widget.type != 'list') {
+                    continue;
+                }
+//TODO make this work
+
+                //log list widget
+                widget.params = {
+                    page: 1,
+                    total: 0,
+                    perPageOptions: [3, 5, 10, 20],
+                    perPage: 3,
+                    sorting: {
+                        name: 'created'
+                    },
+                    query: widget.data.query,
+                    logs: widget.display,
+                    lastUpdated: new Date()
+                };
+                $scope.dashboard.widgets[w] = widget;
+
+                $scope.$watch('dashboard.widgets[w].params', $scope.updateLogList(widget.params), true);
+            }
         };
 
-        $scope.$watch('logWidgetParams', function(params) {
-            if ($scope.jql.length  === 0) {
+        $scope.updateLogList = function(params) {
+            if (params.query.length === 0) {
                 return;
             }
 
-            var offset = (($scope.logWidgetParams.page - 1) * $scope.logWidgetParams.perPage);
-            if ($scope.logWidgetParams.page === 1) {
+            var offset = ((params.page - 1) * params.perPage);
+            if (params.page === 1) {
                 offset = 0;
             }
-            Restangular.one('search').get({query: $scope.jql, limit: $scope.logWidgetParams.perPage, start: offset}).then(function(result) {
-                console.log(result);
+            Restangular.one('search').get({query: params.query, limit: params.perPage, start: offset}).then(function(result) {
                 $scope.results = result;
-                var params = angular.copy($scope.logWidgetParams);
                 params.total = result.total;
                 params.logs = result.logs;
-                $scope.logWidgetParams = params;
             });
-        }, true);
+        };
 
-
+        $scope.setUpLogList();
         $scope.startWidgetRefresh();
     })
 

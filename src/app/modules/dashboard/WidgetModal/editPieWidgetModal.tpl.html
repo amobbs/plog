@@ -12,13 +12,33 @@
     <div class="control-group">
         <label class="control-label">Title </label>
         <div class="controls">
-            <input type="text" placeholder="Title..." value="" ng-model="widget.data.title"/>
+            <input type="text" placeholder="Title..." value="" ng-model="widget.details.title"/>
         </div>
     </div>
     <div class="control-group">
         <label class="control-label">Search Query</label>
         <div class="controls">
-            <textarea placeholder="Filter..." ng-model="widget.data.query" required></textarea>
+            <textarea placeholder="Filter..." ng-model="widget.details.query" required></textarea>
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label">Count</label>
+        <div class="controls">
+            <select
+                    ng-model="widget.details.yAxis"
+                    ng-options="field.id as field.name for field in widget.options.yAxis"
+                    >
+            </select>
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label">Group By</label>
+        <div class="controls">
+            <select
+                    ng-model="widget.details.series"
+                    ng-options="field.id as field.name for field in widget.options.series"
+                    >
+            </select>
         </div>
     </div>
     <div class="control-group">

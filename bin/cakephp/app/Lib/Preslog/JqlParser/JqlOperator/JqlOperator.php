@@ -1,11 +1,14 @@
 <?php
 namespace Preslog\JqlParser\JqlOperator;
 
+use Zend\Validator\NotEmpty;
+
 class JqlOperator {
 
     public static function listOperators() {
         return array(
             '=' => new EqualsOperator(),
+            '!=' => new NotEqualsOperator(),
             '>' => new GreaterThanOperator(),
             '<' => new LessThanOperator(),
             'NOT IN' => new NotInOperator(),

@@ -85,6 +85,10 @@ class JqlParser {
     }
 
     private function _buildMongoCriteria($expression) {
+        if (!$expression) {
+            return array();
+        }
+
         if ($expression instanceof Clause) {
             return $expression->getMongoCriteria();
         }
@@ -119,36 +123,70 @@ class JqlParser {
         return '{ ' . $this->_buildMongoCriteria($this->_expression) . ' }';
     }
 
-    private function _buildMongoCriteriaAsString($expression) {
-        if ($expression instanceof Clause) {
-            return $expression->getMongoCriteria();
-        }
+    /***
+     * find all the mongo id's for fields in the query and return as string
+     *
+     * @return array
+     */
+    public function getFieldList() {
 
-        $doc = '';
-        foreach($expression as $keyword => $clause) {
-            $keyword = $this->_findKeyword($keyword);
-            $subClauses = $this->_buildMongoCriteria($clause);
-
-            if ($keyword instanceof JqlKeyword) {
-                return "'" . $keyword->getMongoSymbol() . "' : {" . $this->_buildMongoCriteria($clause)  .' }';
-            }
-
-            if (is_array($clause)) {
-                foreach ($clause as $subKeyWord => $subClauses) {
-                    $subKeyWordObj = $this->_findKeyword($subKeyWord);
-                    $doc .= " '" . $subKeyWordObj->getMongoSymbol() . "' : '" . $this->_buildMongoCriteria($subClauses) . "' ";
-                }
-            } else {
-                $doc .= '{ '. $clause->getMongoCriteria() . ' }, ';
-            }
-        }
-
-        if (substr($doc, -2) == ', ') {
-            $doc = substr($doc, 0, -2);
-        }
-
-        return $doc;
+        $fieldList = array();
+        $this->_getFields($this->_expression, $fieldList);
+        return $fieldList;
     }
+
+    /***
+     * recursivly find all the fields in the expression
+     * @param $fieldList
+     * @return array
+     */
+    private function _getFields($clauses, &$fieldList) {
+        if(is_array($clauses)) {
+            foreach($clauses as $clause) {
+                if($clause instanceof Clause) {
+                    $args[] = $clause->getField();
+                } else if (is_array($clause)) {
+                    $this->_getFields($clause, $fieldList);
+                }
+            }
+        } else if($clauses instanceof Clause) {
+            $fieldList[] = $clauses->getField();
+        }
+
+        return $fieldList;
+    }
+
+    //TODO probably not needed
+//    private function _buildMongoCriteriaAsString($expression) {
+//        if ($expression instanceof Clause) {
+//            return $expression->getMongoCriteria();
+//        }
+//
+//        $doc = '';
+//        foreach($expression as $keyword => $clause) {
+//            $keyword = $this->_findKeyword($keyword);
+//            $subClauses = $this->_buildMongoCriteria($clause);
+//
+//            if ($keyword instanceof JqlKeyword) {
+//                return "'" . $keyword->getMongoSymbol() . "' : {" . $this->_buildMongoCriteria($clause)  .' }';
+//            }
+//
+//            if (is_array($clause)) {
+//                foreach ($clause as $subKeyWord => $subClauses) {
+//                    $subKeyWordObj = $this->_findKeyword($subKeyWord);
+//                    $doc .= " '" . $subKeyWordObj->getMongoSymbol() . "' : '" . $this->_buildMongoCriteria($subClauses) . "' ";
+//                }
+//            } else {
+//                $doc .= '{ '. $clause->getMongoCriteria() . ' }, ';
+//            }
+//        }
+//
+//        if (substr($doc, -2) == ', ') {
+//            $doc = substr($doc, 0, -2);
+//        }
+//
+//        return $doc;
+//    }
 
     private function _getWhereFromSql($sql, $args)
     {

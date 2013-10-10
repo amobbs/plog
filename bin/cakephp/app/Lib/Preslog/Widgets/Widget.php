@@ -6,33 +6,62 @@ use Highchart;
 use MongoId;
 
 class Widget {
-    protected $id, $order, $name, $type, $data, $maxWidth = 1, $series = array(), $query = '';
+    protected $id; //mongo id for instance of widget
+    protected $order; //order displayed on screen
+    protected $name; //shown in title bar of widget
+    protected $type; //determines type of graph or method used to display widget
+    protected $details; //information used to render the graph (title, refresh rate, options available to generate the graph
+    protected $options = array(); //all possible options that are shown when picking details to generate the graphs
+    protected $maxWidth = 1; //how much space the widget should take up on screen
+    protected $series = array(); //data used to populate graph
+    protected $aggregate; //is the result of the data an aggregate or just a list of logs?
+
 
     public function setId($id) { $this->id = $id; }
-    public function setData($data) { $this->data = $data; }
-    public function setOrder($order) { $this->order = $order; }
     public function setSeries($series) { $this->series = $series; }
-    public function setQuery($query) { $this->query = $query; }
+    public function setDetail($key, $value) { $this->details[$key] = $value; }
+    public function setOptions($key, $value) { $this->options[$key] = $value; }
 
-    public function getQuery() { return $this->query; }
+    /*
+     * an array for all the details in this object
+     */
+//    public function getProperties() {
+//        return array(
+//            'id' => $this->id,
+//            'order' => $this->order,
+//            'name' => $this->name,
+//            'type' => $this->type,
+//            'aggregate' => $this->aggregate,
+//            'details' => $this->details,
+//            'options' => $this->options,
+//            'series' => $this->series,
+//        );
+//    }
+
+    public function getDetail($key) { return isset($this->details[$key]) ? $this->details[$key] : ''; }
+    public function getOptions() { return $this->options; }
+    public function isAggregate() { return $this->aggregate; }
 
     public function __construct($data) {
+        //set all the widget details
         $this->id = isset($data['_id']) ? new MongoId($data['_id']): new MongoId();
         $this->name = isset($data['name']) ? $data['name'] : '';
         $this->order = isset($data['order']) ? $data['order'] : null;
-        //$this->query = isset($data['query']) ? $data['query'] : null;
-        if (!is_array($this->data)) {
-            $this->data = array();
+        if (!is_array($this->details)) {
+            $this->details = array();
         }
 
-
-        if (isset($data['data'])) {
-            $this->data['title'] = isset($data['data']['title']) ? $data['data']['title'] : '';
-            $this->data['query'] = isset($data['data']['query']) ? $data['data']['query'] : '';
-            $this->data['refresh'] = isset($data['data']['refresh']) ? $data['data']['refresh'] : 0;
+        //set details about the chart that will be displayed
+        if (isset($data['details'])) {
+            $this->details['title'] = isset($data['details']['title']) ? $data['details']['title'] : '';
+            $this->details['query'] = isset($data['details']['query']) ? $data['details']['query'] : '';
+            $this->details['refresh'] = isset($data['details']['refresh']) ? $data['details']['refresh'] : 0;
         } else {
             $this->data['title'] = '';
+            $this->details['query'] = '';
         }
+
+
 
 //        $this->series = array(
 //            array(
@@ -50,19 +79,34 @@ class Widget {
 //        );
     }
 
-    public function toArray() {
-        return array(
+    public function toArray($forMongo = true) {
+        $widget = array(
             '_id' => (string)$this->id,
             'order' => $this->order,
             'name' => $this->name,
             'type' => $this->type,
-            'data' => $this->data,
-            'highcharts' => $this->toHighCharts(),
+            'details' => $this->details,
             'maxWidth' => $this->maxWidth,
         );
+
+        if (!$forMongo) {
+            $widget['options'] = $this->options;
+            $widget['display'] = $this->getDisplayData();
+        }
+
+        return $widget;
     }
 
-    public function toHighCharts() {
+    //return data that is needed to display this widget in the interface
+    public function getDisplayData() {
        return array();
     }
+
+//    private function _parseOptionsForDisplay() {
+//        $result = array();
+//
+//        foreach($this->options as $key => $value) {
+//
+//        }
+//    }
 }

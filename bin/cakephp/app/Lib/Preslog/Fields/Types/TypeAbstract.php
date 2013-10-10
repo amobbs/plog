@@ -27,6 +27,12 @@ abstract class TypeAbstract
      */
     protected $description = '';
 
+    /***
+     * @var array       list of details needed to aggregate this field type
+     */
+    protected $aggregationDetails = array();
+
+
 
     /**
      * Fetch a list of properties for this field, or just the one specified.
@@ -58,10 +64,23 @@ abstract class TypeAbstract
     protected function getPropertyList()
     {
         return array(
-            'alias'         =>$this->alias,
-            'name'          =>$this->name,
-            'description'   =>$this->description,
+            'alias'             =>$this->alias,
+            'name'              =>$this->name,
+            'description'       =>$this->description,
+            'aggregationDetails'=>$this->aggregationDetails,
         );
+    }
+
+
+    /***
+     * used to create a human readable list for the aggregation details that can be used in the interface
+     *
+     * @param $fieldName
+     * @param $fieldId
+     * @return array
+     */
+    public function listDetails($fieldName) {
+        return array();
     }
 
 }
