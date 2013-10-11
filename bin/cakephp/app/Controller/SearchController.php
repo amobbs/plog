@@ -105,15 +105,9 @@ class SearchController extends AppController
             $query .= 'AND client_id = my_client_id';
         }
 
-
-        // Translate query to Mongo
-        $jqlParser = new JqlParser();
-        $jqlParser->setSqlFromJql($query);
-        $query = $jqlParser->getMongoCriteria();
-
         // Do query
-        $results = $this->Log->findByMongoCriteria($query, $start, $limit, $orderBy);
-        $total = $this->Log->countByMongoCriteria($query);
+        $results = $this->Log->findByQuery($query, $start, $limit, $orderBy);
+        $total = $this->Log->countByQuery($query);
 
         $clients = array();
         $users = array();
@@ -241,11 +235,12 @@ class SearchController extends AppController
 
             $logs[] = $parsed;
         }
-
-        //TODO remove this it is just here for testing.
-        $mongo = $this->Log->getDataSource();
-        $mongo->toString($query);
-
+//
+//        //TODO remove this it is just here for testing.
+//        if (!empty($query)) {
+//            $mongo = $this->Log->getDataSource();
+//            $mongo->toString($query);
+//        }
         // Return the Results and the corresponding Client opts
         return array('query' => $query, 'logs' => $logs, 'fields' => $options, 'total' => $total);
     }

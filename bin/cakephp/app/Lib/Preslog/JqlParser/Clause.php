@@ -1,6 +1,7 @@
 <?php
 namespace Preslog\JqlParser;
 
+use MongoDate;
 use Preslog\JqlParser\JqlFunction\JqlFunction;
 use Preslog\JqlParser\JqlOperator\JqlOperator;
 
@@ -31,7 +32,13 @@ class Clause {
         return $this->_operator->formatValueForSql($this->_value);
     }
 
+    public function getField() { return $this->_field; }
+
     public function getFunctionEvaluated() {
+        if (strtotime($this->_value)) {
+            return new MongoDate(strtotime($this->_value));
+        }
+
         return $this->_executeFunctionInValue($this->_value);
     }
 
@@ -123,7 +130,7 @@ class Clause {
      * @return mixed
      */
     private function _executeFunctionInValue($value) {
-        if (substr_count($value, '[') == 0) return $value;
+        if (substr_count($value, '(') == 0) return $value;
 
         $parts = explode('(', $value);
         $functionName = trim($parts[0]);

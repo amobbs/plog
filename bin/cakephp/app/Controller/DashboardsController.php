@@ -1,6 +1,8 @@
 <?php
 
 
+use Preslog\Fields\Types\TypeAbstract;
+use Preslog\JqlParser\JqlParser;
 use Swagger\Annotations as SWG;
 use Preslog\Widgets\WidgetFactory;
 
@@ -46,11 +48,15 @@ class DashboardsController extends AppController
         $fav = array();
         if (isset($user['User']['dashboards'])) {
             foreach($user['User'] as $dashboardId) {
-                $dashboard = $this->Dashboard->findById(new MongoId($dashboardId));
-                $fav[] = array(
-                    'id' => $dashboard['Dashboard']['id'],
-                    'name' => $dashboard['Dashboard']['name'],
-                );
+                if (!empty($dashboardId)) {
+                    $dashboard = $this->Dashboard->findById(new MongoId($dashboardId));
+                    if (!empty($dashboard)) {
+                        $fav[] = array(
+                            'id' => $dashboard['Dashboard']['id'],
+                            'name' => $dashboard['Dashboard']['name'],
+                        );
+                    }
+                }
             }
         }
 
@@ -107,30 +113,44 @@ class DashboardsController extends AppController
      */
     public function editDashboard()
     {
+        //id of the dashboard we are working on
         $id = isset($this->request->params['pass'][0]) ? $this->request->params['pass'][0] : "";
-        if ($this->request->is('get')) { //read dashboard
+
+        //read dashboard
+        if ($this->request->is('get')) {
             $dashboard = $this->Dashboard->findById($id);
             if (empty($dashboard)) {
-                throw new Exception('dashboard not found in database');
+                throw new Exception('We are unable to find this dashboard in the system');
             }
-            $this->set('dashboard', $this->Dashboard->toArray($dashboard['Dashboard']));
+            $dashboard = $this->_getParsedDashboard($dashboard['Dashboard']);
+            $this->set('dashboard', $this->Dashboard->toArray($dashboard, false));
             $this->set('status', 'success');
+
         } else if ($this->request->is('post')) {
-            if (!empty($id)) { //edit dashboard
+
+            //edit dashboard
+            if (!empty($id)) {
                 if(isset($this->request->data['widgets'])) { //just update the widgets
                     $this->updateDashboardWidgets($id, $this->request->data['widgets']);
                     $dashboard = $this->Dashboard->findById($id);
-                } else { //update the name
+
+                //update the name
+                } else {
                     $dashboard = $this->Dashboard->findById($id);
                     $dashboard['Dashboard']['name'] = $this->request->data['name'];
                     $this->Dashboard->save($dashboard['Dashboard']);
-                    $this->set('dashboard', $this->Dashboard->toArray($dashboard['Dashboard']));
+
+                    $dashboard = $this->_getParsedDashboard($dashboard['Dashboard']);
+                    $this->set('dashboard', $this->Dashboard->toArray($dashboard, false));
                     $this->set('status', 'success');
                 }
 
-                $this->set('dashboard', $this->Dashboard->toArray($dashboard['Dashboard']));
+                $dashboard = $this->_getParsedDashboard($dashboard['Dashboard']);
+                $this->set('dashboard', $this->Dashboard->toArray($dashboard));
                 $this->set('status', 'saved');
-            } else { //new dashboard
+
+            //new dashboard
+            } else {
                 $dashboard = array(
                     '_id' => new MongoId(),
                     'name' => $this->request->data['name'],
@@ -142,7 +162,8 @@ class DashboardsController extends AppController
                 $this->Dashboard->save();
 
                 $dashboard = $this->Dashboard->findById($dashboard['_id']);
-                $this->set('dashboard', $this->Dashboard->toArray($dashboard['Dashboard']));
+                $dashboard = $this->_getParsedDashboard($dashboard);
+                $this->set('dashboard', $this->Dashboard->toArray($dashboard, false));
                 $this->set('status', 'created');
             }
         }
@@ -155,14 +176,35 @@ class DashboardsController extends AppController
         $this->set('_serialize', array('status', 'dashboard', 'favourites', 'clients'));
     }
 
+    /*
+     * given a dashboard that has just come out from the database repalce all the widgets with widget objects
+     */
+    private function _getParsedDashboard($dashboard) {
+        $widgets = array();
+
+        if (isset($dashboard['widgets'])) {
+            foreach($dashboard['widgets'] as $widget) {
+                $widgetObject = null;
+                if(!($widget instanceof Widget)) {
+                    $widgetObject = $this->_createWidgetObject($widget);
+                } else {
+                    $widgetObject = $widget;
+                }
+                $widgets[] = $widgetObject;
+            }
+        }
+
+        $dashboard['widgets'] = $widgets;
+        return $dashboard;
+    }
+
     private function updateDashboardWidgets($id, $widgets) {
         $dashboard = array(
             '_id' => new MongoId($id),
             'widgets' => array(),
         );
         foreach($widgets as $widget) {
-            $widgetObject = WidgetFactory::createWidget($widget);
-            $widgetObject->setId(new MongoId($widget['_id']));
+            $widgetObject = $this->_createWidgetObject($widget);
             $dashboard['widgets'][] = $widgetObject->toArray();
         }
 
@@ -272,23 +314,23 @@ class DashboardsController extends AppController
         $widget = null;
         if ($this->request->is('post'))
         {
-            if (!isset( $this->request->params['widget_id'])) { //create widget
-                $widget = $this->createWidget($this->request->data['widget']);
-                $dashboard['widgets'][] = $widget->toArray();
+            //create widget
+            if (!isset( $this->request->params['widget_id'])) {
+                $widget = $this->_createWidgetObject($this->request->data['widget']);
+                $dashboard['widgets'][] = $widget->toArray(true);
                 $this->Dashboard->save($dashboard);
-                $this->set('widget', $widget->toArray());
+                $this->set('widget', $widget->toArray(false));
                 $serialize[] = 'widget';
 
                 $success = true;
             } else { //edit widget
                 $widgetArrayId = $this->Dashboard->findWidgetArrayId($dashboard, $this->request->params['widget_id']);
-                $dashboard['widgets'][$widgetArrayId] = $this->Widget->updateWidget($dashboard['widgets'][$widgetArrayId], $this->request->data['widget']);
+                $widget = $this->_createWidgetObject($this->request->data['widget']);
+                $dashboard['widgets'][$widgetArrayId] = $widget->toArray(true);
+                   // $this->Widget->updateWidget($dashboard['widgets'][$widgetArrayId], );
                 $this->Dashboard->save($dashboard);
-                $widget = WidgetFactory::createWidget($dashboard['widgets'][$widgetArrayId]);
-                $widget->setSeries($this->Dashboard->getDataForWidget($widget->getQuery()));
 
-                $this->Dashboard->save($dashboard);
-                $this->set('widget', $widget->toArray());
+                $this->set('widget', $widget->toArray(false));
                 $serialize[] = 'widget';
 
                 $success= true;
@@ -297,28 +339,14 @@ class DashboardsController extends AppController
 
         if ($this->request->is('get')) { //read widget
             $widgetArrayId = $this->Dashboard->findWidgetArrayId($dashboard, $this->request->params['widget_id']);
-            $widget = WidgetFactory::createWidget($dashboard['widgets'][$widgetArrayId]);
-            $widget->setSeries($this->Dashboard->getDataForWidget($widget->getQuery()));
-            $this->set('widget', $widget->toArray());
+            $widget = $this->_createWidgetObject($dashboard['widgets'][$widgetArrayId]);
+            $this->set('widget', $widget->toArray(false));
             $serialize[] = 'widget';
         }
 
         $this->set('success', $success);
         $this->set('_serialize', $serialize);
     }
-
-    private function createWidget($data) {
-        if (!isset($data['name'])) $data['name'] = 'Widget';
-        $widget = WidgetFactory::createWidget($data);
-        $widget->setId(new MongoId());
-        //TODO remove this and replace with jql parser stuff
-        //from query get data and save into series on widget;
-        $widget->setSeries($this->Dashboard->getDataForWidget($widget->getQuery()));
-
-
-        return $widget;
-    }
-
 
     /**
      * Delete a widget on a dashboard
@@ -519,5 +547,290 @@ class DashboardsController extends AppController
         $this->set('_serialize', array('todo'));
     }
 
+    /*
+     * Create an instance of Preslog\Widget and populate it with data passed in
+     */
+    private function _createWidgetObject($widget) {
+        $widgetObject = WidgetFactory::createWidget($widget);
+        //set the id if we have it otherwise it will be random
+        if (isset($widget['_id'])) {
+            $widgetObject->setId(new MongoId($widget['_id']));
+        }
 
+        //TODO replace with client list from session
+        $clients = array();
+        $allClients = $this->Client->find('all');
+        foreach($allClients as $c) {
+            $clients[] = $c['Client']['_id'];
+        }
+        //end todo
+
+        //populate the options available for this client on this widget
+        $options = $widgetObject->getOptions();
+
+        //this gets populated in _populateOptions
+        $mongoPipeLine = array();
+
+        //populate any options that are available
+        foreach($options as $optionName => $value) {
+            $widgetObject = $this->_populateOptions($options, $optionName, $widgetObject, $mongoPipeLine);
+        }
+
+        return $this->_populateSeries($widgetObject, $mongoPipeLine);
+    }
+
+    /***
+     * this will take all the fields each widget can use for aggregation (eg: xaxis and yaxis) create a human readable
+     * list of options to display and add details of the actually selected values into the mongo pipeline
+     *
+     * @param $options
+     * @param $optionName
+     * @param $widgetObject
+     * @param $mongoPipeLine
+     * @return mixed
+     */
+    private function _populateOptions($options, $optionName, $widgetObject, &$mongoPipeLine) {
+        //check this widget contains the option we want to populate
+        if (!isset($options[$optionName])) {
+            return $widgetObject;
+        }
+
+        $options = $options[$optionName];
+
+        //TODO replace with client list from session
+        $clients = array();
+        $allClients = $this->Client->find('all');
+        foreach($allClients as $c) {
+            $clients[] = $c['Client']['_id'];
+        }
+        //end todo
+
+        if (!empty($options)) {
+            $xOptions = array();
+            $xAxis = $widgetObject->getDetail($optionName);
+
+            $xName = null;
+            $xOperation = null;
+            if (!empty($xAxis)) {
+                $xParts = explode(':', $xAxis);
+                $xName = $xParts[0];
+                $xOperation = $xParts[1];
+            }
+
+            $mongoPipeLine[$optionName] = array();
+
+            foreach($options as $option) {
+                if ($option['fieldType'] instanceof TypeAbstract) {
+                    //find all fields for all clients of this type
+                    foreach($clients as $clientId) {
+                        $client = $this->Client->findById($clientId);
+                        //find the format of this type
+                        foreach($client['Client']['format'] as $format) {
+                            //find the format and add to options used for dropdowns
+                            if ($format['type'] == $option['fieldType']->getProperties('alias')) {
+                                $xOptions[$format['name']] = $option['fieldType']->listDetails($format['name']);
+                            }
+
+                            //find the type the widget is using
+                            if($xName == $format['name']) {
+                                $aggregationDetails = $option['fieldType']->getProperties('aggregationDetails');
+                                $mongoPipeLine[$optionName][$format['name']] = $aggregationDetails[$xOperation];
+                            }
+                        }
+                    }
+                } else {
+                    //these are mostly hardcoded and computed fields
+                    switch ($option['fieldType']) {
+                        case 'count':
+                            $xOptions['count'] = array(
+                                array(
+                                    'name' => 'Count Logs',
+                                    'id' => 'count:count',
+                                ),
+                            );
+
+                            if ($xName == 'count') {
+                                $mongoPipeLine[$optionName]['count'] = array(
+                                    'dataLocation' => 1,
+                                    'groupBy' => '$sum',
+                                    'aggregate' => true,
+                                );
+                            }
+                            break;
+                        case 'created':
+                            break;
+                        case 'modified':
+                            break;
+                        case 'client':
+                            $xOptions['client'] = array(
+                                array(
+                                    'name' => 'by Client',
+                                    'id' => 'client:client',
+                                ),
+                            );
+
+                            if ($xName == 'client') {
+                                $mongoPipeLine[$optionName]['client'] = array(
+                                    'dataLocation' => 'client_id',
+                                    'groupBy' => '',
+                                    'aggregate' => false,
+                                );
+                            }
+                            break;
+                    }
+
+                }
+            }
+
+            $show = array();
+            foreach($xOptions as $field) {
+                foreach($field as $option) {
+                    $show[] = $option;
+                }
+            }
+
+            $widgetObject->setDisplayOptions($optionName, $show);
+        };
+
+        return $widgetObject;
+    }
+
+
+    /***
+     * run any queries needed against the database to populate the data on for the widget
+     * -this will parse the jql text query into a mongo $match array (via JqlParser)
+     * -find any fields in the query and get the corrosponding mongoId for each client that is available to this user.
+     * -send the $match to the correct find (aggregation or normal) and add the returned data onto the widget object
+     *
+     * @param $widgetObject
+     * @param $aggregationPipeLine
+     *
+     * @throws Exception
+     * @return mixed
+     */
+    private function _populateSeries($widgetObject, $aggregationPipeLine) {
+
+        // Translate query to Mongo
+        $jqlParser = new JqlParser();
+        $jqlParser->setSqlFromJql($widgetObject->getDetail('query'));
+        $match = $jqlParser->getMongoCriteria();
+
+        //TODO replace with client list from session
+        $clients = array();
+        $allClients = $this->Client->find('all');
+        foreach($allClients as $c) {
+            $clients[] = $c['Client']['_id'];
+        }
+        //end todo
+
+        //find which fields we are using in the query
+        $fieldNames = $jqlParser->getFieldList();
+
+        //add the fields that are being used for grouping (aggregation)
+        foreach($aggregationPipeLine as $fieldName => $fields) {
+            foreach($fields as $name => $value) {
+                $fieldNames[] = $name;
+            }
+        }
+
+        //get the id's for the fields from each available client
+        $fields = array();
+        foreach ($clients as $clientId) {
+            $client = $this->Client->findById($clientId);
+            foreach($client['Client']['format'] as $format) {
+                //does this client have a field with this name?
+                if (in_array($format['name'], $fieldNames)) {
+                    if (!isset($fields[$format['name']])) {
+                        $fields[$format['name']] = array();
+                    }
+                    //add the id for this cleints version of the field.
+                    $fields[$format['name']][] =  new MongoId($format['_id']);
+                }
+            }
+        }
+
+        $result = array(
+            'ok' => 0,
+        );
+
+        //send to database and get results.
+        if ($widgetObject->isAggregate()) {
+           $result = $this->Log->findAggregate($match, $aggregationPipeLine, $fields);
+        } else {
+            $result = $this->Log->findByQuery($match);
+        }
+
+        if (empty($result)) {
+            //TODO why is it empty??????
+            $widgetObject->setSeries(array());
+        } else {
+            if ($result['ok'] != 1) {
+                throw new Exception('query to mongo failed!!!!'); //TODO replace with cake exception
+            }
+
+            //remove any mongo'ids from series to show field value
+            $seriesTypeDetails = explode(':', $widgetObject->getDetail('series'));
+            $seriesType = $seriesTypeDetails[0];
+            $dataLocation = '';
+            $parsedResult = array();
+            foreach($widgetObject->getOptions()['series'] as $option) {
+                $fieldType = $option['fieldType'];
+                if ($fieldType instanceof TypeAbstract) {
+                    if ($fieldType->getProperties('alias') == $seriesTypeDetails[1]) {
+                        $seriesType = $fieldType;
+                        $aggregationDetails = $fieldType->getProperties('aggregationDetails');
+                        foreach($aggregationDetails as $name => $details) {
+                            if ($name = $seriesTypeDetails[1]) {
+                                $dataLocation = $details['dataLocation'];
+                            }
+                        }
+                    }
+                }
+            }
+
+            if ($seriesType instanceof TypeAbstract) {
+                $parsedPoint = array();
+                foreach($result['result'] as $point) {
+                    $parsedPoint = $point;
+                    if ($point['series'][$dataLocation] instanceof MongoId) {
+                        foreach($allClients as $client) {
+                            foreach($client['Client']['format'] as $format) {
+
+                                //it is some kind of select so search through the options for the value
+                                if (isset($format['data']) && isset($format['data']['options'])) {
+                                    foreach($format['data']['options'] as $option) {
+                                        if ($option['_id'] == $point['series'][$dataLocation]) {
+                                            $parsedPoint['series'] = $option['name'];
+                                        }
+                                    }
+                                } else if ($format['_id'] == $point['series']) { //client
+                                    $parsedPoint['series'] = $client['Client']['name'];
+                                }
+                            }
+                        }
+                    }
+                    $parsedResult[] = $parsedPoint;
+                }
+
+            } else {
+                switch ($seriesType) {
+                    case 'client':
+                        foreach($result['result'] as $point) {
+                            if ($point['series'] instanceof MongoId) {
+                                $client = $this->Client->findById($point['series']);
+                                $point['series'] = $client['Client']['name'];
+                            }
+                            $parsedResult[] = $point;
+                        }
+
+                        break;
+                }
+            }
+
+            $widgetObject->setSeries($parsedResult);
+
+        }
+
+        return $widgetObject;
+    }
 }

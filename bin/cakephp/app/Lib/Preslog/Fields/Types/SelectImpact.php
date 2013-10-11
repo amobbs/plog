@@ -14,4 +14,42 @@ class SelectImpact extends TypeAbstract
     protected $alias = 'select-impact';
     protected $name = 'Drop-down Select Box for On-Air Impact';
     protected $description = 'A drop-down selection box, including validation between Impact and Duration.';
+
+    protected $aggregationDetails = array(
+        'select' => array(
+            'dataLocation' => 'selected',
+            'groupBy' => array(
+                'select' => ''
+            ),
+            'aggregate' => false,
+        ),
+    );
+
+    /***
+     * used to create a human readable list for the aggregation details that can be used in the interface
+     *
+     * @param $fieldName
+     *
+     * @internal param $fieldId
+     * @return array
+     */
+    public function listDetails($fieldName) {
+        $list = array();
+        foreach($this->aggregationDetails as $name => $detail) {
+            $list[] = array(
+                'name' => $fieldName,
+                'id' =>  $fieldName . ':' . $name,
+            );
+        }
+
+        return $list;
+    }
+
+    public function chartDisplay($aggregationType, $data) {
+        switch ($aggregationType) {
+            case 'select':
+                return $data;
+                break;
+        }
+    }
 }

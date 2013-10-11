@@ -137,8 +137,8 @@ angular.module( 'Preslog.dashboard', [
         $scope.startWidgetRefresh = function() {
             for(var wId in $scope.dashboard.widgets) {
                 var widget = $scope.dashboard.widgets[wId];
-                if (widget.data.refresh && widget.data.refresh > 0) {
-                    $scope.setRefreshTimer(widget._id, widget.data.refresh);
+                if (widget.details.refresh && widget.details.refresh > 0) {
+                    $scope.setRefreshTimer(widget._id, widget.details.refresh);
                 }
             }
         };
@@ -180,7 +180,7 @@ angular.module( 'Preslog.dashboard', [
                             var widget = $scope.dashboard.widgets[wId];
                             if (widget._id == widgetId) {
                                 $scope.dashboard.widgets[wId] = result.widget;
-                                $scope.updateRefreshTimer(widgetId, result.widget.data.refresh);
+                                $scope.updateRefreshTimer(widgetId, result.widget.details.refresh);
                                 break;
                             }
                         }
@@ -269,7 +269,7 @@ angular.module( 'Preslog.dashboard', [
                         for(var index = 0; index < $scope.dashboard.widgets.length; index++) {
                             if ($scope.dashboard.widgets[index]._id == result.widget._id) {
                                 $scope.dashboard.widgets[index] = result.widget;
-                                $scope.updateRefreshTimer(result.widget._id, result.widget.data.refresh);
+                                $scope.updateRefreshTimer(result.widget._id, result.widget.details.refresh);
                             }
                         }
                     });
@@ -318,40 +318,52 @@ angular.module( 'Preslog.dashboard', [
             return columns;
         };
 
-        //log list widget
-        $scope.logWidgetParams = {
-            page: 1,
-            total: 0,
-            perPageOptions: [3, 5, 10, 20],
-            perPage: 3,
-            sorting: {
-                name: 'created'
-            },
-            query: '',
-            logs: [],
-            lastUpdated: new Date()
+        $scope.setUpLogList = function() {
+
+            for(var w in $scope.dashboard.widgets) {
+                var widget = $scope.dashboard.widgets[w];
+
+                if (widget.type != 'list') {
+                    continue;
+                }
+//TODO make this work
+
+                //log list widget
+                widget.params = {
+                    page: 1,
+                    total: 0,
+                    perPageOptions: [3, 5, 10, 20],
+                    perPage: 3,
+                    sorting: {
+                        name: 'created'
+                    },
+                    query: widget.details.query,
+                    logs: widget.display,
+                    lastUpdated: new Date()
+                };
+                $scope.dashboard.widgets[w] = widget;
+
+                $scope.$watch('dashboard.widgets[w].params', $scope.updateLogList(widget.params), true);
+            }
         };
 
-        $scope.$watch('logWidgetParams', function(params) {
-            if ($scope.jql.length  === 0) {
+        $scope.updateLogList = function(params) {
+            if (params.query.length === 0) {
                 return;
             }
 
-            var offset = (($scope.logWidgetParams.page - 1) * $scope.logWidgetParams.perPage);
-            if ($scope.logWidgetParams.page === 1) {
+            var offset = ((params.page - 1) * params.perPage);
+            if (params.page === 1) {
                 offset = 0;
             }
-            Restangular.one('search').get({query: $scope.jql, limit: $scope.logWidgetParams.perPage, start: offset}).then(function(result) {
-                console.log(result);
+            Restangular.one('search').get({query: params.query, limit: params.perPage, start: offset}).then(function(result) {
                 $scope.results = result;
-                var params = angular.copy($scope.logWidgetParams);
                 params.total = result.total;
                 params.logs = result.logs;
-                $scope.logWidgetParams = params;
             });
-        }, true);
+        };
 
-
+        $scope.setUpLogList();
         $scope.startWidgetRefresh();
     })
 
