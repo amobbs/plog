@@ -76,7 +76,7 @@ module.exports = {
             'vendor/lodash/dist/lodash.js',
             'vendor/restangular/dist/restangular.js',
 
-            'vendor/dynatree/dist/jquery.dynatree-1.2.4.js',
+            'vendor/dynatree/dist/jquery.dynatree.min.js'
         ],
 
         /**

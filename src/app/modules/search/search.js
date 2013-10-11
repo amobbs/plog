@@ -13,7 +13,6 @@
  * specified, as shown below.
  */
 angular.module( 'Preslog.search', [
-        'titleService',
         'Preslog.search.sqlModal'
     ])
 
@@ -32,7 +31,7 @@ angular.module( 'Preslog.search', [
 /**
  * And of course we define a controller for our route.
  */
-    .controller( 'SearchCtrl', function LogController( $scope, $http, $modal, titleService, Restangular ) {
+    .controller( 'SearchCtrl', function SearchCtrl( $scope, $http, $modal, titleService, Restangular ) {
        titleService.setTitle( 'Search' );
 
        // $scope.jql = '(created > startofweek[] AND created < startofday[-1d]) AND operator not in ("jim", "pete") AND (duration > 1d AND duration < 1d10m) ';

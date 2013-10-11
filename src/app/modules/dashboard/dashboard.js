@@ -13,8 +13,6 @@
  * specified, as shown below.
  */
 angular.module( 'Preslog.dashboard', [
-        'titleService',
-        'ui.bootstrap',
         'Preslog.dashboard.dashboardModal',
         'Preslog.dashboard.widgetModal'
     ])

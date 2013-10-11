@@ -18,6 +18,7 @@ angular.module('moduleManager', [
     // Services and Interceptors
     'userService',
     'errorHandler',
+    'loadingHandler',
 
     // Directives
     'ngConfirmClick',
@@ -38,9 +39,6 @@ angular.module('moduleManager', [
     'Preslog.home',
     'Preslog.log',
     'Preslog.search',
-    'Preslog.search.sqlModal',
-    'Preslog.dashboard',
-    'Preslog.dashboard.dashboardModal',
-    'Preslog.dashboard.widgetModal'
+    'Preslog.dashboard'
 ]);
 

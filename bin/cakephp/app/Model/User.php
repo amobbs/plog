@@ -39,20 +39,102 @@ class User extends AppModel
      * @var array   Schema definition for this document
      */
     public $mongoSchema = array(
-        '_id'           => array('type' => 'string', 'length'=>24, 'primary' => true, 'mongoType'=>'MongoId'),
-        'firstName'     => array('type' => 'string', 'length'=>255),
-        'lastName'      => array('type' => 'string', 'length'=>255),
-        'email'         => array('type' => 'string', 'length'=>255),
-        'password'      => array('type' => 'string', 'length'=>60),
-        'company'       => array('type' => 'string', 'length'=>255),
-        'phoneNumber'   => array('type' => 'string', 'length'=>40),
-        'role'          => array('type' => 'string', 'length'=>32),
-        'client_id'     => array('type' => 'string', 'length'=>24, 'mongoType'=>'MongoId'),
-        'deleted'       => array('type' => 'boolean'),
-        'notifications'         => array('type' => null),
-        'favouriteDashboards'   => array('type' => null),
-        'created'       => array('type' => 'datetime', 'mongoType'=>'MongoDate'),
-        'modified'      => array('type' => 'datetime', 'mongoType'=>'MongoDate'),
+        '_id' => array(
+            'type' => 'string',
+            'mongoType' => 'mongoId',
+            'length' => 24,
+            'primary' => true
+        ),
+        'firstName' => array(
+            'type' => 'string',
+            'length' => 255
+        ),
+        'lastName' => array(
+            'type' => 'string',
+            'length' => 255
+        ),
+        'email' => array(
+            'type' => 'string',
+            'length' => 255
+        ),
+        'password' => array(
+            'type' => 'string',
+            'length' => 60
+        ),
+        'company' => array(
+            'type' => 'string',
+            'length' => 255
+        ),
+        'phoneNumber' => array(
+            'type' => 'string',
+            'length' => 40
+        ),
+        'role' => array(
+            'type' => 'string',
+            'length' => 32
+        ),
+        'client_id' => array(
+            'type' => 'string',
+            'mongoType' => 'mongoId',
+            'length' => 24
+        ),
+        'deleted' => array('type' => 'boolean'),
+        'notifications' => array(
+            'type' => 'subDocument',
+            'schema' => array(
+                'methods' => array(
+                    'type' => 'subDocument',
+                    'schema' => array(
+                        'sms' => array(
+                            'type' => 'boolean',
+                            'default' => false,
+                        ),
+                        'email' => array(
+                            'type' => 'boolean',
+                            'default' => false
+                        )
+                    )
+                ),
+                'clients' => array(
+                    'type' => 'subCollection',
+                    'schema' => array(
+                        'client_id' => array(
+                            'type' => 'string',
+                            'mongoType' => 'mongoId',
+                            'length' => 24
+                        ),
+                        'attributes' => array(
+                            'type' => 'array'
+                        ),
+                        'types' => array(
+                            'type' => 'object'
+                        )
+                    )
+                )
+            )
+        ),
+        'clients' => array(
+            'type' => 'subCollection',
+            'schema' => array(
+                'client_id' => array(
+                    'type' => 'string',
+                    'mongoType' => 'mongoId',
+                    'length' => 24
+                ),
+                'attributes' => array(
+                    'type' => 'array'
+                ),
+            )
+        ),
+        'favouriteDashboards' => array('type' => null),
+        'created' => array(
+            'type' => 'datetime',
+            'mongoType' => 'mongoDate'
+        ),
+        'modified' => array(
+            'type' => 'datetime',
+            'mongoType' => 'mongoDate'
+        ),
     );
 
 

@@ -11,6 +11,7 @@ class JsonErrorHandler extends ErrorHandler
 {
     public static function handleError($code, $description, $file = null, $line = null, $context = null)
     {
+        debug(array($description, $file, $line)); exit;
         // get the error code
         list(, $level) = ErrorHandler::mapErrorCode($code);
 

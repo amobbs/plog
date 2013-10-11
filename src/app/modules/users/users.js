@@ -142,11 +142,31 @@ angular.module( 'Preslog.users', [
     .controller( 'UserMyNotifyCtrl', function UserMyNotifyController( $scope, titleService, userSource, optionsSource, $location ) {
         titleService.setTitle( 'My Notifications' );
 
-        console.log(userSource);
-
         // Pass resolves to the scope
         $scope.options = optionsSource;
         $scope.user = userSource.User;
+
+        /**
+         * Fix the client notifications so they can display properly in the form and then be saved to
+         * MongoDB with relative ease.
+         * Utilising:
+         * _.where() - http://lodash.com/docs#where
+         * _.defaults() - http://lodash.com/docs#defaults
+         */
+        var clientNotifications = [];
+        angular.forEach(optionsSource.notifications.clients, function(client) {
+            var search = _.where($scope.user.notifications.clients, {"client_id": client._id}),
+                currentVals = {client_id: client._id};
+            if (search.length > 0) {
+                currentVals.attributes = search[0].attributes;
+                currentVals.types = Array.isArray(search[0].types) ? {} : search[0].types;
+            }
+            clientNotifications.push(_.defaults(currentVals, {"attributes": [], "types": {}}));
+        });
+
+        console.log(clientNotifications);
+        // Save the new notification back to the client.
+        $scope.user.notifications.clients = clientNotifications;
 
         /**
          * Save My Notifications
