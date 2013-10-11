@@ -144,10 +144,16 @@ class PreslogAuthComponent extends AuthComponent
 
         // No role? Must be a guest. Grab the anonymous permissions
         if (empty($role)) {
-            $role =  $config['anonymousRole'];
+            $role = $config['anonymousRole'];
         }
 
-        // Send back
+        // If the role desginated so far doesn't exist, make it anonymous..
+        if (!isset($config['roles'][ $role ]))
+        {
+            $role = $config['anonymousRole'];
+        }
+
+        // Return available permissions
         return $config['roles'][ $role ]['permissions'];
     }
 

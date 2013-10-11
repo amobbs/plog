@@ -8,6 +8,7 @@ angular.module('userService', ['restangular'])
         var user,
             permissions,
             clients,
+            currentClient,
             dashboards;
 
         // Define the service
@@ -136,10 +137,10 @@ angular.module('userService', ['restangular'])
 
                 // Fetch client list if not loaded
                 if (! clients) {
-                    Restangular.all('clients').getList().then(function (ret) {
+                    service.getUser().then(function (ret) {
 
                         // Set clients
-                        clients = ret.clients;
+                        clients = ret.login.clients;
 
                         deferred.resolve(clients);
                     });
@@ -149,6 +150,36 @@ angular.module('userService', ['restangular'])
 
                 // Promise to complete this request
                 return deferred.promise;
+            },
+
+
+            /**
+             * Fetch the currently active client
+             */
+            getClient: function() {
+                var deferred = $q.defer();
+
+                // Get clients
+                service.getClients().then(function(clients) {
+
+                    // Fetch this active client
+                    var client = $.map(clients, function(v,k){ if (v._id == currentClient) { return v; } });
+                    client = client[0];
+
+                    deferred.resolve(client);
+                });
+
+                return deferred.promise;
+            },
+
+
+            /**
+             * Set the client
+             */
+            setClient: function( client_id ) {
+
+                // Set the active client
+                currentClient = client_id;
             },
 
 
@@ -237,10 +268,20 @@ angular.module('userService', ['restangular'])
             forgottenPassword: function( email ) {
                 var deferred = $q.defer();
 
-                // Try to get the OK message
-                Restangular.all('users/reset-password/email').getList().then(function (ret) {
+                var postData = {
+                    "email":email
+                };
 
-                });
+                // Try to get the OK message
+                Restangular.all('users/reset-password/email').post( postData ).then(
+                    function (data) {
+                        deferred.resolve(data);
+                    },
+                    function (data) {
+                        deferred.reject(data);
+                    });
+
+                return deferred.promise;
             },
 
 
@@ -250,7 +291,24 @@ angular.module('userService', ['restangular'])
              * @param   string      token
              */
             resetPassword: function( newPassword, token ) {
+                var deferred = $q.defer();
 
+                var postData = {
+                    "password":newPassword,
+                    "token":token
+                };
+
+                // Try to get the OK message
+                Restangular.all('users/reset-password').post( postData ).then(
+                    function (data) {
+                        deferred.resolve(data);
+                    },
+                    function (data) {
+                        deferred.reject(data);
+                    });
+
+
+                return deferred.promise;
             }
 
         };

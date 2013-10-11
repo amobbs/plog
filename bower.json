@@ -18,7 +18,8 @@
         "dynatree": "~1.2.4",
         "ng-table": "https://github.com/esvit/ng-table.git#~v0.2.0",
         "angularjs-modal-service": "master",
-        "angular-ui-sortable": "master"
+        "angular-ui-sortable": "master",
+        "jquery-file-upload": "~8.8.7"
     },
     "dependencies": {}
 }

@@ -16,6 +16,7 @@ use Swagger\Annotations as SWG;
 class UsersController extends AppController
 {
     public $uses = array('User', 'Client');
+    public $components = array('Cookie');
 
 
     /**
@@ -68,11 +69,72 @@ class UsersController extends AppController
         if (array_key_exists('User', $this->request->data))
         {
             // Try to login with form validation
-            if( !$this->PreslogAuth->login() )
+            if( $this->PreslogAuth->login() )
+            {
+                // If the user wants to remember their login..
+                if (array_key_exists('remember', $this->request->data['User']))
+                {
+                    // Construct login token
+                    $token = md5(time().'_preslog_'.$this->PreslogAuth->user('created'));
+
+                    // Write token client
+                    $this->Cookie->write('preslog_login-token', $token);
+
+                    // Write token to DB
+                    $user = array(
+                        '_id'=>$this->PreslogAuth->user('_id'),
+                        'login-token'=>$token
+                    );
+                    $this->User->save(array('User'=>$user));
+
+                }
+                else
+                {
+                    // Clear any DB token or cookie token
+                    $user = array(
+                        '_id'=>$this->PreslogAuth->user('_id'),
+                        'login-token'=>null
+                    );
+                    $this->User->save(array('User'=>$user));
+
+                    // Delete token
+                    $this->Cookie->delete('preslog_login-token');
+                }
+
+            }
+            // Login failed
+            else
             {
                 $response['message'] = 'Invalid username or password.';
             }
+
         }
+        // User is not already logged in and has a remember-me token?
+        elseif ($this->Cookie->read('preslog_login-token') && !$this->PreslogAuth->loggedIn())
+        {
+            // Get token from client
+            $token = $this->Cookie->read('preslog_login-token');
+
+            // Try to find a user with this token
+            $user = $this->User->find('first', array('conditions'=>array(
+                'login-token'=>$token,
+            )));
+
+            // Found the token user?
+            if (!empty($user))
+            {
+                // Login as this user
+                $this->PreslogAuth->login($user['User']);
+            }
+            else
+            {
+                // Nobody matches this token
+                $response['message'] = 'Login token failed to match.';
+            }
+
+
+        }
+        // User failed to provide enough details
         else
         {
             // If no credentials, and not logged in, a simple error will suffice.
@@ -102,7 +164,7 @@ class UsersController extends AppController
                 )
             ));
 
-            // Flatten
+            // Flatten/populate client list
             foreach ($clients as $k=>$client)
             {
                 $client['Client']['logo'] = $this->Client->getLogoPath($client['Client']);
@@ -116,6 +178,7 @@ class UsersController extends AppController
                 'permissions' => $permissions,      // User Permissions
                 'clients' => $clients,              // Accessible client list
             );
+
         }
 
         // Send response
@@ -135,6 +198,17 @@ class UsersController extends AppController
      */
     public function logout()
     {
+        // Logout clear user tokens
+        // Delete client token
+        $this->Cookie->delete('preslog_login-token');
+
+        // Write token out of DB
+        $user = array(
+            '_id'=>$this->PreslogAuth->user('_id'),
+            'login-token'=>null
+        );
+        $this->User->save(array('User'=>$user));
+
         // Logout
         $this->PreslogAuth->logout();
 
@@ -591,10 +665,8 @@ class UsersController extends AppController
     public function resetPasswordEmail()
     {
         // Fetch requested email address
-        $emailAddress = $this->request->data('email');
-
         // Validate: Email is valid?
-        if (!$emailAddress)
+        if (!$emailAddress = $this->request->data('email'))
         {
             $this->errorBadRequest(array('message'=>'You must supply a valid email address.'));
         }
@@ -611,17 +683,23 @@ class UsersController extends AppController
         }
 
         // Create a token for the reset
-        $token = 123;
+        $token = md5(time().'-preslog-'.$user['User']['company']);
 
         // Save the token
-        $user['password-token'] = $token;
-        $this->User->save($user);
+        $user['User']['password-token'] = $token;
+        $this->User->save($user['User']);
+
+        // Use debug email if in debug mode
+        if (Configure::read('debug') > 0)
+        {
+            $user['User']['email'] = Configure::read('Preslog.Debug.email');
+        }
 
         // Author email to the user for their reset
         $email = new CakeEmail('default');
-        $email->to($user['email'], $user['firstName'].' '.$user['lastName']);
+        $email->to($user['User']['email'], $user['User']['firstName'].' '.$user['User']['lastName']);
         $email->subject('Password Reset');
-        $email->viewVars(array('user' => $user));
+        $email->viewVars(array('user' => $user['User']));
         $email->helpers(array('Html'));
         $email->template('password-reset');
 
@@ -635,7 +713,7 @@ class UsersController extends AppController
 
 
     /**
-     * Send a password reset email
+     * Perform password reset on the user
      *
      * @SWG\Operation(
      *      partial="users.reset-password",
@@ -654,22 +732,35 @@ class UsersController extends AppController
      */
     public function resetPassword()
     {
+        // Validate: Email
+        if (!$password = $this->request->data('password'))
+        {
+            $this->errorBadRequest(array('message'=>'You must supply a new password.'));
+        }
+
+        // Validate: token
+        if (!$token = $this->request->data('token'))
+        {
+            $this->errorBadRequest(array('message'=>'You must supply a valid reset token.'));
+        }
+
         // Find the user by their token
-        $user = array();
+        $user = $this->User->find('first', array(
+            'conditions'=>array(
+                'password-token'=>$token,
+            )
+        ));
 
         // User or token doesn't exist? Error.
         if (empty($user))
         {
-            $this->errorBadRequest(array('message'=>'Invalid password reset token. Please try again.'));
+            $this->errorBadRequest(array('message'=>'Invalid reset token. Please try again.'));
         }
 
-        // encrypt the new password
-        $password = 123;
-
         // Save the new password over this user and remove the existing token
-        $user['password'] = $password;
-        $user['password-token'] = null;
-        $this->User->save($user);
+        $user['User']['password'] = $password;
+        $user['User']['password-token'] = null;
+        $this->User->save($user['User']);
 
         // Report success
         $this->set('success', true);

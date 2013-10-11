@@ -204,13 +204,33 @@ angular.module( 'Preslog.auth', [
      */
     .controller( 'AuthLoginForgottenPasswordCtrl', function AuthLoginController( $rootScope, $scope, $location, userService, $modalInstance ) {
 
+        $scope.forgotten = {};
+
         /**
          * Ok
          */
         $scope.ok = function()
         {
-            console.log($scope.email);
-            $modalInstance.dismiss();
+            $scope.serverErrors = {};
+
+            // Request reset email
+            userService.forgottenPassword( $scope.forgotten.email ).then(
+
+                // Success
+                function(data)
+                {
+                    $modalInstance.dismiss();
+                    alert('An email will be sent to you shortly. Please check your inbox.');
+                },
+
+                // Failure
+                function(data)
+                {
+                    $scope.serverErrors = {email:data.data.message};
+                }
+            );
+
+
         };
 
 
@@ -231,7 +251,7 @@ angular.module( 'Preslog.auth', [
     .controller( 'AuthLoginResetPasswordCtrl', function AuthLoginController( $rootScope, $scope, $location, userService, $modalInstance, token ) {
 
         // Set up empty form
-        $scope.user = {
+        $scope.reset = {
             'password':'',
             'passwordConfirm':''
         };
@@ -242,19 +262,23 @@ angular.module( 'Preslog.auth', [
          */
         $scope.ok = function()
         {
-            // Perform reset
-            userService.resetPassword( $scope.user.password, token).then(
+            $scope.serverErrors = {};
+
+            // Perform password reset
+            userService.resetPassword( $scope.reset.password, token ).then(
 
                 // Success
-                function(ret)
+                function(data)
                 {
                     $modalInstance.dismiss();
+                    alert('Your password has been changed. Please try logging in with your new password.');
                 },
 
                 // Failure
-                function(ret)
+                function(data)
                 {
-
+                    // Convert to a server error
+                    $scope.serverErrors = {email:data.message};
                 }
             );
         };

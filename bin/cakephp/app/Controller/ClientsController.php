@@ -107,7 +107,7 @@ class ClientsController extends AppController
         }
 
         // Get Logo
-        $client['Client']['logo'] = $this->Client->getLogoPath($client['Client']);
+        $client['Client']['logo-img'] = $this->Client->getLogoPath($client['Client']);
 
         // Truncate the activation date
         $client['Client']['activationDate'] = date('Y-m-d', strtotime($client['Client']['activationDate']));

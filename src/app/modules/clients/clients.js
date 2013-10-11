@@ -164,6 +164,7 @@ angular.module( 'Preslog.clients', [
         $scope.options = clientOptions;
 
         // Page opts
+        $scope.logo = [];
         $scope.newField = {};
         $scope.showDeleted = false;
         $scope.newGroup = {};
@@ -197,12 +198,6 @@ angular.module( 'Preslog.clients', [
          * Save Client
          */
         $scope.saveClient = function() {
-
-            // Will not submit without validation passing
-            if ( $scope.clientForm.$invalid ) {
-                alert('Your submission is not valid. Please check for errors.');
-                return false;
-            }
 
             // Fetch data from form
             clientData.Client = $scope.client;

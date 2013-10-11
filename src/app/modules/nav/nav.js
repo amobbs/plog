@@ -5,6 +5,7 @@
 angular.module( 'Preslog.nav', [])
 
     .config(function(stateHelperProvider) {
+
     })
 
 
@@ -17,8 +18,23 @@ angular.module( 'Preslog.nav', [])
          * Init
          */
 
-        // Set the currently selected client
-        currentClient = {};
+        // Fetch user
+        userService.getUser().then(function(user)
+        {
+            $scope.user = user;
+        });
+
+        // Fetch current client
+        userService.getClient().then(function(client)
+        {
+            $scope.client = client;
+        });
+
+        // Fetch current client list
+        userService.getClients().then(function(clients)
+        {
+            $scope.clients = clients;
+        });
 
 
         /**
@@ -27,7 +43,15 @@ angular.module( 'Preslog.nav', [])
          */
         $scope.switchClient = function( client_id )
         {
-            console.log('Swithc Client');
+            // Change the selected client in system
+            userService.setClient( client_id );
+
+            // Update client
+            userService.getClient().then(function(client)
+            {
+                $scope.client = client;
+            });
+
         };
 
     })

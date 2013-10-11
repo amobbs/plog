@@ -15,8 +15,14 @@
                 <div class="nav-collapse collapse navbar-responsive-collapse">
                     <ul class="nav pull-right">
                         <li>
-                            <button type="submit" class="btn btn-success" ng-disabled="userForm.$invalid"><i class="icon icon-ok"></i> Save Changes</button>
-                            <button type="button" class="btn btn-danger" ng-click="deleteUser()" ng-show="{{user._id !== null && !user.deleted}}" ng-confirm-click="Are you sure you want to delete this user?"><i class="icon icon-remove"></i> Delete User</button>
+                            <button type="submit"
+                                    class="btn btn-success"
+                                    ng-disabled="userForm.$invalid"><i class="icon icon-ok"></i> Save Changes</button>
+                            <button type="button"
+                                    class="btn btn-danger"
+                                    ng-click="deleteUser()"
+                                    ng-show="{{user._id && !user.deleted}}"
+                                    ng-confirm-click="Are you sure you want to delete this user?"><i class="icon icon-remove"></i> Delete User</button>
                         </li>
                     </ul>
                 </div><!-- /.nav-collapse -->
@@ -31,7 +37,7 @@
                 <p>Use the form below to modify the users details.</p>
 
                 <!-- Names -->
-                <div class="control-group" ng-class="{error: userForm.firstName.$invalid}">
+                <div class="control-group" ng-class="{error: userForm.firstName.$dirty && userForm.firstName.$invalid}">
                     <label class="control-label" for="inputFirstname">First Name</label>
                     <div class="controls">
                         <input type="text"
@@ -45,7 +51,7 @@
                         <span class="help-inline" ng-show="userForm.firstName.$error.validateServer" ng-bind="serverErrors.firstName"></span>
                     </div>
                 </div>
-                <div class="control-group" ng-class="{error: userForm.lastName.$invalid}">
+                <div class="control-group" ng-class="{error: userForm.lastName.$dirty && userForm.lastName.$invalid}">
                     <label class="control-label" for="inputLastname">Last Name</label>
                     <div class="controls">
                         <input type="text"
@@ -61,7 +67,7 @@
                 </div>
 
                 <!-- Contact -->
-                <div class="control-group" ng-class="{error: userForm.email.$invalid}">
+                <div class="control-group" ng-class="{error: userForm.email.$dirty && userForm.email.$invalid}">
                     <label class="control-label" for="inputEmail">Email Address</label>
                     <div class="controls">
                         <input type="email"
@@ -80,7 +86,7 @@
 
 
                 <!-- Passwords -->
-                <div class="control-group" ng-class="{error: userForm.passwordConfirm.$invalid}">
+                <div class="control-group" ng-class="{error: userForm.passwordConfirm.$dirty && userForm.passwordConfirm.$invalid}">
                     <label class="control-label" for="inputPassword">Password</label>
                     <div class="controls">
                         <input type="text"
@@ -93,7 +99,7 @@
                         <span class="help-inline" ng-show="userForm.password.$error.validateServer" ng-bind="serverErrors.password"></span>
                     </div>
                 </div>
-                <div class="control-group" ng-class="{error: userForm.passwordConfirm.$invalid}">
+                <div class="control-group" ng-class="{error: userForm.passwordConfirm.$dirty && userForm.passwordConfirm.$invalid}">
                     <label class="control-label" for="inputPassword2">Confirm Password</label>
                     <div class="controls">
                         <input type="text"
@@ -107,7 +113,7 @@
                 </div>
 
                 <!-- Company -->
-                <div class="control-group" ng-class="{error: userForm.company.$invalid}">
+                <div class="control-group" ng-class="{error: userForm.company.$dirty && userForm.company.$invalid}">
                     <label class="control-label" for="inputCompany">Company</label>
                     <div class="controls">
                         <input type="text"
@@ -121,7 +127,7 @@
                 </div>
 
                 <!-- Phone Number -->
-                <div class="control-group" ng-class="{error: userForm.phoneNumber.$invalid}">
+                <div class="control-group" ng-class="{error: userForm.phoneNumber.$dirty && userForm.phoneNumber.$invalid}">
                     <label class="control-label" for="inputPhoneNumber">Phone Number</label>
                     <div class="controls">
                         <input type="text"
@@ -138,7 +144,7 @@
                 </div>
 
                 <!-- Role -->
-                <div class="control-group" ng-class="{error: userForm.role.$invalid}">
+                <div class="control-group" ng-class="{error: userForm.role.$dirty && userForm.role.$invalid}">
                     <label class="control-label" for="inputRole">Role</label>
                     <div class="controls">
                         <select id="inputRole"
@@ -154,7 +160,7 @@
                 </div>
 
                 <!-- Client ID -->
-                <div class="control-group" ng-class="{error: userForm.client_id.$invalid}">
+                <div class="control-group" ng-class="{error: userForm.client_id.$dirty && userForm.client_id.$invalid}">
                     <label class="control-label" for="inputClient">Default Client</label>
                     <div class="controls">
                         <select id="inputClient"
@@ -184,8 +190,15 @@
                 <!-- Save -->
                 <div class="control-group">
                     <div class="controls">
-                        <button type="submit" name="submitButton" class="btn btn-success" ng-disabled="userForm.$invalid"><i class="icon icon-ok"></i> Save Changes</button>
-                        <button type="button" class="btn btn-danger" ng-click="deleteUser()" ng-show="{{user._id !== null && !user.deleted}}" ng-confirm-click="Are you sure you want to delete this user?"><i class="icon icon-remove"></i> Delete User</button>
+                        <button type="submit"
+                                name="submitButton"
+                                class="btn btn-success"
+                                ng-disabled="userForm.$invalid"><i class="icon icon-ok"></i> Save Changes</button>
+                        <button type="button"
+                                class="btn btn-danger"
+                                ng-click="deleteUser()"
+                                ng-show="{{user._id && !user.deleted}}"
+                                ng-confirm-click="Are you sure you want to delete this user?"><i class="icon icon-remove"></i> Delete User</button>
                     </div>
                 </div>
             </div>

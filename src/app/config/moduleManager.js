@@ -27,6 +27,7 @@ angular.module('moduleManager', [
     'permission',
     'logFields',
     'logWidget',
+    'fileUpload',
 
     // Site Modules
     'pages',

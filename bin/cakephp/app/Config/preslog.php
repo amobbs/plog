@@ -44,6 +44,14 @@ Configure::write('Preslog', array(
         'address'   => 'https://smsgw.exetel.com.au/sendsms/api_sms.php?username=%s&Pwd=%s&messagetype=Text&sender=%s',
     ),
 
+
+    /**
+     * Some debug vars
+     */
+    'Debug' => array(
+        'email' => 'dave@4mation.com.au',
+    ),
+
 ));
 
 

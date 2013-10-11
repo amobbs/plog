@@ -13,11 +13,11 @@
 
             <div class="nav-collapse collapse navbar-responsive-collapse">
                 <ul class="nav">
-                    <li class="dropdown" ng-show="{{global.clients.length > 1}}">
+                    <li class="dropdown" ng-show="clients.length > 1">
                         <a href="#" title="{{client.name}}" class="dropdown-toggle" data-toggle="dropdown"><img alt="{{client.name}}" src="{{client.logo}}"> <b class="caret"></b></a>
                         <ul class="dropdown-menu">
-                            <li ng-repeat="client in global.clients">
-                                <a href="#" ng-click="switchClient( client._id );" title="{{ client.name }}"><img alt="{{ client.name }}" src="{{ client.logo }}"></a>
+                            <li ng-repeat="clientItem in clients" ng-show="clientItem._id != client._id">
+                                <a href="#" ng-click="switchClient( clientItem._id );" title="{{ clientItem.name }}"><img alt="{{ clientItem.name }}" src="{{ clientItem.logo }}"></a>
                             </li>
                         </ul>
                     </li>
@@ -60,7 +60,7 @@
                         </ul>
                     </li>
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{global.user.firstName}} {{global.user.lastName}} <b class="caret"></b></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{user.firstName}} {{user.lastName}} <b class="caret"></b></a>
                         <ul class="dropdown-menu">
                             <li><a href="/my-profile"><i class="icon icon-white icon-user"></i> My Profile</a></li>
                             <li><a href="/my-notifications"><i class="icon icon-white icon-envelope"></i> My Notifications</a></li>

@@ -44,6 +44,8 @@ class User extends AppModel
         'lastName'      => array('type' => 'string', 'length'=>255),
         'email'         => array('type' => 'string', 'length'=>255),
         'password'      => array('type' => 'string', 'length'=>60),
+        'password-token'=> array('type' => 'string', 'length'=>32),
+        'login-token'   => array('type' => 'string', 'length'=>32),
         'company'       => array('type' => 'string', 'length'=>255),
         'phoneNumber'   => array('type' => 'string', 'length'=>40),
         'role'          => array('type' => 'string', 'length'=>32),
@@ -177,6 +179,24 @@ class User extends AppModel
             )
         )
     );
+
+
+    /**
+     * Before Save
+     * - Modify password to hash format
+     * @param   array   $options
+     * @return  bool
+     */
+    public function beforeSave( $options = array() )
+    {
+        // Convert password, if set, to bCrypt password
+        if (isset($this->data['User']['password']))
+        {
+            $this->data['User']['password'] = Security::hash($this->data['User']['password'], 'blowfish');;
+        }
+
+        return parent::beforeSave( $options );
+    }
 
 
     /**

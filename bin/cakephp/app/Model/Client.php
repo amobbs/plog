@@ -35,6 +35,105 @@ class Client extends AppModel
     );
 
 
+    public $validateClient = array(
+        'name'=>array(
+            'min-length'=>array(
+                'rule'=>array('notEmpty'),
+                'message'=>'Must not be empty',
+                'required'=>true
+            ),
+            'max-length'=>array(
+                'rule'=>array('maxLength', 255),
+                'message'=>'Maximum length is 255 characters',
+                'required'=>true,
+            ),
+            'noCollision'=>array(
+                'rule'=>array('checkCollision'),
+                'message'=>'This name is already in use',
+                'required'=>true,
+            )
+        ),
+        'shortName'=>array(
+            'min-length'=>array(
+                'rule'=>array('notEmpty'),
+                'message'=>'Must not be empty',
+                'required'=>true
+            ),
+            'max-length'=>array(
+                'rule'=>array('maxLength', 6),
+                'message'=>'Maximum length is 6 characters',
+                'required'=>true,
+            ),
+            'custom'=>array(
+                'rule'=>array('custom', '/^[a-zA-Z]+$/'),
+                'message'=>'Must only contain letters',
+                'required'=>true
+            ),
+            'noCollision'=>array(
+                'rule'=>array('checkCollision'),
+                'message'=>'This short name is already in use',
+                'required'=>true,
+            )
+        ),
+        'logPrefix'=>array(
+            'min-length'=>array(
+                'rule'=>array('notEmpty'),
+                'message'=>'Must not be empty',
+                'required'=>true
+            ),
+            'max-length'=>array(
+                'rule'=>array('maxLength', 6),
+                'message'=>'Maximum length is 6 characters',
+                'required'=>true,
+            ),
+            'custom'=>array(
+                'rule'=>array('custom', '/^[a-zA-Z]+$/'),
+                'message'=>'Must only contain letters',
+                'required'=>true
+            ),
+            'noCollision'=>array(
+                'rule'=>array('checkCollision'),
+                'message'=>'This log prefix is already in use',
+                'required'=>true,
+            )
+        ),
+        'contact'=>array(
+            'max-length'=>array(
+                'rule'=>array('maxLength', 255),
+                'message'=>'Maximum length is 255 characters',
+                'required'=>true,
+                'allowEmpty'=>true,
+            ),
+        ),
+        'activationDate'=>array(
+            'date'=>array(
+                'rule'=>array('date', 'ymd'),
+                'message'=>'Must be a valid date format  of YYYY-MM-DD',
+                'required'=>true,
+            ),
+        )
+    );
+
+
+    /**
+     * Custom validation to verify the given $field value isn't in use elsewhere
+     * @param   $check
+     * @return  bool        true if valid
+     */
+    public function checkCollision($check)
+    {
+        // Find a collision
+        $found = $this->find('first', array(
+            'conditions'=>array(
+                $check
+            )
+        ));
+
+        // Return true if no collision
+        return empty($found);
+    }
+
+
     /**
      * convert any id's into mongo id's and add any missing id's
      * @param array $options
@@ -236,7 +335,21 @@ class Client extends AppModel
     }
 
     public function validatesAdminEdit() {
-        return true;
+
+        $rules = $this->validateClient;
+
+        // Apply rules to validator
+        $validator = $this->validator();
+        foreach ($rules as $field=>$rule)
+        {
+            $validator->add($field, $rule);
+        }
+
+        // Validate
+        $success = $validator->validates();
+
+        return $success;
+
     }
 
 

@@ -60,9 +60,7 @@ module.exports = {
         js: [
             'vendor/jquery/jquery.min.js',
             'vendor/jquery-ui/ui/minified/jquery-ui.min.js',
-
             'vendor/select2/select2.js',
-
             'vendor/angular-unstable/angular.js',
             'vendor/angular-bootstrap/ui-bootstrap-tpls.min.js',
             'vendor/angular-ui-router/release/angular-ui-router.js',
@@ -72,11 +70,11 @@ module.exports = {
             'vendor/angular-resource-unstable/angular-resource.js',
             'vendor/angular-highcharts-directive/src/directives/highcharts.js',
             'vendor/ng-table/ng-table.js',
-
             'vendor/lodash/dist/lodash.js',
             'vendor/restangular/dist/restangular.js',
-
             'vendor/dynatree/dist/jquery.dynatree-1.2.4.js',
+            'vendor/jquery-file-upload/js/jquery.fileupload.js',
+            'vendor/jquery-file-upload/js/jquery.fileupload-angular.js'
         ],
 
         /**
@@ -98,7 +96,9 @@ module.exports = {
          * Directories to straight copy into the project
          */
         files: [
-            'vendor/RedQueryBuilder/**'
+            'vendor/RedQueryBuilder/**',
+            'vendor/jquery-file-upload/css/**',
+            'vendor/jquery-file-upload/css/'
         ],
 
         /**
@@ -108,11 +108,7 @@ module.exports = {
             'vendor/select2/select2.png',
             'vendor/select2/select2-spinner.gif',
             'vendor/select2/select2x2.png',
-
-            'vendor/dynatree/src/skin/*.gif',
-
+            'vendor/dynatree/src/skin/*.gif'
         ]
-
-
     }
 };
