@@ -125,6 +125,19 @@ class MongodbSource extends DboSource {
 		'modified' => array('type' => 'datetime', 'default' => null)
 	);
 
+    protected $_defaultTypeValues = array(
+        'string' => null,
+        'integer' => null,
+        'mongoId' => null,
+        'mongoDate' => null,
+        'datetime' => null,
+        'boolean' => false,
+        'array' => array(),
+        'object' => array(),
+        'subDocument' => array(),
+        'subCollection' => array()
+    );
+
 /**
  * construct method
  *
@@ -469,6 +482,10 @@ class MongodbSource extends DboSource {
 		} else {
 			$data = $Model->data;
 		}
+
+        $this->convertToDocument($data, $Model->mongoSchema, $fields);
+        $this->prune($data, $Model->mongoSchema);
+
 		if (!empty($data['_id'])) {
 			$this->_convertId($data['_id']);
 		}
@@ -703,6 +720,9 @@ class MongodbSource extends DboSource {
 		} else{
 			$data = $Model->data;
 		}
+
+        $this->convertToDocument($data, $Model->mongoSchema, $fields);
+        $this->prune($data, $Model->mongoSchema);
 
 		if (empty($data['_id'])) {
 			$data['_id'] = $Model->id;
@@ -1087,9 +1107,14 @@ class MongodbSource extends DboSource {
 			while ($return->hasNext()) {
 				$mongodata = $return->getNext();
 
+                $fields[] = '_id';
+                $this->convertToArray($mongodata, $Model->mongoSchema, $fields);
+                $this->prune($mongodata, $Model->mongoSchema);
+
                 // Add to return block
 				$_return[][$Model->alias] = $mongodata;
 			}
+
 			return $_return;
 		}
 
@@ -1443,6 +1468,159 @@ class MongodbSource extends DboSource {
 			}
 		}
 	}
+
+    public function convertToArray(&$doc, $schema, $fields) {
+        $this->convert($doc, $schema, $fields, true);
+    }
+
+    public function convertToDocument(&$doc, $schema, $fields) {
+        $this->convert($doc, $schema, $fields);
+    }
+    /**
+     * From Database to Model
+     */
+    public function convert(&$doc, $schema, $fields, $toArray = false, $topLevel = true)
+    {
+        // Skip non-arrays
+        if (! is_array($doc)) {
+            return;
+        }
+
+        // If an array, recuse each one on the schema type.
+        if (! $this->_isAssoc($doc)) {
+            foreach ($doc as &$docItem) {
+                $this->convert($docItem, $schema, $fields, $toArray, false);
+            }
+
+            return;
+        }
+
+        // Convert schema
+        foreach ($schema as $fieldKey => $fieldOptions) {
+            // Skip schema that doesn't have a type set
+            if (empty($fieldOptions['type'])) {
+                continue;
+            }
+
+            $type = $fieldOptions['type'];
+
+            // If on top level and the field is not in the list of fields passed in, go about your business
+            if ($topLevel && ! in_array($fieldKey, $fields)) {
+                continue;
+            }
+
+            // Set default values if field doesn't exist
+            if (! isset($doc[$fieldKey])) {
+                $doc[$fieldKey] = isset($fieldOptions['default']) ?
+                    $fieldOptions['default'] : $this->_defaultTypeValues[$type];
+            }
+
+            // Recurse for subCollections
+            if ('subCollection' === $type && ! empty($doc[$fieldKey])) {
+                // Enforce the data to be a numerical array
+                if ($this->_isAssoc($doc[$fieldKey])) {
+                    throw new ErrorException('If using subCollection type, the data must be a numerical array');
+                }
+
+                $this->convert($doc[$fieldKey], $fieldOptions['schema'], $fields, $toArray, false);
+            }
+
+            // Recurse for subDocuments
+            if ('subDocument' === $type) {
+                // Enforce the data to be non-numerical array
+                if (! empty($doc[$fieldKey]) && ! $this->_isAssoc($doc[$fieldKey])) {
+                    throw new ErrorException('If using subDocument type, the data must be a non-numerical array');
+                }
+
+                $this->convert($doc[$fieldKey], $fieldOptions['schema'], $fields, $toArray, false);
+            }
+
+            // Fix string/integer lengths
+            if (
+                ! empty($fieldOptions['length']) &&
+                (is_string($doc[$fieldKey]) || is_integer($doc[$fieldKey]))
+            ) {
+                $doc[$fieldKey] = substr($doc[$fieldKey], 0, $fieldOptions['length']);
+            }
+
+            // Cast the values to what type they are
+            switch ($type) {
+                case 'object':
+                    $doc[$fieldKey] = (object) $doc[$fieldKey];
+                    break;
+                case 'string':
+                    $doc[$fieldKey] = (string) $doc[$fieldKey];
+                    break;
+                case 'array':
+                    $doc[$fieldKey] = (array) $doc[$fieldKey];
+                    break;
+                case 'boolean':
+                    $doc[$fieldKey] = (boolean) $doc[$fieldKey];
+                    break;
+                case 'integer':
+                    $doc[$fieldKey] = (integer) $doc[$fieldKey];
+                    break;
+            }
+
+            if (! empty($fieldOptions['mongoType'])) {
+                switch ($fieldOptions['mongoType']) {
+                    case 'mongoId':
+                        if ($toArray) {
+                            $doc[$fieldKey] = (string) $doc[$fieldKey];
+                        } elseif (! empty($doc[$fieldKey]) && ! $doc[$fieldKey] instanceof MongoId) {
+                            $doc[$fieldKey] = new MongoId($doc[$fieldKey]);
+                        }
+                        break;
+                    case 'mongoDate':
+                        if ($toArray) {
+                            $doc[$fieldKey] = date('Y-m-d h:i:s', $doc[$fieldKey]->sec);
+                        } elseif (! empty($doc[$fieldKey]) && ! $doc[$fieldKey] instanceof MongoDate) {
+                            $doc[$fieldKey] = new MongoDate(strtotime($doc[$fieldKey]));
+                        }
+
+                        break;
+                }
+            }
+        }
+    }
+
+    /**
+     * Remove fields from the doc that aren't in the Schema
+     *
+     * @param $doc
+     * @param array $schema
+     */
+    public function prune(&$doc, array $schema) {
+        if (! $this->_isAssoc($doc)) {
+            foreach ($doc as &$docItem) {
+                $this->prune($docItem, $schema);
+            }
+
+            return;
+        }
+
+        foreach ($doc as $fieldKey => &$value) {
+            if (! isset($schema[$fieldKey])) {
+                unset($doc[$fieldKey]);
+            } elseif (is_array($value) && isset($schema[$fieldKey]['schema'])) {
+                $this->prune($value, $schema[$fieldKey]['schema']);
+            }
+        }
+    }
+
+    /**
+     * Checks to see if an array is a numeric array
+     * var_dump($this->_isAssoc(array('a', 'b', 'c'))); // false
+     * var_dump($this->_isAssoc(array("0" => 'a', "1" => 'b', "2" => 'c'))); // false
+     * var_dump($this->_isAssoc(array("1" => 'a', "0" => 'b', "2" => 'c'))); // true
+     * var_dump($this->_isAssoc(array("a" => 'a', "b" => 'b', "c" => 'c'))); // true
+     * @param $array
+     *
+     * @return bool
+     */
+    protected function _isAssoc($array) {
+        return array_keys($array) !== range(0, count($array) - 1);
+    }
 }
 
 /**

@@ -18,6 +18,9 @@ angular.module('Preslog', [
     })
 
     .controller('AppCtrl', function AppCtrl($scope, $location) {
+        $scope.$on('loadingHandler.loading', function(event, loading) {
+            $scope.waitingOnHTTP = loading;
+        });
     })
 
 ;

@@ -2,6 +2,7 @@
 
 namespace Preslog\Widgets\Types;
 
+use Configure;
 use Highchart;
 use MongoDate;
 use MongoId;
@@ -11,37 +12,56 @@ class PieWidget extends Widget {
 
     public function __construct($data) {
         $this->type = 'pie';
-        if (isset($data['data'])) {
-            if (!is_array($this->data)) {
-                $this->data = array();
+        $this->aggregate = true;
+        if (isset($data['details'])) {
+            if (!is_array($this->details)) {
+                $this->details = array();
             }
-            $this->data['x'] = isset($data['x']) ? $data['x'] : '';
+
+            $this->details['yAxis'] = isset($data['details']['yAxis']) ? $data['details']['yAxis'] : '';
+            $this->details['series'] = isset($data['details']['series']) ? $data['details']['series'] : '';
+
         }
 
-        $this->query = array(
-            array(
-                '$match' => array(
-                    "created" => array('$gt' => new MongoDate(strtotime("2012-01-01T00:00:00.0Z")), '$lt' => new MongoDate(strtotime("2012-12-01T00:00:00.0Z"))),
-                    '_id' => new MongoId('524a42bddf81d178120031a0')
-                 )
+
+        $fields = Configure::Read('Preslog')['Fields'];
+        $this->options = array(
+            'yAxis' => array(
+                array('fieldType' => 'count'),
+                array('fieldType' => $fields['duration']),
             ),
-            array(
-                '$project' => array(
-                    'cause' => '$fields.data.name'
-                ),
+            'series' => array(
+                array('fieldType' => 'client'),
+                array('fieldType' => $fields['select']),
+                array('fieldType' => $fields['select-impact']),
+                array('fieldType' => $fields['select-severity']),
             ),
-	        array(
-                '$group' => array(
-                    '_id' => '$cause',
-                    'count' => array('$sum' =>  1)
-                )
-            )
         );
+
+//        $this->query = array(
+//            array(
+//                '$match' => array(
+//                    "created" => array('$gt' => new MongoDate(strtotime("2012-01-01T00:00:00.0Z")), '$lt' => new MongoDate(strtotime("2012-12-01T00:00:00.0Z"))),
+//                    '_id' => new MongoId('524a42bddf81d178120031a0')
+//                 )
+//            ),
+//            array(
+//                '$project' => array(
+//                    'cause' => '$fields.data.name'
+//                ),
+//            ),
+//	        array(
+//                '$group' => array(
+//                    '_id' => '$cause',
+//                    'count' => array('$sum' =>  1)
+//                )
+//            )
+//        );
 
         parent::__construct($data);
     }
 
-    public function toHighCharts() {
+    public function getDisplayData() {
         $chart = new Highchart();
 
         $chart->chart = array(
@@ -55,35 +75,49 @@ class PieWidget extends Widget {
                 'allowPointerSelect' => true,
                 'cursor' => 'pointer',
                 'dataLabels' => array(
-                    'enabled' => true,
+                    'enabled' => false,
                     'color' => '#000000',
                     'connectorColor' => '#000000',
                     'format' => '<b>{point.name}</b>: {point.percentage:.1f} %',
                 ),
+                'showInLegend' => true,
             ),
         );
 
         $chart->title = array(
-            'text' => $this->data['title'],
+            'text' => $this->details['title'],
         );
 
+        $seriesData = array();
 
-//        $chart->legend = array(
-//            'layout' => 'vertical',
-//            'align' => 'right',
-//            'verticalAlign' => 'top',
-//            'x' => - 10,
-//            'y' => 100,
-//            'borderWidth' => 0
-//        );
+        foreach($this->series as $point) {
+            $seriesId = (string)$point['series'];
+            $seriesData[] = array(
+                $seriesId,
+                $point['yAxis'],
+            );
+        }
+
+        $yLabel = '';
+        foreach($this->displayOptions['yAxis'] as $option) {
+            if ($option['id'] == $this->details['yAxis']) {
+                $yLabel = $option['name'];
+            }
+        }
+
+        $series = array(
+            'type' => 'pie',
+            'name' => 'No Data',
+            'data' => array(),
+        );
+        if (!empty($this->series)) {
+            $series['name'] = $yLabel;
+            $series['data'] = $seriesData;
+        }
 
 
         $chart->series = array(
-            array(
-                'type' => 'pie',
-                'name' => 'no Data',
-                'data' => array(1,2,3),
-            ),
+            $series,
         );
 
 //        if (isset($this->series['result'])) {

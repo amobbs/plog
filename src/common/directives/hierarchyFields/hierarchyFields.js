@@ -34,6 +34,7 @@ angular.module('hierarchyFields', [])
                 // Draw dynaTree
                 function drawHierarchy(fields, hideDeleted, enableDnD, allowEdit) {
                     options = {
+                        debugLevel: 0,
                         extensions: ["dnd"],
                         generateIds: true,
                         idPrefix: 'hf-',

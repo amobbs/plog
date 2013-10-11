@@ -18,8 +18,6 @@
 //use Misd\Highcharts\Series\ScatterSeries;
 //use Zend\Json\Json;
 
-use Preslog\Widgets\WidgetFactory;
-
 App::uses('AppModel', 'Model', 'HttpSocket', 'Network/Http');
 
 class Dashboard extends AppModel
@@ -47,6 +45,8 @@ class Dashboard extends AppModel
         'favouriteDashboards'   => array(null),
         'created'       => array('type' => 'datetime'),
         'modified'      => array('type' => 'datetime'),
+
+        'preset'        =>array('type'  => 'boolean'),
     );
 
     /**
@@ -75,7 +75,7 @@ class Dashboard extends AppModel
         return false;
     }
 
-    public function toArray($dashboard) {
+    public function toArray($dashboard, $forMongo = true) {
         $parsed = array();
         $parsed['id'] = (String)$dashboard['_id'];
         $parsed['name'] = $dashboard['name'];
@@ -83,14 +83,12 @@ class Dashboard extends AppModel
         $parsed['widgets'] = array();
         foreach($dashboard['widgets'] as $widget) {
             $widgetObject = null;
-            if(!($widget instanceof Widget)) {
-                $widgetObject = WidgetFactory::createWidget($widget);
-                $widgetObject->setId(new MongoId($widget['_id']));
-                $widgetObject->setSeries($this->getDataForWidget($widgetObject->getQuery()));
+            if(!($widget instanceof Preslog\Widgets\Widget)) {
+                //TODO what?
             } else {
                 $widgetObject = $widget;
             }
-            $parsed['widgets'][] = $widgetObject->toArray();
+            $parsed['widgets'][] = $widgetObject->toArray($forMongo);
         }
 
         return $parsed;
@@ -150,22 +148,4 @@ class Dashboard extends AppModel
         return TMP . $reportName;
     }
 
-    public function getDataForWidget($mongoQuery) {
-        $data = array();
-
-        $mongo = $this->getMongoDb();
-//        //get the mongo id related to a clients format
-//        foreach($mongoQuery['$group'] as $el) {
-//            if (isset($el['stupid_format'])) {
-//                $clients = $mongo->selectCollection('clients')->find(array('format.name'));
-//                foreach($clients as $client) {
-//
-//                }
-//            }
-//        }
-
-        $data = $mongo->selectCollection('logs')->aggregate($mongoQuery);
-
-        return $data;
-    }
 }

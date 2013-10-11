@@ -72,9 +72,8 @@ module.exports = {
             'vendor/ng-table/ng-table.js',
             'vendor/lodash/dist/lodash.js',
             'vendor/restangular/dist/restangular.js',
-            'vendor/dynatree/dist/jquery.dynatree-1.2.4.js',
-            'vendor/jquery-file-upload/js/jquery.fileupload.js',
-            'vendor/jquery-file-upload/js/jquery.fileupload-angular.js'
+
+            'vendor/dynatree/dist/jquery.dynatree.min.js'
         ],
 
         /**
@@ -96,9 +95,7 @@ module.exports = {
          * Directories to straight copy into the project
          */
         files: [
-            'vendor/RedQueryBuilder/**',
-            'vendor/jquery-file-upload/css/**',
-            'vendor/jquery-file-upload/css/'
+            'vendor/RedQueryBuilder/**'
         ],
 
         /**
