@@ -139,8 +139,8 @@ angular.module( 'Preslog.dashboard', [
         $scope.startWidgetRefresh = function() {
             for(var wId in $scope.dashboard.widgets) {
                 var widget = $scope.dashboard.widgets[wId];
-                if (widget.data.refresh && widget.data.refresh > 0) {
-                    $scope.setRefreshTimer(widget._id, widget.data.refresh);
+                if (widget.details.refresh && widget.details.refresh > 0) {
+                    $scope.setRefreshTimer(widget._id, widget.details.refresh);
                 }
             }
         };
@@ -182,7 +182,7 @@ angular.module( 'Preslog.dashboard', [
                             var widget = $scope.dashboard.widgets[wId];
                             if (widget._id == widgetId) {
                                 $scope.dashboard.widgets[wId] = result.widget;
-                                $scope.updateRefreshTimer(widgetId, result.widget.data.refresh);
+                                $scope.updateRefreshTimer(widgetId, result.widget.details.refresh);
                                 break;
                             }
                         }
@@ -271,7 +271,7 @@ angular.module( 'Preslog.dashboard', [
                         for(var index = 0; index < $scope.dashboard.widgets.length; index++) {
                             if ($scope.dashboard.widgets[index]._id == result.widget._id) {
                                 $scope.dashboard.widgets[index] = result.widget;
-                                $scope.updateRefreshTimer(result.widget._id, result.widget.data.refresh);
+                                $scope.updateRefreshTimer(result.widget._id, result.widget.details.refresh);
                             }
                         }
                     });
@@ -339,7 +339,7 @@ angular.module( 'Preslog.dashboard', [
                     sorting: {
                         name: 'created'
                     },
-                    query: widget.data.query,
+                    query: widget.details.query,
                     logs: widget.display,
                     lastUpdated: new Date()
                 };

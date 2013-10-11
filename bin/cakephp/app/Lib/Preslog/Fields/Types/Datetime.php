@@ -26,16 +26,16 @@ class Datetime extends TypeAbstract
         'day' => array(
             'dataLocation' => 'datetime',
             'groupBy' => array(
-                'day' => '$dayOfMonth',
                 'month' => '$month',
+                'day' => '$dayOfMonth',
             ),
             'aggregate' => false,
         ),
         'month' => array(
             'dataLocation' => 'datetime',
             'groupBy' => array(
-                'month' => '$month',
                 'year' => '$year',
+                'month' => '$month',
             ),
             'aggregate' => false,
         ),
@@ -59,5 +59,19 @@ class Datetime extends TypeAbstract
         }
 
         return $list;
+    }
+
+    public function chartDisplay($aggregationType, $data) {
+        switch ($aggregationType) {
+            case 'hour':
+                return $data['hour'];
+                break;
+            case 'day':
+                return $data['day'] . '/' . $data['month'];
+                break;
+            case 'month':
+                return $data['month'] . '/' . substr($data['year'], 2);
+                break;
+        }
     }
 }

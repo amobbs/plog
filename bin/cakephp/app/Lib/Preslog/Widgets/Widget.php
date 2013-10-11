@@ -11,7 +11,7 @@ class Widget {
     protected $name; //shown in title bar of widget
     protected $type; //determines type of graph or method used to display widget
     protected $details; //information used to render the graph (title, refresh rate, options available to generate the graph
-    protected $options = array(); //all possible options that are shown when picking details to generate the graphs
+    protected $displayOptions = array(); //all possible options that are shown when picking details to generate the graphs
     protected $maxWidth = 1; //how much space the widget should take up on screen
     protected $series = array(); //data used to populate graph
     protected $aggregate; //is the result of the data an aggregate or just a list of logs?
@@ -20,7 +20,7 @@ class Widget {
     public function setId($id) { $this->id = $id; }
     public function setSeries($series) { $this->series = $series; }
     public function setDetail($key, $value) { $this->details[$key] = $value; }
-    public function setOptions($key, $value) { $this->options[$key] = $value; }
+    public function setDisplayOptions($key, $value) { $this->displayOptions[$key] = $value; }
 
     /*
      * an array for all the details in this object
@@ -90,7 +90,7 @@ class Widget {
         );
 
         if (!$forMongo) {
-            $widget['options'] = $this->options;
+            $widget['options'] = $this->displayOptions;
             $widget['display'] = $this->getDisplayData();
         }
 

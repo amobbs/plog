@@ -140,10 +140,11 @@ class Log extends AppModel
             ),
         );
 
-        //create the group by condtions for each axis we want to show
+        //create the group by conditions for each axis we want to show
         foreach($mongoPipeLine as $axisName => $axisFields) {
             $axisFieldIds = array();
 
+            //only return the fields we are searching against
             foreach($axisFields as $fieldName => $value) {
                 if (isset($fields[$fieldName])) {
                     foreach($fields[$fieldName] as $id) {
@@ -157,6 +158,7 @@ class Log extends AppModel
                 }
             }
 
+            //format depending on what we are aggregating against
             if (empty($axisFieldIds)) {
                 //this is a bit stupid but since there are no id's for this just grab the first record.
                 //there should only be one field in the axis so grab the first one
@@ -166,6 +168,8 @@ class Log extends AppModel
                     '$first' => '$' . $field['dataLocation'],
                 );
             } else {
+
+                //continue to make sure we only get the fields we want to check against.
                 $x = array(
                     '$max' => array(
                         '$cond' => array(
@@ -205,11 +209,20 @@ class Log extends AppModel
                 //project the data so each axis is at the top level
                 $project['$project'][$axisName] = '$' . $axisName;
 
+                //format group depending if we are performing an aggregate function on this field
                 if ($detail['aggregate']) {
+                    $aggregateOn = '';
+                    if ($detailName == 'count') {
+                        $aggregateOn = $detail['dataLocation'];
+                    } else {
+                        $aggregateOn = '$' . $axisName . '.' . $detail['dataLocation'];
+                    }
+
                     $group['$group'][$axisName] = array(
-                        $detail['groupBy'] => '$' . $axisName . '.' . $detail['dataLocation'],
+                        $detail['groupBy'] => $aggregateOn,
                     );
                 } else {
+                    //anything we are not aggregating on just group on it (in _id).
                     $group['$group']['_id'][$detailName] = array();
                     if (empty($detail['groupBy'])) {
                         $group['$group']['_id'][$detailName] = '$' . $axisName;

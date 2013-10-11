@@ -689,7 +689,7 @@ class DashboardsController extends AppController
                 }
             }
 
-            $widgetObject->setOptions($optionName, $show);
+            $widgetObject->setDisplayOptions($optionName, $show);
         };
 
         return $widgetObject;
@@ -765,11 +765,70 @@ class DashboardsController extends AppController
             $widgetObject->setSeries(array());
         } else {
             if ($result['ok'] != 1) {
-                throw new Exception('query to mongo failed!!!!'); //TODO replace with cake eception
+                throw new Exception('query to mongo failed!!!!'); //TODO replace with cake exception
             }
 
-            $widgetObject->setSeries($result['result']);
-            //TODO i should probably parse the data coming back and change client id's to client names etc..
+            //remove any mongo'ids from series to show field value
+            $seriesTypeDetails = explode(':', $widgetObject->getDetail('series'));
+            $seriesType = $seriesTypeDetails[0];
+            $dataLocation = '';
+            $parsedResult = array();
+            foreach($widgetObject->getOptions()['series'] as $option) {
+                $fieldType = $option['fieldType'];
+                if ($fieldType instanceof TypeAbstract) {
+                    if ($fieldType->getProperties('alias') == $seriesTypeDetails[1]) {
+                        $seriesType = $fieldType;
+                        $aggregationDetails = $fieldType->getProperties('aggregationDetails');
+                        foreach($aggregationDetails as $name => $details) {
+                            if ($name = $seriesTypeDetails[1]) {
+                                $dataLocation = $details['dataLocation'];
+                            }
+                        }
+                    }
+                }
+            }
+
+            if ($seriesType instanceof TypeAbstract) {
+                $parsedPoint = array();
+                foreach($result['result'] as $point) {
+                    $parsedPoint = $point;
+                    if ($point['series'][$dataLocation] instanceof MongoId) {
+                        foreach($allClients as $client) {
+                            foreach($client['Client']['format'] as $format) {
+
+                                //it is some kind of select so search through the options for the value
+                                if (isset($format['data']) && isset($format['data']['options'])) {
+                                    foreach($format['data']['options'] as $option) {
+                                        if ($option['_id'] == $point['series'][$dataLocation]) {
+                                            $parsedPoint['series'] = $option['name'];
+                                        }
+                                    }
+                                } else if ($format['_id'] == $point['series']) { //client
+                                    $parsedPoint['series'] = $client['Client']['name'];
+                                }
+                            }
+                        }
+                    }
+                    $parsedResult[] = $parsedPoint;
+                }
+
+            } else {
+                switch ($seriesType) {
+                    case 'client':
+                        foreach($result['result'] as $point) {
+                            if ($point['series'] instanceof MongoId) {
+                                $client = $this->Client->findById($point['series']);
+                                $point['series'] = $client['Client']['name'];
+                            }
+                            $parsedResult[] = $point;
+                        }
+
+                        break;
+                }
+            }
+
+            $widgetObject->setSeries($parsedResult);
+
         }
 
         return $widgetObject;

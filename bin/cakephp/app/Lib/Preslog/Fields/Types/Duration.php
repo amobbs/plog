@@ -16,10 +16,15 @@ class Duration extends TypeAbstract
     protected $description = 'A field for specifying durations, in H:M:S format.';
 
     protected $aggregationDetails = array(
-        'sum' => array(
+        'seconds' => array(
             'dataLocation' => 'seconds',
             'groupBy' => '$sum',
             'aggregate' => true,
+            ),
+            'minutes' => array(
+                'dataLocation' => 'seconds',
+                'groupBy' => '$sum',
+                'aggregate' => true,
             ),
         );
 //        'sum' => array(
@@ -35,18 +40,32 @@ class Duration extends TypeAbstract
      * used to create a human readable list for the aggregation details that can be used in the interface
      *
      * @param $fieldName
-     * @param $fieldId
+     *
+     * @internal param $fieldId
      * @return array
      */
     public function listDetails($fieldName) {
         $list = array();
         foreach($this->aggregationDetails as $name => $detail) {
             $list[] = array(
-                'name' => $name . '  ' . $fieldName,
+                'name' => 'Total  ' . $fieldName . ' by ' . $name ,
                 'id' =>  $fieldName . ':' . $name,
             );
         }
 
         return $list;
+    }
+
+    public function chartDisplay($aggregationType, $data) {
+        switch ($aggregationType) {
+            case 'seconds':
+                return $data;
+                break;
+            case 'minutes':
+                return $data / 60;
+                break;
+        }
+
+        return $data;
     }
 }

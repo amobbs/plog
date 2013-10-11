@@ -6,6 +6,7 @@ use Configure;
 use Highchart;
 use MongoDate;
 use MongoId;
+use Preslog\Fields\Types\TypeAbstract;
 use Preslog\Widgets\Widget;
 
 class LineWidget extends Widget {
@@ -73,10 +74,23 @@ class LineWidget extends Widget {
             'borderWidth' => 0,
         );
 
+        //get the label for the xAxis
         $xLabel = '';
-        foreach($this->options['xAxis'] as $option) {
+        foreach($this->displayOptions['xAxis'] as $option) {
             if ($option['id'] == $this->details['xAxis']) {
                 $xLabel = $option['name'];
+            }
+        }
+
+        //find the field type so we can format the display later
+        $xFieldType = null;
+        $xParts = explode(':', $this->details['xAxis']);
+        //get the field type so we can get the point label format
+        foreach($this->options['xAxis'] as $option) {
+            $type = $option['fieldType'];
+            if ($type instanceof TypeAbstract
+                && strtolower($type->getProperties('alias')) == strtolower($xParts[0])) {
+                $xFieldType = $type;
             }
         }
 
@@ -86,16 +100,29 @@ class LineWidget extends Widget {
             ),
         );
 
+        //get the y label and field type
         $yLabel = '';
-        foreach($this->options['yAxis'] as $option) {
+        foreach($this->displayOptions['yAxis'] as $option) {
             if ($option['id'] == $this->details['yAxis']) {
                 $yLabel = $option['name'];
+            }
+        }
+
+        $yParts = explode(':', $this->details['yAxis']);
+        $yFieldType = $yParts[0];
+        //get the field type so we can get the point label format
+        foreach($this->options['yAxis'] as $option) {
+            $type = $option['fieldType'];
+            if ($type instanceof TypeAbstract
+                && strtolower($type->getProperties('alias')) == strtolower($yParts[0])) {
+                $yFieldType = $type;
             }
         }
 
         $categorieData = array();
         $seriesData = array();
 
+        //go through each point in the series and
         foreach($this->series as $point) {
             $seriesId = (string)$point['series'];
             if (!isset($seriesData[$seriesId])) {
@@ -104,9 +131,21 @@ class LineWidget extends Widget {
                     'data' => array(),
                 );
             }
-            $categorieData[$point['xAxis']['hour']] = $point['xAxis']['hour']; //TODO fix this put the format somewhere
-            $seriesData[$seriesId]['data'][] = $point['yAxis'];
+
+            $pointLabel = $xFieldType->chartDisplay($xParts[1], $point['xAxis']);
+            $categorieData[$pointLabel] = $pointLabel;
+
+            //format the data depending n the field type
+            $pointValue = 0;
+            if ($yFieldType instanceof TypeAbstract) {
+                $pointValue = $yFieldType->chartDisplay($yParts[1], $point['yAxis']);
+            } else if ($yFieldType == 'count'){
+                $pointValue = $point['yAxis'];
+            }
+
+            $seriesData[$seriesId]['data'][] = $pointValue;
         }
+
 
         $series = array_values($seriesData);
         $categories = array_values($categorieData);

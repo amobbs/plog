@@ -83,4 +83,8 @@ abstract class TypeAbstract
         return array();
     }
 
+    public function chartDisplay($aggregationType, $data) {
+        return '';
+    }
+
 }

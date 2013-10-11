@@ -75,11 +75,12 @@ class PieWidget extends Widget {
                 'allowPointerSelect' => true,
                 'cursor' => 'pointer',
                 'dataLabels' => array(
-                    'enabled' => true,
+                    'enabled' => false,
                     'color' => '#000000',
                     'connectorColor' => '#000000',
                     'format' => '<b>{point.name}</b>: {point.percentage:.1f} %',
                 ),
+                'showInLegend' => true,
             ),
         );
 
@@ -98,7 +99,7 @@ class PieWidget extends Widget {
         }
 
         $yLabel = '';
-        foreach($this->options['yAxis'] as $option) {
+        foreach($this->displayOptions['yAxis'] as $option) {
             if ($option['id'] == $this->details['yAxis']) {
                 $yLabel = $option['name'];
             }
