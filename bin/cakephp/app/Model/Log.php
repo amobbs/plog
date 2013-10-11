@@ -18,16 +18,22 @@ class Log extends AppModel
      * @var array   Schema definition for this document
      */
     public $mongoSchema = array(
-        '_id'           => array('type' => 'string', 'length'=>40, 'primary' => true, 'mongoType'=>'MongoId'),
-        'hrid'          => array('type' => 'int'),
+        '_id'               => array('type' => 'string', 'length'=>40, 'primary' => true, 'mongoType'=>'mongoId'),
+        'client_id'         => array('type' => 'string', 'length'=>24, 'mongoType'=>'mongoId'),
+        'created_user_id'   => array('type' => 'string', 'length'=>24, 'mongoType'=>'mongoId'),
+        'modified_user_id'  => array('type' => 'string', 'length'=>24, 'mongoType'=>'mongoId'),
+        'hrid'              => array('type' => 'integer'),
         'deleted'       => array('type' => 'boolean'),
-        'fields'        => array(
-            'field_id'      => array('type' => 'string', 'length'=>40, 'mongoType'=>'MongoId'),
-            'data'          => array(null),
+        'fields'        => array('type' => 'subCollection',
+            'schema'=> array(
+                'field_id'      => array('type' => 'string', 'length'=>40, 'mongoType'=>'mongoId'),
+                'data'          => array('type' => 'array'),
+            ),
         ),
-        'attributes'    => array('type' => null),
-        'created'       => array('type' => 'datetime', 'mongoType'=>'MongoDate'),
-        'modified'      => array('type' => 'datetime', 'mongoType'=>'MongoDate'),
+        'attributes'    => array('type' => 'array'),
+        'version'       => array('type' => 'integer'),
+        'created'       => array('type' => 'datetime', 'mongoType'=>'mongoDate'),
+        'modified'      => array('type' => 'datetime', 'mongoType'=>'mongoDate'),
     );
 
 

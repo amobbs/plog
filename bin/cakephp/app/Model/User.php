@@ -113,20 +113,7 @@ class User extends AppModel
                 )
             )
         ),
-        'clients' => array(
-            'type' => 'subCollection',
-            'schema' => array(
-                'client_id' => array(
-                    'type' => 'string',
-                    'mongoType' => 'mongoId',
-                    'length' => 24
-                ),
-                'attributes' => array(
-                    'type' => 'array'
-                ),
-            )
-        ),
-        'favouriteDashboards' => array('type' => null),
+        'favouriteDashboards' => array('type' => 'array'),
         'created' => array(
             'type' => 'datetime',
             'mongoType' => 'mongoDate'

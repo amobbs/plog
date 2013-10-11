@@ -45,6 +45,8 @@ class Dashboard extends AppModel
         'favouriteDashboards'   => array(null),
         'created'       => array('type' => 'datetime'),
         'modified'      => array('type' => 'datetime'),
+
+        'preset'        =>array('type'  => 'boolean'),
     );
 
     /**
