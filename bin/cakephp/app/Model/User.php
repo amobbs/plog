@@ -69,6 +69,14 @@ class User extends AppModel
             'type' => 'string',
             'length' => 40
         ),
+        'password-token' => array(
+            'type' => 'string',
+            'length' => 32
+        ),
+        'login-token' => array(
+            'type' => 'string',
+            'length' => 32
+        ),
         'role' => array(
             'type' => 'string',
             'length' => 32

@@ -210,7 +210,10 @@ Router::connect(
     array('controller' => 'Users', 'action' => 'adminEditOptions', '[method]' => 'OPTIONS'),
     array('pass'=>array('user_id'), 'user_id'=>'[0-9a-z]*')
 );
-
+Router::connect(
+    '/admin/users',
+    array('controller' => 'Users', 'action' => 'adminEditOptions', '[method]' => 'OPTIONS')
+);
 
 /**
  * Admin.Users.Create: POST (create a user)
@@ -312,4 +315,24 @@ Router::connect(
 Router::connect(
     '/users/reset-password/email',
     array('controller' => 'Users', 'action' => 'resetPasswordEmail', '[method]' => 'POST')
+);
+
+
+/**
+ * Users.ResetPassword: POST (Request a password reset)
+ * @SWG\Resource(
+ *      resourcePath="/users",
+ *      @SWG\Api(
+ *          path="/users/reset-password",
+ *          @SWG\Operation(
+ *              @SWG\Partial("users.reset-password"),
+ *              nickname="users.reset-password",
+ *              httpMethod="POST"
+ *          )
+ *      )
+ * )
+ */
+Router::connect(
+    '/users/reset-password',
+    array('controller' => 'Users', 'action' => 'resetPassword', '[method]' => 'POST')
 );

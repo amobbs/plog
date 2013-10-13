@@ -518,7 +518,7 @@ class ImportController extends AppController
 
             $user =  array(
                 '_id' => new MongoId(),
-                'password' => Security::hash('nopassword', 'blowfish', false),
+                'password' => 'nopassword',
                 'email' => mb_convert_encoding(trim($parts[0]), 'utf8'),
                 'firstName' => mb_convert_encoding(trim($parts[1]), 'utf8'),
                 'lastName' => mb_convert_encoding(trim($parts[2]), 'utf8'),

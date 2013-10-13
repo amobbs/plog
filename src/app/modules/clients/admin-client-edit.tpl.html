@@ -22,7 +22,7 @@
                             </button>
                             <button type="button" class="btn btn-danger"
                                     ng-click="deleteClient()"
-                                    ng-show="{{client.id.length && !client.deleted}}"
+                                    ng-show="{{client._id && !client.deleted}}"
                                     ng-confirm-click="Are you sure you want to delete this client? All users assigned to this client will be unable to access Preslog if you do this.">
                                 <i class="icon icon-remove"></i>
                                 Delete Client
@@ -64,16 +64,20 @@
                     <!-- Company Logo -->
                     <div class="control-group" ng-class="{error: clientForm.logo.$dirty && clientForm.logo.$invalid && clientForm.logo.$invalid}">
 
-                        <label class="control-label" for="inputLogo"><span ng-show="client.id">Change </span>Logo</label>
+                        <label class="control-label"
+                               for="inputLogo"
+                               tooltip-placement="right"
+                               tooltip="Displayed on the Client Selection tab. Must be 68x20 pixel PNG."
+                                >
+                            <span ng-show="client._id">Change </span>Logo
+                        </label>
                         <div class="controls">
-                            <img ng-show="client._id" src="{{ client.logo }}" width="68" height="20" />
+                            <img ng-show="client._id" src="{{ client.logo-img }}" width="68" height="20" />
                             <br/>
                             <input type="file"
+                                   file-upload="logo"
                                    id="inputLogo"
                                    name="logo"
-                                   tooltip-placement="right"
-                                   tooltip="Displayed on the Client Selection tab.
-                                            Must be 68x20 pixel PNG."
                                     />
                             <span class="help-inline" ng-show="clientForm.logo.$error.validateServer" ng-bind="serverErrors.logo"></span>
                         </div>

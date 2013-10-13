@@ -25,7 +25,17 @@ angular.module( 'Preslog.home', [])
 
                 // User must have permissions to access this resource
                 permissions: ['$q', 'userService', function($q, userService) {
-                    return userService.checkAccessPermission('user');
+                    var defer = $q.defer();
+
+                    userService.checkAccessPermission('user').then(function()
+                    {
+                        defer.resolve();
+                    }, function()
+                    {
+                        defer.reject();
+                    });
+
+                    return defer.promise;
                 }],
 
                 // Force a redirect. This isn't an actual page, just a redirect.
@@ -51,7 +61,7 @@ angular.module( 'Preslog.home', [])
                     $location.path(requestedPath);
 
                     // Reject this state change as a matter of course.
-                    var defer = $q.deferred;
+                    var defer = $q.defer();
                     defer.reject();
                     return defer.promise;
 

@@ -140,3 +140,6 @@ spl_autoload_register(array('App', 'load'), true, true);
 
 // Preslog Config
 require_once('preslog.php');
+
+// Email config - bugfix for class loader
+require APP.'/Config/email.php';

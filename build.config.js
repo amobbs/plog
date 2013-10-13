@@ -60,9 +60,7 @@ module.exports = {
         js: [
             'vendor/jquery/jquery.min.js',
             'vendor/jquery-ui/ui/minified/jquery-ui.min.js',
-
             'vendor/select2/select2.js',
-
             'vendor/angular-unstable/angular.js',
             'vendor/angular-bootstrap/ui-bootstrap-tpls.min.js',
             'vendor/angular-ui-router/release/angular-ui-router.js',
@@ -72,7 +70,6 @@ module.exports = {
             'vendor/angular-resource-unstable/angular-resource.js',
             'vendor/angular-highcharts-directive/src/directives/highcharts.js',
             'vendor/ng-table/ng-table.js',
-
             'vendor/lodash/dist/lodash.js',
             'vendor/restangular/dist/restangular.js',
 
@@ -108,11 +105,7 @@ module.exports = {
             'vendor/select2/select2.png',
             'vendor/select2/select2-spinner.gif',
             'vendor/select2/select2x2.png',
-
-            'vendor/dynatree/src/skin/*.gif',
-
+            'vendor/dynatree/src/skin/*.gif'
         ]
-
-
     }
 };
