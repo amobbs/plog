@@ -6,6 +6,64 @@
 
 use Swagger\Annotations as SWG;
 
+/**
+ * Dashboard.Favourites: GET (Fetch my favourite dashboards)
+ * @SWG\Resource(
+ *      resourcePath="/dashboards",
+ *      @SWG\Api(
+ *          path="/dashboards/favourites",
+ *          @SWG\Operation(
+ *              @SWG\Partial("dashboards.favourites.read"),
+ *              nickname="dashboards.favourites.read",
+ *              httpMethod="GET"
+ *          )
+ *      )
+ * )
+ */
+Router::connect(
+    '/dashboards/favourites',
+    array('controller' => 'Dashboards', 'action' => 'listFavouriteDashboards', '[method]' => 'GET')
+);
+
+
+/**
+ * Dashboard.Favourites: POST (Save a favourite)
+ * @SWG\Resource(
+ *      resourcePath="/dashboards",
+ *      @SWG\Api(
+ *          path="/dashboards/favourites",
+ *          @SWG\Operation(
+ *              @SWG\Partial("dashboards.favourites.update"),
+ *              nickname="dashboards.favourites.update",
+ *              httpMethod="POST"
+ *          )
+ *      )
+ * )
+ */
+Router::connect(
+    '/dashboards/favourites',
+    array('controller' => 'Dashboards', 'action' => 'editFavouriteDashboards', '[method]' => 'POST')
+);
+
+
+/**
+ * Dashboard.Favourites: DELETE (Delete a favourite)
+ * @SWG\Resource(
+ *      resourcePath="/dashboards",
+ *      @SWG\Api(
+ *          path="/dashboards/favourites",
+ *          @SWG\Operation(
+ *              @SWG\Partial("dashboards.favourites.delete"),
+ *              nickname="dashboards.favourites.delete",
+ *              httpMethod="DELETE"
+ *          )
+ *      )
+ * )
+ */
+Router::connect(
+    '/dashboards/favourites/:dashboard_id',
+    array('controller' => 'Dashboards', 'action' => 'editFavouriteDashboards', '[method]' => 'DELETE')
+);
 
 /**
  * Dashboards: GET (read all dashboards)
@@ -233,67 +291,6 @@ Router::connect(
     '/dashboards',
     array('controller' => 'Dashboards', 'action' => 'editDashboard', '[method]' => 'POST')
 );
-
-
-/**
- * Dashboard.Favourites: GET (Fetch my favourite dashboards)
- * @SWG\Resource(
- *      resourcePath="/dashboards",
- *      @SWG\Api(
- *          path="/dashboards/favourites",
- *          @SWG\Operation(
- *              @SWG\Partial("dashboards.favourites.read"),
- *              nickname="dashboards.favourites.read",
- *              httpMethod="GET"
- *          )
- *      )
- * )
- */
-Router::connect(
-    '/dashboards/favourites',
-    array('controller' => 'Dashboards', 'action' => 'listFavouriteDashboards', '[method]' => 'GET')
-);
-
-
-/**
- * Dashboard.Favourites: POST (Save a favourite)
- * @SWG\Resource(
- *      resourcePath="/dashboards",
- *      @SWG\Api(
- *          path="/dashboards/favourites",
- *          @SWG\Operation(
- *              @SWG\Partial("dashboards.favourites.update"),
- *              nickname="dashboards.favourites.update",
- *              httpMethod="POST"
- *          )
- *      )
- * )
- */
-Router::connect(
-    '/dashboards/favourites',
-    array('controller' => 'Dashboards', 'action' => 'editFavouriteDashboards', '[method]' => 'POST')
-);
-
-
-/**
- * Dashboard.Favourites: DELETE (Delete a favourite)
- * @SWG\Resource(
- *      resourcePath="/dashboards",
- *      @SWG\Api(
- *          path="/dashboards/favourites",
- *          @SWG\Operation(
- *              @SWG\Partial("dashboards.favourites.delete"),
- *              nickname="dashboards.favourites.delete",
- *              httpMethod="DELETE"
- *          )
- *      )
- * )
- */
-Router::connect(
-    '/dashboards/favourites',
-    array('controller' => 'Dashboards', 'action' => 'editFavouriteDashboards', '[method]' => 'DELETE')
-);
-
 
 /**
  * Widgets
