@@ -33,7 +33,15 @@ angular.module('hierarchyFields', [])
 
                 // Draw dynaTree
                 function drawHierarchy(fields, hideDeleted, enableDnD, allowEdit) {
-                    options = {
+                    var triggerSelected = function(id, selected) {
+                        if (selected && (scope.hierarchySelected.indexOf(id) === -1 )) {
+                            scope.hierarchySelected.push(id);
+                        } else if (!selected && (scope.hierarchySelected.indexOf(id) !== -1)) {
+                            var index = scope.hierarchySelected.indexOf(id);
+                            scope.hierarchySelected.splice(index, 1);
+                        }
+                    };
+                    var options = {
                         debugLevel: 0,
                         extensions: ["dnd"],
                         generateIds: true,
@@ -43,16 +51,14 @@ angular.module('hierarchyFields', [])
                         selectMode: 3,
                         cookieId: "hf",
                         onSelect: function(selected, dtnode) {
-
                             // On dynaTree change, pass selection back to model
                             scope.$apply(function() {
-                                var id = dtnode.data.key;
+                                triggerSelected(dtnode.data.key, selected);
 
-                                if (selected && (scope.hierarchySelected.indexOf(id) == -1 )) {
-                                    scope.hierarchySelected.push(id);
-                                } else if (!selected && (scope.hierarchySelected.indexOf(id) != -1)) {
-                                    var index = scope.hierarchySelected.indexOf(id);
-                                    scope.hierarchySelected.splice(index, 1);
+                                if (dtnode.data.children && dtnode.data.children.length > 0) {
+                                    for (var i = 0; dtnode.data.children.length > i; i++) {
+                                        triggerSelected(dtnode.data.children[i].key, selected);
+                                    }
                                 }
                             });
                         },
@@ -232,20 +238,16 @@ angular.module('hierarchyFields', [])
                     var dynaFields = [];
 
                     for(var i in fields) {
-                        var dynaField = {};
-                        var isInitiallySelected = (scope.hierarchySelected.indexOf(fields[i].id) > -1);
-                        dynaField.select = isInitiallySelected;
-                        if (fields[i].deleted && fields[i].deleted === true) {
-                            if (hideDeleted === false) {
-                                continue;
-                            } else {
-                                dynaField.select = true;
-                            }
+                        if (! fields.hasOwnProperty(i)) {
+                            continue;
                         }
 
+                        var dynaField = {};
+
+                        dynaField.select = (scope.hierarchySelected.indexOf(fields[i]._id) !== -1);
                         dynaField.title = fields[i].name;
                         dynaField.expand = false;
-                        dynaField.key = fields[i]._id.$id;
+                        dynaField.key = fields[i]._id;
                         if (fields[i].children && (fields[i].children.length > 0)) {
                             dynaField.expand = true;
                             dynaField.isFolder = true;

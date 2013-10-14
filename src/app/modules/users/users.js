@@ -161,7 +161,6 @@ angular.module( 'Preslog.users', [
             clientNotifications.push(_.defaults(currentVals, {"attributes": [], "types": {}}));
         });
 
-        console.log(clientNotifications);
         // Save the new notification back to the client.
         $scope.user.notifications.clients = clientNotifications;
 
