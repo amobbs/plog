@@ -2,13 +2,16 @@
 
     <div id="preslog_sidebar">
         <ul class="nav nav-tabs nav-stacked" ng-repeat="dashboard in presetDashboards">
-            <li><a ng-href="/dashboard/{{dashboard._id}}">{{ dashboard.name }}<i class="icon-chevron-right"></i></a></li>
+            <li>
+                <a ng-href="/dashboard/{{dashboard._id}}">{{ dashboard.name }}<i class="icon-chevron-right"></i></a>
+            </li>
         </ul>
 
         <h3>Favourite Dashboards</h3>
         <ul class="nav nav-tabs nav-stacked">
             <li ng-repeat="favourite in favourites">
-                <a ng-href="/dashboard/{{favourite._id}}">{{ favourite.name }} <i class="icon-chevron-right"></i></a></li>
+                <a ng-href="/dashboard/{{favourite._id}}">{{ favourite.name }} <i class="icon-chevron-right"></i></a>
+            </li>
         </ul>
 
         <h3>All Dashboards</h3>

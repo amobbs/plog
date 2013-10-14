@@ -36,6 +36,12 @@ angular.module( 'Preslog.nav', [])
             $scope.clients = clients;
         });
 
+        //
+        userService.getDashboards().then(function(dashboards){
+            $scope.presets = dashboards.preset;
+            $scope.favourites = dashboards.favourites;
+        });
+
 
         /**
          * Switch the currently selected client

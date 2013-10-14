@@ -199,7 +199,7 @@ angular.module('userService', ['restangular'])
                     Restangular.all('dashboards').getList().then(function (ret) {
 
                         // Set Dashboards
-                        dashboards = ret.dashboards;
+                        dashboards = ret;
 
                         deferred.resolve(dashboards);
                     });
