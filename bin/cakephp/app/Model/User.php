@@ -257,6 +257,50 @@ class User extends AppModel
 
 
     /**
+     * @param   null|string     $permission     Permission we're checking for
+     * @param   null|string     $userRole       Role we're checking for the permission
+     * @param   null|array      $route          Information about the current route. Supplied from Controller::isAuthorized
+     * @return  bool            False if not permitted
+     */
+    public function isAuthorized( $permission=null, $userRole=null, $route=null )
+    {
+        // Load the ACL configuration
+        $config = Configure::read('auth-acl');
+
+        // If no role, set as anonymous
+        $userRole = ($userRole ? $userRole : $config['anonymousRole']);
+
+        // If we're not checking a SPECIFIC permission on the user, check the controller/action path
+        if ( $permission ) {
+            return ( isset($config['roles'][ $userRole ]['permissions']) && in_array($permission, $config['roles'][ $userRole ]['permissions']) );
+        }
+
+        // Check the route
+        elseif (is_array($route)) {
+
+            // Scan all rules
+            foreach ($config['routes'] as $rule)
+            {
+                // Match by controller or wildcard
+                if ($rule['controller'] != $route['controller'] && $rule['controller'] != '*')
+                    continue;
+
+                // Match by action or wildcard
+                if ($rule['action'] != $route['action'] && $rule['action'] != '*')
+                    continue;
+
+                // Match permission required to the role's available permissions
+                if ( sizeof( array_intersect($rule['permissions'], $config['roles'][$userRole]['permissions']) ) )
+                    return true;
+            }
+        }
+
+        // Failed to find
+        return false;
+    }
+
+
+    /**
      * Fetch all available roles and return a simple array
      * @return array
      */
@@ -481,5 +525,53 @@ class User extends AppModel
             ),
         ));
     }
+
+
+    /**
+     * Fetch a list of clients available to this user.
+     * Requires the client_id and role fields for the user.
+     * @param   array   $user       The user
+     * @return  array               Client list
+     */
+    public function listAvailableClientsForUser( $user ) {
+
+        // Get list of clients, where not deleted
+        $conditions = array('deleted'=>false);
+
+        // Is this ocked to single client? If so, use the client_id.
+        if ( $this->isAuthorized('single-client', $user['role']) )
+        {
+            $conditions['_id'] = $user['client_id'];
+        }
+
+        // Fetch!
+        $clients = $this->Client->find('all', array(
+            'conditions'=>$conditions,
+            'fields'=>array(
+                '_id',
+                'name',
+            )
+        ));
+
+        // Some crunching
+        if (sizeof($clients))
+        {
+            // Flatten/populate client list
+            foreach ($clients as $k=>$client)
+            {
+                $client['Client']['logo'] = $this->Client->getLogoPath($client['Client']);
+                $clients[$k] = $client['Client'];
+            }
+        }
+        else
+        {
+            // Default is an empty array
+            $clients = array();
+        }
+
+        return $clients;
+    }
+
+
 
 }

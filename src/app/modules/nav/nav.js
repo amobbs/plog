@@ -12,7 +12,7 @@ angular.module( 'Preslog.nav', [])
 /**
  * Nav Controller
  */
-    .controller( 'NavCtrl', function NavController( $scope, userService ) {
+    .controller( 'NavCtrl', function NavController( $q, $scope, userService ) {
 
         /**
          * Init
@@ -53,6 +53,18 @@ angular.module( 'Preslog.nav', [])
             });
 
         };
+
+
+        // Observe the User model
+        // Change the user properties when they're modified on the user object
+        $scope.$watch(function()
+        {
+            return userService.readUser();
+
+        }, function(data)
+        {
+            $scope.user = data;
+        }, true);
 
     })
 

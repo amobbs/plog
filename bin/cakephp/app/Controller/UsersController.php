@@ -148,28 +148,8 @@ class UsersController extends AppController
             // Fetch user data
             $user = $this->PreslogAuth->User();
             $permissions = $this->PreslogAuth->getUserPermissions();
+            $clients = $this->User->listAvailableClientsForUser( $user );
 
-            // Get list of accessible clients, where available
-            $conditions = array('deleted'=>false);
-            if ( $this->isAuthorized('single-client') )
-            {
-                $conditions['_id'] = $user['client_id'];
-            }
-
-            $clients = $this->Client->find('all', array(
-                'conditions'=>$conditions,
-                'fields'=>array(
-                    '_id',
-                    'name',
-                )
-            ));
-
-            // Flatten/populate client list
-            foreach ($clients as $k=>$client)
-            {
-                $client['Client']['logo'] = $this->Client->getLogoPath($client['Client']);
-                $clients[$k] = $client['Client'];
-            }
 
             // Override error response with success response!
             $response = array(
@@ -178,7 +158,6 @@ class UsersController extends AppController
                 'permissions' => $permissions,      // User Permissions
                 'clients' => $clients,              // Accessible client list
             );
-
         }
 
         // Send response
@@ -325,6 +304,14 @@ class UsersController extends AppController
             'company',
             'phoneNumber',
         ));
+
+        // Update the stored Session for the current user
+        $user = $this->User->find('first', array(
+            'conditions'=>array(
+                '_id'=>$user['_id']
+            ),
+        ));
+        $this->PreslogAuth->login( $user['User'] );
 
         // Return success
         $return = array('Success'=>$ret);

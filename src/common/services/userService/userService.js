@@ -22,11 +22,14 @@ angular.module('userService', ['restangular'])
              *
              * @returns User details object
              */
-            getUser: function () {
+            getUser: function (forceReload) {
                 var deferred = $q.defer();
 
+                // Default "force" to false if net set
+                forceReload = (forceReload !== undefined ? forceReload : false);
+
                 // If user is not set, attempt to login
-                if (! user) {
+                if (! user || forceReload) {
 
                     // Attempt to login in order to fetch the user
                     service.login().then(function () {
@@ -50,6 +53,18 @@ angular.module('userService', ['restangular'])
 
 
             /**
+             * Directly read the user from this class.
+             * Does not call the user via Rest, merely monitors and returns the currently stored data.
+             * Usually used in conjunction with $watch
+             */
+            readUser: function() {
+                return user;
+            },
+
+
+
+
+            /**
              * Login the given user
              * @param username
              * @param password
@@ -57,42 +72,33 @@ angular.module('userService', ['restangular'])
             login: function(userCredentials) {
                 var deferred = $q.defer();
 
-                // Only try to login if we're not already logged in.
-                if (user === undefined)
-                {
-                    // setup default user object
-                    userCredentials = (userCredentials === undefined ? {} : {'User':userCredentials});
+                // setup default user object
+                userCredentials = (userCredentials === undefined ? {} : {'User':userCredentials});
 
-                    // Attempt to login
-                    Restangular.all('users/login').post( userCredentials ).then(function (ret) {
+                // Attempt to login
+                Restangular.all('users/login').post( userCredentials ).then(function (ret) {
 
-                        // Login OK?
-                        if (ret.login.success)
-                        {
-                            // Save user details to service
-                            user = ret.login.user;
-                            permissions = ret.login.permissions;
-                            clients = ret.login.clients;
+                    // Login OK?
+                    if (ret.login.success)
+                    {
+                        // Save user details to service
+                        user = ret.login.user;
+                        permissions = ret.login.permissions;
+                        clients = ret.login.clients;
 
-                            // Push details to scopes
-                            $rootScope.global.user = user;
-                            $rootScope.global.clients = clients;
-                            $rootScope.global.userService = service;
-                            $rootScope.global.loggedIn = true;
+                        // Push details to scopes
+                        $rootScope.global.user = user;
+                        $rootScope.global.clients = clients;
+                        $rootScope.global.userService = service;
+                        $rootScope.global.loggedIn = true;
 
-                            // resolve the promise
-                            deferred.resolve(ret);
-                        }
+                        // resolve the promise
+                        deferred.resolve(ret);
+                    }
 
-                        // Reject the promose on failure
-                        deferred.reject(ret);
-                    });
-
-                }
-                else
-                {
-                    deferred.resolve();
-                }
+                    // Reject the promose on failure
+                    deferred.reject(ret);
+                });
 
                 // Promise to complete this request
                 return deferred.promise;

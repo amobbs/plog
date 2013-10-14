@@ -148,42 +148,28 @@ class AppController extends Controller {
     /**
      * Check if the user is authorised on this resource
      * We can also call $this->isAuthorised against a specific permission or specific userRole
+     *
+     * @param   string  $permission     Specific permission to check for
+     * @param   string  $userRole       The role to check the permission for, as opposed to the active user
+     * @return  bool                    True if permission is available
      */
     function isAuthorized( $permission=null, $userRole=null )
     {
+        // get user model
+        $userModel = ClassRegistry::init('User');
+
         // Get the users role from PreslogAuth if not supplied
         $userRole = ($userRole ? $userRole : $this->PreslogAuth->user('role'));
 
-        // Load the ACL configuration
-        $config = Configure::read('auth-acl');
+        // Check
+        return $userModel->isAuthorized(
+            $permission,
+            $userRole,
+            array('controller'=>$this->name, 'action'=>$this->action)
+        );
 
-        // If no role, set as anonymous
-        $userRole = ($userRole ? $userRole : $config['anonymousRole']);
 
-        // If we're not checking a SPECIFIC permission on the user, check the controller/action path
-        if ( $permission ) {
-            return ( isset($config['roles'][ $userRole ]['permissions']) && in_array($permission, $config['roles'][ $userRole ]['permissions']) );
-        }
 
-        // Check the route
-        else {
-
-            // Scan all rules
-            foreach ($config['routes'] as $rule)
-            {
-                // Match by controller or wildcard
-                if ($rule['controller'] != $this->name && $rule['controller'] != '*')
-                    continue;
-
-                // Match by action or wildcard
-                if ($rule['action'] != $this->action && $rule['action'] != '*')
-                    continue;
-
-                // Match permission required to the role's available permissions
-                if ( sizeof( array_intersect($rule['permissions'], $config['roles'][$userRole]['permissions']) ) )
-                    return true;
-            }
-        }
 
         // Permisson check failed
         return false;

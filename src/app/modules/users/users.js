@@ -85,7 +85,7 @@ angular.module( 'Preslog.users', [
     /**
      * User: My Profile
      */
-    .controller( 'UserMyProfileCtrl', function UserMyProfileController( $scope, titleService, userSource, optionsSource, $location ) {
+    .controller( 'UserMyProfileCtrl', function UserMyProfileController( $scope, titleService, userSource, optionsSource, $location, userService ) {
         titleService.setTitle( 'My Profile' );
 
         // Pass resolves to the scope
@@ -103,12 +103,6 @@ angular.module( 'Preslog.users', [
                 success: false
             };
 
-            // Will not submit without validation passing
-            if ( $scope.userForm.$invalid ) {
-                alert('Your submission is not valid. Please check for errors.');
-                return false;
-            }
-
             // Fetch data from form
             userSource.User = $scope.user;
 
@@ -118,6 +112,9 @@ angular.module( 'Preslog.users', [
                 // On success
                 function()
                 {
+                    // Force a reload of the user data from the server
+                    userService.getUser(true);
+
                     // Show a success message
                     $scope.flashMessage.success = true;
                 },
