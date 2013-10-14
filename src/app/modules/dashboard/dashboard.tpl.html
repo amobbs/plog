@@ -1,26 +1,22 @@
 <div id="preslog_dashboard">
 
     <div id="preslog_sidebar">
-        <ul class="nav nav-tabs nav-stacked">
-            <li><a href="/dashboard/log-list">Live Report<i class="icon-chevron-right"></i></a></li>
-            <li><a href="/dashboard/log-list">Daily Logs<i class="icon-chevron-right"></i></a></li>
-            <li><a href="/dashboard/log-list">Weekly Logs<i class="icon-chevron-right"></i></a></li>
-            <li><a href="/dashboard/log-list">To Be Released Logs<i class="icon-chevron-right"></i></a></li>
+        <ul class="nav nav-tabs nav-stacked" ng-repeat="dashboard in presetDashboards">
+            <li><a ng-href="/dashboard/{{dashboard._id}}">{{ dashboard.name }}<i class="icon-chevron-right"></i></a></li>
         </ul>
 
         <h3>Favourite Dashboards</h3>
         <ul class="nav nav-tabs nav-stacked">
             <li ng-repeat="favourite in favourites">
-                <a ng-href="/dashboard/{{favourite.id}}">{{ favourite.name }} <i class="icon-chevron-right"></i></a></li>
+                <a ng-href="/dashboard/{{favourite._id}}">{{ favourite.name }} <i class="icon-chevron-right"></i></a></li>
         </ul>
 
         <h3>All Dashboards</h3>
         <div class="favourites-manager">
-            <select ui-select2 ng-model="select2" data-placeholder="Add to Favourites">
-                <option value="test">Dashboard Custom</option>
-                <option value="test">Magical Dash</option>
-                <option value="test">Reporting Box</option>
-            </select>
+            <select ui-select2 ng-model="addDashboard" data-placeholder="Add to Favourites">
+                <option value=""></option>
+                <option ng-repeat="dashboard in allDashboards" value="{{ dashboard._id }}">{{ dashboard.name }}</option>
+             </select>
         </div>
     </div>
 
@@ -38,7 +34,7 @@
                     <button class="btn dropdown-toggle"><i class="icon icon-list-alt"></i> More <b class="caret"></b> </button>
                     <ul class="dropdown-menu">
                         <li><a href="#" ng-click="openEditDashboardModal()"><i class="icon icon-edit"></i> Edit Dashboard </a></li>
-                        <li><a href="#" ng-show="!isFavourite()" ng-click="addToFavourite()"><i class="icon icon-star-empty"></i> Add to Favourites </a></li>
+                        <li><a href="#" ng-show="!isFavourite()" ng-click="addToFavourite($scope.id)"><i class="icon icon-star-empty"></i> Add to Favourites </a></li>
                         <li><a href="#" ng-show="isFavourite()" ng-click="removeFromFavourite()"><i class="icon icon-star"></i> Remove from Favourites </a></li>
                         <li><a ng-click="exportReport()"><i class="icon icon-download"></i> Export as Report</a></li>
                     </ul>

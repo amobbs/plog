@@ -52,7 +52,7 @@ class DashboardsController extends AppController
                     $dashboard = $this->Dashboard->findById(new MongoId($dashboardId));
                     if (!empty($dashboard)) {
                         $fav[] = array(
-                            'id' => $dashboard['Dashboard']['_id'],
+                            '_id' => $dashboard['Dashboard']['_id'],
                             'name' => $dashboard['Dashboard']['name'],
                         );
                     }
@@ -67,14 +67,33 @@ class DashboardsController extends AppController
      * Retrieve a list of all custom (not preset) dashboards that exist and are shared with the current logged in users default client.
      */
     private function listAllCustomDashboards() {
-        //TODO finish
-        $dashboards = array();
+        $user = $this->User->findById(
+            $this->PreslogAuth->user('_id')
+        );
+
+        $clients = $this->User->listAvailableClientsForUser($user['User']);
+
+        $clientIds = array();
+        foreach($clients as $client) {
+            $clientIds[] = $client['_id'];
+        }
 
         $dashboards = $this->Dashboard->find('all', array(
-            'conditions' => array('preset' => false),
+            'conditions' => array(
+                'preset' => false,
+                'shares' => array('$in' => $clientIds),
+            ),
         ));
 
-        return $dashboards;
+        $result = array();
+        foreach($dashboards as $dashboard) {
+            $result[] = array(
+                '_id' => $dashboard['Dashboard']['_id'],
+                'name' => $dashboard['Dashboard']['name'],
+            );
+        }
+
+        return $result;
     }
 
     /**
@@ -83,6 +102,17 @@ class DashboardsController extends AppController
      */
     private function listPresetDashboards() {
         $preset = array();
+
+        $dashboards = $this->Dashboard->find('all', array(
+            'conditions' => array('preset' => true),
+        ));
+
+        foreach($dashboards as $dashboard) {
+            $preset[] = array(
+                'name' => $dashboard['Dashboard']['name'],
+                '_id' => $dashboard['Dashboard']['_id'],
+            );
+        }
 
         return $preset;
     }
@@ -170,14 +200,15 @@ class DashboardsController extends AppController
                     'name' => $this->request->data['name'],
                     'type' => 'static',
                     'widgets' => array(),
-                    'shares' => array(),
+                    'shares' => $this->request->data['shares'],
+                    'preset' => false, //users can not create preset dashboards.
                 );
                 $this->Dashboard->create($dashboard);
                 $this->Dashboard->save();
 
                 $dashboard = $this->Dashboard->findById($dashboard['_id']);
                 $dashboard = $this->_getParsedDashboard($dashboard);
-                $this->set('dashboard', $this->Dashboard->toArray($dashboard, false));
+                $this->set('dashboard', $this->Dashboard->toArray($dashboard['Dashboard'], false));
                 $this->set('status', 'created');
             }
         }
@@ -498,8 +529,8 @@ class DashboardsController extends AppController
     public function editFavouriteDashboards()
     {
         //DELETE will pass it in
-        if(isset($this->request->pass['dashboard_id'])) {
-            $dashboardId = $this->request->pass['dashboard_id'];
+        if(isset($this->request->params['dashboard_id'])) {
+            $dashboardId = $this->request->params['dashboard_id'];
         }
 
         //POST will be params of request
@@ -524,11 +555,11 @@ class DashboardsController extends AppController
             }
         }
 
-        //only add the dashboard if we did not find it
         if (!$found) {
             $user['User']['favouriteDashboards'][] = $dashboardId;
-            $this->User->save($user['User']);
         }
+
+        $this->User->save($user['User']);
 
         $this->set('favourites', $this->listLoggedInFavouriteDashboards());
         $this->set('_serialize', array('favourites'));

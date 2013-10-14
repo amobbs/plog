@@ -32,17 +32,8 @@ class Dashboard extends AppModel
         'name'          => array('type' => 'string', 'length'=>255),
         'type'          => array('type' => 'string', 'length'=>64),
         'widgets'       => array(null),
-        'shares'        => array(null),
+        'shares'        => array('type' => 'array'),
 
-        'email'         => array('type' => 'string', 'length'=>255),
-        'password'      => array('type' => 'string'),
-        'company'       => array('type' => 'text'),
-        'phoneNumber'   => array('type' => 'integer'),
-        'role'          => array('type' => 'string'),
-        'client'        => array('type' => 'string'),
-        'deleted'       => array('type' => 'boolean'),
-
-        'favouriteDashboards'   => array(null),
         'created'       => array('type' => 'datetime'),
         'modified'      => array('type' => 'datetime'),
 
@@ -82,13 +73,7 @@ class Dashboard extends AppModel
         $parsed['type'] = $dashboard['type'];
         $parsed['widgets'] = array();
         foreach($dashboard['widgets'] as $widget) {
-            $widgetObject = null;
-            if(!($widget instanceof Preslog\Widgets\Widget)) {
-                //TODO what?
-            } else {
-                $widgetObject = $widget;
-            }
-            $parsed['widgets'][] = $widgetObject->toArray($forMongo);
+            $parsed['widgets'][] = $widget->toArray($forMongo);
         }
 
         return $parsed;

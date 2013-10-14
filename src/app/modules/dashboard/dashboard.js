@@ -14,7 +14,8 @@
  */
 angular.module( 'Preslog.dashboard', [
         'Preslog.dashboard.dashboardModal',
-        'Preslog.dashboard.widgetModal'
+        'Preslog.dashboard.widgetModal',
+        'permission'
     ])
 
 
@@ -30,12 +31,7 @@ angular.module( 'Preslog.dashboard', [
             resolve: {
                 source: ['$q', 'Restangular', '$stateParams', function($q, Restangular, $stateParams) {
                     // Fetch dashboard
-                    var deferred = $q.defer();
-                    Restangular.one('dashboards', '5244e28309cc5eeb498b4567').get().then(function(data) {
-                        deferred.resolve(data);
-                    });
-
-                    return deferred.promise;
+                    return Restangular.one('dashboards', '5244e28309cc5eeb498b4567');
                 }]
             }
         });
@@ -50,12 +46,7 @@ angular.module( 'Preslog.dashboard', [
             resolve: {
                 source: ['$q', 'Restangular', '$stateParams', function($q, Restangular, $stateParams) {
                     // Fetch dashboard
-                    var deferred = $q.defer();
-                    Restangular.one('dashboards', $stateParams.dashboard_id).get().then(function(data) {
-                        deferred.resolve(data);
-                    });
-
-                    return deferred.promise;
+                   return Restangular.one('dashboards', $stateParams.dashboard_id);
                 }]
             }
         });
@@ -65,16 +56,39 @@ angular.module( 'Preslog.dashboard', [
     /**
      * Dashboard Controller
      */
-    .controller( 'DashboardCtrl', function DashboardController( $scope, $http, $window, $location, $timeout, $modal, titleService, Restangular, source) {
+    .controller( 'DashboardCtrl', function DashboardController( $scope, $http, $window, $location, $timeout, $modal, userService, titleService, Restangular, source) {
         titleService.setTitle( 'Dashboard' );
 
-        $scope.id = source.dashboard.id; //mongoid for dashboard
-        $scope.dashboard = source.dashboard;
-        $scope.favourites = source.favourites;
-        $scope.clients = source.clients;
+        $scope.id = '';//mongoid for dashboard
+        $scope.dashboard = '';
+        $scope.favourites = '';
+        $scope.clients = '';
+        $scope.allDashboards = [];
+        $scope.presetDashboards = [];
 
         $scope.refreshTimers= [];
         $scope.name = '';
+        $scope.addDashboard = undefined;
+
+        //populate data about this dashboard for the first time
+        source.get().then(function (result) {
+            $scope.id = result.dashboard.id;
+            $scope.dashboard = result.dashboard;
+            $scope.favourites = result.favourites;
+            $scope.clients = result.clients;
+        });
+
+        Restangular.one('dashboards').get().then(function(result) {
+            $scope.allDashboards = result.dashboards;
+            $scope.presetDashboards = result.preset;
+        });
+
+
+        $scope.$watch('addDashboard', function(id) {
+            if (id) {
+                $scope.addToFavourite(id);
+            }
+        });
 
         //move the widgets around
         $scope.sortableOptions = {
@@ -108,8 +122,7 @@ angular.module( 'Preslog.dashboard', [
                    }
                 }
 
-                Restangular.one('dashboards', $scope.id)
-                    .post('', {'widgets': $scope.dashboard.widgets})
+               source.post('', {'widgets': $scope.dashboard.widgets})
                     .then(function(data) {
                         console.log('widget sort saved');
                     }
@@ -118,8 +131,7 @@ angular.module( 'Preslog.dashboard', [
         };
 
         $scope.deleteWidget = function(widgetId) {
-            Restangular.one('dashboards', $scope.id)
-                .one('widgets', widgetId)
+            source.one('widgets', widgetId)
                 .remove()
                 .then(function (result){
                     console.log(result);
@@ -171,8 +183,7 @@ angular.module( 'Preslog.dashboard', [
         };
 
         $scope.refreshWidget = function(widgetId) {
-            Restangular.one('dashboards', $scope.id)
-                .one('widgets', widgetId)
+            source.one('widgets', widgetId)
                 .get()
                 .then(function(result) {
                     if (result && result.widget) {
@@ -204,9 +215,17 @@ angular.module( 'Preslog.dashboard', [
                     clients: function() { return $scope.splitClients(); }
                 }
             });
-            createModal.result.then(function(name) {
+            createModal.result.then(function(details) {
                 var dashboard = Restangular.all('dashboards');
-                dashboard.post({'name' : name})
+                //find which clients we want to share with
+                var shares = [];
+                for(var id in details.share) {
+                    if (details.share[id]) {
+                        shares.push(id);
+                    }
+                }
+
+                dashboard.post({name: details.name, shares: shares})
                     .then(function(result) {
                         $scope.dashboard = result.dashboard;
                         $scope.id = result.dashboard.id;
@@ -227,8 +246,7 @@ angular.module( 'Preslog.dashboard', [
                 }
             });
             editModal.result.then(function(name) {
-                Restangular.one('dashboards', $scope.id)
-                    .post('', {'name': name})
+                source.post('', {'name': name})
                     .then(function(result) {
                         $scope.dashboard.name = name;
                     });
@@ -319,9 +337,9 @@ angular.module( 'Preslog.dashboard', [
         };
 
         //add current dashboard on to the list of favourites for the logged in user
-        $scope.addToFavourite = function() {
+        $scope.addToFavourite = function(id) {
             Restangular.one('dashboards/favourites')
-                .post('', {dashboard_id: $scope.id})
+                .post('', {dashboard_id: id})
                 .then(function(result) {
                     $scope.favourites = result.favourites;
                 });
@@ -329,8 +347,8 @@ angular.module( 'Preslog.dashboard', [
 
         //remove current dashboard on to the list of favourites for the logged in user
         $scope.removeFromFavourite = function() {
-            Restangular.one('dashboards')
-                .remove('favourites', $scope.id)
+            Restangular.one('dashboards/favourites', $scope.id)
+                .remove()
                 .then(function(result) {
                     $scope.favourites = result.favourites;
                 });
