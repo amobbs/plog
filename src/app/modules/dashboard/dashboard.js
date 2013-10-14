@@ -318,6 +318,36 @@ angular.module( 'Preslog.dashboard', [
             return columns;
         };
 
+        //add current dashboard on to the list of favourites for the logged in user
+        $scope.addToFavourite = function() {
+            Restangular.one('dashboards/favourites')
+                .post('', {dashboard_id: $scope.id})
+                .then(function(result) {
+                    $scope.favourites = result.favourites;
+                });
+        };
+
+        //remove current dashboard on to the list of favourites for the logged in user
+        $scope.removeFromFavourite = function() {
+            Restangular.one('dashboards')
+                .remove('favourites', $scope.id)
+                .then(function(result) {
+                    $scope.favourites = result.favourites;
+                });
+        };
+
+        //is the current dashboard a favourite for this user?
+        $scope.isFavourite = function() {
+            var found = false;
+            for(var id in $scope.favourites) {
+                if ($scope.favourites[id].id = $scope.id) {
+                    found = true;
+                }
+            }
+            return found;
+        };
+
+        //setup the properties needed to get the log list widget working.
         $scope.setUpLogList = function() {
 
             for(var w in $scope.dashboard.widgets) {

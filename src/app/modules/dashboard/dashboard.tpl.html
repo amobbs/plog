@@ -10,13 +10,8 @@
 
         <h3>Favourite Dashboards</h3>
         <ul class="nav nav-tabs nav-stacked">
-            <li><a href="/dashboard/5244e28309cc5eeb498b4567">My Dashboard<i class="icon-chevron-right"></i></a></li>
-            <li><a href="/dashboard/">Dash A<i class="icon-chevron-right"></i></a></li>
-            <li><a href="/dashboard/">Dash B<i class="icon-chevron-right"></i></a></li>
-            <li><a href="/dashboard/">Dash C<i class="icon-chevron-right"></i></a></li>
-        </ul>
-        <ul class="nav nav-tabs nav-stacked" ng-repeat="item in favourites">
-            <li><a ng-href="/dashboard/{{ item.id }}">{{ item.name }}<i class="icon-chevron-right"></i></a></li>
+            <li ng-repeat="favourite in favourites">
+                <a ng-href="/dashboard/{{favourite.id}}">{{ favourite.name }} <i class="icon-chevron-right"></i></a></li>
         </ul>
 
         <h3>All Dashboards</h3>
@@ -43,8 +38,8 @@
                     <button class="btn dropdown-toggle"><i class="icon icon-list-alt"></i> More <b class="caret"></b> </button>
                     <ul class="dropdown-menu">
                         <li><a href="#" ng-click="openEditDashboardModal()"><i class="icon icon-edit"></i> Edit Dashboard </a></li>
-                        <li><a href="#"><i class="icon icon-star-empty"></i> Add to Favourites </a></li>
-                        <li><a href="#"><i class="icon icon-star"></i> Remove from Favourites </a></li>
+                        <li><a href="#" ng-show="!isFavourite()" ng-click="addToFavourite()"><i class="icon icon-star-empty"></i> Add to Favourites </a></li>
+                        <li><a href="#" ng-show="isFavourite()" ng-click="removeFromFavourite()"><i class="icon icon-star"></i> Remove from Favourites </a></li>
                         <li><a ng-click="exportReport()"><i class="icon icon-download"></i> Export as Report</a></li>
                     </ul>
 

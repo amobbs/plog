@@ -11,7 +11,8 @@ class Widget {
     protected $name; //shown in title bar of widget
     protected $type; //determines type of graph or method used to display widget
     protected $details; //information used to render the graph (title, refresh rate, options available to generate the graph
-    protected $displayOptions = array(); //all possible options that are shown when picking details to generate the graphs
+    protected $options = array(); //all possible options that are shown when picking details to generate the graphs
+    protected $displayOptions = array(); //parsed options that are are sent to interface
     protected $maxWidth = 1; //how much space the widget should take up on screen
     protected $series = array(); //data used to populate graph
     protected $aggregate; //is the result of the data an aggregate or just a list of logs?

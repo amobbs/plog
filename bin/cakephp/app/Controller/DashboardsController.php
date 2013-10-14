@@ -27,7 +27,7 @@ class DashboardsController extends AppController
     {
         $this->set('preset', $this->listPresetDashboards());
         $this->set('favourites', $this->listLoggedInFavouriteDashboards());
-        $this->set('dashboards', ''); //$this->Dashboard->serializeDashboardForHighcharts());
+        $this->set('dashboards', $this->listAllCustomDashboards());
         $this->set('_serialize', array('preset', 'favourites', 'dashboards'));
     }
 
@@ -39,20 +39,20 @@ class DashboardsController extends AppController
 
     private function listLoggedInFavouriteDashboards() {
         $user = $this->User->findById(
-            $this->PreslogAuth->user('id'),
+            $this->PreslogAuth->user('_id'),
             array('fields'=>array(
-                'dashboards',
+                'favouriteDashboards',
             ))
         );
 
         $fav = array();
-        if (isset($user['User']['dashboards'])) {
-            foreach($user['User'] as $dashboardId) {
+        if (isset($user['User']['favouriteDashboards'])) {
+            foreach($user['User']['favouriteDashboards'] as $dashboardId) {
                 if (!empty($dashboardId)) {
                     $dashboard = $this->Dashboard->findById(new MongoId($dashboardId));
                     if (!empty($dashboard)) {
                         $fav[] = array(
-                            'id' => $dashboard['Dashboard']['id'],
+                            'id' => $dashboard['Dashboard']['_id'],
                             'name' => $dashboard['Dashboard']['name'],
                         );
                     }
@@ -61,6 +61,20 @@ class DashboardsController extends AppController
         }
 
         return $fav;
+    }
+
+    /***
+     * Retrieve a list of all custom (not preset) dashboards that exist and are shared with the current logged in users default client.
+     */
+    private function listAllCustomDashboards() {
+        //TODO finish
+        $dashboards = array();
+
+        $dashboards = $this->Dashboard->find('all', array(
+            'conditions' => array('preset' => false),
+        ));
+
+        return $dashboards;
     }
 
     /**
@@ -483,9 +497,41 @@ class DashboardsController extends AppController
      */
     public function editFavouriteDashboards()
     {
-        // TODO
-        $this->set('todo', 'Edit Favourite Dashboards');
-        $this->set('_serialize', array('todo'));
+        //DELETE will pass it in
+        if(isset($this->request->pass['dashboard_id'])) {
+            $dashboardId = $this->request->pass['dashboard_id'];
+        }
+
+        //POST will be params of request
+        if (empty($dashboardId)) {
+            $dashboardId = $this->request->data('dashboard_id');
+        }
+
+        $user = $user = $this->User->findById(
+            $this->PreslogAuth->user('_id')
+        );
+
+        //make sure this dashboard is not all ready a favourite for the user;
+        $found = false;
+        foreach($user['User']['favouriteDashboards'] as $key => $dashboard) {
+            if ($dashboard == $dashboardId) {
+                $found = true;
+
+                //user requested we delete this one.
+                if ($this->request->is('delete')) {
+                    unset($user['User']['favouriteDashboards'][$key]);
+                }
+            }
+        }
+
+        //only add the dashboard if we did not find it
+        if (!$found) {
+            $user['User']['favouriteDashboards'][] = $dashboardId;
+            $this->User->save($user['User']);
+        }
+
+        $this->set('favourites', $this->listLoggedInFavouriteDashboards());
+        $this->set('_serialize', array('favourites'));
     }
 
 
