@@ -67,16 +67,7 @@ class DashboardsController extends AppController
      * Retrieve a list of all custom (not preset) dashboards that exist and are shared with the current logged in users default client.
      */
     private function listAllCustomDashboards() {
-        $user = $this->User->findById(
-            $this->PreslogAuth->user('_id')
-        );
-
-        $clients = $this->User->listAvailableClientsForUser($user['User']);
-
-        $clientIds = array();
-        foreach($clients as $client) {
-            $clientIds[] = $client['_id'];
-        }
+        $clientIds = $this->getClientListForUser();
 
         $dashboards = $this->Dashboard->find('all', array(
             'conditions' => array(
@@ -634,13 +625,7 @@ class DashboardsController extends AppController
             $widgetObject->setId(new MongoId($widget['_id']));
         }
 
-        //TODO replace with client list from session
-        $clients = array();
-        $allClients = $this->Client->find('all');
-        foreach($allClients as $c) {
-            $clients[] = $c['Client']['_id'];
-        }
-        //end todo
+        $clients = $this->getClientListForUser();
 
         //populate the options available for this client on this widget
         $options = $widgetObject->getOptions();
@@ -674,13 +659,7 @@ class DashboardsController extends AppController
 
         $options = $options[$optionName];
 
-        //TODO replace with client list from session
-        $clients = array();
-        $allClients = $this->Client->find('all');
-        foreach($allClients as $c) {
-            $clients[] = $c['Client']['_id'];
-        }
-        //end todo
+        $clients = $this->getClientListForUser();
 
         if (!empty($options)) {
             $xOptions = array();
@@ -792,13 +771,10 @@ class DashboardsController extends AppController
         $jqlParser->setSqlFromJql($widgetObject->getDetail('query'));
         $match = $jqlParser->getMongoCriteria();
 
-        //TODO replace with client list from session
-        $clients = array();
-        $allClients = $this->Client->find('all');
-        foreach($allClients as $c) {
-            $clients[] = $c['Client']['_id'];
-        }
-        //end todo
+        $clients = $this->getClientListForUser();
+        $allClients = $this->Client->find('all', array(
+            'conditions' => array('_id' => array('$in' => $clients))
+        ));
 
         //find which fields we are using in the query
         $fieldNames = $jqlParser->getFieldList();
@@ -909,5 +885,23 @@ class DashboardsController extends AppController
         }
 
         return $widgetObject;
+    }
+
+    /**
+     * get the list of clients the logged in user can access
+     * @return mixed
+     */
+    private function getClientListForUser() {
+        $user = $this->User->findById(
+            $this->PreslogAuth->user('_id')
+        );
+
+        $clients = $this->User->listAvailableClientsForUser($user['User']);
+
+        $clientIds = array();
+        foreach($clients as $client) {
+            $clientIds[] = $client['_id'];
+        }
+        return $clientIds;
     }
 }
