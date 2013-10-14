@@ -17,21 +17,93 @@ class Client extends AppModel
      * @var array   Schema definition for this document
      */
     public $mongoSchema = array(
-        '_id'           => array('type' => 'string', 'length'=>24, 'primary' => true, 'mongoType'=>'MongoId'),
-        'name'          => array('type' => 'string', 'length'=>255),
-        'shortName'     => array('type' => 'string', 'length'=>4),
-        'contact'       => array('type' => 'string', 'length'=>255),
-        'logPrefix'     => array('type' => 'string', 'length'=>6),
-        'activationDate'=> array('type' => 'datetime', 'mongoType'=>'MongoDate'),
-        'format'        => array(
-            '_id'           => array('type' => 'string', 'length'=>24, 'mongoType'=>'MongoId'),
-            'order'         => array('type'=>'int'),
-            'name'          => array('type'=>'string', 'length'=>255),
-            'data'          => array(null),
+        '_id' => array(
+            'type' => 'string',
+            'length' => 24,
+            'primary' => true,
+            'mongoType' => 'mongoId'
         ),
-        'attributes'    => array(null),
-        'created'       => array('type' => 'datetime', 'mongoType'=>'MongoDate'),
-        'modified'      => array('type' => 'datetime', 'mongoType'=>'MongoDate'),
+        'name' => array(
+            'type' => 'string',
+            'length' => 255
+        ),
+        'shortName' => array(
+            'type' => 'string',
+            'length' => 4
+        ),
+        'contact' => array(
+            'type' => 'string',
+            'length' => 255
+        ),
+        'logPrefix' => array(
+            'type' => 'string',
+            'length' => 6
+        ),
+        'activationDate' => array(
+            'type' => 'datetime',
+            'mongoType' => 'MongoDate'
+        ),
+        'format' => array(
+            'type' => 'subDocument',
+            'schema' => array(
+                '_id' => array(
+                    'type' => 'string',
+                    'length' => 24,
+                    'mongoType' => 'mongoId'
+                ),
+                'order' => array('type' => 'int'),
+                'name' => array(
+                    'type' => 'string',
+                    'length' => 255
+                ),
+                'data' => array('type' => 'array')
+            )
+        ),
+        'attributes' => array(
+            'type' => 'subCollection',
+            'schema' => array(
+                '_id' => array(
+                    'type' => 'string',
+                    'length' => 24,
+                    'mongoType' => 'mongoId'
+                ),
+                'name' => array('type' => 'string'),
+                'deleted' => array('type' => 'boolean'),
+                'children' => array(
+                    'type' => 'subCollection',
+                    'schema' => array(
+                        '_id' => array(
+                            'type' => 'string',
+                            'length' => 24,
+                            'mongoType' => 'mongoId'
+                        ),
+                        'name' => array('type' => 'string'),
+                        'deleted' => array('type' => 'boolean'),
+                        'children' => array(
+                            'type' => 'subCollection',
+                            'schema' => array(
+                                '_id' => array(
+                                    'type' => 'string',
+                                    'length' => 24,
+                                    'mongoType' => 'mongoId'
+                                ),
+                                'name' => array('type' => 'string'),
+                                'deleted' => array('type' => 'boolean'),
+                                'children' => array('type' => 'array')
+                            )
+                        )
+                    )
+                )
+            )
+        ),
+        'created' => array(
+            'type' => 'datetime',
+            'mongoType' => 'mongoDate'
+        ),
+        'modified' => array(
+            'type' => 'datetime',
+            'mongoType' => 'mongoDate'
+        ),
     );
 
 
@@ -143,11 +215,11 @@ class Client extends AppModel
     public function beforeSave($options = array()) {
         //TODO clean up this horrible code
         $client = $this->data['Client'];
-        if (!($client['_id'] instanceof MongoId)) {
+        if (!($client['_id'] instanceof mongoId)) {
             if ($client['_id'] == null || (isset($client['newGroup']) && $client['newGroup'])) {
-                $client['_id'] = new MongoId();
+                $client['_id'] = new mongoId();
             } else {
-                $client['_id'] = new MongoId($client['_id']);
+                $client['_id'] = new mongoId($client['_id']);
             }
         }
 
@@ -156,26 +228,26 @@ class Client extends AppModel
         //check all the attributes
         foreach ($client['attributes'] as $group) {
             if ($group['_id'] == null || (isset($group['newGroup']) && $group['newChild']) || strlen($group['_id']) != 24) {
-                $group['_id'] = new MongoId();
+                $group['_id'] = new mongoId();
             } else {
-                $group['_id'] = new MongoId($group['_id']);
+                $group['_id'] = new mongoId($group['_id']);
             }
             $children = [];
             foreach($group['children'] as $child) {
-                if (!($child['_id'] instanceof MongoId)) {
+                if (!($child['_id'] instanceof mongoId)) {
                     if ($child['_id'] == null || (isset($child['newGroup']) && $child['newChild']) || strlen($child['_id']) != 24) {
-                        $child['_id'] = new MongoId();
+                        $child['_id'] = new mongoId();
                     } else {
-                        $child['_id'] = new MongoId($child['_id']);
+                        $child['_id'] = new mongoId($child['_id']);
                     }
                 }
                 $subChildren = [];
                 foreach($child['children'] as $subChild) {
-                    if (!($subChild['_id'] instanceof MongoId)) {
+                    if (!($subChild['_id'] instanceof mongoId)) {
                         if ($subChild['_id'] == null || (isset($subChild['newGroup']) && $subChild['newChild']) || strlen($subChild['_id']) != 24) {
-                            $subChild['_id'] = new MongoId();
+                            $subChild['_id'] = new mongoId();
                         } else {
-                            $subChild['_id'] = new MongoId($subChild['_id']);
+                            $subChild['_id'] = new mongoId($subChild['_id']);
                         }
                     }
                     $subChildren[] = $subChild;
