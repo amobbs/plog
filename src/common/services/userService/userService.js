@@ -143,11 +143,9 @@ angular.module('userService', ['restangular'])
 
                 // Fetch client list if not loaded
                 if (! clients) {
-                    service.getUser().then(function (ret) {
+                    service.getUser().then(function (user) {
 
-                        // Set clients
-                        clients = ret.login.clients;
-
+                        // Resolve clients from the value set by getUser()
                         deferred.resolve(clients);
                     });
                 } else {
