@@ -44,7 +44,7 @@ class Client extends AppModel
             'mongoType' => 'MongoDate'
         ),
         'format' => array(
-            'type' => 'subDocument',
+            'type' => 'subCollection',
             'schema' => array(
                 '_id' => array(
                     'type' => 'string',
@@ -52,6 +52,7 @@ class Client extends AppModel
                     'mongoType' => 'mongoId'
                 ),
                 'order' => array('type' => 'int'),
+                'type' => array('type' => 'string'),
                 'name' => array(
                     'type' => 'string',
                     'length' => 255
