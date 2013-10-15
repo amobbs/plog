@@ -62,8 +62,6 @@ angular.module('userService', ['restangular'])
             },
 
 
-
-
             /**
              * Login the given user
              * @param username
@@ -85,11 +83,9 @@ angular.module('userService', ['restangular'])
                         user = ret.login.user;
                         permissions = ret.login.permissions;
                         clients = ret.login.clients;
+                        currentClient = clients[0]._id;
 
-                        // Push details to scopes
-                        $rootScope.global.user = user;
-                        $rootScope.global.clients = clients;
-                        $rootScope.global.userService = service;
+                        // Mark as logged in
                         $rootScope.global.loggedIn = true;
 
                         // resolve the promise
@@ -166,8 +162,15 @@ angular.module('userService', ['restangular'])
                 // Get clients
                 service.getClients().then(function(clients) {
 
+                    // Set current client if not already chosen
+                    if (currentClient === undefined)
+                    {
+                        currentClient = clients[0]._id;
+                    }
+
                     // Fetch this active client
                     var client = $.map(clients, function(v,k){ if (v._id == currentClient) { return v; } });
+                    console.log(client);
                     client = client[0];
 
                     deferred.resolve(client);

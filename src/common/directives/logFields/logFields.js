@@ -6,6 +6,7 @@
 angular.module('logFields', [])
     .directive('logFields', ['$templateCache', '$compile', function ( $templateCache, $compile ) {
 
+
         /**
          * Field types
          * @type {Array}
@@ -38,6 +39,9 @@ angular.module('logFields', [])
             {
                 scope.data = [];
             }
+
+            console.log(attrs);
+
 
             // Sort the FIELDS data into the correct order.
             scope.fields = scope.fields.sort(function(a,b) {

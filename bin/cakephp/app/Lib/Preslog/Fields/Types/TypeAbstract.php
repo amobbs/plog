@@ -87,4 +87,14 @@ abstract class TypeAbstract
         return '';
     }
 
+
+    /**
+     * Initialise this field type with the given data.
+     * Usually used in conjunction with Select fields, etc.
+     * @param   array   $data       Data to configure this type
+     */
+    public function initialise( $data )
+    {
+    }
+
 }

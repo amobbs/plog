@@ -5,6 +5,7 @@
  */
 
 use Preslog\JqlParser\JqlParser;
+use Preslog\Fields\FieldHelper;
 
 App::uses('AppModel', 'Model');
 
@@ -18,7 +19,7 @@ class Log extends AppModel
      * @var array   Schema definition for this document
      */
     public $mongoSchema = array(
-        '_id'               => array('type' => 'string', 'length'=>40, 'primary' => true, 'mongoType'=>'mongoId'),
+        '_id'               => array('type' => 'string', 'length'=>24, 'primary' => true, 'mongoType'=>'mongoId'),
         'client_id'         => array('type' => 'string', 'length'=>24, 'mongoType'=>'mongoId'),
         'created_user_id'   => array('type' => 'string', 'length'=>24, 'mongoType'=>'mongoId'),
         'modified_user_id'  => array('type' => 'string', 'length'=>24, 'mongoType'=>'mongoId'),
@@ -26,7 +27,7 @@ class Log extends AppModel
         'deleted'       => array('type' => 'boolean'),
         'fields'        => array('type' => 'subCollection',
             'schema'=> array(
-                'field_id'      => array('type' => 'string', 'length'=>40, 'mongoType'=>'mongoId'),
+                'field_id'      => array('type' => 'string', 'length'=>24, 'mongoType'=>'mongoId'),
                 'data'          => array('type' => 'array'),
             ),
         ),
@@ -36,6 +37,178 @@ class Log extends AppModel
         'modified'      => array('type' => 'datetime', 'mongoType'=>'mongoDate'),
     );
 
+
+    /**
+     * Validate the Log content
+     * - Note that log.fields is dynamically allocated, so the log validation needs to be loaded based on the Client and tested per-field.
+     * - Attributes are expected to be an array of IDs, so simple validation occurs here.
+     * @param   array|null  $options    Options for validation
+     * @return  bool                    True on success
+     */
+    public function validates($options = array())
+    {
+        // Validate the core model
+        $coreResult = parent::validates( $options );
+
+        // Fetch the Client Schema
+        $clientModel = ClassRegistry::init('Client');
+        $client = $clientModel->find('first', array(
+            'conditions'=>array(
+                '_id' => $this->data['client_id'],
+            )
+        ));
+
+        // Check the client loaded
+        if ( !sizeof($client) )
+        {
+            return false;
+        }
+
+        // Load the schema
+        $fieldHelper = new FieldHelper;
+        $fieldHelper->loadSchema($client['fields']);
+
+        // Validate the data, using $this->validator() for errors
+        $result = $fieldHelper->validates( $this->data, $this->validator() );
+
+        // Return the validation result
+        return ($coreResult == false ? false : $result);
+    }
+
+
+    /**
+     * Before Save (inverse of After Find)
+     * - Process the Schema objects here before passing the data to the DB abstract.
+     * - Remove any fields the user does not have permission to modify
+     * @param   array|null  $options        Options array
+     * @return  bool
+     */
+    public function beforeSave($options = array())
+    {
+        // Process any AppModel beforeSave tasks
+        $ok = parent::beforeSave($options);
+
+        // Return if the initial process fails
+        if (!$ok)
+        {
+            return $ok;
+        }
+
+        // Client ID must be present or we'll have some serious problems
+        if (!isset( $this->data[ $this->name ]['client_id'] ))
+        {
+            trigger_error('Log saves must have an appropriate client_id field attached. Log cannot be saved.', E_USER_WARNING);
+            return false;
+        }
+
+        // Try to load fieldHelper from cache first
+        if (!$fieldHelper = $this->getFieldHelperByClientId( $this->data[ $this->name ]['client_id'] ))
+        {
+            trigger_error('The given client_id does not appear to exist. Log cannot be saved.', E_USER_WARNING);
+        }
+
+        // Process schema of the fields
+        $fieldHelper->convertToDocument( $this->data[ $this->name ] );
+
+        return true;
+    }
+
+
+    /**
+     * After Find (inverse of Before Save)
+     * - Process the Schema objects specific to this log.client_id in log.fields
+     * - Remove fields this user does not have permission to see
+     * @param mixed $results
+     * @param bool $primary
+     * @return mixed
+     */
+    public function afterFind($results, $primary = false)
+    {
+        // Run traditional afterFind
+        $results = parent::afterFind($results, $primary);
+
+        // Check there's data to process
+        if ( !sizeof($results) )
+        {
+            return $results;
+        }
+
+        // Do not try to do the next step is the client_id doesn't exist
+        foreach ($results as &$result)
+        {
+            // Don't try it if the client_id isn't in the resultset
+            // This might be omitted due to the 'fields' list of the find options
+            if ( !isset( $result[ $this->name ]['client_id'] ))
+            {
+                continue;
+            }
+
+            // Get the field helper instance for this client_id
+            if (!$fieldHelper = $this->getFieldHelperByClientId( $result[ $this->name ]['client_id'] ))
+            {
+                continue;
+            }
+
+            // Convert the data
+            $fieldHelper->convertToArray( $result[ $this->name ] );
+        }
+
+
+        return $results;
+    }
+
+
+    /**
+     * Fetch a field helper object by the given $client_id
+     * - Attempts to cache these requests per client, otherwise the lookup could take a long, long time.
+     * @param       string          $client_id      Client ID to load data for
+     * @return      FieldHelper|bool                Field Helper Object, or false if client unavailable
+     */
+    public function getFieldHelperByClientId( $client_id )
+    {
+        // Load poor-mans cache for this pageload
+        $clientFieldHelperCache = Configure::read('Preslog.cache.clientFieldsHelper');
+        if (!is_array($clientFieldHelperCache))
+        {
+            $clientFieldHelperCache = array();
+        }
+
+        // Attempt to load the ClientSchema from cache before calling up a new one.
+        if ( isset($clientFieldHelperCache[ $client_id ]))
+        {
+            return $clientFieldHelperCache[ $client_id ];
+        }
+        else
+        {
+            // Fetch the Client Schema
+            $clientModel = ClassRegistry::init('Client');
+            $client = $clientModel->find('first', array(
+                'conditions'=>array(
+                    '_id' => $client_id,
+                )
+            ));
+
+            // Abort if the client couldn't be loaded from the DB
+            if ( sizeof($client) )
+            {
+                // Initialize field helper
+                // Pass the field types available from config
+                // Pass the schema from Client
+                $fieldHelper = new FieldHelper();
+                $fieldHelper->setFieldTypes( Configure::read('Preslog.Fields') );
+                $fieldHelper->loadFieldSchema( $client['Client']['format'] );
+
+                // Save to cache
+                $clientFieldHelperCache[ $client_id ] = $fieldHelper;
+                Configure::write('Preslog.cache.clientFieldsHelper', $clientFieldHelperCache);
+
+                return $fieldHelper;
+            }
+        }
+
+        // Fell through - return our failure to find the client/fieldHelper
+        return false;
+    }
 
 
     /**
@@ -257,4 +430,38 @@ class Log extends AppModel
 
         return $data;
     }
+
+
+    /**
+     * Fetch options fields for this client.
+     * - Format
+     * - Attributes hierarchy
+     * @param   $client_id
+     * @return  array
+     */
+    public function getOptionsByClientId( $client_id )
+    {
+        // Load client
+        $clientModel = ClassRegistry::init('Client');
+
+        // Client fetch opts
+        $client = $clientModel->find('first', array(
+            'conditions'=>array(
+                '_id'=>$client_id
+            ),
+            'fields'=>array(
+                'format',
+                'attributes'
+            ),
+        ));
+
+        // Save only the items relevant to this action
+        $options = array(
+            'format' => $client['Client']['format'],
+            'attributes' => $client['Client']['attributes'],
+        );
+
+        return $options;
+    }
+
 }

@@ -31,7 +31,7 @@
 
             <!-- Log Fields -->
             <div class="span8 form-horizontal log-fields">
-                <log-fields data="log.fields" fields="options.fields"></log-fields>
+                <log-fields data="log.fields" fields="options.format"></log-fields>
             </div>
 
             <!-- Hierarchy Fields -->
@@ -65,7 +65,7 @@
                         <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu">
-                        <li ng-show="{{log.hrid}}"><a href="#"><i class="icon icon-trash"></i> Delete Log</a></li>
+                        <li ng-show="{{!log.newLog}}"><a href="#"><i class="icon icon-trash"></i> Delete Log</a></li>
                     </ul>
                 </div>
 

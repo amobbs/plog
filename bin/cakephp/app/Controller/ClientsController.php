@@ -26,7 +26,7 @@ class ClientsController extends AppController
         // Fetch all clients, with limited fields
         $clients = $this->Client->find('all', array(
             'fields'=>array(
-                'id',
+                '_id',
                 'name',
                 'activationDate',
                 'created',

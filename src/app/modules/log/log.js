@@ -49,6 +49,8 @@ angular.module( 'Preslog.log', [
                             Log: {
                                 _id: null,
                                 deleted: false,
+                                fields: [],
+                                attributes: [],
                                 newLog: true
                             }
                         });
@@ -58,18 +60,31 @@ angular.module( 'Preslog.log', [
                 }],
 
                 // Load log options
-                logOptions: ['$q', 'Restangular', '$stateParams', function($q, Restangular, $stateParams) {
+                logOptions: ['$q', 'Restangular', '$stateParams', 'userService', function($q, Restangular, $stateParams, userService) {
                     var deferred = $q.defer();
 
-                    var request = Restangular.one('logs');
-
+                    // If an existing log, use that as a basis
                     if ($stateParams.log_id) {
-                        request = Restangular.one('logs', $stateParams.log_id);
+
+                        // Fetch the options based off the Log ID
+                        var request = Restangular.one('logs', $stateParams.log_id).options().then(function(options) {
+                            deferred.resolve(options);
+                        });
+
+                    }
+                    // If for a specific client, use that as a basis
+                    else
+                    {
+                        // Get the client ID
+                        userService.getClient().then(function(client){
+
+                            // Add the Client ID as part of the query params to fetch the opts
+                            var request = Restangular.one('logs').options({'client_id':client._id}).then(function(options) {
+                                deferred.resolve(options);
+                            });
+                        });
                     }
 
-                    request.options().then(function(options) {
-                        deferred.resolve(options);
-                    });
                     return deferred.promise;
                 }]
 

@@ -333,10 +333,10 @@ class User extends AppModel
     {
         $defaultOptions = array(
             'conditions'=>array(
-                'id'=>$id
+                '_id'=>$id
             ),
             'fields'=>array(
-                'id',
+                '_id',
                 'firstName',
                 'lastName',
                 'email',

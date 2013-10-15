@@ -386,27 +386,9 @@ class Client extends AppModel
 
 
     /**
-     * Fetch options fields for this client.
-     * - Format
-     * - Attributes hierarchy
-     * @param   $client_id
-     * @return  array
+     * Validate Admin Edit of a Client
+     * @return bool
      */
-    public function getOptionsByClientId( $client_id )
-    {
-        $options = $this->find('all', array(
-            'conditions'=>array(
-                '_id'=>$client_id
-            ),
-            'fields'=>array(
-                'format',
-                'attributes'
-            ),
-        ));
-
-        return $options;
-    }
-
     public function validatesAdminEdit() {
 
         $rules = $this->validateClient;

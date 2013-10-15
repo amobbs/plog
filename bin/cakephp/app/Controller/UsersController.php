@@ -445,7 +445,7 @@ class UsersController extends AppController
         // Fetch all users, with limited fields
         $users = $this->User->find('all', array(
             'fields'=>array(
-                'id',
+                '_id',
                 'firstName',
                 'lastName',
                 'role',

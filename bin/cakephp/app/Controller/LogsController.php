@@ -41,10 +41,8 @@ class LogsController extends AppController
      */
     public function edit( $id = null )
     {
-        // Get log data
+        // Get log data from request
         $log = $this->request->data['Log'];
-
-        // TODO
 
         //  If we have an ID, we need to validate the original log first before it can be updated
         if ( !empty($id) )
@@ -71,39 +69,22 @@ class LogsController extends AppController
         }
         else
         {
+            // Validate: Does this user have permission to create logs
+            if ( !$this->isAuthorized('log-create') )
+            {
+                $this->errorUnauthorised(array('message'=>'You do not have permission to create new logs.'));
+            }
+
             // Not loading an existing log. Ensure the ID is cleared
             unset($log['_id']);
             $log['version'] = 1;
-            $log['created'] = new MongoDate( time() );
-            //$log['created_user_id'] = 'user_log_id_here';
-        }
-
-        // Validate: Different user permissions are allowed to update restricted series of fields.
-        // Apply this restriction below.
-
-        // Validate: Comment-only permissions
-        if (false) // User permissions == comment-only
-        {
-            // If NOT editing a log, bail out. comment-only can't create new logs.
-            if (!isset($sourceLog))
-            {
-                $this->errorUnauthorised(array('message'=>'You do not have permission to create new logs'));
-            }
-
-            // Remove any submitted data EXCEPT the comments field.
-            //$log = array( 'comments' => $log['comments'] );
-        }
-
-        // Validate: Can edit the accountability-and-status fields?
-        if (false) // User role != accountability-and-status
-        {
-            //unset($log['accountability']);
-            //unset($log['status']);
+            $log['created'] = date( 'Y-m-d H:i:s' );
+            $log['created_user_id'] = $this->PreslogAuth->user('_id');
         }
 
         // Update: Last Modified fields
-        $log['modified'] = new MongoDate( time() );
-        //$log['modified_user_id'] = 'This users ID';
+        $log['modified'] = date( 'Y-m-d H:i:s' );
+        $log['modified_user_id'] = $this->PreslogAuth->user('_id');
 
         // Validate field options
         $this->Log->set( $log );
@@ -145,8 +126,6 @@ class LogsController extends AppController
      */
     public function read( $id )
     {
-        // TODO
-
         // Fetch log from DB
         $log = $this->Log->findByHrid( $id );
 
@@ -156,16 +135,13 @@ class LogsController extends AppController
             $this->errorNotFound(array('message'=>'Log could not be found'));
         }
 
-        // Validate: does the given user have access to this log? - Client IDs are a match if used has single-client
-        if (false)
+        // Validate: does the given user have access to this log? - Client IDs are a match if user has single-client
+        if ($this->isAuthorized('single-client'))
         {
-            $this->errorUnauthorised(array('message'=>'You do not have permission to view this log'));
-        }
-
-        // Validate: Does the client have permission to see Accountability fields?
-        if (false)
-        {
-            unset($log['Log']['accountability']);
+            if ($this->PreslogAuth->user('client_id') != $log['client_id'])
+            {
+                $this->errorUnauthorised(array('message'=>'You do not have permission to view this log'));
+            }
         }
 
         // Output
@@ -196,9 +172,10 @@ class LogsController extends AppController
      */
     public function options( $id=null )
     {
-        // TODO: Load the default Client, because no log was specified
+        // IF ID given, try to load that given log
         if (!empty($id))
         {
+            // Fetch log
             $log = $this->Log->findByHrid( $id );
 
             // Validate: Does log exist?
@@ -207,24 +184,30 @@ class LogsController extends AppController
                 $this->errorNotFound(array('message'=>'Log could not be found'));
             }
 
+            // Client ID is..
             $clientId = (string) $log['Log']['client_id'];
         }
         else
         {
-            // Fetch the current client ID that's been selected.
-            $clientId = $this->User->selectedClient();
+            // Try to fetch the client_id from query string
+            if (!$clientId = $this->request->query('client_id'))
+            {
+                $this->errorBadRequest(array('message'=>'A valid Client ID must be specified in query string parameter "client_id".'));
+            }
+        }
+
+        // Validate: is this user able to see this clientId?
+        if ($this->isAuthorized('single-client'))
+        {
+            // Check the user client_id matches this client_id
+            if ($this->PreslogAuth->user('client_id') != $clientId)
+            {
+                $this->errorBadRequest(array('message'=>'Invalid Client ID, or Client is not accessible to this user.'));
+            }
         }
 
         // Load: Log format from specific Client
-        $options = $this->Client->getLogOptionsById( $clientId );
-
-        // Validate: Do we NOT have permissions to see the Accountability types?
-        if (false)
-        {
-            // TODO
-            unset( $options['accountability_field'] );
-            unset( $options['status_field'] );
-        }
+        $options = $this->Log->getOptionsByClientId( $clientId );
 
         // Return options
         $this->set($options);
@@ -253,26 +236,34 @@ class LogsController extends AppController
      */
     public function delete( $id )
     {
-        // TODO
-        // Validate: Does the user have permissiont to delete anything?
-        if (false)
+        // Validate: Does the user have permission to delete anything?
+        if ($this->isAuthorized('log-delete'))
         {
-            $this->errorUnauthorised(array('message'=>'You do not have permission to delete this log'));
+            $this->errorUnauthorised(array('message'=>'You do not have permission to delete logs'));
         }
 
         // user must exist
-        if (!$this->Log->findByHrid($id)) {
+        if (!$log = $this->Log->findByHrid($id)) {
             $this->errorNotFound('Log could not be found');
         }
 
+        // Validate: Log must be visible to this client
+        if ($this->isAuthorized('single-client'))
+        {
+            if ($this->PreslogAuth->user('client_id') != $log['client_id'])
+            {
+                $this->errorUnauthorised(array('message'=>'You do not have permission to delete logs of other clients.'));
+            }
+        }
+
         // Simple delete save
-        $log = array(
+        $deleteLog = array(
             'id'=>$id,
             'deleted'=>true,
         );
 
         // Delete
-        $this->Log->save( array('Log'=>$log) );
+        $this->Log->save( array('Log'=>$deleteLog) );
 
         // OK Response
         $this->set('success', true);
