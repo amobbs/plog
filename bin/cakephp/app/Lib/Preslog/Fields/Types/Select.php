@@ -25,6 +25,10 @@ class Select extends TypeAbstract
         ),
     );
 
+    protected $mongoSchema = array(
+        'selected'   => array('type' => 'string', 'length'=>24, 'mongoType'=>'mongoId'),
+    );
+
     /***
      * used to create a human readable list for the aggregation details that can be used in the interface
      *
