@@ -142,7 +142,6 @@ angular.module( 'Preslog.usersAdmin', [
             }
         };
 
-
     })
 
 
@@ -162,6 +161,71 @@ angular.module( 'Preslog.usersAdmin', [
         // Pass user to form
         $scope.user = userSource.User;
 
+        $scope.clientAttributes = {};
+        $scope.selectedAttributes = {};
+
+        /**
+         * seperate the selected attributes from the user details so it is easier for hierarchy field directive to read.
+         */
+        $scope.setSelectedAttributes = function() {
+            $scope.selectedAttributes = {};
+            for(var id in $scope.user.notifications.clients) {
+                var client = $scope.user.notifications.clients[id];
+                for(var attrId in client.attributes) {
+                    if (!$scope.selectedAttributes[client.client_id]) {
+                        $scope.selectedAttributes[client.client_id] = [];
+                    }
+                    $scope.selectedAttributes[client.client_id].push(client.attributes[attrId]);
+                }
+            }
+        };
+        $scope.setSelectedAttributes();
+
+        /**
+         * format the attribute children so we can display hierachy fields in 2 columns
+         * @param children
+         * @returns {Array}
+         */
+        $scope.attributesDisplay = function(children) {
+            var columns = [[], []];
+            //there is nothing to show
+            if (children.length === 0) {
+                return columns;
+            }
+
+            //if there are only 4 then just show one column
+            if (children.length < 5) {
+                return [children, []];
+            }
+
+            //split the children in the middle so they are even across to columns
+            var colSize1 = Math.floor(children.length / 2);
+
+            for(var i = 0; i < children.length; i++)
+            {
+                if (i < colSize1) {
+                    columns[0].push(children[i]);
+                } else {
+                    columns[1].push(children[i]);
+                }
+            }
+
+            return columns;
+        };
+
+        /**
+         *
+         */
+        $scope.setClientAttributes = function() {
+            for(var id in $scope.options.notifications.clients) {
+                var client = $scope.options.notifications.clients[id];
+                for(var attrId in client.attributes) {
+                    client.attributes[attrId].children = $scope.attributesDisplay(client.attributes[attrId].children);
+                }
+                $scope.options.notifications.clients[id] = client;
+            }
+        };
+        $scope.setClientAttributes();
 
         /**
          * Save User
@@ -176,6 +240,9 @@ angular.module( 'Preslog.usersAdmin', [
 
             // Fetch data from form
             userSource.User = $scope.user;
+
+            //set attributes back onto user
+
 
             // Post back to API
             userSource.post().then(
