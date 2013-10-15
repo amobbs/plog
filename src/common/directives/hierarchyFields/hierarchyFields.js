@@ -27,18 +27,22 @@ angular.module('hierarchyFields', [])
                 }
 
                 // Draw the hierarchy on scope change
-                scope.$watch(scope.hierarchyFields, function () {
-                    drawHierarchy(scope.hierarchyFields, scope.hideDeleted, scope.dragAndDrop, scope.allowEdit);
-                }, true);
+                scope.$watch(
+                    function() { return scope.hierarchyFields; },
+                    function () {
+                        drawHierarchy(scope.hierarchyFields, scope.hideDeleted, scope.dragAndDrop, scope.allowEdit);
+                    },
+                    true
+                );
 
                 // Draw dynaTree
                 function drawHierarchy(fields, hideDeleted, enableDnD, allowEdit) {
                     var triggerSelected = function(id, selected) {
                         if (selected && (scope.hierarchySelected.indexOf(id) === -1 )) {
-                            scope.hierarchySelected.push(id);
+                            //scope.hierarchySelected.push(id);
                         } else if (!selected && (scope.hierarchySelected.indexOf(id) !== -1)) {
                             var index = scope.hierarchySelected.indexOf(id);
-                            scope.hierarchySelected.splice(index, 1);
+                           // scope.hierarchySelected.splice(index, 1);
                         }
                     };
                     var options = {
@@ -52,7 +56,7 @@ angular.module('hierarchyFields', [])
                         cookieId: "hf",
                         onSelect: function(selected, dtnode) {
                             // On dynaTree change, pass selection back to model
-                            scope.$apply(function() {
+                            //scope.$apply(function() {
                                 triggerSelected(dtnode.data.key, selected);
 
                                 if (dtnode.data.children && dtnode.data.children.length > 0) {
@@ -60,7 +64,7 @@ angular.module('hierarchyFields', [])
                                         triggerSelected(dtnode.data.children[i].key, selected);
                                     }
                                 }
-                            });
+                            //});
                         },
                         onDblClick: function(node, event) {
                             if (allowEdit.toLowerCase() === "true") {
@@ -184,7 +188,8 @@ angular.module('hierarchyFields', [])
                         };
                     }
 
-                     $(element).dynatree(options);
+                    $(element).dynatree(options);
+                    $(element).dynatree("getTree").reload();
                 }
 
                 function editNode(node) {
@@ -238,7 +243,8 @@ angular.module('hierarchyFields', [])
                     var dynaFields = [];
 
                     for(var i in fields) {
-                        if (! fields.hasOwnProperty(i)) {
+                        if (! fields.hasOwnProperty(i) ||
+                            (hideDeleted && fields[i].deleted)) {
                             continue;
                         }
 
@@ -248,11 +254,17 @@ angular.module('hierarchyFields', [])
                         dynaField.title = fields[i].name;
                         dynaField.expand = false;
                         dynaField.key = fields[i]._id;
+
+                        //we are not hiding the deleted items but we still want to indicate they are deleted.
+                        if (fields[i].deleted) {
+                            dynaField.icon = 'deleted.gif';
+                        }
+
                         if (fields[i].children && (fields[i].children.length > 0)) {
                             dynaField.expand = true;
                             dynaField.isFolder = true;
                             dynaField.children = [];
-                            dynaField.children = parseHierarchyToDyna(fields[i].children);
+                            dynaField.children = parseHierarchyToDyna(fields[i].children, hideDeleted);
                         }
                         dynaFields.push(dynaField);
                     }

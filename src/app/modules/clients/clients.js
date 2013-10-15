@@ -525,8 +525,8 @@ angular.module( 'Preslog.clients', [
         $scope.index = index;
         $scope.group = group;
         $scope.showDeleted = false;
-        $scope.withSelectedAction = 'Set Deleted';
-        $scope.selectionActions = ['Do nothing', 'Set Deleted'];
+        $scope.selectionActions = ['Do nothing', 'Toggle deleted status'];
+        $scope.withSelectedAction = $scope.selectionActions[1];
 
         // list of nodes selected in hierarchy fields
         $scope.hierarchySelected = [];
@@ -540,14 +540,17 @@ angular.module( 'Preslog.clients', [
          * when writing out group to hierarchy field directive the $id value in the object is lost.
          */
         $scope.fixGroupIds = function() {
+            //this is a new element with no idea yet
             if ($scope.group._id == null && $scope.group.children.length === 0) {
                 return;
             }
 
+            //fix the parent
             if ($scope.group._id != null && $scope.group._id.$id) {
                 $scope.group._id = $scope.group._id.$id;
             }
 
+            //fix the children and grandchildren
             for(var child in $scope.group.children) {
                 if ($scope.group.children[child]._id.$id) {
                     $scope.group.children[child]._id = $scope.group.children[child]._id.$id;
@@ -561,6 +564,10 @@ angular.module( 'Preslog.clients', [
                 }
             }
         };
+
+        /**
+         * make sure we fix the id's right away
+         */
         $scope.fixGroupIds();
 
         /**
@@ -568,25 +575,6 @@ angular.module( 'Preslog.clients', [
          */
         $scope.save = function()
         {
-            if ($scope.withSelectedAction == 'Set Deleted') {
-                //find selected ids and mark as deleted also undelete any that are no longer selected
-                for(var itemId in $scope.group.children) {
-                    if ($scope.hierarchySelected.indexOf($scope.group.children[itemId]._id) != -1) {
-                        $scope.group.children[itemId].deleted = true;
-                    } else {
-                        $scope.group.children[itemId].deleted = false;
-                    }
-                    //dont forget to check the children
-                    for(var subItemId in $scope.group.children[itemId].children) {
-                        if ($scope.hierarchySelected.indexOf($scope.group.children[itemId].children[subItemId]._id) != -1) {
-                            $scope.group.children[itemId].children[subItemId].deleted = true;
-                        } else {
-                            $scope.group.children[itemId].children[subItemId].deleted = false;
-                        }
-                    }
-                }
-            }
-
             // Close, and pass back the Field we've edited with the new changes.
             $modalInstance.close({
                 'index':$scope.index,
@@ -594,6 +582,9 @@ angular.module( 'Preslog.clients', [
             });
         };
 
+        /**
+         * add a new attribute to the list
+         */
         $scope.addAttr = function() {
             var field = {
                 name: $scope.newAttrName,
@@ -608,7 +599,42 @@ angular.module( 'Preslog.clients', [
         };
 
         /**
-         * Delete field
+         * set all selected elements to deleted
+         */
+        $scope.deleteAttr = function() {
+            $scope.setDeletedOnChildren(true);
+            $scope.hierarchySelected = [];
+        };
+
+        /**
+         * undelete any selected elements
+         */
+        $scope.restoreAttr = function() {
+            $scope.setDeletedOnChildren(false);
+            $scope.hierarchySelected = [];
+        };
+
+        /**
+         * find any selected elements and set the deleted option to passed in value
+         * @param deleted
+         */
+        $scope.setDeletedOnChildren = function(deleted) {
+            //find any ids that are selected and deleted state
+            for(var itemId in $scope.group.children) {
+                if ($scope.hierarchySelected.indexOf($scope.group.children[itemId]._id) != -1) {
+                    $scope.group.children[itemId].deleted = deleted;
+                }
+                //don't forget to check the children
+                for(var subItemId in $scope.group.children[itemId].children) {
+                    if ($scope.hierarchySelected.indexOf($scope.group.children[itemId].children[subItemId]._id) != -1) {
+                        $scope.group.children[itemId].children[subItemId].deleted = deleted;
+                    }
+                }
+            }
+        };
+
+        /**
+         * Delete attribute group
          */
         $scope.remove = function()
         {
