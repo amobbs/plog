@@ -56,7 +56,7 @@ angular.module('hierarchyFields', [])
                         cookieId: "hf",
                         onSelect: function(selected, dtnode) {
                             // On dynaTree change, pass selection back to model
-                            //scope.$apply(function() {
+                            scope.$apply(function() {
                                 triggerSelected(dtnode.data.key, selected);
 
                                 if (dtnode.data.children && dtnode.data.children.length > 0) {
@@ -64,7 +64,7 @@ angular.module('hierarchyFields', [])
                                         triggerSelected(dtnode.data.children[i].key, selected);
                                     }
                                 }
-                            //});
+                            });
                         },
                         onDblClick: function(node, event) {
                             if (allowEdit.toLowerCase() === "true") {
