@@ -1106,8 +1106,7 @@ class MongodbSource extends DboSource {
 			$_return = array();
 			while ($return->hasNext()) {
 				$mongodata = $return->getNext();
-
-                $fields[] = '_id';
+;
                 $this->convertToArray($mongodata, $Model->mongoSchema, $fields);
                 $this->prune($mongodata, $Model->mongoSchema);
 
@@ -1481,6 +1480,7 @@ class MongodbSource extends DboSource {
      */
     public function convert(&$doc, $schema, $fields, $toArray = false, $topLevel = true)
     {
+
         // Skip non-arrays
         if (! is_array($doc)) {
             return;
@@ -1495,6 +1495,8 @@ class MongodbSource extends DboSource {
             return;
         }
 
+
+
         // Convert schema
         foreach ($schema as $fieldKey => $fieldOptions) {
             // Skip schema that doesn't have a type set
@@ -1505,7 +1507,7 @@ class MongodbSource extends DboSource {
             $type = $fieldOptions['type'];
 
             // If on top level and the field is not in the list of fields passed in, go about your business
-            if ($topLevel && ! in_array($fieldKey, $fields)) {
+            if (! empty($fields) && $topLevel && ! in_array($fieldKey, $fields)) {
                 continue;
             }
 
