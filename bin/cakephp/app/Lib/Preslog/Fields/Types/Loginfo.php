@@ -41,4 +41,12 @@ class Loginfo extends TypeAbstract
         ),
     );
 
+    protected $mongoSchema = array(
+        'created'           => array('type' => 'datetime', 'mongoType'=>'mongoDate'),
+        'modified'          => array('type' => 'datetime', 'mongoType'=>'mongoDate'),
+        'created_user_id'   => array('type' => 'string', 'length'=>24, 'mongoType'=>'mongoId'),
+        'modified_user_id'  => array('type' => 'string', 'length'=>24, 'mongoType'=>'mongoId'),
+        'version'           => array('type' => 'int'),
+    );
+
 }

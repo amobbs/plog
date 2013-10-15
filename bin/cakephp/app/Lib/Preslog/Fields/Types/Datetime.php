@@ -41,6 +41,10 @@ class Datetime extends TypeAbstract
         ),
     );
 
+    protected $mongoSchema = array(
+        'datetime'          => array('type' => 'datetime', 'mongoType'=>'mongoDate'),
+    );
+
     /***
      * used to create a human readable list for the aggregation details that can be used in the interface
      *

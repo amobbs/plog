@@ -27,10 +27,16 @@ abstract class TypeAbstract
      */
     protected $description = '';
 
-    /***
+    /**
      * @var array       list of details needed to aggregate this field type
      */
     protected $aggregationDetails = array();
+
+
+    /**
+     * @var array       Mongo schema definition for this field
+     */
+    protected $mongoSchema = array();
 
 
 
@@ -95,6 +101,16 @@ abstract class TypeAbstract
      */
     public function initialise( $data )
     {
+    }
+
+
+    /**
+     * Fetch the schema for this type of object
+     * @returns     array       Schema definition for this field
+     */
+    public function getSchema()
+    {
+        return $this->mongoSchema;
     }
 
 }

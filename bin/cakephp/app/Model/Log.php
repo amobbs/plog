@@ -194,9 +194,11 @@ class Log extends AppModel
                 // Initialize field helper
                 // Pass the field types available from config
                 // Pass the schema from Client
+                // Pass the datasource to the helper
                 $fieldHelper = new FieldHelper();
                 $fieldHelper->setFieldTypes( Configure::read('Preslog.Fields') );
                 $fieldHelper->loadFieldSchema( $client['Client']['format'] );
+                $fieldHelper->setDataSource( $this->getDataSource() );
 
                 // Save to cache
                 $clientFieldHelperCache[ $client_id ] = $fieldHelper;
