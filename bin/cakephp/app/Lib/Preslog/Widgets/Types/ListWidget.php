@@ -19,6 +19,13 @@ class ListWidget extends Widget {
     }
 
     public function getDisplayData() {
+        $display = array();
 
+        foreach($this->series as $logDetail) {
+            $log = $logDetail['Log'];
+            $display[] = $log;
+        }
+
+        return $display;
     }
 }

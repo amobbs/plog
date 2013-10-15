@@ -84,7 +84,9 @@ angular.module( 'Preslog.dashboard', [
         });
 
 
-        $scope.$watch('addDashboard', function(id) {
+        $scope.$watch(
+            function() { return $scope.addDashboard; },
+            function(id) {
             if (id) {
                 $scope.addToFavourite(id);
             }
@@ -187,10 +189,16 @@ angular.module( 'Preslog.dashboard', [
                 .get()
                 .then(function(result) {
                     if (result && result.widget) {
+                        //find the widget in memory and update display
                         for(var wId in $scope.dashboard.widgets) {
                             var widget = $scope.dashboard.widgets[wId];
                             if (widget._id == widgetId) {
                                 $scope.dashboard.widgets[wId] = result.widget;
+                                //make sure params are updated for lost lists.
+                                if (widget.type == 'list') {
+                                    $scope.setUpLogList();
+                                }
+
                                 $scope.updateRefreshTimer(widgetId, result.widget.details.refresh);
                                 break;
                             }
@@ -365,6 +373,8 @@ angular.module( 'Preslog.dashboard', [
             return found;
         };
 
+
+
         //setup the properties needed to get the log list widget working.
         $scope.setUpLogList = function() {
 
@@ -374,7 +384,6 @@ angular.module( 'Preslog.dashboard', [
                 if (widget.type != 'list') {
                     continue;
                 }
-//TODO make this work
 
                 //log list widget
                 widget.params = {
@@ -390,11 +399,25 @@ angular.module( 'Preslog.dashboard', [
                     lastUpdated: new Date()
                 };
                 $scope.dashboard.widgets[w] = widget;
-
-                $scope.$watch('dashboard.widgets[w].params', $scope.updateLogList(widget.params), true);
             }
+
+            //i had some issues adding the watch inside the loop, so just watch all widgets and re-update
+            // log list on any widget changes (not ideal)
+            $scope.$watch(
+                'dashboard.widgets',
+                function() {
+                    for(var id in $scope.dashboard.widgets) {
+                        var widget = $scope.dashboard.widgets[id];
+                        if (widget.type == 'list') {
+                            $scope.updateLogList(widget.params);
+                        }
+                    }
+                },
+                true
+            );
         };
 
+        //log list widget needs some different logic to display
         $scope.updateLogList = function(params) {
             if (params.query.length === 0) {
                 return;
@@ -411,7 +434,15 @@ angular.module( 'Preslog.dashboard', [
             });
         };
 
-        $scope.setUpLogList();
+        //watch any changes in widgets so we can do some work needed to display log lists
+        $scope.$watch(
+            function() { return $scope.dashboard.widgets; },
+            function() {
+                $scope.setUpLogList();
+            }
+        );
+
+        //start all the timers to refresh widgets regularly
         $scope.startWidgetRefresh();
     })
 

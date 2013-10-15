@@ -110,6 +110,12 @@ angular.module( 'Preslog.log', [
             if (children.length === 0) {
                 return columns;
             }
+
+            //if there are only 4 then just show one column
+            if (children.length < 5) {
+                return [children, []];
+            }
+
             var colSize1 = Math.floor(children.length / 2);
 
             for(var i = 0; i < children.length; i++)

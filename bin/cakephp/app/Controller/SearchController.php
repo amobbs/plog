@@ -82,7 +82,6 @@ class SearchController extends AppController
 
     /**
      * Perform the search operation and return a series of log data sufficient for search results.
-     * TODO: This should really be paginated to avoid problems with large result sets
      */
     protected function executeSearch( $params, $limit = 3, $start = 1, $orderBy = '')
     {
@@ -105,9 +104,14 @@ class SearchController extends AppController
             $query .= 'AND client_id = my_client_id';
         }
 
+        // Translate query to Mongo
+        $jqlParser = new JqlParser();
+        $jqlParser->setSqlFromJql($query);
+        $match = $jqlParser->getMongoCriteria();
+
         // Do query
-        $results = $this->Log->findByQuery($query, $start, $limit, $orderBy);
-        $total = $this->Log->countByQuery($query);
+        $results = $this->Log->findByQuery($match, $start, $limit, $orderBy);
+        $total = $this->Log->countByQuery($match);
 
         $clients = array();
         $users = array();

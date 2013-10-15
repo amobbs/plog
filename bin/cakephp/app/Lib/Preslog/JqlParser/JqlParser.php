@@ -68,6 +68,10 @@ class JqlParser {
     }
 
     public function setSqlFromJql($jql) {
+        if (empty($jql)) {
+            return;
+        }
+
         $jql = strtoupper($jql);
         $this->_jql = $jql;
 

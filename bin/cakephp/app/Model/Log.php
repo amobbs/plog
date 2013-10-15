@@ -251,28 +251,19 @@ class Log extends AppModel
     /**
      * fetch a list of logs based on mongo find
      */
-    public function findByQuery($query, $start, $limit, $orderBy) {
-
-        // Translate query to Mongo
-        $jqlParser = new JqlParser();
-        $jqlParser->setSqlFromJql($query);
-        $criteria = $jqlParser->getMongoCriteria();
-
-        return $this->find('all', array(
-            'conditions' => $criteria,
+    public function findByQuery($query, $start = 0, $limit = 10, $orderBy = '') {
+        $result =  $this->find('all', array(
+            'conditions' => $query,
             'limit' => $limit,
             'offset' => $start,
         ));
+
+        return $result;
     }
 
     public function countByQuery($query) {
-        // Translate query to Mongo
-        $jqlParser = new JqlParser();
-        $jqlParser->setSqlFromJql($query);
-        $criteria = $jqlParser->getMongoCriteria();
-
         return $this->find('count', array(
-            'conditions' => $criteria,
+            'conditions' => $query,
         ));
     }
 

@@ -813,12 +813,9 @@ class DashboardsController extends AppController
             $result = $this->Log->findByQuery($match);
         }
 
-        if (empty($result)) {
-            //TODO why is it empty??????
-            $widgetObject->setSeries(array());
-        } else {
+        if (isset($result['ok'])) {
             if ($result['ok'] != 1) {
-                throw new Exception('query to mongo failed!!!!'); //TODO replace with cake exception
+                throw new Exception('aggregation failed!!!!'); //TODO replace with cake exception
             }
 
             //remove any mongo'ids from series to show field value
@@ -882,6 +879,8 @@ class DashboardsController extends AppController
 
             $widgetObject->setSeries($parsedResult);
 
+        } else {
+            $widgetObject->setSeries($result);
         }
 
         return $widgetObject;
