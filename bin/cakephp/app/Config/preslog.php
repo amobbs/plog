@@ -51,11 +51,27 @@ Configure::write('Preslog', array(
     'Debug' => array(
         'email' => 'dave@4mation.com.au',
     ),
-
 ));
 
 
 /**
- * Highcharts Configuration options
+ * Configuration options for dashboard exports
  */
-Configure::write(array('highcharts_export_server' => 'http://192.168.4.49:8080/highcharts-export-web/'));
+Configure::write('Preslog.export.exec', array(
+
+    //location of executable and scripts to perform export
+    'phantomjs' => 'D:\ProgramFiles\phantomjs-1.9.2-windows/phantomjs.exe',
+    'highchartsExport.js' => 'D:\git\highcharts.com\exporting-server\phantomjs\highcharts-convert.js',
+));
+
+/**
+ * config for printed layout of dashboard export
+ */
+Configure::write('Preslog.export.layout', array(
+    //details for log tables
+    'titleColWidth' => 1440, // in twips
+    'detailColWidth' => 7200, // in twips
+    'titleColor' => '1F497D', //in hex - dark blue
+    'cellBorder' => 10, //in twips
+    'cellBorderColor' => 'ffffff' //in hex
+));

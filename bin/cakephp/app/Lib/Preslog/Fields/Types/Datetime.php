@@ -65,7 +65,7 @@ class Datetime extends TypeAbstract
         return $list;
     }
 
-    public function chartDisplay($aggregationType, $data) {
+    public function chartDisplay($data, $aggregationType = 'all') {
         switch ($aggregationType) {
             case 'hour':
                 return $data['hour'];
@@ -76,6 +76,8 @@ class Datetime extends TypeAbstract
             case 'month':
                 return $data['month'] . '/' . substr($data['year'], 2);
                 break;
+            case 'all':
+                return $data['day'] . '/' . $data['month']. '/' . substr($data['year'], 2);
         }
     }
 }

@@ -448,8 +448,15 @@ class DashboardsController extends AppController
     public function exportDashboard($dashboardId)
     {
         $dashboard = $this->Dashboard->findById($dashboardId);
-        $reportName = 'report_' . $dashboard['Dashboard']['name'] . '.docx';
-        $reportPath = $this->Dashboard->generateReport($dashboard['Dashboard'], $reportName);
+        $reportName = $dashboard['Dashboard']['name'] . '_' . date('Ymd_Hi') . '.docx';
+        $dashboard =  $this->_getParsedDashboard($dashboard['Dashboard']);
+
+        $clients = $this->getClientListForUser();
+        $clientDetails = $this->Client->find('all', array(
+            'conditions' => array('_id' => array('$in' => $clients))
+        ));
+
+        $reportPath = $this->Dashboard->generateReport($dashboard, $clientDetails, $reportName);
 
         $this->response->file($reportPath, array(
             'download' => true,

@@ -43,7 +43,7 @@ class SelectSeverity extends TypeAbstract
         return $list;
     }
 
-    public function chartDisplay($aggregationType, $data) {
+    public function chartDisplay($data, $aggregationType = null) {
         switch ($aggregationType) {
             case 'select':
                 return $data;

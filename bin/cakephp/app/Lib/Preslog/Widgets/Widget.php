@@ -23,25 +23,12 @@ class Widget {
     public function setDetail($key, $value) { $this->details[$key] = $value; }
     public function setDisplayOptions($key, $value) { $this->displayOptions[$key] = $value; }
 
-    /*
-     * an array for all the details in this object
-     */
-//    public function getProperties() {
-//        return array(
-//            'id' => $this->id,
-//            'order' => $this->order,
-//            'name' => $this->name,
-//            'type' => $this->type,
-//            'aggregate' => $this->aggregate,
-//            'details' => $this->details,
-//            'options' => $this->options,
-//            'series' => $this->series,
-//        );
-//    }
 
     public function getDetail($key) { return isset($this->details[$key]) ? $this->details[$key] : ''; }
+    public function getName() { return $this->name; }
     public function getOptions() { return $this->options; }
     public function isAggregate() { return $this->aggregate; }
+
 
     public function __construct($data) {
         //set all the widget details
@@ -61,23 +48,6 @@ class Widget {
             $this->data['title'] = '';
             $this->details['query'] = '';
         }
-
-
-
-//        $this->series = array(
-//            array(
-//                'name' => 'a',
-//                'data' => array(1, 4, 5, 6, 7,1, 3, 2),
-//            ),
-//            array(
-//                'name' => 'b',
-//                'data' => array(2, 8, 21, 56 ,9, 21),
-//            ),
-//            array(
-//                'name' => 'c',
-//                'data' => array(1, 4, 8,9 ,0 , 10),
-//            ),
-//        );
     }
 
     public function toArray($forMongo = true) {
@@ -102,12 +72,4 @@ class Widget {
     public function getDisplayData() {
        return array();
     }
-
-//    private function _parseOptionsForDisplay() {
-//        $result = array();
-//
-//        foreach($this->options as $key => $value) {
-//
-//        }
-//    }
 }
