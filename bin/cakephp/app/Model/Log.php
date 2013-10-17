@@ -5,7 +5,7 @@
  */
 
 use Preslog\JqlParser\JqlParser;
-use Preslog\Fields\FieldHelper;
+use Preslog\Logs\LogHelper;
 
 App::uses('AppModel', 'Model');
 
@@ -65,11 +65,15 @@ class Log extends AppModel
         }
 
         // Load the schema
-        $fieldHelper = new FieldHelper;
-        $fieldHelper->loadSchema($client['fields']);
+        $logHelper = new LogHelper;
+        $logHelper->loadSchema($client);
 
         // Validate the data, using $this->validator() for errors
-        $result = $fieldHelper->validates( $this->data, $this->validator() );
+        $errors = $logHelper->validates( $this->data );
+        foreach ($errors as $field=>$error)
+        {
+            $this->validator()->invalidate($field, $error);
+        }
 
         // Return the validation result
         return ($coreResult == false ? false : $result);
@@ -101,14 +105,14 @@ class Log extends AppModel
             return false;
         }
 
-        // Try to load fieldHelper from cache first
-        if (!$fieldHelper = $this->getFieldHelperByClientId( $this->data[ $this->name ]['client_id'] ))
+        // Try to load LogHelper from cache first
+        if (!$logHelper = $this->getLogHelperByClientId( $this->data[ $this->name ]['client_id'] ))
         {
             trigger_error('The given client_id does not appear to exist. Log cannot be saved.', E_USER_WARNING);
         }
 
         // Process schema of the fields
-        $fieldHelper->convertToDocument( $this->data[ $this->name ] );
+        $logHelper->convertToDocument( $this->data[ $this->name ] );
 
         return true;
     }
@@ -144,13 +148,13 @@ class Log extends AppModel
             }
 
             // Get the field helper instance for this client_id
-            if (!$fieldHelper = $this->getFieldHelperByClientId( $result[ $this->name ]['client_id'] ))
+            if (!$logHelper = $this->getLogHelperByClientId( $result[ $this->name ]['client_id'] ))
             {
                 continue;
             }
 
             // Convert the data
-            $fieldHelper->convertToArray( $result[ $this->name ] );
+            $logHelper->convertToArray( $result[ $this->name ] );
         }
 
 
@@ -159,24 +163,24 @@ class Log extends AppModel
 
 
     /**
-     * Fetch a field helper object by the given $client_id
+     * Fetch a LogHelper object by the given $client_id
      * - Attempts to cache these requests per client, otherwise the lookup could take a long, long time.
      * @param       string          $client_id      Client ID to load data for
-     * @return      FieldHelper|bool                Field Helper Object, or false if client unavailable
+     * @return      LogHelper|bool                Field Helper Object, or false if client unavailable
      */
-    public function getFieldHelperByClientId( $client_id )
+    public function getLogHelperByClientId( $client_id )
     {
         // Load poor-mans cache for this pageload
-        $clientFieldHelperCache = Configure::read('Preslog.cache.clientFieldsHelper');
-        if (!is_array($clientFieldHelperCache))
+        $clientLogHelperCache = Configure::read('Preslog.cache.clientLogHelper');
+        if (!is_array($clientLogHelperCache))
         {
-            $clientFieldHelperCache = array();
+            $clientLogHelperCache = array();
         }
 
         // Attempt to load the ClientSchema from cache before calling up a new one.
-        if ( isset($clientFieldHelperCache[ $client_id ]))
+        if ( isset($clientLogHelperCache[ $client_id ]))
         {
-            return $clientFieldHelperCache[ $client_id ];
+            return $clientLogHelperCache[ $client_id ];
         }
         else
         {
@@ -195,20 +199,20 @@ class Log extends AppModel
                 // Pass the field types available from config
                 // Pass the schema from Client
                 // Pass the datasource to the helper
-                $fieldHelper = new FieldHelper();
-                $fieldHelper->setFieldTypes( Configure::read('Preslog.Fields') );
-                $fieldHelper->loadFieldSchema( $client['Client']['format'] );
-                $fieldHelper->setDataSource( $this->getDataSource() );
+                $logHelper = new LogHelper();
+                $logHelper->setFieldTypes( Configure::read('Preslog.Fields') );
+                $logHelper->loadSchema( $client['Client'] );
+                $logHelper->setDataSource( $this->getDataSource() );
 
                 // Save to cache
-                $clientFieldHelperCache[ $client_id ] = $fieldHelper;
-                Configure::write('Preslog.cache.clientFieldsHelper', $clientFieldHelperCache);
+                $clientLogHelperCache[ $client_id ] = $logHelper;
+                Configure::write('Preslog.cache.clientLogHelper', $clientLogHelperCache);
 
-                return $fieldHelper;
+                return $logHelper;
             }
         }
 
-        // Fell through - return our failure to find the client/fieldHelper
+        // Fell through - return our failure to find the client/logHelper
         return false;
     }
 
@@ -436,7 +440,7 @@ class Log extends AppModel
 
     /**
      * Fetch options fields for this client.
-     * - Format
+     * - fields
      * - Attributes hierarchy
      * @param   $client_id
      * @return  array
@@ -452,14 +456,14 @@ class Log extends AppModel
                 '_id'=>$client_id
             ),
             'fields'=>array(
-                'format',
+                'fields',
                 'attributes'
             ),
         ));
 
         // Save only the items relevant to this action
         $options = array(
-            'format' => $client['Client']['format'],
+            'fields' => $client['Client']['fields'],
             'attributes' => $client['Client']['attributes'],
         );
 

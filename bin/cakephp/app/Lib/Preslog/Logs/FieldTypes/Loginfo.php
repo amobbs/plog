@@ -1,14 +1,14 @@
 <?php
 
-namespace Preslog\Fields\Types;
+namespace Preslog\Logs\FieldTypes;
 
-use Preslog\Fields\Types\TypeAbstract;
+use Preslog\Logs\FieldTypes\FieldTypeAbstract;
 
 /**
  * Preslog Field Type: Loginfo
  * Handles log information for general logs. Used just to control this items position in the log.
  */
-class Loginfo extends TypeAbstract
+class Loginfo extends FieldTypeAbstract
 {
 
     protected $alias = 'loginfo';
@@ -48,5 +48,7 @@ class Loginfo extends TypeAbstract
         'modified_user_id'  => array('type' => 'string', 'length'=>24, 'mongoType'=>'mongoId'),
         'version'           => array('type' => 'int'),
     );
+
+    protected $mongoClientSchema = array();
 
 }

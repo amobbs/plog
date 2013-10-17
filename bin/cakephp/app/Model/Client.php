@@ -4,8 +4,11 @@
  * Client Model
  */
 
+use Preslog\Logs\LogHelper;
+
 App::uses('AppModel', 'Model');
 App::uses('Client', 'Model');
+
 
 class Client extends AppModel
 {
@@ -43,7 +46,7 @@ class Client extends AppModel
             'type' => 'datetime',
             'mongoType' => 'MongoDate'
         ),
-        'format' => array(
+        'fields' => array(
             'type' => 'subCollection',
             'schema' => array(
                 '_id' => array(
@@ -52,7 +55,7 @@ class Client extends AppModel
                     'mongoType' => 'mongoId'
                 ),
                 'order' => array('type' => 'int'),
-                'type' => array('type' => 'string'),
+                'type' => array('type' => 'string', 'length'=>255),
                 'name' => array(
                     'type' => 'string',
                     'length' => 255
@@ -214,7 +217,18 @@ class Client extends AppModel
      * @return bool|void
      */
     public function beforeSave($options = array()) {
+
+        // Process any AppModel beforeSave tasks
+        $ok = parent::beforeSave($options);
+
+        // Return if the initial process fails
+        if (!$ok)
+        {
+            return $ok;
+        }
+
         //TODO clean up this horrible code
+        // Ensure the _id mongoId
         $client = $this->data['Client'];
         if (!($client['_id'] instanceof mongoId)) {
             if ($client['_id'] == null || (isset($client['newGroup']) && $client['newGroup'])) {
@@ -261,7 +275,60 @@ class Client extends AppModel
         }
         $client['attributes'] = $groups;
         $this->data['Client'] = $client;
+
+
+        // Convert to Document
+        // Initialize a log helper and convert the client
+        // LogHelper is basically half way to client conversion anyway...
+        $logHelper = new LogHelper();
+        $logHelper->setFieldTypes( Configure::read('Preslog.Fields') );
+        $logHelper->setDataSource( $this->getDataSource() );
+        $logHelper->convertClientToDocument( $this->data[ $this->name ] );
+
+        return true;
     }
+
+
+    /**
+     * After Find (inverse of before save)
+     * - Crawl the Fields and Attribute schema and convert values as needed
+     * @param mixed $results
+     * @param bool $primary
+     * @return mixed|void
+     */
+    public function afterFind($results, $primary = false)
+    {
+        // Run traditional afterFind
+        $results = parent::afterFind($results, $primary);
+
+        // Check there's data to process
+        if ( !sizeof($results) )
+        {
+            return $results;
+        }
+
+        // Do not try to do the next step is the client_id doesn't exist
+        foreach ($results as &$result)
+        {
+            // Don't try it if the client_id isn't in the resultset
+            // This might be omitted due to the 'fields' list of the find options
+            if ( !isset( $result[ $this->name ]['_id'] ) )
+            {
+                continue;
+            }
+
+            // Initialize a log helper and convert the client
+            // LogHelper is basically half way to client conversion anyway...
+            $logHelper = new LogHelper();
+            $logHelper->setFieldTypes( Configure::read('Preslog.Fields') );
+            $logHelper->setDataSource( $this->getDataSource() );
+            $logHelper->convertClientToArray( $result[ $this->name ] );
+        }
+
+        return $results;
+    }
+
+
 
     /**
      * Fetch the notifications for clients
@@ -420,7 +487,7 @@ class Client extends AppModel
 
         // Get options fields from client
         $options = array(
-            'fields'        => $client['Client']['format'],
+            'fields'        => $client['Client']['fields'],
             'attributes'    => $client['Client']['attributes'],
         );
 

@@ -1,14 +1,14 @@
 <?php
 
-namespace Preslog\Fields\Types;
+namespace Preslog\Logs\FieldTypes;
 
-use Preslog\Fields\Types\TypeAbstract;
+use Preslog\Logs\FieldTypes\FieldTypeAbstract;
 
 /**
  * Preslog Field Type: Duration
  * Handles duration fields
  */
-class Duration extends TypeAbstract
+class Duration extends FieldTypeAbstract
 {
 
     protected $alias = 'duration';
@@ -35,6 +35,13 @@ class Duration extends TypeAbstract
 //            )
 //        ),
 
+
+    protected $mongoSchema = array(
+        'seconds'  => array('type' => 'int'),
+    );
+
+    protected $mongoClientSchema = array(
+    );
 
     /***
      * used to create a human readable list for the aggregation details that can be used in the interface

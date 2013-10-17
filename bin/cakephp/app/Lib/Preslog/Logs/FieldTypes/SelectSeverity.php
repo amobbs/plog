@@ -1,14 +1,14 @@
 <?php
 
-namespace Preslog\Fields\Types;
+namespace Preslog\Logs\FieldTypes;
 
-use Preslog\Fields\Types\TypeAbstract;
+use Preslog\Logs\FieldTypes\FieldTypeAbstract;
 
 /**
  * Preslog Field Type: SelectSeverity
  * Handles drop-down select boxes for the seveirty field
  */
-class SelectSeverity extends TypeAbstract
+class SelectSeverity extends FieldTypeAbstract
 {
 
     protected $alias = 'select-seveirty';

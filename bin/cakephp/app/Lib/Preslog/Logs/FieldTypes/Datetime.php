@@ -1,14 +1,14 @@
 <?php
 
-namespace Preslog\Fields\Types;
+namespace Preslog\Logs\FieldTypes;
 
-use Preslog\Fields\Types\TypeAbstract;
+use Preslog\Logs\FieldTypes\FieldTypeAbstract;
 
 /**
  * Preslog Field Type: Datetime
  * Handles DateTime fields
  */
-class Datetime extends TypeAbstract
+class Datetime extends FieldTypeAbstract
 {
 
     protected $alias = 'datetime';
@@ -43,6 +43,9 @@ class Datetime extends TypeAbstract
 
     protected $mongoSchema = array(
         'datetime'          => array('type' => 'datetime', 'mongoType'=>'mongoDate'),
+    );
+
+    protected $mongoClientSchema = array(
     );
 
     /***

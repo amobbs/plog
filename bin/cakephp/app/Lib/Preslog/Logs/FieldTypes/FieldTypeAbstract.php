@@ -1,13 +1,13 @@
 <?php
 
-namespace Preslog\Fields\Types;
+namespace Preslog\Logs\FieldTypes;
 
 
 /**
  * Preslog Field Types: Type Abstract
  * Extend this to create different field types for use with Preslog.
  */
-abstract class TypeAbstract
+abstract class FieldTypeAbstract
 {
 
     /**
@@ -34,10 +34,14 @@ abstract class TypeAbstract
 
 
     /**
-     * @var array       Mongo schema definition for this field
+     * @var array       Mongo schema definition for this field within Log
      */
     protected $mongoSchema = array();
 
+    /**
+     * @var array       Mongo schema definition for this field within Admin Client
+     */
+    protected $mongoClientSchema =array();
 
 
     /**
@@ -111,6 +115,40 @@ abstract class TypeAbstract
     public function getSchema()
     {
         return $this->mongoSchema;
+    }
+
+
+    /**
+     * Fetch the schema for this type of object
+     * @returns     array       Schema definition for this field
+     */
+    public function getClientSchema()
+    {
+        return $this->mongoClientSchema;
+    }
+
+
+    /**
+     * Validate the given $data, passing errors to the $validator
+     * @param   array   $data           Data to validate
+     * @param   string  $fieldName      Field name being validated
+     * @return  array                   Data
+     */
+    public function validate( $data, $fieldName )
+    {
+        return array();
+    }
+
+
+    /**
+     * Validate the admin schema of $data, passing errors to the $validator
+     * @param   array   $data           Data to validate
+     * @param   string  $fieldName      Field name being validated
+     * @return  array                   Errors
+     */
+    public function validateClient( $data, $fieldName )
+    {
+        return array();
     }
 
 }

@@ -1,19 +1,19 @@
 <?php
 
-namespace Preslog\Fields\Types;
+namespace Preslog\Logs\FieldTypes;
 
-use Preslog\Fields\Types\TypeAbstract;
+use Preslog\Logs\FieldTypes\FieldTypeAbstract;
 
 /**
- * Preslog Field Type: Select
- * Handles drop-down select boxes
+ * Preslog Field Type: SelectImpact
+ * Handles drop-down select boxes for the impact field
  */
-class Select extends TypeAbstract
+class SelectImpact extends FieldTypeAbstract
 {
 
-    protected $alias = 'select';
-    protected $name = 'Drop-down Select Box';
-    protected $description = 'A drop-down selection box with various preset options.';
+    protected $alias = 'select-impact';
+    protected $name = 'Drop-down Select Box for On-Air Impact';
+    protected $description = 'A drop-down selection box, including validation between Impact and Duration.';
 
     protected $aggregationDetails = array(
         'select' => array(
@@ -23,10 +23,6 @@ class Select extends TypeAbstract
             ),
             'aggregate' => false,
         ),
-    );
-
-    protected $mongoSchema = array(
-        'selected'   => array('type' => 'string', 'length'=>24, 'mongoType'=>'mongoId'),
     );
 
     /***
