@@ -42,6 +42,8 @@ angular.module('logWidget', [])
                 scope.totalPages = 1; //total number of pages
                 scope.showing = 0; //how many logs are currently showing (may differ from prePage)
 
+                scope.orderDirections = ['Asc', 'Desc'];
+
                 //if any params change get new logs
                 scope.$watch(function() { return scope.params; }, function() {
                     scope.getLogs();
@@ -127,7 +129,7 @@ angular.module('logWidget', [])
                         return;
                     }
 
-                    //there are to many pages truncate the display
+                    //there are to many pages, truncate the display
                     if (scope.params.page > 5) {
                         pages.push({
                             number: -1,
@@ -138,11 +140,11 @@ angular.module('logWidget', [])
                         });
                     }
 
-                    //add in the pages we will display
+                    //add in the pages we will display, there should be a max of 7 shown at any time
                     var maxAdd = scope.totalPages;
-                    if (scope.totalPages > (scope.params.page + 2)) {
+                    if (scope.totalPages > (scope.params.page + 2)) { //add 2 pages after
                         maxAdd = scope.params.page + 2;
-                    } else if (scope.params.page < 3) {
+                    } else if (scope.params.page < 3) { //
                         maxAdd = 5;
                     }
 
@@ -172,7 +174,7 @@ angular.module('logWidget', [])
                     }
 
                     //if there are to many pages to show then truncate the end
-                    if (scope.totalPages > (scope.params.page + 2)) {
+                    if (scope.totalPages >= (scope.params.page + 2)) {
                         pages.push({
                             number: -1,
                             display: '...',

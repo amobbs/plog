@@ -15,9 +15,16 @@
         <div class="span3 text-right">
             <div class="control-group control-horizontal">
                 <label class="control-label">Order By</label>
-                <select>
-                    <option>Created</option>
-                </select>
+                <select
+                        class="input-medium"
+                        ng-model="params.order"
+                        ng-options="value for value in params.sorting"
+                ></select>
+                <select
+                    class="input-small"
+                    ng-model="params.orderDirection"
+                    ng-options="value for value in orderDirections"
+                ></select>
                 <button class="btn"><i class="icon icon-download-alt"></i> Export to XLS</button>
             </div>
         </div>

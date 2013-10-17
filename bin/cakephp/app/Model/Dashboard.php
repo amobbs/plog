@@ -31,13 +31,14 @@ class Dashboard extends AppModel
         '_id'           => array('type' => 'string', 'length'=>40, 'primary' => true),
         'name'          => array('type' => 'string', 'length'=>255),
         'type'          => array('type' => 'string', 'length'=>64),
-        'widgets'       => array(null),
+        'widgets'       => array('type' => 'array'),
         'shares'        => array('type' => 'array'),
 
         'created'       => array('type' => 'datetime'),
         'modified'      => array('type' => 'datetime'),
 
         'preset'        =>array('type'  => 'boolean'),
+        'maxWidth'      =>array('type'  => 'integer'),
     );
 
     /**

@@ -16,6 +16,8 @@ class LineWidget extends Widget {
         $this->type = 'line';
         $this->aggregate = true;
 
+        $this->maxWidth = isset($data['maxWidth']) ? $data['maxWidth'] : 1;
+
         //info for this instance of the widget
         if (!is_array($this->details)) {
             $this->details = array();
@@ -58,8 +60,8 @@ class LineWidget extends Widget {
 
         $chart->chart = array(
             'type' => $this->type,
-            'marginRight' => 25,
-            'marginBottom' => 50,
+            'marginRight' => 120,
+            'marginBottom' => 100,
         );
 
         $chart->title = array(
@@ -69,9 +71,22 @@ class LineWidget extends Widget {
 
 
         $chart->legend = array(
-            'align' => 'center',
-            'verticalAlign' => 'bottom',
+            'align' => 'right',
+            'verticalAlign' => 'middle',
             'borderWidth' => 0,
+            'layout' => 'vertical',
+            'width' => 100,
+            'navigation' => array(
+                'activeColor' => '#3E576F',
+                'animation' => true,
+                'arrowSize' => 12,
+                'inactiveColor' => '#CCC',
+                'style' => array(
+                    'fontWeight'=> array('bold',
+                        'color'=> '#333',
+                        'fontSize' => '12px')
+                ),
+            ),
         );
 
         //get the label for the xAxis

@@ -250,15 +250,125 @@ class Log extends AppModel
 
     /**
      * fetch a list of logs based on mongo find
+     *
+     * @param $query
+     * @param int $start            - log id to return from
+     * @param int $limit            - how many logs top return
+     * @param array $fieldDetails   - array('clientIds', 'dataFieldName') list of field ids from each client and the name of the value we want to sort on from the found field.
+     * @param bool $orderAsc        - should the logs be returned in an ascending order
+     *
+     * @return mixed
      */
-    public function findByQuery($query, $start = 0, $limit = 10, $orderBy = '') {
-        $result =  $this->find('all', array(
-            'conditions' => $query,
-            'limit' => $limit,
-            'offset' => $start,
-        ));
+    public function findByQuery($query, $start = 0, $limit = 10, $fieldDetails = array(), $orderAsc = true) {
+//        $conditions = array(
+//            'conditions' => $query,
+//            'limit' => $limit,
+//            'offset' => $start,
+//        );
+//
 
-        return $result;
+
+//
+//            $conditions['order'] = array(strtolower($orderBy) => $orderDirection);
+//        }
+//
+//        $result =  $this->find('all', $conditions);
+//
+//        return $result;
+//
+//        $criteria = array();
+//
+//
+        if (empty($query)) {
+            return array();
+        }
+
+
+        //initial match to find records we want
+        $criteria[] = array(
+            '$match' => $query,
+        );
+
+        //rewind the log back together and add the extra 'sort' field so we can sort
+        $group = array(
+            //list all the log fields since there is no 'select *'
+            '_id' => '$_id',
+            'hrid' => array('$first' => '$hrid'),
+            'client_id' => array('$first' => '$client_id'),
+            'fields' => array('$push' => '$fields'),
+            'attributes' => array('$first' => '$attributes'),
+            'deleted' => array('$first' => '$deleted'),
+         );
+
+        //are we sorting the results?
+        if (isset($fieldDetails['clientIds']) && !empty($fieldDetails['clientIds'])) {
+
+            //split all the fields up so we can order based on sub field
+            $criteria[] = array(
+                '$unwind' => '$fields',
+            );
+
+            //put the list of field id's we are sorting on into a friendly array
+            $fieldIds = array();
+            foreach($fieldDetails['clientIds'] as $id) {
+                //only return the fields we are searching against
+                $fieldIds[] = array(
+                    '$eq' => array(
+                        '$fields.field_id',
+                        new MongoId($id),
+                    ),
+                );
+            }
+
+            //extra field so we can perform the sort
+            $group['sort'] = array(
+                '$max' => array(
+                    //the sort field should just be the field we are ordering by for each client this user has access to
+                    '$cond' => array(
+                        array('$or' => $fieldIds),
+                        '$fields.data',
+                        null,
+                    ),
+                ),
+            );
+
+            $criteria[] = array(
+                '$group' => $group
+            );
+
+            $orderDirection = -1;
+            if ($orderAsc) {
+                $orderDirection = 1;
+            }
+
+            //do the sort
+            $criteria[] = array(
+                '$sort' => array(
+                    'sort.' . $fieldDetails['dataFieldName'] => $orderDirection,
+                )
+            );
+        }
+
+        //offset for pagination
+        $criteria[] = array(
+            '$skip' => (int)$start,
+        );
+
+        //limit for pagination
+        $criteria[] = array(
+            '$limit' => (int)$limit,
+        );
+
+        //actually do the query and return result
+        $mongo = $this->getMongoDb();
+        $data = $mongo->selectCollection('logs')->aggregate($criteria);
+
+        if ($data['ok'] == 0) {
+            throw new Exception($data['errmsg']);
+        }
+
+        return $data['result'];
+
     }
 
     public function countByQuery($query) {

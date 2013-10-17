@@ -48,11 +48,11 @@ angular.module( 'Preslog.search', [
         $scope.logWidgetParams = {
             page: 1,
             total: 0,
-            perPageOptions: [3, 5, 10, 20],
+            perPageOptions: [3, 5, 10, 25],
             perPage: 3,
-            sorting: {
-                name: 'created'
-            },
+            sorting: [],
+            order: '',
+            orderDirection: 'Asc',
             query: '',
             logs: [],
             lastUpdated: new Date()
@@ -62,8 +62,7 @@ angular.module( 'Preslog.search', [
             $scope.search();
         }, true);
 
-        $scope.queryMeta = function() {
-            return {
+        $scope.queryMeta = {
                 "tables": [
                     {
                         "name": "LOGS",
@@ -251,7 +250,6 @@ angular.module( 'Preslog.search', [
                     }
                 ]
             };
-        };
 
         $scope.doSearch = function() {
             $scope.logWidgetParams.page = 1;
@@ -263,18 +261,29 @@ angular.module( 'Preslog.search', [
                 return;
             }
 
+            //find start of page
             var offset = (($scope.logWidgetParams.page - 1) * $scope.logWidgetParams.perPage);
             if ($scope.logWidgetParams.page === 1) {
                 offset = 0;
             }
-            Restangular.one('search').get({query: $scope.jql, limit: $scope.logWidgetParams.perPage, start: offset}).then(function(result) {
-                console.log(result);
-                $scope.results = result;
-                var params = angular.copy($scope.logWidgetParams);
-                params.total = result.total;
-                params.logs = result.logs;
-                $scope.logWidgetParams = params;
-            });
+
+            Restangular.one('search').get({
+                    query: $scope.jql,
+                    limit: $scope.logWidgetParams.perPage,
+                    start: offset,
+                    order: $scope.logWidgetParams.order,
+                    orderasc: $scope.logWidgetParams.orderDirection == 'Asc'
+                })
+                .then(function(result) {
+                    console.log(result);
+                    $scope.results = result;
+                    var params = angular.copy($scope.logWidgetParams);
+                    params.total = result.total;
+                    params.logs = result.logs;
+                    params.sorting = result.fields;
+                    $scope.logWidgetParams = params;
+                }
+            );
         };
 
         $scope.sqlToJql = function() {
@@ -296,18 +305,20 @@ angular.module( 'Preslog.search', [
                    if (data) {
                        $scope.sql = data.sql;
                        $scope.args = data.args;
+                       $scope.queryMeta = data.fieldList;
 
                        var modal = $modal.open({
-                           templateUrl: 'modules/search/queryModal/sqlQueryModal.tpl.html',
-                           controller: 'SqlModalCtrl',
-                           resolve: {
+                            templateUrl: 'modules/search/queryModal/sqlQueryModal.tpl.html',
+                            controller: 'SqlModalCtrl',
+                            resolve: {
                                 sql: function() { return $scope.sql; },
-                                args: function() { return $scope.args; }
-                           }
+                                args: function() { return $scope.args; },
+                                queryMeta: function() { return $scope.queryMeta; }
+                            }
                        });
-                       modal.result.then(function(jql) {
-
-                       });
+//                       modal.result.then(function(jql) {
+//                            debugger;
+//                       });
 
                    }
                });
@@ -318,43 +329,52 @@ angular.module( 'Preslog.search', [
     .directive('redQueryBuilder', ['$timeout', 'Restangular',
         function($timeout, Restangular) {
             return {
-                link : function(scope, element, attrs) {
-                    if (scope.jql === "") {
-                        return;
-                    }
-                    Restangular.one('search/wizard/params').get({jql : scope.jql}).then(function(data) {
-                        if (data) {
-                            scope.sql = data.sql;
-                            scope.args = data.args;
+                restrict:'E',
+                transclude: true,
 
-                            $timeout(function() {
+                // Data binding on two fields
+                scope: {
+                    sql: '=',
+                    args: '=',
+                    queryMeta: '='
+                },
+
+                link : function(scope, element, attrs) {
+
+//                    Restangular.one('search/wizard/params').get({jql : scope.jql}).then(function(data) {
+//                        if (data) {
+//                            scope.sql = data.sql;
+//                            scope.args = data.args;
+//
+//                            $timeout(function() {
                                 RedQueryBuilderFactory.create({
                                         targetId : 'rqb',
-                                        meta : scope.queryMeta(),
-                                        onSqlChange : function(sql, args) {
-                                            scope.sql = sql;
-                                            scope.args = args;
-                                        },
-                                        enumerate : function(request, response) {
-                                            if (request.columnName == 'CATEGORY') {
-                                                response([{value:'A', label:'Small'}, {value:'B', label:'Medium'}]);
-                                            } else {
-                                                response([{value:'M', label:'Male'}, {value:'F', label:'Female'}]);
-                                            }
-                                        },
-                                        editors : [ {
-                                            name : 'DATE',
-                                            format : 'dd.MM.yyyy'
-                                        } ],
-                                        suggest: function(args, callback) {
-                                            console.log(args);
-                                        }
+                                        meta : scope.queryMeta
+//                                        onSqlChange : function(sql, args) {
+//                                            scope.sql = sql;
+//                                            scope.args = args;
+//                                        },
+//                                        enumerate : function(request, response) {
+//                                            if (request.columnName == 'CATEGORY') {
+//                                                response([{value:'A', label:'Small'}, {value:'B', label:'Medium'}]);
+//                                            } else {
+//                                                response([{value:'M', label:'Male'}, {value:'F', label:'Female'}]);
+//                                            }
+//                                        },
+//                                        editors : [ {
+//                                            name : 'DATE',
+//                                            format : 'dd.MM.yyyy'
+//                                        } ],
+//                                        suggest: function(args, callback) {
+//                                            console.log(args);
+//                                        }
                                     },
-                                    scope.sql,
+                                    'select * from "LOGS" where ID = ?',
+                                    //scope.sql,
                                     scope.args);
-                            }, 100);
-                        }
-                    });
+                            //}//, 100);
+                        //}
+                    //});
                 }
             };
         }

@@ -106,6 +106,10 @@ angular.module( 'Preslog.dashboard', [
                 if (ui.item.hasClass('col3')) {
                     ui.placeholder.css('width', '98%');
                 }
+
+                if (ui.item.hasClass('col2')) {
+                    ui.placeholder.css('width', '62%');
+                }
             },
             change: function(event, ui) {
                 ui.placeholder.before('\n').after('\n');
@@ -366,7 +370,7 @@ angular.module( 'Preslog.dashboard', [
         $scope.isFavourite = function() {
             var found = false;
             for(var id in $scope.favourites) {
-                if ($scope.favourites[id].id = $scope.id) {
+                if ($scope.favourites[id]._id = $scope.id) {
                     found = true;
                 }
             }
@@ -385,15 +389,20 @@ angular.module( 'Preslog.dashboard', [
                     continue;
                 }
 
+                var orderDirection = 'Desc';
+                if (widget.details.orderDirection) {
+                    orderDirection = 'Asc';
+                }
+
                 //log list widget
                 widget.params = {
                     page: 1,
                     total: 0,
-                    perPageOptions: [3, 5, 10, 20],
-                    perPage: 3,
-                    sorting: {
-                        name: 'created'
-                    },
+                    perPageOptions: [3, 5, 10, 25],
+                    perPage: widget.details.perPage,
+                    sorting: [],
+                    order: widget.details.orderBy,
+                    orderDirection: orderDirection,
                     query: widget.details.query,
                     logs: widget.display,
                     lastUpdated: new Date()
@@ -409,7 +418,8 @@ angular.module( 'Preslog.dashboard', [
                     for(var id in $scope.dashboard.widgets) {
                         var widget = $scope.dashboard.widgets[id];
                         if (widget.type == 'list') {
-                            $scope.updateLogList(widget.params);
+
+                            $scope.updateLogList(widget);
                         }
                     }
                 },
@@ -418,7 +428,8 @@ angular.module( 'Preslog.dashboard', [
         };
 
         //log list widget needs some different logic to display
-        $scope.updateLogList = function(params) {
+        $scope.updateLogList = function(widget) {
+            params = widget.params;
             if (params.query.length === 0) {
                 return;
             }
@@ -427,11 +438,32 @@ angular.module( 'Preslog.dashboard', [
             if (params.page === 1) {
                 offset = 0;
             }
-            Restangular.one('search').get({query: params.query, limit: params.perPage, start: offset}).then(function(result) {
-                $scope.results = result;
-                params.total = result.total;
-                params.logs = result.logs;
-            });
+
+            //request new list of logs
+            Restangular.one('search').get({
+                    query: params.query,
+                    limit: params.perPage,
+                    start: offset,
+                    order: params.order,
+                    orderasc: params.orderDirection == 'Asc'
+                })
+                .then(function(result) {
+                    $scope.results = result;
+                    params.total = result.total;
+                    params.logs = result.logs;
+                    params.sorting = result.fields;
+                }
+            );
+
+            //TODO find a way to add these params without calling the watch 3 times.
+            widget.details.perPage = params.perPage;
+            widget.details.orderBy = params.order;
+            widget.details.orderDirection = params.orderDirection == 'Asc';
+
+            //save changes to the widget
+            Restangular.one('dashboards', $scope.id)
+                .one('widgets', widget._id)
+                .post('',{'widget': widget});
         };
 
         //watch any changes in widgets so we can do some work needed to display log lists

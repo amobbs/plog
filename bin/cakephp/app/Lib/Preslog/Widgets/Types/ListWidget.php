@@ -14,18 +14,19 @@ class ListWidget extends Widget {
         $this->maxWidth = 3;
         $this->aggregate = false;
 
+        //info for this instance of the widget
+        if (!is_array($this->details)) {
+            $this->details = array();
+        }
+
+        $this->details['perPage'] = isset($data['details']['perPage']) ? $data['details']['perPage'] : 3;
+        $this->details['orderBy'] = isset($data['details']['orderBy']) ? $data['details']['orderBy'] : '';
+        $this->details['orderDirection'] = isset($data['details']['orderDirection']) ? $data['details']['orderDirection'] : 'Asc';
 
         parent::__construct($data);
     }
 
     public function getDisplayData() {
-        $display = array();
-
-        foreach($this->series as $logDetail) {
-            $log = $logDetail['Log'];
-            $display[] = $log;
-        }
-
-        return $display;
+       return $this->series;
     }
 }

@@ -141,7 +141,10 @@ class JqlParser {
 
     /***
      * recursivly find all the fields in the expression
+     *
+     * @param $clauses
      * @param $fieldList
+     *
      * @return array
      */
     private function _getFields($clauses, &$fieldList) {
@@ -159,38 +162,6 @@ class JqlParser {
 
         return $fieldList;
     }
-
-    //TODO probably not needed
-//    private function _buildMongoCriteriaAsString($expression) {
-//        if ($expression instanceof Clause) {
-//            return $expression->getMongoCriteria();
-//        }
-//
-//        $doc = '';
-//        foreach($expression as $keyword => $clause) {
-//            $keyword = $this->_findKeyword($keyword);
-//            $subClauses = $this->_buildMongoCriteria($clause);
-//
-//            if ($keyword instanceof JqlKeyword) {
-//                return "'" . $keyword->getMongoSymbol() . "' : {" . $this->_buildMongoCriteria($clause)  .' }';
-//            }
-//
-//            if (is_array($clause)) {
-//                foreach ($clause as $subKeyWord => $subClauses) {
-//                    $subKeyWordObj = $this->_findKeyword($subKeyWord);
-//                    $doc .= " '" . $subKeyWordObj->getMongoSymbol() . "' : '" . $this->_buildMongoCriteria($subClauses) . "' ";
-//                }
-//            } else {
-//                $doc .= '{ '. $clause->getMongoCriteria() . ' }, ';
-//            }
-//        }
-//
-//        if (substr($doc, -2) == ', ') {
-//            $doc = substr($doc, 0, -2);
-//        }
-//
-//        return $doc;
-//    }
 
     private function _getWhereFromSql($sql, $args)
     {
