@@ -31,13 +31,14 @@ class Dashboard extends AppModel
         '_id'           => array('type' => 'string', 'length'=>40, 'primary' => true),
         'name'          => array('type' => 'string', 'length'=>255),
         'type'          => array('type' => 'string', 'length'=>64),
-        'widgets'       => array(null),
+        'widgets'       => array('type' => 'array'),
         'shares'        => array('type' => 'array'),
 
         'created'       => array('type' => 'datetime'),
         'modified'      => array('type' => 'datetime'),
 
         'preset'        =>array('type'  => 'boolean'),
+        'maxWidth'      =>array('type'  => 'integer'),
     );
 
     /**
@@ -98,6 +99,10 @@ class Dashboard extends AppModel
     }
 
     public function getChartImageLocal($chartOptions, $tmpFilename) {
+
+        //get details about export exec locations
+        $export = Configure::read('Preslog.export.exec');
+
         $jsonFile = TMP . $tmpFilename . '.json';
         $outFile = TMP . $tmpFilename;
 
@@ -105,26 +110,135 @@ class Dashboard extends AppModel
         fwrite($optionsFile, $chartOptions);
         fclose($optionsFile);
 
-        $phantomjs = '/root/highcharts/phantomjs-1.9.2-linux-x86_64/bin/phantomjs';
-        $convertScript = '/tmp/phantomjs/highcharts-convert.js';
+        $phantomjs = $export['phantomjs'];
+        $convertScript = $export['highchartsExport.js'];
 
 
-        $command = $phantomjs . ' ' . $convertScript . '  -infile ' . $jsonFile . ' -outfile ' . $outFile . ' -scale 1 -width 500 -constr Chart';
+        $command = $phantomjs . ' ' . $convertScript . '  -infile ' . $jsonFile . ' -outfile ' . $outFile . ' -scale 1 -width 600 -constr Chart';
         $result = exec($command);
     }
 
-    public function generateReport($dashboard, $reportName)
+    public function generateReport($dashboard, $clientDetails, $reportName)
     {
+        //get layout configurtaion
+        $layout = Configure::read('Preslog.export.layout');
+
         $phpWord = new PHPWord();
         $section= $phpWord->createSection();
 
-        $dashboardObject = $this->toArray($dashboard);
         $salt = md5(date('Y-m-d h:s'));
-        foreach($dashboardObject['widgets'] as $key => $widget) {
-            $unique = substr(md5($widget['name']), 0, 6);
-            $imageFilename = $salt .$unique . '.png';
-            $this->getChartImageLocal($widget['highcharts'], $imageFilename);
-            $section->addImage(TMP . $imageFilename);
+
+        //setup any document wide formatting required
+        $styleFont = array('name'=>'Tahoma', 'size'=>12);
+        $tocDepth = 1;
+        $phpWord->addTitleStyle( $tocDepth, $styleFont);
+
+//
+//        //toc
+//        $section->addText('Table of Contents', array('bold' => true, 'size' => 24));
+//        $styleTOC = array('tabLeader' => PHPWord_Style_TOC::TABLEADER_DOT);
+//        $section->addTOC($styleFont, $styleTOC);
+//        $section->addPageBreak();
+
+
+        foreach($dashboard['widgets'] as $widget) {
+            $section->addTitle($widget->getName());
+
+            //only aggregate widgets can make charts
+            if ($widget->isAggregate()) {
+
+                $unique = substr(md5($widget->getName()), 0, 6);
+                $imageFilename = $salt .$unique . '.png';
+                $this->getChartImageLocal($widget->getDisplayData(), $imageFilename);
+                $section->addImage(TMP . $imageFilename);
+            } else { //data is not aggregated so just show it as a list of logs
+                $logs = $widget->getDisplayData();
+
+                if (empty($logs)) {
+                    $section->addText('No Errors');
+                }
+
+                foreach($logs as $log) {
+
+                    $table = $section->addTable();
+
+                    $titleStyle = array(
+                        'color' => $layout['titleColor'],
+                    );
+
+                    $paragraphStyle = array(
+                        'spacing' => 1,
+                        'spaceAfter' => 1,
+                    );
+
+                    $cellStyle = array(
+                        'borderSize' => $layout['cellBorder'],
+                        'borderColor' => $layout['cellBorderColor'],
+                    );
+
+                    //fault id
+                    $table->addRow();
+                    $cell = $table->addCell($layout['titleColWidth'], $cellStyle);
+                    $cell->addText('Fault', $titleStyle, $paragraphStyle);
+                    $cell = $table->addCell($layout['detailColWidth'], $cellStyle);
+//                    $cell->addText($log['hrid']);
+                    $cell->addText($log['hrid'], array(), $paragraphStyle);
+
+                    //date
+                    $table->addRow();
+                    $cell = $table->addCell($layout['titleColWidth'], $cellStyle);
+                    $cell->addText('Date', $titleStyle, $paragraphStyle);
+                    $cell = $table->addCell($layout['detailColWidth'], $cellStyle);
+                    $cell->addText(date('Y-m-d', strtotime($log['created'])), array(), $paragraphStyle);
+
+                    //time
+                    $table->addRow();
+                    $cell = $table->addCell($layout['titleColWidth'], $cellStyle);
+                    $cell->addText('Time', $titleStyle, $paragraphStyle);
+                    $cell = $table->addCell($layout['detailColWidth'], $cellStyle);
+                    $cell->addText(date('h:i:s A', strtotime($log['created'])), array(), $paragraphStyle);
+
+                    $client = null;
+                    foreach($clientDetails as $detail) {
+                        if ($detail['Client']['_id'] == $log['client_id']) {
+                            $client = $detail['Client'];
+                            break;
+                        }
+                    }
+
+                    //TODO clean this up so we dont have duplicated code. i copied this from Log->getFieldHelperByClientId
+                    // Load poor-mans cache for this pageload
+                    $clientFieldHelperCache = Configure::read('Preslog.cache.clientFieldsHelper');
+                    if (!is_array($clientFieldHelperCache))
+                    {
+                        throw new Exception('can not acces any clients'); //TODO replace with cake error
+                    }
+
+                    if (!isset($clientFieldHelperCache[$client['_id']])) {
+                        throw new Exception('no permission to view this users logs'); //TODO replace with cake error
+                    }
+
+                    $fieldHelper = $clientFieldHelperCache[$client['_id']];
+
+                    //dynamic fields
+                    $document = $fieldHelper->convertToDocument($log);
+                    foreach($log['fields'] as $field) {
+                    //    $format = $fieldHelper['fields'][$field['field_id']];
+
+                     //   $table->addRow();
+//                        $table->addCell($layout['titleColWidth'])
+//                            ->addText($format->getProperties('name'));
+//                        $table->addCell($layout['detailColWidth'])
+//                            ->addText($format->chartDisplay($field['data']));
+                    }
+
+                    //add a space before next table.
+                    $section->addTextBreak();
+
+                }
+            }
+
+            $section->addPageBreak();
         }
 
         $objWriter = PHPWord_IOFactory::createWriter($phpWord, 'Word2007');

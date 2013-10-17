@@ -10,7 +10,7 @@ use Swagger\Annotations as SWG;
  */
 class SearchController extends AppController
 {
-    public $uses = array('Search', 'JqlParser', 'Log', 'Client');
+    public $uses = array('Search', 'JqlParser', 'Log', 'Client', 'User');
 
     /**
      * Search using the given query string
@@ -34,11 +34,12 @@ class SearchController extends AppController
     {
         $limit = isset($this->request->query['limit']) ? $this->request->query['limit'] : 3;
         $start =  isset($this->request->query['start']) ? $this->request->query['start'] : 1;
-        $orderBy =  isset($this->request->query['orderBy']) ? $this->request->query['orderBy'] : '';
+        $orderBy =  isset($this->request->query['order']) ? $this->request->query['order'] : '';
+        $asc = isset($this->request->query['orderasc']) ? $this->request->query['orderasc'] == 'true' : true;
 
         // Perform search
         // Returns Logs and Options to accompany
-        $return = $this->executeSearch( $this->request->query, $limit, $start, $orderBy );
+        $return = $this->executeSearch( $this->request->query, $limit, $start, $orderBy, $asc);
 
         // Return search result
         $this->set($return);
@@ -82,11 +83,9 @@ class SearchController extends AppController
 
     /**
      * Perform the search operation and return a series of log data sufficient for search results.
-     * TODO: This should really be paginated to avoid problems with large result sets
      */
-    protected function executeSearch( $params, $limit = 3, $start = 1, $orderBy = '')
+    protected function executeSearch( $params, $limit = 3, $start = 1, $orderBy = '', $orderAsc = true)
     {
-        // TODO
         $options = array();
 
         // Validate: Search criteria must not be empty
@@ -105,9 +104,40 @@ class SearchController extends AppController
             $query .= 'AND client_id = my_client_id';
         }
 
+        // Translate query to Mongo
+        $jqlParser = new JqlParser();
+        $jqlParser->setSqlFromJql($query);
+        $match = $jqlParser->getMongoCriteria();
+
+        //find the ids of the fields we are going to order this search based on
+        $fieldDetails = array(
+            'clientIds' => array(),
+            'dataFieldName' => '',
+        );
+        $user = $this->User->findById(
+            $this->PreslogAuth->user('_id')
+        );
+
+        $clients = $this->User->listAvailableClientsForUser($user['User']);
+        foreach($clients as $clientDetails) {
+            $client = $this->Client->findById($clientDetails['_id']);
+            //check each format for the field we are ordering on
+            foreach($client['Client']['format'] as $format) {
+                //exact name match, search on this field
+                if ($format['name'] == strtolower($orderBy)) {
+                    $fieldDetails['clientIds'][] = $format['_id'];
+                    $fieldDetails['dataFieldName'] = 'seconds'; //TODO add data field name for each field type
+                } else if ($format['name'] == 'loginfo' && //TODO clean up, we should get data field off type object
+                    (strtolower($orderBy) == 'created' || strtolower($orderBy) == 'modified')) {
+                    $fieldDetails['clientIds'][] = $format['_id'];
+                    $fieldDetails['dataFieldName'] = strtolower($orderBy);
+                }
+            }
+        }
+
         // Do query
-        $results = $this->Log->findByQuery($query, $start, $limit, $orderBy);
-        $total = $this->Log->countByQuery($query);
+        $results = $this->Log->findByQuery($match, $start, $limit, $fieldDetails, $orderAsc);
+        $total = $this->Log->countByQuery($match);
 
         $clients = array();
         $users = array();
@@ -115,13 +145,14 @@ class SearchController extends AppController
         foreach ($results as $k=>$result)
         {
             // Collate the list of clients for fetching the field format
-            $clients[] = $result['Log']['client_id'];
-            if ($result['Log']['created_user_id'] instanceof MongoId) {
-                $users[] = $result['Log']['created_user_id'];
-            }
-            if ($result['Log']['modified_user_id'] instanceof MongoId) {
-                $users[] = $result['Log']['modified_user_id'];
-            }
+            $clients[] = $result['client_id'];
+            //TODO clean up- when field helper is done
+//            if ($result['created_user_id'] instanceof MongoId) {
+//                $users[] = $result['created_user_id'];
+//            }
+//            if ($result['modified_user_id'] instanceof MongoId) {
+//                $users[] = $result['modified_user_id'];
+//            }
 
             // Drop the Accountability and Status fields if we don't have permission
             if (false)
@@ -144,10 +175,14 @@ class SearchController extends AppController
         if (!empty($users)) {
             $userObjects = $this->Log->listUsersByIds($users);
         }
+
+        //list all fields that we can use to sort these logs
+        $allFieldNames = array();
+
         //loop through the logs again and reformat them for display
         $logs = array();
-        foreach ($results as $k=>$result) {
-            $log = $result['Log'];
+        foreach ($results as $k=>$log) {
+            $allFieldNames['hrid'] = true; // so we can search on log id TODO find a way to give this a better name
 
             //create the format and add in some fields that will always be there
             $parsed = array(
@@ -160,31 +195,33 @@ class SearchController extends AppController
                         'value' => $log['hrid'],
                         'showTooltip' => false,
                     ),
-                    array(
-                        'title' => 'Created',
-                        'value' => $log['created'],
-                        'showTooltip' => false,
-                    ),
-                    array(
-                        'title' => 'Modified',
-                        'value' => $log['modified'],
-                        'showTooltip' => false,
-                    ),
-                    array(
-                        'title' => 'Version',
-                        'value' => $log['version'],
-                        'showTooltip' => false,
-                    ),
-                    array(
-                        'title' => 'Created By',
-                        'value' => $this->_getUserName($log['created_user_id'], $userObjects),
-                        'showTooltip' => false,
-                    ),
-                    array(
-                        'title' => 'Modified By',
-                        'value' => $this->_getUserName($log['modified_user_id'], $userObjects),
-                        'showTooltip' => false,
-                    ),
+
+                    //TODO clean up - when field helper is done
+//                    array(
+//                        'title' => 'Created',
+//                        'value' => $log['created'],
+//                        'showTooltip' => false,
+//                    ),
+//                    array(
+//                        'title' => 'Modified',
+//                        'value' => $log['modified'],
+//                        'showTooltip' => false,
+//                    ),
+//                    array(
+//                        'title' => 'Version',
+//                        'value' => $log['version'],
+//                        'showTooltip' => false,
+//                    ),
+//                    array(
+//                        'title' => 'Created By',
+//                        'value' => $this->_getUserName($log['created_user_id'], $userObjects),
+//                        'showTooltip' => false,
+//                    ),
+//                    array(
+//                        'title' => 'Modified By',
+//                        'value' => $this->_getUserName($log['modified_user_id'], $userObjects),
+//                        'showTooltip' => false,
+//                    ),
 //                    array(
 //                        'title' => 'Company',
 //                        'value' => $this->_getCompanyName($log['client_id'], $options[$log['client_id']]),
@@ -205,10 +242,23 @@ class SearchController extends AppController
                 );
                 $includeField = true;
 
+                $fieldName = $fieldInfo['name'];
                 //different fields get displayed in different ways
                 switch ($fieldInfo['type']) {
                     case 'loginfo':
-                        $includeField = false;
+                        $formattedField = array(
+                            'title' => 'Created',
+                            'value' => $field['data']['created'],
+                            'showTooltip' => false
+                        );
+                        $fieldName = 'Created';
+                        $formattedField = array(
+                            'title' => 'Modified',
+                            'value' => $field['data']['modified'],
+                            'showTooltip' => false
+                        );
+                        $fieldName = 'Modified';
+
                         break;
                     case 'datetime':
                         if ($field['data']['datetime'] instanceof MongoDate) {
@@ -230,6 +280,7 @@ class SearchController extends AppController
 
                 if ($includeField) {
                     $parsed['attributes'][] = $formattedField;
+                    $allFieldNames[$fieldName] = true;
                 }
             }
 
@@ -242,7 +293,7 @@ class SearchController extends AppController
 //            $mongo->toString($query);
 //        }
         // Return the Results and the corresponding Client opts
-        return array('query' => $query, 'logs' => $logs, 'fields' => $options, 'total' => $total);
+        return array('query' => $query, 'logs' => $logs,  'fields' => array_keys($allFieldNames),'total' => $total);
     }
 
     private function _formatDuration($duration) {
@@ -338,9 +389,35 @@ class SearchController extends AppController
         $parser = new JqlParser();
         $parser->setSqlFromJql($jql);
 
+        //get list of fields that can be used to query against (red query builder format)
+        $fieldList = array(
+            "tables" => array(
+                'name' => 'LOGS',
+                'columns' => array(
+                    'name' => '',
+                    'label' => '',
+                    'type' => '',
+                    'size' => '',
+                ),
+                'fks' => array(),
+            ),
+            'types' => array(
+                array(
+                    'editor' => '',
+                    'name' => '',
+                    'operators' => array(
+                        'name' => '',
+                        'label' => '',
+                        'cardinality' => 'ONE',
+                    ),
+                ),
+            ),
+        );
+
         $this->set('sql', $parser->getSql());
         $this->set('args', $parser->getArguments());
-        $this->set('_serialize', array('sql', 'args'));
+        $this->set('fieldList', $fieldList);
+        $this->set('_serialize', array('sql', 'args', 'fieldList'));
     }
 
 

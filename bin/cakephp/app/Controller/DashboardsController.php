@@ -49,7 +49,7 @@ class DashboardsController extends AppController
         if (isset($user['User']['favouriteDashboards'])) {
             foreach($user['User']['favouriteDashboards'] as $dashboardId) {
                 if (!empty($dashboardId)) {
-                    $dashboard = $this->Dashboard->findById(new MongoId($dashboardId));
+                    $dashboard = $this->Dashboard->findById($dashboardId);
                     if (!empty($dashboard)) {
                         $fav[] = array(
                             '_id' => $dashboard['Dashboard']['_id'],
@@ -448,8 +448,15 @@ class DashboardsController extends AppController
     public function exportDashboard($dashboardId)
     {
         $dashboard = $this->Dashboard->findById($dashboardId);
-        $reportName = 'report_' . $dashboard['Dashboard']['name'] . '.docx';
-        $reportPath = $this->Dashboard->generateReport($dashboard['Dashboard'], $reportName);
+        $reportName = $dashboard['Dashboard']['name'] . '_' . date('Ymd_Hi') . '.docx';
+        $dashboard =  $this->_getParsedDashboard($dashboard['Dashboard']);
+
+        $clients = $this->getClientListForUser();
+        $clientDetails = $this->Client->find('all', array(
+            'conditions' => array('_id' => array('$in' => $clients))
+        ));
+
+        $reportPath = $this->Dashboard->generateReport($dashboard, $clientDetails, $reportName);
 
         $this->response->file($reportPath, array(
             'download' => true,
@@ -765,10 +772,14 @@ class DashboardsController extends AppController
      * @return mixed
      */
     private function _populateSeries($widgetObject, $aggregationPipeLine) {
+        $query = $widgetObject->getDetail('query');
+        if (empty($query)) {
+            return $widgetObject;
+        }
 
         // Translate query to Mongo
         $jqlParser = new JqlParser();
-        $jqlParser->setSqlFromJql($widgetObject->getDetail('query'));
+        $jqlParser->setSqlFromJql($query);
         $match = $jqlParser->getMongoCriteria();
 
         $clients = $this->getClientListForUser();
@@ -810,15 +821,12 @@ class DashboardsController extends AppController
         if ($widgetObject->isAggregate()) {
            $result = $this->Log->findAggregate($match, $aggregationPipeLine, $fields);
         } else {
-            $result = $this->Log->findByQuery($match);
+            $result = $this->Log->findByQuery($match, $aggregationPipeLine);
         }
 
-        if (empty($result)) {
-            //TODO why is it empty??????
-            $widgetObject->setSeries(array());
-        } else {
+        if (isset($result['ok'])) {
             if ($result['ok'] != 1) {
-                throw new Exception('query to mongo failed!!!!'); //TODO replace with cake exception
+                throw new Exception('Error in database query: ' . $result['errmsg']);
             }
 
             //remove any mongo'ids from series to show field value
@@ -882,6 +890,8 @@ class DashboardsController extends AppController
 
             $widgetObject->setSeries($parsedResult);
 
+        } else {
+            $widgetObject->setSeries($result);
         }
 
         return $widgetObject;

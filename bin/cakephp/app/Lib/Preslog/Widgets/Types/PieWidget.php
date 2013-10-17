@@ -38,26 +38,6 @@ class PieWidget extends Widget {
             ),
         );
 
-//        $this->query = array(
-//            array(
-//                '$match' => array(
-//                    "created" => array('$gt' => new MongoDate(strtotime("2012-01-01T00:00:00.0Z")), '$lt' => new MongoDate(strtotime("2012-12-01T00:00:00.0Z"))),
-//                    '_id' => new MongoId('524a42bddf81d178120031a0')
-//                 )
-//            ),
-//            array(
-//                '$project' => array(
-//                    'cause' => '$fields.data.name'
-//                ),
-//            ),
-//	        array(
-//                '$group' => array(
-//                    '_id' => '$cause',
-//                    'count' => array('$sum' =>  1)
-//                )
-//            )
-//        );
-
         parent::__construct($data);
     }
 
@@ -75,18 +55,20 @@ class PieWidget extends Widget {
                 'allowPointerSelect' => true,
                 'cursor' => 'pointer',
                 'dataLabels' => array(
-                    'enabled' => false,
+                    'enabled' => true,
                     'color' => '#000000',
                     'connectorColor' => '#000000',
                     'format' => '<b>{point.name}</b>: {point.percentage:.1f} %',
                 ),
-                'showInLegend' => true,
+                'showInLegend' => false,
             ),
         );
 
-        $chart->title = array(
-            'text' => $this->details['title'],
-        );
+        if (isset($this->details['title'])) {
+            $chart->title = array(
+                'text' => $this->details['title'],
+            );
+        }
 
         $seriesData = array();
 
@@ -99,9 +81,11 @@ class PieWidget extends Widget {
         }
 
         $yLabel = '';
-        foreach($this->displayOptions['yAxis'] as $option) {
-            if ($option['id'] == $this->details['yAxis']) {
-                $yLabel = $option['name'];
+        if (isset($this->details['yAxis'])) {
+            foreach($this->displayOptions['yAxis'] as $option) {
+                if ($option['id'] == $this->details['yAxis']) {
+                    $yLabel = $option['name'];
+                }
             }
         }
 

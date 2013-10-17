@@ -65,7 +65,7 @@ class Select extends FieldTypeAbstract
         return $list;
     }
 
-    public function chartDisplay($aggregationType, $data) {
+    public function chartDisplay($data, $aggregationType = null) {
         switch ($aggregationType) {
             case 'select':
                 return $data;

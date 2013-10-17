@@ -15,6 +15,7 @@ class Duration extends FieldTypeAbstract
     protected $name = 'Duration Field (H:M:S)';
     protected $description = 'A field for specifying durations, in H:M:S format.';
 
+    //describes fields and data to use during aggregation in mongo
     protected $aggregationDetails = array(
         'seconds' => array(
             'dataLocation' => 'seconds',
@@ -27,14 +28,6 @@ class Duration extends FieldTypeAbstract
                 'aggregate' => true,
             ),
         );
-//        'sum' => array(
-//            'fieldName' => 'duration',
-//            '$project' => array(),
-//            '$group' => array(
-//                'sum' => array('operation' => '$sum', 'data' => '$fields.data.seconds'),
-//            )
-//        ),
-
 
     protected $mongoSchema = array(
         'seconds'  => array('type' => 'int'),
@@ -63,7 +56,7 @@ class Duration extends FieldTypeAbstract
         return $list;
     }
 
-    public function chartDisplay($aggregationType, $data) {
+    public function chartDisplay($data, $aggregationType = 'minutes') {
         switch ($aggregationType) {
             case 'seconds':
                 return $data;

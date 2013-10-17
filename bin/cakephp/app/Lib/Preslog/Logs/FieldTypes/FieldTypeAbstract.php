@@ -93,7 +93,7 @@ abstract class FieldTypeAbstract
         return array();
     }
 
-    public function chartDisplay($aggregationType, $data) {
+    public function chartDisplay($data, $aggregationType = null) {
         return '';
     }
 
