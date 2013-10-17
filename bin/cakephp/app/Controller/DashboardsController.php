@@ -681,7 +681,7 @@ class DashboardsController extends AppController
                     foreach($clients as $clientId) {
                         $client = $this->Client->findById($clientId);
                         //find the format of this type
-                        foreach($client['Client']['format'] as $format) {
+                        foreach($client['Client']['fields'] as $format) {
                             //find the format and add to options used for dropdowns
                             if ($format['type'] == $option['fieldType']->getProperties('alias')) {
                                 $xOptions[$format['name']] = $option['fieldType']->listDetails($format['name']);
@@ -790,7 +790,7 @@ class DashboardsController extends AppController
         $fields = array();
         foreach ($clients as $clientId) {
             $client = $this->Client->findById($clientId);
-            foreach($client['Client']['format'] as $format) {
+            foreach($client['Client']['fields'] as $format) {
                 //does this client have a field with this name?
                 if (in_array($format['name'], $fieldNames)) {
                     if (!isset($fields[$format['name']])) {
@@ -847,7 +847,7 @@ class DashboardsController extends AppController
                     $parsedPoint = $point;
                     if ($point['series'][$dataLocation] instanceof MongoId) {
                         foreach($allClients as $client) {
-                            foreach($client['Client']['format'] as $format) {
+                            foreach($client['Client']['fields'] as $format) {
 
                                 //it is some kind of select so search through the options for the value
                                 if (isset($format['data']) && isset($format['data']['options'])) {

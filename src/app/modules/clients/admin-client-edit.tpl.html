@@ -198,7 +198,7 @@
                             </tr>
                         </thead>
                         <tbody ui-sortable="fieldSortableOptions">
-                            <tr ng-repeat="field in client.format" ng-show="!field.deleted || showDeleted == true">
+                            <tr ng-repeat="field in client.fields" ng-show="!field.deleted || showDeleted == true">
                                 <td class="order"><i class="icon icon-resize-vertical"></i></td>
                                 <td>{{ field.name }}</td>
                                 <td>{{ options.fieldTypes[field.type].name }}</td>

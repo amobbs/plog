@@ -93,7 +93,7 @@ class ImportController extends AppController
                 'contact' => '',
                 'logPrefix' => 'AUS',
                 'activationDate' => new MongoDate(strtotime('now')),
-                'format' => $baseFormats,
+                'fields' => $baseFormats,
                 'attributes' => array(),
             ),
             array(
@@ -104,7 +104,7 @@ class ImportController extends AppController
                 'contact' => '',
                 'logPrefix' => 'MH',
                 'activationDate' => new  MongoDate(strtotime('now')),
-                'format' => $baseFormats,
+                'fields' => $baseFormats,
                 'attributes' => array(),
             ),
             array(
@@ -115,7 +115,7 @@ class ImportController extends AppController
                 'contact' => '',
                 'logPrefix' => 'SBS',
                 'activationDate' => new  MongoDate(strtotime('now')),
-                'format' => $baseFormats,
+                'fields' => $baseFormats,
                 'attributes' => array(),
             ),
             array(
@@ -126,7 +126,7 @@ class ImportController extends AppController
                 'contact' => '',
                 'logPrefix' => 'TVN',
                 'activationDate' => new  MongoDate(strtotime('now')),
-                'format' => $baseFormats,
+                'fields' => $baseFormats,
                 'attributes' => array(),
             ),
             array(
@@ -137,7 +137,7 @@ class ImportController extends AppController
                 'contact' => '',
                 'logPrefix' => 'WIN',
                 'activationDate' => new  MongoDate(strtotime('now')),
-                'format' => $baseFormats,
+                'fields' => $baseFormats,
                 'attributes' => array(),
             ),
             array(
@@ -148,7 +148,7 @@ class ImportController extends AppController
                 'contact' => '',
                 'logPrefix' => 'ABC',
                 'activationDate' => new  MongoDate(strtotime('now')),
-                'format' => $baseFormats,
+                'fields' => $baseFormats,
                 'attributes' => array(),
             ),
         );
@@ -164,6 +164,7 @@ class ImportController extends AppController
                 'order' => $order++,
                 'type' => 'loginfo',
                 'name' => 'loginfo',
+                'label' => 'Log Info',
                 'data' => null,
             ),
             array(
@@ -171,27 +172,31 @@ class ImportController extends AppController
                 'order' => $order++,
                 'type' => 'datetime',
                 'name' => 'datetime',
+                'label' => 'Date',
                 'data' => null,
             ),
             array(
                 '_id' => null,
                 'order' => $order++,
                 'type' => 'textarea',
-                'name' => 'Program',
+                'name' => 'program',
+                'label' => 'Program Name',
                 'data' => array('placeholder' => '?'),
             ),
             array(
                 '_id' => null,
                 'order' => $order++,
                 'type' => 'textarea',
-                'name' => 'Asset ID',
+                'name' => 'asset_id',
+                'label' => 'Asset ID',
                 'data' => array('placeholder' => '?'),
             ),
             array(
                 '_id' => null,
                 'order' => $order++,
                 'type' => 'select',
-                'name' => 'On-Air Impact',
+                'name' => 'impact',
+                'label' => 'On-Air Impact',
                 'data' => array(
                     'placeholder' => '?',
                     'options' => array(
@@ -203,28 +208,32 @@ class ImportController extends AppController
                 '_id' => null,
                 'order' => $order++,
                 'type' => 'textarea',
-                'name' => 'What happened?', //description
+                'name' => 'what_happened', //description
+                'label' => 'What happened?',
                 'data' => array('placeholder' => '?'),
             ),
             array(
                 '_id' => null,
                 'order' => $order++,
                 'type' => 'textarea',
-                'name' => 'Why it happened', //details
+                'name' => 'why', //details
+                'label' => 'Why it happened?',
                 'data' => array('seconds' => '?'),
             ),
             array(
                 '_id' => null,
                 'order' => $order++,
                 'type' => 'textarea',
-                'name' => 'What action taken', //cause?
+                'name' => 'action_taken', //cause?
+                'label' => 'What action taken?',
                 'data' => array('placeholder' => '?'),
             ),
             array(
                 '_id' => null,
                 'order' => $order++,
                 'type' => 'select',
-                'name' => 'Severity',
+                'name' => 'severity',
+                'label' => 'Severity',
                 'data' => array(
                     'placeholder' => '?',
                     'options' => array(
@@ -236,21 +245,24 @@ class ImportController extends AppController
                 '_id' => null,
                 'order' => $order++,
                 'type' => 'duration',
-                'name' => 'Duration',
+                'name' => 'duration',
+                'label' => 'Duration',
                 'data' => null,
             ),
             array(
                 '_id' => null,
                 'order' => $order++,
                 'type' => 'datetime',
-                'name' => 'Entered Time',
+                'name' => 'start_time',
+                'label' => 'Start Time',
                 'data' => null,
             ),
             array(
                 '_id' => null,
                 'order' => $order++,
                 'type' => 'textarea',
-                'name' => 'Cause',
+                'name' => 'cause',
+                'label' => 'Cause',
                 'data' => array(
                     'placeholder' => '?',
                 ),
@@ -260,7 +272,8 @@ class ImportController extends AppController
                 '_id' => null,
                 'order' => $order++,
                 'type' => 'select',
-                'name' => 'Accountability',
+                'name' => 'accountability',
+                'label' => 'Accountability',
                 'data' => array(
                     'placeholder' => '?',
                     'options' => array(
@@ -273,7 +286,8 @@ class ImportController extends AppController
                 '_id' => null,
                 'order' => $order++,
                 'type' => 'select',
-                'name' => 'Status',
+                'name' => 'status',
+                'label' => 'status',
                 'data' => array(
                     'placeholder' => '?',
                     'options' => array(
@@ -292,12 +306,12 @@ class ImportController extends AppController
         $accountabilityId = -1;
         $statusId = -1;
         //loop through format and set new mongo_ids
-        for($i =0; $i < sizeof($client['format']); $i++) {
-            $client['format'][$i]['_id'] = new MongoId();
-            if($client['format'][$i]['name'] == 'On-Air Impact') $onairImpactId = $i;
-            if($client['format'][$i]['name'] == 'Severity') $severityId = $i;
-            if($client['format'][$i]['name'] == 'Accountability') $accountabilityId = $i;
-            if($client['format'][$i]['name'] == 'Status') $statusId = $i;
+        for($i =0; $i < sizeof($client['fields']); $i++) {
+            $client['fields'][$i]['_id'] = new MongoId();
+            if($client['fields'][$i]['name'] == 'On-Air Impact') $onairImpactId = $i;
+            if($client['fields'][$i]['name'] == 'Severity') $severityId = $i;
+            if($client['fields'][$i]['name'] == 'Accountability') $accountabilityId = $i;
+            if($client['fields'][$i]['name'] == 'Status') $statusId = $i;
         }
 
         $sql = 'SELECT distinct impact FROM ' . $client['database_prefix'] . '_dailylog';
@@ -313,7 +327,7 @@ class ImportController extends AppController
                     'old_id' => $row['impact'], //used to find attr later
                 );
             }
-            $client['format'][$onairImpactId]['data']['options'] = $options;
+            $client['fields'][$onairImpactId]['data']['options'] = $options;
         }
 
         $sql = 'SELECT id, severity, level, deleted, `order`, validation FROM ' . $client['database_prefix'] . '_severity ORDER BY `order`';
@@ -328,7 +342,7 @@ class ImportController extends AppController
                     'old_id' => $row['id'],
                 );
             }
-            $client['format'][$severityId]['data']['options'] = $options;
+            $client['fields'][$severityId]['data']['options'] = $options;
         }
 
         $sql = "SELECT id, name, `order`, deleted FROM " . $client['database_prefix'] . '_accountability ORDER BY `order`';
@@ -343,7 +357,7 @@ class ImportController extends AppController
                     'old_id' => $row['id'],
                 );
             }
-            $client['format'][$accountabilityId]['data']['options'] = $options;
+            $client['fields'][$accountabilityId]['data']['options'] = $options;
         }
 
         $sql = "SELECT id, name FROM " . $client['database_prefix'] . '_status';
@@ -359,7 +373,7 @@ class ImportController extends AppController
                     'old_id' => $row['id'],
                 );
             }
-            $client['format'][$statusId]['data']['options'] = $options;
+            $client['fields'][$statusId]['data']['options'] = $options;
         }
 
 
@@ -486,10 +500,10 @@ class ImportController extends AppController
         //remove anything we dont want saved to mongo
         unset($client['database']);
         unset($client['database_prefix']);
-        foreach($client['format'] as $formatKey => $formatValue) {
+        foreach($client['fields'] as $formatKey => $formatValue) {
             foreach($formatValue as $key => $val) {
                 if (substr($key, 0, 4) == 'old_')
-                    unset($client['format'][$formatKey][$key]);
+                    unset($client['fields'][$formatKey][$key]);
             }
         }
 
@@ -525,12 +539,13 @@ class ImportController extends AppController
                 'company' => mb_convert_encoding(trim($parts[3]), 'utf8'),
                 'phoneNumber' => mb_convert_encoding(trim($parts[4]), 'utf8'),
                 'role' => strtolower(mb_convert_encoding(trim($parts[6]), 'utf8')),
-                'favouriteDashboards' => array(),
+                'dashboards' => array(),
                 'notifications' => array(
-                    'types' => array(
+                    'methods' => array(
                         'sms' => false,
                         'email' => false,
                     ),
+                    'clients' => array(),
                 ),
             );
 
@@ -603,7 +618,7 @@ class ImportController extends AppController
 
                 $fields = array(
                     array(
-                        'field_id' => $this->_getMongoIDFromFormatByName($client['format'], 'loginfo'),
+                        'field_id' => $this->_getMongoIDFromFormatByName($client['fields'], 'loginfo'),
                         'data' => array(
                             'created' => new MongoDate(strtotime($row['created'])),
                             'createdBy' => $row['loggedby'],
@@ -613,81 +628,81 @@ class ImportController extends AppController
                         ),
                     ),
                     array(
-                        'field_id' => $this->_getMongoIDFromFormatByName($client['format'], 'Duration'),
+                        'field_id' => $this->_getMongoIDFromFormatByName($client['fields'], 'duration'),
                         'data' => array(
                             'seconds' => intval($row['duration']),
                         ),
                     ),
                     array(
-                        'field_id' => $this->_getMongoIDFromFormatByName($client['format'], 'datetime'),
+                        'field_id' => $this->_getMongoIDFromFormatByName($client['fields'], 'datetime'),
                         'data' => array(
                             'datetime' => new MongoDate(strtotime($row['logdate'] . ' ' . $row['logtime'])),
                         ),
                     ),
                     array(
-                        'field_id' =>  $this->_getMongoIDFromFormatByName($client['format'], 'Program'),
+                        'field_id' =>  $this->_getMongoIDFromFormatByName($client['fields'], 'program'),
                         'data' => array(
                             'text' => mb_convert_encoding($row['program'], 'utf-8'),
                         ),
                     ),
                     array(
-                        'field_id' =>  $this->_getMongoIDFromFormatByName($client['format'], 'Asset ID'),
+                        'field_id' =>  $this->_getMongoIDFromFormatByName($client['fields'], 'asset_id'),
                         'data' => array(
                             'text' => mb_convert_encoding($row['assetid'], 'utf-8'),
                         ),
                     ),
                     array(
-                        'field_id' =>  $this->_getMongoIDFromFormatByName($client['format'], 'On-Air Impact'),
+                        'field_id' =>  $this->_getMongoIDFromFormatByName($client['fields'], 'impact'),
                         'data' => array(
-                            'selected' => $this->_getMongoIdForOptionInSelect($client['format'], 'On-Air Impact', $row['impact']),
+                            'selected' => $this->_getMongoIdForOptionInSelect($client['fields'], 'impact', $row['impact']),
                         ),
                     ),
                     array(
-                        'field_id' =>  $this->_getMongoIDFromFormatByName($client['format'], 'What happened?'),
+                        'field_id' =>  $this->_getMongoIDFromFormatByName($client['fields'], 'what'),
                         'data' => array(
                             'text' => mb_convert_encoding($row['description'], 'utf-8'),
                         ),
                     ),
                     array(
-                        'field_id' =>  $this->_getMongoIDFromFormatByName($client['format'], 'Why it happened'),
+                        'field_id' =>  $this->_getMongoIDFromFormatByName($client['fields'], 'why'),
                         'data' => array(
                             'text' => mb_convert_encoding($row['details'], 'utf-8'),
                         ),
                     ),
                     array(
-                        'field_id' =>  $this->_getMongoIDFromFormatByName($client['format'], 'What action taken'),
+                        'field_id' =>  $this->_getMongoIDFromFormatByName($client['fields'], 'action_taken'),
                         'data' => array(
                             'text' => mb_convert_encoding($row['action'], 'utf-8'),
                         ),
                     ),
                     array(
-                        'field_id' =>  $this->_getMongoIDFromFormatByName($client['format'], 'Severity'),
+                        'field_id' =>  $this->_getMongoIDFromFormatByName($client['fields'], 'severity'),
                         'data' => array(
-                            'selected' => $this->_getMongoIdForOptionInSelect($client['format'], 'Severity', $row['severity']),
+                            'selected' => $this->_getMongoIdForOptionInSelect($client['fields'], 'severity', $row['severity']),
                         ),
                     ),
                     array(
-                        'field_id' =>  $this->_getMongoIDFromFormatByName($client['format'], 'Entered Time'),
+                        'field_id' =>  $this->_getMongoIDFromFormatByName($client['fields'], 'start_time'),
                         'data' => array(
                             'datetime' => new MongoDate(strtotime($row['enteredtimestamp'])),
                         ),
                     ),
                     array(
-                        'field_id' =>  $this->_getMongoIDFromFormatByName($client['format'], 'Cause'),
+                        'field_id' =>  $this->_getMongoIDFromFormatByName($client['fields'], 'cause'),
                         'data' => array(
                             'text' => mb_convert_encoding($row['cause'], 'utf-8'),
                         ),
                     ),
                     array(
-                        'field_id' =>  $this->_getMongoIDFromFormatByName($client['format'], 'Accountability'),
+                        'field_id' =>  $this->_getMongoIDFromFormatByName($client['fields'], 'accountability'),
                         'data' => array(
-                            'selected' => $this->_getMongoIdForOptionInSelect($client['format'], 'Accountability', $row['accountability']),
+                            'selected' => $this->_getMongoIdForOptionInSelect($client['fields'], 'accountability', $row['accountability']),
                         ),
                     ),
                     array(
-                        'field_id' =>  $this->_getMongoIDFromFormatByName($client['format'], 'Status'),
+                        'field_id' =>  $this->_getMongoIDFromFormatByName($client['fields'], 'status'),
                         'data' => array(
-                            'selected' => $this->_getMongoIdForOptionInSelect($client['format'], 'Status', $row['status']),
+                            'selected' => $this->_getMongoIdForOptionInSelect($client['fields'], 'status', $row['status']),
                         ),
                     ),
                 );

@@ -286,7 +286,7 @@ class SearchController extends AppController
 
     //find field from a client given an id
     private function _getFieldFromClientById($fieldId, $clientFields) {
-        foreach($clientFields['format'] as $field) {
+        foreach($clientFields['fields'] as $field) {
             if ($field['_id'] == $fieldId) {
                 return $field;
             }

@@ -174,9 +174,9 @@ angular.module( 'Preslog.clients', [
         $scope.fieldSortableOptions = {
             update: function(e, ui) {
                 // Resolve order of items to data
-                for (var i in $scope.client.format)
+                for (var i in $scope.client.fields)
                 {
-                    $scope.client.format[i].order = i;
+                    $scope.client.fields[i].order = i;
                 }
             },
             handle: '.order'
@@ -264,7 +264,7 @@ angular.module( 'Preslog.clients', [
                 '_id': null,
                 'name': $scope.newField.name,
                 'type': $scope.newField.type,
-                'order': $scope.client.format.length,
+                'order': $scope.client.fields.length,
                 'data': {},
                 'newField': true
             };
@@ -290,7 +290,7 @@ angular.module( 'Preslog.clients', [
                 delete ret.field.newField;
 
                 // Append the new element
-                $scope.client.format.push(ret.field);
+                $scope.client.fields.push(ret.field);
 
                 // Clear the field items
                 $scope.newField = {};
@@ -306,11 +306,11 @@ angular.module( 'Preslog.clients', [
         $scope.editField = function( field_id ) {
 
             // Fetch the object in the array
-            var field = $.grep($scope.client.format, function(e){ return e._id === field_id; });
+            var field = $.grep($scope.client.fields, function(e){ return e._id === field_id; });
             field = field[0];
 
             // Get the array index of this item
-            var index = $scope.client.format.indexOf(field);
+            var index = $scope.client.fields.indexOf(field);
 
             // Create a copt of the item so we break the binding
             var fieldCopy = angular.copy(field);
@@ -337,7 +337,7 @@ angular.module( 'Preslog.clients', [
             modal.result.then(function(ret) {
 
                 // Replace the element
-                $scope.client.format[ret.index] = ret.field;
+                $scope.client.fields[ret.index] = ret.field;
             },
 
             /**
