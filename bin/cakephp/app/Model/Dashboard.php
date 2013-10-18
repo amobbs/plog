@@ -18,6 +18,8 @@
 //use Misd\Highcharts\Series\ScatterSeries;
 //use Zend\Json\Json;
 
+use Preslog\Logs\LogHelper;
+
 App::uses('AppModel', 'Model', 'HttpSocket', 'Network/Http');
 
 class Dashboard extends AppModel
@@ -28,17 +30,61 @@ class Dashboard extends AppModel
      * @var array   Schema definition for this document
      */
     public $mongoSchema = array(
-        '_id'           => array('type' => 'string', 'length'=>40, 'primary' => true),
-        'name'          => array('type' => 'string', 'length'=>255),
-        'type'          => array('type' => 'string', 'length'=>64),
-        'widgets'       => array('type' => 'array'),
-        'shares'        => array('type' => 'array'),
+        '_id' => array(
+            'type' => 'string',
+            'length'=>40,
+            'primary' => true,
+            'mongoType'=>'mongoId',
+        ),
+        'name' => array(
+            'type' => 'string',
+            'length' => 255
+        ),
+        'type' => array(
+            'type' => 'string',
+            'length' => 64
+        ),
+        'widgets' => array(
+            'type' => 'subCollection',
+            'schema'=> array(
+                '_id' =>array(
+                    'type' => 'string',
+                    'length'=>24,
+                    'mongoType'=>'mongoId'
+                ),
+                'order' => array(
+                    'type' => 'integer'
+                ),
+                'name' => array(
+                    'type' => 'string'
+                ),
+                'type' => array(
+                    'type' => 'string'
+                ),
+                'details' => array(
+                    'type' => 'array',
+                ),
+                'maxWidth' => array(
+                    'type' => 'integer'
+                ),
+            ),
+        ),
+        'shares' => array(
+            'type' => 'array'
+        ),
 
-        'created'       => array('type' => 'datetime'),
-        'modified'      => array('type' => 'datetime'),
+        'created' => array(
+            'type' => 'datetime',
+            'mongoType'=>'mongoDate',
+        ),
+        'modified' => array(
+            'type' => 'datetime',
+            'mongoType'=>'mongoDate',
+        ),
 
-        'preset'        =>array('type'  => 'boolean'),
-        'maxWidth'      =>array('type'  => 'integer'),
+        'preset' => array(
+            'type' => 'boolean'
+        ),
     );
 
     /**
@@ -159,6 +205,8 @@ class Dashboard extends AppModel
                 }
 
                 foreach($logs as $log) {
+                    $logHelper = $this->getLogHelperByClientId($log['client_id']);
+                    $logHelper->convertForDisplay($log);
 
                     $table = $section->addTable();
 
@@ -181,55 +229,32 @@ class Dashboard extends AppModel
                     $cell = $table->addCell($layout['titleColWidth'], $cellStyle);
                     $cell->addText('Fault', $titleStyle, $paragraphStyle);
                     $cell = $table->addCell($layout['detailColWidth'], $cellStyle);
-//                    $cell->addText($log['hrid']);
                     $cell->addText($log['hrid'], array(), $paragraphStyle);
 
-                    //date
-                    $table->addRow();
-                    $cell = $table->addCell($layout['titleColWidth'], $cellStyle);
-                    $cell->addText('Date', $titleStyle, $paragraphStyle);
-                    $cell = $table->addCell($layout['detailColWidth'], $cellStyle);
-                    $cell->addText(date('Y-m-d', strtotime($log['created'])), array(), $paragraphStyle);
+//                    //date
+//                    $table->addRow();
+//                    $cell = $table->addCell($layout['titleColWidth'], $cellStyle);
+//                    $cell->addText('Date', $titleStyle, $paragraphStyle);
+//                    $cell = $table->addCell($layout['detailColWidth'], $cellStyle);
+//                    $cell->addText(), array(), $paragraphStyle);
+//
+//                    //time
+//                    $table->addRow();
+//                    $cell = $table->addCell($layout['titleColWidth'], $cellStyle);
+//                    $cell->addText('Time', $titleStyle, $paragraphStyle);
+//                    $cell = $table->addCell($layout['detailColWidth'], $cellStyle);
+//                    $cell->addText(date('h:i:s A', strtotime($log['created'])), array(), $paragraphStyle);
 
-                    //time
-                    $table->addRow();
-                    $cell = $table->addCell($layout['titleColWidth'], $cellStyle);
-                    $cell->addText('Time', $titleStyle, $paragraphStyle);
-                    $cell = $table->addCell($layout['detailColWidth'], $cellStyle);
-                    $cell->addText(date('h:i:s A', strtotime($log['created'])), array(), $paragraphStyle);
-
-                    $client = null;
-                    foreach($clientDetails as $detail) {
-                        if ($detail['Client']['_id'] == $log['client_id']) {
-                            $client = $detail['Client'];
-                            break;
-                        }
-                    }
-
-                    //TODO clean this up so we dont have duplicated code. i copied this from Log->getFieldHelperByClientId
-                    // Load poor-mans cache for this pageload
-                    $clientFieldHelperCache = Configure::read('Preslog.cache.clientFieldsHelper');
-                    if (!is_array($clientFieldHelperCache))
-                    {
-                        throw new Exception('can not acces any clients'); //TODO replace with cake error
-                    }
-
-                    if (!isset($clientFieldHelperCache[$client['_id']])) {
-                        throw new Exception('no permission to view this users logs'); //TODO replace with cake error
-                    }
-
-                    $fieldHelper = $clientFieldHelperCache[$client['_id']];
 
                     //dynamic fields
-                    $document = $fieldHelper->convertToDocument($log);
                     foreach($log['fields'] as $field) {
                     //    $format = $fieldHelper['fields'][$field['field_id']];
 
-                     //   $table->addRow();
-//                        $table->addCell($layout['titleColWidth'])
-//                            ->addText($format->getProperties('name'));
-//                        $table->addCell($layout['detailColWidth'])
-//                            ->addText($format->chartDisplay($field['data']));
+                        $table->addRow();
+                        $table->addCell($layout['titleColWidth'])
+                            ->addText('');
+                        $table->addCell($layout['detailColWidth'])
+                            ->addText($field['data']);
                     }
 
                     //add a space before next table.
@@ -245,6 +270,60 @@ class Dashboard extends AppModel
         $objWriter->save(TMP . $reportName);
 
         return TMP . $reportName;
+    }
+
+    /**
+     * Fetch a LogHelper object by the given $client_id
+     * - Attempts to cache these requests per client, otherwise the lookup could take a long, long time.
+     * @param       string          $client_id      Client ID to load data for
+     * @return      LogHelper|bool                Field Helper Object, or false if client unavailable
+     */
+    public function getLogHelperByClientId( $client_id )
+    {
+        // Load poor-mans cache for this pageload
+        $clientLogHelperCache = Configure::read('Preslog.cache.clientLogHelper');
+        if (!is_array($clientLogHelperCache))
+        {
+            $clientLogHelperCache = array();
+        }
+
+        // Attempt to load the ClientSchema from cache before calling up a new one.
+        if ( isset($clientLogHelperCache[ $client_id ]))
+        {
+            return $clientLogHelperCache[ $client_id ];
+        }
+        else
+        {
+            // Fetch the Client Schema
+            $clientModel = ClassRegistry::init('Client');
+            $client = $clientModel->find('first', array(
+                'conditions'=>array(
+                    '_id' => $client_id,
+                )
+            ));
+
+            // Abort if the client couldn't be loaded from the DB
+            if ( sizeof($client) )
+            {
+                // Initialize field helper
+                // Pass the field types available from config
+                // Pass the schema from Client
+                // Pass the datasource to the helper
+                $logHelper = new LogHelper();
+                $logHelper->setFieldTypes( Configure::read('Preslog.Fields') );
+                $logHelper->loadSchema( $client['Client'] );
+                $logHelper->setDataSource( $this->getDataSource() );
+
+                // Save to cache
+                $clientLogHelperCache[ $client_id ] = $logHelper;
+                Configure::write('Preslog.cache.clientLogHelper', $clientLogHelperCache);
+
+                return $logHelper;
+            }
+        }
+
+        // Fell through - return our failure to find the client/logHelper
+        return false;
     }
 
 }

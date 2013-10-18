@@ -27,6 +27,15 @@ class ListWidget extends Widget {
     }
 
     public function getDisplayData() {
-       return $this->series;
+        $result = array();
+        foreach($this->series as $log) {
+            if (isset($log['Log'])) {
+                $result[] = $log['Log'];
+            } else {
+                $result[] = $log;
+            }
+        }
+
+       return $result;
     }
 }

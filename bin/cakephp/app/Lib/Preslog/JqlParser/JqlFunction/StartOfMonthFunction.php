@@ -21,7 +21,7 @@ class StartOfMonthFunction extends JqlFunction {
      */
     public function execute($args = null) {
         $date = mktime(0, 0, 0, date('n'), date('j'), date('y'));
-        if ($args != null || empty($args)) {
+        if ($args != null && !empty($args)) {
             $date = $this->_convertValueToTimestamp($args);
         }
 

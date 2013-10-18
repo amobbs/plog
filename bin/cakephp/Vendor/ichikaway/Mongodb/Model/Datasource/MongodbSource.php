@@ -1468,11 +1468,11 @@ class MongodbSource extends DboSource {
 		}
 	}
 
-    public function convertToArray(&$doc, $schema, $fields) {
+    public function convertToArray(&$doc, $schema, $fields = array()) {
         $this->convert($doc, $schema, $fields, true);
     }
 
-    public function convertToDocument(&$doc, $schema, $fields) {
+    public function convertToDocument(&$doc, $schema, $fields = array()) {
         $this->convert($doc, $schema, $fields);
     }
     /**

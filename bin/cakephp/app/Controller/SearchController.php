@@ -122,7 +122,7 @@ class SearchController extends AppController
         foreach($clients as $clientDetails) {
             $client = $this->Client->findById($clientDetails['_id']);
             //check each format for the field we are ordering on
-            foreach($client['Client']['format'] as $format) {
+            foreach($client['Client']['fields'] as $format) {
                 //exact name match, search on this field
                 if ($format['name'] == strtolower($orderBy)) {
                     $fieldDetails['clientIds'][] = $format['_id'];
@@ -145,7 +145,7 @@ class SearchController extends AppController
         foreach ($results as $k=>$result)
         {
             // Collate the list of clients for fetching the field format
-            $clients[] = $result['client_id'];
+            $clients[] = $result['Log']['client_id'];
             //TODO clean up- when field helper is done
 //            if ($result['created_user_id'] instanceof MongoId) {
 //                $users[] = $result['created_user_id'];
@@ -183,6 +183,8 @@ class SearchController extends AppController
         $logs = array();
         foreach ($results as $k=>$log) {
             $allFieldNames['hrid'] = true; // so we can search on log id TODO find a way to give this a better name
+
+            $log = $log['Log'];
 
             //create the format and add in some fields that will always be there
             $parsed = array(
@@ -232,6 +234,9 @@ class SearchController extends AppController
 
             //add all the custom attributes into display
             foreach($log['fields'] as $field) {
+                $logHelper = $this->Log->getLogHelperByClientId((string)$log['client_id']);
+                //$logHelper->convertForDisplay($log);
+
                 //get field info from the client
                 $fieldInfo = $this->_getFieldFromClientById($field['field_id'], $options[(string)$log['client_id']]);
 
@@ -296,6 +301,7 @@ class SearchController extends AppController
         return array('query' => $query, 'logs' => $logs,  'fields' => array_keys($allFieldNames),'total' => $total);
     }
 
+    //TODO remove this should be on the field type
     private function _formatDuration($duration) {
         $hours = floor($duration / 3600);
         $minutes = floor(($duration % 3600) / 60);

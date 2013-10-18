@@ -259,32 +259,14 @@ class Log extends AppModel
      * @param array $fieldDetails   - array('clientIds', 'dataFieldName') list of field ids from each client and the name of the value we want to sort on from the found field.
      * @param bool $orderAsc        - should the logs be returned in an ascending order
      *
+     * @throws Exception
      * @return mixed
      */
     public function findByQuery($query, $start = 0, $limit = 10, $fieldDetails = array(), $orderAsc = true) {
-//        $conditions = array(
-//            'conditions' => $query,
-//            'limit' => $limit,
-//            'offset' => $start,
-//        );
-//
 
-
-//
-//            $conditions['order'] = array(strtolower($orderBy) => $orderDirection);
-//        }
-//
-//        $result =  $this->find('all', $conditions);
-//
-//        return $result;
-//
-//        $criteria = array();
-//
-//
         if (empty($query)) {
             return array();
         }
-
 
         //initial match to find records we want
         $criteria[] = array(
@@ -369,8 +351,16 @@ class Log extends AppModel
             throw new Exception($data['errmsg']);
         }
 
-        return $data['result'];
+        //pass into cake format (for afterFind)
+        $logs = array();
+        foreach($data['result'] as $log) {
+            $this->getDataSource()->convertToArray($log, $this->mongoSchema);
+            $logs[] = array(
+                'Log' => $log,
+            );
+        }
 
+        return $this->_filterResults( $logs );
     }
 
     public function countByQuery($query) {
@@ -426,6 +416,10 @@ class Log extends AppModel
 
         //create the group by conditions for each axis we want to show
         foreach($mongoPipeLine as $axisName => $axisFields) {
+            if (empty($axisFields)) {
+                continue;
+            }
+
             $axisFieldIds = array();
 
             //only return the fields we are searching against
