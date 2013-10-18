@@ -51,6 +51,16 @@
         </div>
     </div>
     <div class="control-group">
+        <label class="control-label">Column Span </label>
+        <div class="controls">
+            <select
+                    ng-model="widget.maxWidth"
+                    ng-options="value for value in spanOptions"
+                    >
+            </select>
+        </div>
+    </div>
+    <div class="control-group">
         <label class="control-label">Refresh Interval </label>
         <div class="controls">
             <input type="text" placeholder="Seconds..." value="" ng-model="widget.data.refresh" />

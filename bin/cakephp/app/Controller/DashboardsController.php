@@ -1,7 +1,7 @@
 <?php
 
 
-use Preslog\Fields\Types\TypeAbstract;
+use Preslog\Logs\FieldTypes\TypeAbstract;
 use Preslog\JqlParser\JqlParser;
 use Swagger\Annotations as SWG;
 use Preslog\Widgets\WidgetFactory;
@@ -165,6 +165,8 @@ class DashboardsController extends AppController
 
             //edit dashboard
             if (!empty($id)) {
+                //TODO no one can edit preset dashboards
+
                 if(isset($this->request->data['widgets'])) { //just update the widgets
                     $this->updateDashboardWidgets($id, $this->request->data['widgets']);
                     $dashboard = $this->Dashboard->findById($id);
@@ -186,12 +188,13 @@ class DashboardsController extends AppController
 
             //new dashboard
             } else {
+
                 $dashboard = array(
                     '_id' => new MongoId(),
                     'name' => $this->request->data['name'],
                     'type' => 'static',
                     'widgets' => array(),
-                    'shares' => $this->request->data['shares'],
+                    'shares' => $this->_getShares(),
                     'preset' => false, //users can not create preset dashboards.
                 );
                 $this->Dashboard->create($dashboard);
@@ -212,8 +215,33 @@ class DashboardsController extends AppController
         $this->set('_serialize', array('status', 'dashboard', 'favourites', 'clients'));
     }
 
+    private function _getShares() {
+        if (!isset( $this->request->data['shares'])) {
+            return array();
+        }
+
+        $shares = $this->request->data['shares'];
+
+        $user = $this->User->findById(
+            $this->PreslogAuth->user('_id')
+        );
+
+        //share to users default client if it is not already
+        $found = false;
+        foreach($shares as $share) {
+            if ($share == $user['User']['client_id']) {
+                $found = true;
+            }
+        }
+        if (!$found) {
+            $shares[] = $user['User']['client_id'];
+        }
+
+        return $shares;
+    }
+
     /*
-     * given a dashboard that has just come out from the database repalce all the widgets with widget objects
+     * given a dashboard that has just come out from the database replace all the widgets with widget objects
      */
     private function _getParsedDashboard($dashboard) {
         $widgets = array();
@@ -807,7 +835,7 @@ class DashboardsController extends AppController
                     if (!isset($fields[$format['name']])) {
                         $fields[$format['name']] = array();
                     }
-                    //add the id for this cleints version of the field.
+                    //add the id for this clients version of the field.
                     $fields[$format['name']][] =  new MongoId($format['_id']);
                 }
             }

@@ -31,7 +31,7 @@ angular.module( 'Preslog.dashboard', [
             resolve: {
                 source: ['$q', 'Restangular', '$stateParams', function($q, Restangular, $stateParams) {
                     // Fetch dashboard
-                    return Restangular.one('dashboards', '5244e28309cc5eeb498b4567');
+                    return Restangular.one('dashboards', '5260a7d7ad7cc5441b00002b');
                 }]
             }
         });
@@ -312,8 +312,10 @@ angular.module( 'Preslog.dashboard', [
 
             switch(type.toLowerCase()) {
                 case 'bar':
+                    tmpl +=  'BarWidgetModal.tpl.html';
+                    break;
                 case 'line':
-                    tmpl +=  'LineBarWidgetModal.tpl.html';
+                    tmpl +=  'LineWidgetModal.tpl.html';
                     break;
                 case 'pie':
                     tmpl +=  'PieWidgetModal.tpl.html';
