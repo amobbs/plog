@@ -21,8 +21,6 @@ class Log extends AppModel
     public $mongoSchema = array(
         '_id'               => array('type' => 'string', 'length'=>24, 'primary' => true, 'mongoType'=>'mongoId'),
         'client_id'         => array('type' => 'string', 'length'=>24, 'mongoType'=>'mongoId'),
-        'created_user_id'   => array('type' => 'string', 'length'=>24, 'mongoType'=>'mongoId'),
-        'modified_user_id'  => array('type' => 'string', 'length'=>24, 'mongoType'=>'mongoId'),
         'hrid'              => array('type' => 'integer'),
         'deleted'       => array('type' => 'boolean'),
         'fields'        => array('type' => 'subCollection',

@@ -55,11 +55,9 @@ class Client extends AppModel
                     'mongoType' => 'mongoId'
                 ),
                 'order' => array('type' => 'int'),
-                'type' => array('type' => 'string', 'length'=>255),
-                'name' => array(
-                    'type' => 'string',
-                    'length' => 255
-                ),
+                'type' => array('type' => 'string', 'length'=>32),
+                'name' => array('type' => 'string', 'length' => 64),
+                'label' => array('type' => 'string', 'length'=>64),
                 'data' => array('type' => 'array')
             )
         ),
@@ -71,7 +69,7 @@ class Client extends AppModel
                     'length' => 24,
                     'mongoType' => 'mongoId'
                 ),
-                'name' => array('type' => 'string'),
+                'name' => array('type' => 'string', 'length'=>64),
                 'deleted' => array('type' => 'boolean'),
                 'children' => array(
                     'type' => 'subCollection',
@@ -81,7 +79,7 @@ class Client extends AppModel
                             'length' => 24,
                             'mongoType' => 'mongoId'
                         ),
-                        'name' => array('type' => 'string'),
+                        'name' => array('type' => 'string', 'length'=>64),
                         'deleted' => array('type' => 'boolean'),
                         'children' => array(
                             'type' => 'subCollection',
@@ -91,7 +89,7 @@ class Client extends AppModel
                                     'length' => 24,
                                     'mongoType' => 'mongoId'
                                 ),
-                                'name' => array('type' => 'string'),
+                                'name' => array('type' => 'string', 'length'=>64),
                                 'deleted' => array('type' => 'boolean'),
                                 'children' => array('type' => 'array')
                             )
@@ -100,6 +98,7 @@ class Client extends AppModel
                 )
             )
         ),
+        'deleted'=>array( 'type'=>'boolean'),
         'created' => array(
             'type' => 'datetime',
             'mongoType' => 'mongoDate'
@@ -198,6 +197,9 @@ class Client extends AppModel
      */
     public function checkCollision($check)
     {
+        $ds = $this->getDataSource();
+        $this->save();
+
         // Find a collision
         $found = $this->find('first', array(
             'conditions'=>array(

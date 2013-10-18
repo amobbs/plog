@@ -23,13 +23,6 @@ class ImportController extends AppController
         $startTime = microtime(true);
         $this->_log('-starting import script at ' . date('Y-m-d H:s'));
 
-        // clear mongos schemas
-        $this->Client->mongoSchema  = array();
-        $this->Log->mongoSchema     = array();
-        $this->User->mongoSchema    = array();
-
-
-
         //clean mongodb
         $mongo = $this->Log->getDataSource();
         $mongo->truncate('clients');
@@ -208,7 +201,7 @@ class ImportController extends AppController
                 '_id' => null,
                 'order' => $order++,
                 'type' => 'textarea',
-                'name' => 'what_happened', //description
+                'name' => 'what', //description
                 'label' => 'What happened?',
                 'data' => array('placeholder' => '?'),
             ),
@@ -308,10 +301,10 @@ class ImportController extends AppController
         //loop through format and set new mongo_ids
         for($i =0; $i < sizeof($client['fields']); $i++) {
             $client['fields'][$i]['_id'] = new MongoId();
-            if($client['fields'][$i]['name'] == 'On-Air Impact') $onairImpactId = $i;
-            if($client['fields'][$i]['name'] == 'Severity') $severityId = $i;
-            if($client['fields'][$i]['name'] == 'Accountability') $accountabilityId = $i;
-            if($client['fields'][$i]['name'] == 'Status') $statusId = $i;
+            if($client['fields'][$i]['name'] == 'impact') $onairImpactId = $i;
+            if($client['fields'][$i]['name'] == 'severity') $severityId = $i;
+            if($client['fields'][$i]['name'] == 'accountability') $accountabilityId = $i;
+            if($client['fields'][$i]['name'] == 'status') $statusId = $i;
         }
 
         $sql = 'SELECT distinct impact FROM ' . $client['database_prefix'] . '_dailylog';
@@ -508,8 +501,8 @@ class ImportController extends AppController
         }
 
         $this->_log('adding client ' . $client['name'] . " with $networkCount networks containing $channelCount channels");
-        $this->Client->create($client);
-        $this->Client->save();
+//        $this->Client->create($client);
+        $this->Client->save(array('Client'=>$client), array('callbacks'=>false, 'validate'=>false));
 
         return $returnClient;
     }
@@ -532,14 +525,14 @@ class ImportController extends AppController
 
             $user =  array(
                 '_id' => new MongoId(),
-                'password' => 'nopassword',
+                'password' => Security::hash('nopassword', 'blowfish', false),
                 'email' => mb_convert_encoding(trim($parts[0]), 'utf8'),
                 'firstName' => mb_convert_encoding(trim($parts[1]), 'utf8'),
                 'lastName' => mb_convert_encoding(trim($parts[2]), 'utf8'),
                 'company' => mb_convert_encoding(trim($parts[3]), 'utf8'),
                 'phoneNumber' => mb_convert_encoding(trim($parts[4]), 'utf8'),
                 'role' => strtolower(mb_convert_encoding(trim($parts[6]), 'utf8')),
-                'dashboards' => array(),
+                'favouriteDashboards' => array(),
                 'notifications' => array(
                     'methods' => array(
                         'sms' => false,
@@ -621,9 +614,9 @@ class ImportController extends AppController
                         'field_id' => $this->_getMongoIDFromFormatByName($client['fields'], 'loginfo'),
                         'data' => array(
                             'created' => new MongoDate(strtotime($row['created'])),
-                            'createdBy' => $row['loggedby'],
+                            'created_user_id' => $row['loggedby'],
                             'modified' => new MongoDate(strtotime($row['modified'])),
-                            'modifiedBy' => $modifiedBy,
+                            'modified_user_id' => $modifiedBy,
                             'version' => (int)$row['version']
                         ),
                     ),
@@ -709,6 +702,7 @@ class ImportController extends AppController
 
 
                 $attr = array();
+
                 //only abc and media hub use the spread (city/state)
                 if($client['name'] == 'ABC' || $client['name'] == 'MediaHub') {
                     $spread = $row['spread'];
@@ -719,6 +713,7 @@ class ImportController extends AppController
 
                 }
 
+                // State to attr list
                 if ($client['name'] == 'ABC' || $client['name'] == 'SBS') {
                     if($row['vic'] != null) $attr[] = $this->_getMongoIdForAttr($client['attributes'], 'VIC');
                     if($row['sa'] != null) $attr[] = $this->_getMongoIdForAttr($client['attributes'], 'SA');
@@ -729,25 +724,30 @@ class ImportController extends AppController
                     if($row['act'] != null) $attr[] = $this->_getMongoIdForAttr($client['attributes'], 'ACT');
                     if($row['tas'] != null) $attr[] = $this->_getMongoIdForAttr($client['attributes'], 'TAS');
                 }
-                //general log object
+
+                // Network selection to Attr list
+                $netSql = "SELECT log_id, channel_id, network_id FROM ". $client['database_prefix'] ."_dailylog_networks WHERE log_id = '{$row['hrid']}'";
+                if($netResult = $this->mysqli->query($netSql)) {
+                    while ($netRow = $netResult->fetch_assoc()) {
+
+                        // insert magic here
+                        $netRow;
+                    }
+                }
+
+                // log object
                 $log = array(
                     '_id' => new MongoId(),
                     'hrid' => $row['hrid'],
-                    'created_user_id' => 'TODO!!!!!!',
-                    'modified_user_id' => null,
                     'deleted' => false,
                     'fields' => $fields,
                     'attributes' => $attr,
-                    'version' => (int)$row['version'],
                     'client_id' => $client['_id'],
-                    'created' => new MongoDate(strtotime($row['created'])),
-                    'modified' => new MongoDate(strtotime($row['modified'])),
                 );
 
 
                 $this->_log("saving log - count: " . $this->logTotal . ' id: ' . $row['hrid'] .  ' for: ' . $client['name']);
-                $this->Log->create($log);
-                $this->Log->save();
+                $this->Log->save(array('Log'=>$log), array('callbacks'=>false, 'validate'=>false));
                 $logCount++;
                 $this->logTotal++;
             }
