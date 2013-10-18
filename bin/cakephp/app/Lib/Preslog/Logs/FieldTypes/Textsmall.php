@@ -10,6 +10,7 @@ use Preslog\Logs\FieldTypes\Textarea;
  */
 class Textsmall extends Textarea
 {
+
     protected $alias = 'textsmall';
     protected $name = 'Small Text Field';
     protected $description = 'A small text area for a single short piece of text.';
@@ -21,4 +22,14 @@ class Textsmall extends Textarea
     protected $mongoClientSchema = array(
         'placeholder'   => array('type' => 'string', 'length'=>1024),
     );
+
+
+    /**
+     * Convert for display
+     * @param array $data
+     */
+    public function convertForDisplay( &$data )
+    {
+        // No action required; text
+    }
 }

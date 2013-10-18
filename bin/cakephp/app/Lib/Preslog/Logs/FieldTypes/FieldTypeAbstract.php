@@ -43,6 +43,14 @@ abstract class FieldTypeAbstract
      */
     protected $mongoClientSchema =array();
 
+    /**
+     * @var array       Storage for Field Data, driven directly from the Client schema.
+     */
+    protected $fieldDetails = array();
+
+    /**
+    protected $defaultFieldProcess = null;
+
 
     /**
      * Fetch a list of properties for this field, or just the one specified.
@@ -82,17 +90,22 @@ abstract class FieldTypeAbstract
     }
 
 
-    /***
+    /**
      * used to create a human readable list for the aggregation details that can be used in the interface
      *
-     * @param $fieldName
-     * @param $fieldId
-     * @return array
+     * @param   $fieldName
+     * @return  array
      */
     public function listDetails($fieldName) {
         return array();
     }
 
+
+    /**
+     * @param $data
+     * @param null $aggregationType
+     * @return string
+     */
     public function chartDisplay($data, $aggregationType = null) {
         return '';
     }
@@ -100,11 +113,14 @@ abstract class FieldTypeAbstract
 
     /**
      * Initialise this field type with the given data.
-     * Usually used in conjunction with Select fields, etc.
-     * @param   array   $data       Data to configure this type
+     * - Will save the fieldData from the client
+     * - Should be called by an extended class, which has it's own handler for $field['data']
+     * @param   array   $field       Data to configure this type
      */
-    public function initialise( $data )
+    public function initialise( $field )
     {
+        $this->fieldDetails = $field;
+        unset($this->fieldDetails['data']);
     }
 
 
@@ -151,4 +167,45 @@ abstract class FieldTypeAbstract
         return array();
     }
 
+
+    /**
+     * Convert the given $data set into displayable data
+     * @param   array   $data           Data to convert
+     */
+    public function convertForDisplay( &$data )
+    {
+
+    }
+
+
+    /**
+     * Fetch the field details from $this->fieldData
+     * @return      array       Field detail information
+     */
+    public function getFieldDetails()
+    {
+        return $this->fieldDetails;
+    }
+
+
+    /**
+     * Convert data to individual fields
+     * Many field types contain more than one item of data. This splits them to individual blocks with names.
+     * @param   array           $data       Field data
+     * @param   closure|null    $callback   Callback function to process data, if set
+     * @return  array                       Fields
+     */
+    public function convertToFields( $data, $callback=null )
+    {
+        // Callback not set?
+        if ( is_callable($callback) === null)
+        {
+            return $this->defaultConvertToFields($data);
+        }
+
+        return $callback($data);
+    }
+
 }
+
+

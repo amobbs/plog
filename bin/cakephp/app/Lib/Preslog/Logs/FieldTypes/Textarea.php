@@ -15,7 +15,6 @@ class Textarea extends FieldTypeAbstract
     protected $name = 'Multi-Line Text Field';
     protected $description = 'A large text area for multiple lines of text.';
 
-
     protected $mongoSchema = array(
         'text'  => array('type' => 'string', 'length'=>65536),      // Arbitrary limit.
     );
@@ -40,6 +39,7 @@ class Textarea extends FieldTypeAbstract
         return $errors;
     }
 
+
     /**
      * Check if this fields configuration validates
      * For use by the Admin section when editing client fields.
@@ -49,4 +49,19 @@ class Textarea extends FieldTypeAbstract
 
     }
 
+
+    /**
+     * Convert for display
+     * @param array $data
+     */
+    public function convertForDisplay( &$data )
+    {
+        // No action required; text
+    }
+
+
+    protected function defaultConvertToFields( $field )
+    {
+        return array($this->fieldDetails['label'] => $field['data']['text']);
+    }
 }

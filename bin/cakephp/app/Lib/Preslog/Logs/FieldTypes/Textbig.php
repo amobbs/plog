@@ -22,4 +22,14 @@ class Textbig extends Textarea
     protected $mongoClientSchema = array(
         'placeholder'   => array('type' => 'string', 'length'=>1024),
     );
+
+
+    /**
+     * Convert for display
+     * @param array $data
+     */
+    public function convertForDisplay( &$data )
+    {
+        // No action required; text
+    }
 }

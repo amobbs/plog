@@ -2,13 +2,13 @@
 
 namespace Preslog\Logs\FieldTypes;
 
-use Preslog\Logs\FieldTypes\FieldTypeAbstract;
+use Preslog\Logs\FieldTypes\Select;
 
 /**
  * Preslog Field Type: SelectImpact
  * Handles drop-down select boxes for the impact field
  */
-class SelectImpact extends FieldTypeAbstract
+class SelectImpact extends Select
 {
 
     protected $alias = 'select-impact';

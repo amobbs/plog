@@ -245,7 +245,7 @@ class Log extends AppModel
         // Fetch all client info
         return $this->find('first', array(
             'conditions'=>array(
-                'hrid'=>$hrid
+                'hrid'=> (int) $hrid
             )
         ));
     }

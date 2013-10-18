@@ -51,4 +51,34 @@ class Loginfo extends FieldTypeAbstract
 
     protected $mongoClientSchema = array();
 
+
+    /**
+     * Convert LogInfo for display
+     */
+    public function convertForDisplay( &$data )
+    {
+        $newData = array();
+
+        // Convert user IDs to Users
+        $newData['created_user'] = '';
+        $newData['modified_user'] = '';
+
+        //Conver dates
+        $newData['created'] = $data['created']; // no action; RFC 2822
+        $newData['modified'] = $data['modified']; // no action; RFC 2822
+
+        // Switch data
+        $data = $newData;
+    }
+
+
+    protected function defaultConvertToFields( $field )
+    {
+        return array(
+            'Created' => $field['data']['created'],
+            'Created By' => $field['data']['created_by'],
+            'Modified' => $field['data']['modified'],
+            'Modified By' => $field['data']['modified_by'],
+        );
+    }
 }

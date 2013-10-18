@@ -68,4 +68,21 @@ class Duration extends FieldTypeAbstract
 
         return $data;
     }
+
+
+    /**
+     * Convert for display
+     * @param array $data
+     */
+    public function convertForDisplay( &$data )
+    {
+        // Nothing to do
+        // ['data']['seconds'] will show as duration in seconds
+    }
+
+
+    protected function defaultConvertToFields( $field )
+    {
+        return array($this->fieldDetails['label'] => $field['data']['duration']);
+    }
 }

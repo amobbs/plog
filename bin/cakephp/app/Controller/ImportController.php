@@ -11,6 +11,8 @@ class ImportController extends AppController
 
     private $logTotal = 0;
 
+    private $timezone = 'Australia/Sydney';
+
     private function _log($msg) {
         CakeLog::write('activity', $msg);
         $this->arrayLog[] = $msg;
@@ -613,9 +615,9 @@ class ImportController extends AppController
                     array(
                         'field_id' => $this->_getMongoIDFromFormatByName($client['fields'], 'loginfo'),
                         'data' => array(
-                            'created' => new MongoDate(strtotime($row['created'])),
+                            'created' => new MongoDate(strtotime($row['created'] .' '. $this->timezone)),
                             'created_user_id' => $row['loggedby'],
-                            'modified' => new MongoDate(strtotime($row['modified'])),
+                            'modified' => new MongoDate(strtotime($row['modified'] .' '. $this->timezone)),
                             'modified_user_id' => $modifiedBy,
                             'version' => (int)$row['version']
                         ),
@@ -629,7 +631,7 @@ class ImportController extends AppController
                     array(
                         'field_id' => $this->_getMongoIDFromFormatByName($client['fields'], 'datetime'),
                         'data' => array(
-                            'datetime' => new MongoDate(strtotime($row['logdate'] . ' ' . $row['logtime'])),
+                            'datetime' => new MongoDate(strtotime($row['logdate'] . ' ' . $row['logtime'] .' '. $this->timezone)),
                         ),
                     ),
                     array(
@@ -677,7 +679,7 @@ class ImportController extends AppController
                     array(
                         'field_id' =>  $this->_getMongoIDFromFormatByName($client['fields'], 'start_time'),
                         'data' => array(
-                            'datetime' => new MongoDate(strtotime($row['enteredtimestamp'])),
+                            'datetime' => new MongoDate(strtotime($row['enteredtimestamp'] .' '. $this->timezone)),
                         ),
                     ),
                     array(

@@ -83,4 +83,21 @@ class Datetime extends FieldTypeAbstract
                 return $data['day'] . '/' . $data['month']. '/' . substr($data['year'], 2);
         }
     }
+
+
+    /**
+     * Convert data to timestamp.
+     */
+    public function convertForDisplay( &$data )
+    {
+        // Nothing required
+        // ['data']['datetime'] will show as RFC 2822
+    }
+
+
+    protected function defaultConvertToFields( $field )
+    {
+        return array($this->fieldDetails['label'] => $field['data']['datetime']);
+    }
+
 }

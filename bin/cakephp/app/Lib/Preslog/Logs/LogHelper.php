@@ -83,8 +83,8 @@ class LogHelper
             // Fetch type
             $type = clone $this->fieldTypes[ $field['type'] ];
 
-            // Initialise type with type data
-            $type->initialise( $field['data'] );
+            // Initialise field with data
+            $type->initialise( $field );
 
             // Store type to lookup
             $this->fields[ $field['_id'] ] = $type;
@@ -312,15 +312,59 @@ class LogHelper
      */
     public function convertForDisplay( &$data )
     {
+        // Sort by field order
+        uasort($data['fields'], function($a, $b)
+        {
+            return ($a['order'] > $b['order']) ? -1 : 1;
+        });
+
         // Process fields to their data equivalents
         foreach ($data['fields'] as &$field)
         {
-            // Do conversion for field data
-            $field = $this->fields[ $field['field_id'] ]->convertForDisplay( $field );
+            // Get client info fields
+            $data = $this->fields[ $field['field_id'] ]->getFieldDetails();
+            $data['data'] = $field['data'];
+
+            // Convert for display purposes
+            $this->fields[ $field['field_id'] ]->convertForDisplay( $data['data'] );
+
+            // Switch
+            $field = $data;
         }
 
         // Process Attribute to their data equivalents, using the attributeHierarchy as the tree
         $this->convertAttributesForDisplay( $data['attributes'], $this->attributesHierarchy );
+    }
+
+
+    /**
+     * Convert the given $data by $typeCallbacks
+     * @param   array   $data               Data to be converted
+     * @param   array   $typeCallbacks      Callbacks to use for field types, indexed by Type, returning an array
+     * @return  array                       Series of fields, extrapolated for the data types
+     */
+    public function convertToFields( $data, $typeCallbacks = array() )
+    {
+        $outFields = array();
+
+        // Run fields through conversion/callbacks
+        foreach ($data['fields'] as $field)
+        {
+            // Get closure
+            $closure = (isset($typeCallbacks[ $field['type'] ]) ? $typeCallbacks[ $field['type'] ] : null);
+
+            // Convert to fields, using specified closure, and put to array
+            $outFields = array_merge($outFields, $this->fields[ $field['field_id'] ]->convertToFields( $field, $closure ));
+        }
+
+        // Run through attributes, to fetch collapsed list
+        foreach ($data['attributes'] as $attribute)
+        {
+            // TODO make this work properly, k?
+            $outFields[] = $attribute;
+        }
+
+        return $outFields;
     }
 
 
