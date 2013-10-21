@@ -165,21 +165,29 @@ angular.module( 'Preslog.usersAdmin', [
         $scope.selectedAttributes = {};
 
         /**
-         * seperate the selected attributes from the user details so it is easier for hierarchy field directive to read.
+         * Fix the client notifications so they can display properly in the form and then be saved to
+         * MongoDB with relative ease.
+         * Utilising:
+         * _.where() - http://lodash.com/docs#where
+         * _.defaults() - http://lodash.com/docs#defaults
          */
-        $scope.setSelectedAttributes = function() {
-            $scope.selectedAttributes = {};
-            for(var id in $scope.user.notifications.clients) {
-                var client = $scope.user.notifications.clients[id];
-                for(var attrId in client.attributes) {
-                    if (!$scope.selectedAttributes[client.client_id]) {
-                        $scope.selectedAttributes[client.client_id] = [];
-                    }
-                    $scope.selectedAttributes[client.client_id].push(client.attributes[attrId]);
-                }
+        var clientNotifications = [];
+        angular.forEach(optionsSource.notifications.clients, function(client) {
+            var search = _.where($scope.user.notifications.clients, {"client_id": client._id}),
+                currentVals = {client_id: client._id};
+            if (search.length > 0) {
+                currentVals.attributes = search[0].attributes;
+                currentVals.types = Array.isArray(search[0].types) ? {} : search[0].types;
             }
-        };
-        $scope.setSelectedAttributes();
+            clientNotifications.push(_.defaults(currentVals, {"attributes": [], "types": {}}));
+        });
+
+        // Save the new notification back to the client.
+        $scope.user.notifications.clients = clientNotifications;
+
+        $scope.$watch('user.notifications.clients', function() {
+            console.log($scope.user.notifications.clients);
+        }, true);
 
         /**
          * format the attribute children so we can display hierachy fields in 2 columns
