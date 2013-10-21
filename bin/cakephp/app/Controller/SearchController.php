@@ -32,6 +32,7 @@ class SearchController extends AppController
      */
     public function search()
     {
+        $query = $this->request->query['query'];
         $limit = isset($this->request->query['limit']) ? $this->request->query['limit'] : 3;
         $start =  isset($this->request->query['start']) ? $this->request->query['start'] : 1;
         $orderBy =  isset($this->request->query['order']) ? $this->request->query['order'] : '';
@@ -39,7 +40,7 @@ class SearchController extends AppController
 
         // Perform search
         // Returns Logs and Options to accompany
-        $return = $this->executeSearch( $this->request->query, $limit, $start, $orderBy, $asc);
+        $return = $this->executeSearch( $query, $limit, $start, $orderBy, $asc);
 
         // Return search result
         $this->set($return);
@@ -97,47 +98,30 @@ class SearchController extends AppController
         // Get the query
         $query = $params['query'];
 
-        // Validate: If the users permissions are "single-client",
+        // TODO Validate: If the users permissions are "single-client",
         // add a query value which ensures they only get results from their own client_id
         if (false)
         {
             $query .= 'AND client_id = my_client_id';
         }
 
-        // Translate query to Mongo
-        $jqlParser = new JqlParser();
-        $jqlParser->setSqlFromJql($query);
-        $match = $jqlParser->getMongoCriteria();
 
-        //find the ids of the fields we are going to order this search based on
-        $fieldDetails = array(
-            'clientIds' => array(),
-            'dataFieldName' => '',
-        );
         $user = $this->User->findById(
             $this->PreslogAuth->user('_id')
         );
 
+
         $clients = $this->User->listAvailableClientsForUser($user['User']);
-        foreach($clients as $clientDetails) {
-            $client = $this->Client->findById($clientDetails['_id']);
-            //check each format for the field we are ordering on
-            foreach($client['Client']['fields'] as $format) {
-                //exact name match, search on this field
-                if ($format['name'] == strtolower($orderBy)) {
-                    $fieldDetails['clientIds'][] = $format['_id'];
-                    $fieldDetails['dataFieldName'] = 'seconds'; //TODO add data field name for each field type
-                } else if ($format['name'] == 'loginfo' && //TODO clean up, we should get data field off type object
-                    (strtolower($orderBy) == 'created' || strtolower($orderBy) == 'modified')) {
-                    $fieldDetails['clientIds'][] = $format['_id'];
-                    $fieldDetails['dataFieldName'] = strtolower($orderBy);
-                }
-            }
+        $fullClients = array();
+        foreach($clients as $client) {
+            $c = $this->Client->findById($client['_id']);
+            $fullClients[] = $c['Client'];
+            $options[(string)$client['_id']] = $c['Client'];
         }
 
         // Do query
-        $results = $this->Log->findByQuery($match, $start, $limit, $fieldDetails, $orderAsc);
-        $total = $this->Log->countByQuery($match);
+        $results = $this->Log->findByQuery($query, $fullClients, $orderBy, $start, $limit, $orderAsc);
+        $total = $this->Log->countByQuery($query, $fullClients);
 
         $clients = array();
         $users = array();
@@ -146,13 +130,6 @@ class SearchController extends AppController
         {
             // Collate the list of clients for fetching the field format
             $clients[] = $result['Log']['client_id'];
-            //TODO clean up- when field helper is done
-//            if ($result['created_user_id'] instanceof MongoId) {
-//                $users[] = $result['created_user_id'];
-//            }
-//            if ($result['modified_user_id'] instanceof MongoId) {
-//                $users[] = $result['modified_user_id'];
-//            }
 
             // Drop the Accountability and Status fields if we don't have permission
             if (false)
@@ -162,15 +139,7 @@ class SearchController extends AppController
             }
         }
 
-        //Fetch the client field opts from the Log system
-        //Return an array of options by client
-        foreach ($clients as $client)
-        {
-            $clientObject = $this->Client->findById( $client );
-            $options[(string)$client] = $clientObject['Client'];
-        }
-
-        //Fetch the users involved
+        //TODO Fetch the users involved
         $userObjects = array();
         if (!empty($users)) {
             $userObjects = $this->Log->listUsersByIds($users);
@@ -234,8 +203,7 @@ class SearchController extends AppController
 
             //add all the custom attributes into display
             foreach($log['fields'] as $field) {
-                $logHelper = $this->Log->getLogHelperByClientId((string)$log['client_id']);
-                //$logHelper->convertForDisplay($log);
+                $clientEntity = $this->Client->getClientEntityById((string)$log['client_id']);
 
                 //get field info from the client
                 $fieldInfo = $this->_getFieldFromClientById($field['field_id'], $options[(string)$log['client_id']]);
@@ -291,12 +259,7 @@ class SearchController extends AppController
 
             $logs[] = $parsed;
         }
-//
-//        //TODO remove this it is just here for testing.
-//        if (!empty($query)) {
-//            $mongo = $this->Log->getDataSource();
-//            $mongo->toString($query);
-//        }
+
         // Return the Results and the corresponding Client opts
         return array('query' => $query, 'logs' => $logs,  'fields' => array_keys($allFieldNames),'total' => $total);
     }
