@@ -32,7 +32,6 @@ class SearchController extends AppController
      */
     public function search()
     {
-        $query = $this->request->query['query'];
         $limit = isset($this->request->query['limit']) ? $this->request->query['limit'] : 3;
         $start =  isset($this->request->query['start']) ? $this->request->query['start'] : 1;
         $orderBy =  isset($this->request->query['order']) ? $this->request->query['order'] : '';
@@ -40,7 +39,7 @@ class SearchController extends AppController
 
         // Perform search
         // Returns Logs and Options to accompany
-        $return = $this->executeSearch( $query, $limit, $start, $orderBy, $asc);
+        $return = $this->executeSearch( $this->request->query, $limit, $start, $orderBy, $asc);
 
         // Return search result
         $this->set($return);
@@ -95,7 +94,6 @@ class SearchController extends AppController
             $this->errorBadRequest(array('message'=>"Search parameters must not be empty. Please supply a valid JQL query to the 'query' variable."));
         }
 
-        // Get the query
         $query = $params['query'];
 
         // TODO Validate: If the users permissions are "single-client",
