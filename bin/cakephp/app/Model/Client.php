@@ -283,9 +283,9 @@ class Client extends AppModel
         // Initialize a log helper and convert the client
         // LogHelper is basically half way to client conversion anyway...
         $logHelper = new LogHelper();
-        $logHelper->setFieldTypes( Configure::read('Preslog.Fields') );
         $logHelper->setDataSource( $this->getDataSource() );
-        $logHelper->convertClientToDocument( $this->data[ $this->name ] );
+        $logHelper->setFieldTypes( Configure::read('Preslog.Fields') );
+        $logHelper->beforeSaveClient( $this->data[ $this->name ] );
 
         return true;
     }
@@ -324,7 +324,7 @@ class Client extends AppModel
             $logHelper = new LogHelper();
             $logHelper->setFieldTypes( Configure::read('Preslog.Fields') );
             $logHelper->setDataSource( $this->getDataSource() );
-            $logHelper->convertClientToArray( $result[ $this->name ] );
+            $logHelper->afterFindClient( $result[ $this->name ] );
         }
 
         return $results;

@@ -60,7 +60,6 @@ class LogHelper
         $this->dataSource = &$datasource;
     }
 
-
     /**
      * Instigate the client's schema based off the array given here
      * @param   array   $clientData    Array of Client info from client model
@@ -82,8 +81,9 @@ class LogHelper
             // Fetch type
             $type = clone $this->fieldTypes[ $field['type'] ];
 
-            // Initialise field with data
-            $type->initialise( $field );
+            // Initialise field
+            $type->setFieldData( $field );
+            $type->setDataSource( $this->dataSource );
 
             // Store type to lookup
             $this->fields[ $field['_id'] ] = $type;
@@ -182,11 +182,11 @@ class LogHelper
 
 
     /**
-     * Convert an Array to a Document
+     * beforeSave for Logs
      * - Process the Log Schema against the given $data and convert to a Document
      * @param   array       $data       Array to convert to Document format
      */
-    public function convertToDocument( &$data )
+    public function beforeSave( &$data )
     {
         // Check the datasource is available
         if (!$this->dataSource)
@@ -197,21 +197,17 @@ class LogHelper
         // Cycle through data and convert to new schema
         foreach ($data['fields'] as &$field)
         {
-            // Fetch schema for this object
-            $schema = $this->fields[ $field['field_id'] ]->getSchema();
-
-            // Convert data using datasource
-            $this->dataSource->convertToDocument($field['data'], $schema, array());
+            $this->fields[ $field['field_id'] ]->beforeSave($field);
         }
     }
 
 
     /**
-     * Convert a Document to an Array
+     * AfterFind for Logs
      * - Process the Log Schema and convert the given $data to an Array
      * @param   array       $data       Document to convert to Array format
      */
-    public function convertToArray( &$data )
+    public function afterFind( &$data )
     {
         // Check the datasource is available
         if (!$this->dataSource)
@@ -222,20 +218,17 @@ class LogHelper
         // Cycle through fields and run schema conversion
         foreach ($data['fields'] as &$field)
         {
-            // Fetch schema for this object
-            $schema = $this->fields[ $field['field_id'] ]->getSchema();
-
-            // Convert data using datasource
-            $this->dataSource->convertToArray($field['data'], $schema, array());
+            $this->fields[ $field['field_id'] ]->afterFind( $field );
         }
     }
 
 
     /**
-     * Convert client document to array
+     * AfterFind for Client
+     * - Convert client fields to arrays
      * @param   array       $data       client Document to convert to Array
      */
-    public function convertClientToArray( &$data )
+    public function afterFindClient( &$data )
     {
         // Check the datasource is available
         if (!$this->dataSource)
@@ -268,10 +261,11 @@ class LogHelper
 
 
     /**
-     * Convert array to document
+     * beforeSave for Client
+     * - Convert client field arrays to documents
      * @param   array       $data       Convert given client Array to Document
      */
-    public function convertClientToDocument( &$data )
+    public function beforeSaveClient( &$data )
     {
         // Check the datasource is available
         if (!$this->dataSource)

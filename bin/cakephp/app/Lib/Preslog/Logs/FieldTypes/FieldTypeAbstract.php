@@ -49,7 +49,9 @@ abstract class FieldTypeAbstract
     protected $fieldDetails = array();
 
     /**
-    protected $defaultFieldProcess = null;
+     * @var null        Data source object, back to main DB. Required for some lookups
+     */
+    protected $dataSource = null;
 
 
     /**
@@ -115,12 +117,22 @@ abstract class FieldTypeAbstract
      * Initialise this field type with the given data.
      * - Will save the fieldData from the client
      * - Should be called by an extended class, which has it's own handler for $field['data']
-     * @param   array   $field       Data to configure this type
+     * @param   array       $field          Data to configure this type
      */
-    public function initialise( $field )
+    public function setFieldData( $field )
     {
         $this->fieldDetails = $field;
         unset($this->fieldDetails['data']);
+    }
+
+
+    /**
+     * Initialise a link to the DBO source.
+     * @param   DboSource   $dboSource      Data source
+     */
+    public function setDataSource( $dboSource )
+    {
+        $this->dataSource = $dboSource;
     }
 
 
@@ -185,6 +197,28 @@ abstract class FieldTypeAbstract
     public function getFieldDetails()
     {
         return $this->fieldDetails;
+    }
+
+
+    /**
+     * Convert the given field to an Array, based on the field schema
+     * @param   array   $field      Field data
+     */
+    public function afterFind( &$field )
+    {
+        // Standard conversion
+        $this->dataSource->convertToArray($field['data'], $this->mongoSchema, array());
+    }
+
+
+    /**
+     * Convert the given field to an Array, based on the field schema
+     * @param   array   $field      Field data
+     */
+    public function beforeSave( &$field )
+    {
+        // Standard conversion
+        $this->dataSource->convertToDocument($field['data'], $this->mongoSchema, array());
     }
 
 

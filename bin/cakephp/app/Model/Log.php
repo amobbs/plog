@@ -31,8 +31,6 @@ class Log extends AppModel
         ),
         'attributes'    => array('type' => 'array'),
         'version'       => array('type' => 'integer'),
-        'created'       => array('type' => 'datetime', 'mongoType'=>'mongoDate'),
-        'modified'      => array('type' => 'datetime', 'mongoType'=>'mongoDate'),
     );
 
 
@@ -110,7 +108,7 @@ class Log extends AppModel
         }
 
         // Process schema of the fields
-        $logHelper->convertToDocument( $this->data[ $this->name ] );
+        $logHelper->beforeSave( $this->data[ $this->name ] );
 
         return true;
     }
@@ -152,7 +150,7 @@ class Log extends AppModel
             }
 
             // Convert the data
-            $logHelper->convertToArray( $result[ $this->name ] );
+            $logHelper->afterFind( $result[ $this->name ] );
         }
 
 
@@ -198,9 +196,9 @@ class Log extends AppModel
                 // Pass the schema from Client
                 // Pass the datasource to the helper
                 $logHelper = new LogHelper();
+                $logHelper->setDataSource( $this->getDataSource() );
                 $logHelper->setFieldTypes( Configure::read('Preslog.Fields') );
                 $logHelper->loadSchema( $client['Client'] );
-                $logHelper->setDataSource( $this->getDataSource() );
 
                 // Save to cache
                 $clientLogHelperCache[ $client_id ] = $logHelper;

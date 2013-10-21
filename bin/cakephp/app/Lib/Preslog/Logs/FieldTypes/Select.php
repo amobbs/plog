@@ -78,9 +78,9 @@ class Select extends FieldTypeAbstract
      * Initialise the select option with the available fields.
      * @param array $field
      */
-    public function initialise( $field )
+    public function setFieldData( $field )
     {
-        parent::initialise($field);
+        parent::setFieldData($field);
 
         // Convert array to have _id as the key, for lookups
         foreach ($field['data']['options'] as $option)
