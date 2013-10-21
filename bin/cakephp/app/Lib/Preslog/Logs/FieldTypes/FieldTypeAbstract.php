@@ -46,13 +46,22 @@ abstract class FieldTypeAbstract
     /**
      * @var array       Storage for Field Data, driven directly from the Client schema.
      */
-    protected $fieldDetails = array();
+    protected $fieldSettings = array();
 
     /**
      * @var null        Data source object, back to main DB. Required for some lookups
      */
     protected $dataSource = null;
 
+    /**
+     * @var array       Field data, as per the parent log
+     */
+    public $data = array();
+
+    /**
+     * @var null|LogEntity      Reference to parent Log Entity
+     */
+    protected $log = null;
 
     /**
      * Fetch a list of properties for this field, or just the one specified.
@@ -119,10 +128,10 @@ abstract class FieldTypeAbstract
      * - Should be called by an extended class, which has it's own handler for $field['data']
      * @param   array       $field          Data to configure this type
      */
-    public function setFieldData( $field )
+    public function setFieldSettings( $field )
     {
-        $this->fieldDetails = $field;
-        unset($this->fieldDetails['data']);
+        $this->fieldSettings = $field;
+
     }
 
 
@@ -130,29 +139,19 @@ abstract class FieldTypeAbstract
      * Initialise a link to the DBO source.
      * @param   DboSource   $dboSource      Data source
      */
-    public function setDataSource( $dboSource )
+    public function setDataSource( &$dboSource )
     {
-        $this->dataSource = $dboSource;
+        $this->dataSource = &$dboSource;
     }
 
 
     /**
-     * Fetch the schema for this type of object
-     * @returns     array       Schema definition for this field
+     * Backreference to the parent log.
+     * @param   $log
      */
-    public function getSchema()
+    public function setLog( &$log )
     {
-        return $this->mongoSchema;
-    }
-
-
-    /**
-     * Fetch the schema for this type of object
-     * @returns     array       Schema definition for this field
-     */
-    public function getClientSchema()
-    {
-        return $this->mongoClientSchema;
+        $this->log = &$log;
     }
 
 
@@ -194,9 +193,9 @@ abstract class FieldTypeAbstract
      * Fetch the field details from $this->fieldData
      * @return      array       Field detail information
      */
-    public function getFieldDetails()
+    public function getFieldSettings()
     {
-        return $this->fieldDetails;
+        return $this->fieldSettings;
     }
 
 
@@ -204,10 +203,10 @@ abstract class FieldTypeAbstract
      * Convert the given field to an Array, based on the field schema
      * @param   array   $field      Field data
      */
-    public function afterFind( &$field )
+    public function clientFromDocument( &$field )
     {
         // Standard conversion
-        $this->dataSource->convertToArray($field['data'], $this->mongoSchema, array());
+        $this->dataSource->convertToArray($field['data'], $this->mongoClientSchema, array());
     }
 
 
@@ -215,29 +214,93 @@ abstract class FieldTypeAbstract
      * Convert the given field to an Array, based on the field schema
      * @param   array   $field      Field data
      */
-    public function beforeSave( &$field )
+    public function clientToDocument( &$field )
     {
         // Standard conversion
-        $this->dataSource->convertToDocument($field['data'], $this->mongoSchema, array());
+        $this->dataSource->convertToDocument($field['data'], $this->mongoClientSchema, array());
+    }
+
+
+    /**
+     * Convert the given field to an Array, based on the field schema
+     * @param   array   $field      Field data
+     */
+    public function fromDocument( $field )
+    {
+        $this->data = $field;
+
+        // Standard conversion
+        $this->dataSource->convertToArray($this->data['data'], $this->mongoSchema, array());
+    }
+
+
+    /**
+     * Convert the given field to an Array, based on the field schema
+     * @return  array               Data
+     */
+    public function toDocument()
+    {
+        // Copy data
+        $out = $this->data;
+
+        // Standard conversion
+        $this->dataSource->convertToDocument($out['data'], $this->mongoSchema, array());
+
+        return $out;
+    }
+
+
+    /**
+     * Input field data from an array
+     * @param   array   $data       Array data
+     */
+    public function fromArray( $data )
+    {
+        $this->data = $data;
+    }
+
+
+    /**
+     * Output field data as an array
+     * @return  array
+     */
+    public function toArray()
+    {
+        return $this->data;
     }
 
 
     /**
      * Convert data to individual fields
      * Many field types contain more than one item of data. This splits them to individual blocks with names.
-     * @param   array           $data       Field data
      * @param   closure|null    $callback   Callback function to process data, if set
      * @return  array                       Fields
      */
-    public function convertToFields( $data, $callback=null )
+    public function convertToFields( $callback=null )
     {
-        // Callback not set?
-        if ( is_callable($callback) === null)
+        // Callback not available? Use default
+        if ( !is_callable($callback) )
         {
-            return $this->defaultConvertToFields($data);
+            return $this->defaultConvertToFields( $this->fieldSettings['label'], $this->data );
         }
 
-        return $callback($data);
+        // Use custom callback
+        return $callback( $this->fieldDetails['label'], $this->data );
+    }
+
+
+    /**
+     * afterFind callback
+     */
+    public function afterFind()
+    {
+    }
+
+    /**
+     * beforeSave Callback
+     */
+    public function beforeSave()
+    {
     }
 
 }

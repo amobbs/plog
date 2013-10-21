@@ -5,7 +5,7 @@
  */
 
 use Preslog\JqlParser\JqlParser;
-use Preslog\Logs\LogHelper;
+use Preslog\Logs\Entities\LogEntity;
 
 App::uses('AppModel', 'Model');
 
@@ -30,7 +30,6 @@ class Log extends AppModel
             ),
         ),
         'attributes'    => array('type' => 'array'),
-        'version'       => array('type' => 'integer'),
     );
 
 
@@ -61,11 +60,11 @@ class Log extends AppModel
         }
 
         // Load the schema
-        $logHelper = new LogHelper;
-        $logHelper->loadSchema($client);
+        $log = new LogEntity;
+        $log->setClientEntity($client);
 
         // Validate the data, using $this->validator() for errors
-        $errors = $logHelper->validates( $this->data );
+        $errors = $log->validates( $this->data );
         foreach ($errors as $field=>$error)
         {
             $this->validator()->invalidate($field, $error);
@@ -133,6 +132,9 @@ class Log extends AppModel
             return $results;
         }
 
+        // Load client Model
+        $clientModel = ClassRegistry::init('Client');
+
         // Do not try to do the next step is the client_id doesn't exist
         foreach ($results as &$result)
         {
@@ -143,73 +145,28 @@ class Log extends AppModel
                 continue;
             }
 
-            // Get the field helper instance for this client_id
-            if (!$logHelper = $this->getLogHelperByClientId( $result[ $this->name ]['client_id'] ))
+            // Get the client object instance for this log
+            if (!$client = $clientModel->getClientEntityById( $result[ $this->name ]['client_id'] ))
             {
                 continue;
             }
 
-            // Convert the data
-            $logHelper->afterFind( $result[ $this->name ] );
-        }
+            // Establish the entity
+            $log = new LogEntity;
+            $log->setDataSource( $this->getDataSource() );
+            $log->setClientEntity($client);
 
+            // Populate
+            $log->fromDocument($result[ $this->name ]);
+
+            // After Find tasks
+            $log->afterFind();
+
+            // Put results
+            $result[ $this->name ] = $log->toArray();
+        }
 
         return $results;
-    }
-
-
-    /**
-     * Fetch a LogHelper object by the given $client_id
-     * - Attempts to cache these requests per client, otherwise the lookup could take a long, long time.
-     * @param       string          $client_id      Client ID to load data for
-     * @return      LogHelper|bool                Field Helper Object, or false if client unavailable
-     */
-    public function getLogHelperByClientId( $client_id )
-    {
-        // Load poor-mans cache for this pageload
-        $clientLogHelperCache = Configure::read('Preslog.cache.clientLogHelper');
-        if (!is_array($clientLogHelperCache))
-        {
-            $clientLogHelperCache = array();
-        }
-
-        // Attempt to load the ClientSchema from cache before calling up a new one.
-        if ( isset($clientLogHelperCache[ $client_id ]))
-        {
-            return $clientLogHelperCache[ $client_id ];
-        }
-        else
-        {
-            // Fetch the Client Schema
-            $clientModel = ClassRegistry::init('Client');
-            $client = $clientModel->find('first', array(
-                'conditions'=>array(
-                    '_id' => $client_id,
-                )
-            ));
-
-            // Abort if the client couldn't be loaded from the DB
-            if ( sizeof($client) )
-            {
-                // Initialize field helper
-                // Pass the field types available from config
-                // Pass the schema from Client
-                // Pass the datasource to the helper
-                $logHelper = new LogHelper();
-                $logHelper->setDataSource( $this->getDataSource() );
-                $logHelper->setFieldTypes( Configure::read('Preslog.Fields') );
-                $logHelper->loadSchema( $client['Client'] );
-
-                // Save to cache
-                $clientLogHelperCache[ $client_id ] = $logHelper;
-                Configure::write('Preslog.cache.clientLogHelper', $clientLogHelperCache);
-
-                return $logHelper;
-            }
-        }
-
-        // Fell through - return our failure to find the client/logHelper
-        return false;
     }
 
 

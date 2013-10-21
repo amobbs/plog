@@ -78,9 +78,9 @@ class Select extends FieldTypeAbstract
      * Initialise the select option with the available fields.
      * @param array $field
      */
-    public function setFieldData( $field )
+    public function setFieldSettings( $field )
     {
-        parent::setFieldData($field);
+        parent::setFieldSettings($field);
 
         // Convert array to have _id as the key, for lookups
         foreach ($field['data']['options'] as $option)
@@ -113,19 +113,16 @@ class Select extends FieldTypeAbstract
 
 
     /**
-     * Convert Select fields to their subordinate selection
-     * @param array $data
+     * Convert the Selected ID to a name
+     * @param $label
+     * @param $field
+     * @return array
      */
-    public function convertForDisplay( &$data )
+    protected function defaultConvertToFields( $label, $field )
     {
-        // Swap for the name of the item
-        $data['selected'] = $this->options[ $data['selected'] ];
-    }
+        $selected = (isset($this->options[ $field['data']['selected'] ]) ? $this->options[ $field['data']['selected'] ] : '');
 
-
-    protected function defaultConvertToFields( $field )
-    {
-        return array($this->fieldDetails['label'] => $field['data']['selected']);
+        return array($label => $selected);
     }
 
 }

@@ -4,7 +4,7 @@
  * Client Model
  */
 
-use Preslog\Logs\LogHelper;
+use Preslog\Logs\Entities\ClientEntity;
 
 App::uses('AppModel', 'Model');
 App::uses('Client', 'Model');
@@ -279,13 +279,20 @@ class Client extends AppModel
         $this->data['Client'] = $client;
 
 
-        // Convert to Document
-        // Initialize a log helper and convert the client
-        // LogHelper is basically half way to client conversion anyway...
-        $logHelper = new LogHelper();
-        $logHelper->setDataSource( $this->getDataSource() );
-        $logHelper->setFieldTypes( Configure::read('Preslog.Fields') );
-        $logHelper->beforeSaveClient( $this->data[ $this->name ] );
+        // Convert to an Array
+        // Initialize a client entity
+        $client = new ClientEntity();
+        $client->setDataSource( $this->getDataSource() );
+        $client->setFieldTypes( Configure::read('Preslog.Fields') );
+
+        // Load to the entity
+        $client->fromArray( $this->data['Client'] );
+
+        // Perform beforeSave tasks
+        $client->beforeSave();
+
+        // Prep for save by outputting as a document
+        $this->data['Client'] = $client->toDocument();
 
         return true;
     }
@@ -319,12 +326,19 @@ class Client extends AppModel
                 continue;
             }
 
-            // Initialize a log helper and convert the client
-            // LogHelper is basically half way to client conversion anyway...
-            $logHelper = new LogHelper();
-            $logHelper->setFieldTypes( Configure::read('Preslog.Fields') );
-            $logHelper->setDataSource( $this->getDataSource() );
-            $logHelper->afterFindClient( $result[ $this->name ] );
+            // Initialize a client entity
+            $client = new ClientEntity();
+            $client->setFieldTypes( Configure::read('Preslog.Fields') );
+            $client->setDataSource( $this->getDataSource() );
+
+            // Load as a doc
+            $client->fromDocument($result[ $this->name ]);
+
+            // Perform after find
+            $client->afterFind(  );
+
+            // Put to an array rather than a doc
+            $result[ $this->name ] = $client->toArray();
         }
 
         return $results;
@@ -505,6 +519,56 @@ class Client extends AppModel
     public function getLogoPath( $client )
     {
         return '/assets/clients/'.(string) $client['_id'].'/logo.png';
+    }
+
+
+    /**
+     * Fetch a Client Entity by the given Client ID
+     * @param   string      $id             Mongo ID of the client
+     * @return  ClientEntity                Client Entity, after initialisation
+     */
+    public function getClientEntityById( $client_id )
+    {
+        // Poor-mans cache method
+        $clientCache = Configure::read('Preslog.cache.clientEntity');
+        if (!is_array($clientCache))
+        {
+            $clientCache = array();
+        }
+
+        // Attempt to load the ClientSchema from cache before calling up a new one.
+        if ( isset($clientCache[ $client_id ]))
+        {
+            return $clientCache[ $client_id ];
+        }
+
+        // Prep client object
+        $client = new ClientEntity;
+        $client->setDataSource( $this->getDataSource() );
+        $client->setFieldTypes( Configure::read('Preslog.Fields') );
+
+        // Find the client in the DB
+        $clientData = $this->find('first', array(
+            'conditions'=>array(
+                '_id'=> $client_id,
+            ),
+        ));
+
+        // Catch any errors
+        if (empty($clientData))
+        {
+            trigger_error("Client could not be loaded by ID '{$id}''", E_USER_ERROR);
+        }
+
+        // Load from doc
+        $client->fromDocument( $clientData['Client'] );
+
+        // Write to cache
+        $clientCache[ $client_id ] = $client;
+        Configure::write('Preslog.cache.clientEntity', $clientCache);
+
+        // Pass back
+        return $client;
     }
 
 }

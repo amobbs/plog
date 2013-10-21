@@ -55,16 +55,15 @@ class Loginfo extends FieldTypeAbstract
     /**
      * Convert LogInfo to Array
      * - Lookup the users for Created and Modified and populate additional field data
-     * @param   array   $field
      */
-    public function afterFind( &$field )
+    public function afterFind()
     {
-        parent::afterFind( $field );
+        parent::afterFind();
 
         // Collate IDs for IN() search
         $userList = array();
-        $userList[] = (!empty($field['data']['created_user_id']) ? $field['data']['created_user_id'] : '');
-        $userList[] = (!empty($field['data']['created_user_id']) ? $field['data']['modified_user_id'] : '');
+        $userList[] = (!empty($this->data['data']['created_user_id']) ? $this->data['data']['created_user_id'] : '');
+        $userList[] = (!empty($this->data['data']['created_user_id']) ? $this->data['data']['modified_user_id'] : '');
 
         // User Model and search
         $userModel = \ClassRegistry::init('User');
@@ -87,12 +86,12 @@ class Loginfo extends FieldTypeAbstract
         }
 
         // Apply users
-        $field['data']['created_user'] = (isset($userLookup[ $field['data']['created_user_id'] ])
-            ? $userLookup[ $field['data']['created_user_id'] ]
+        $this->data['data']['created_user'] = (isset($userLookup[ $this->data['data']['created_user_id'] ])
+            ? $userLookup[ $this->data['data']['created_user_id'] ]
             : array()
         );
-        $field['data']['modified_user'] = (isset($userLookup[ $field['data']['modified_user_id'] ])
-            ? $userLookup[ $field['data']['modified_user_id'] ]
+        $this->data['data']['modified_user'] = (isset($userLookup[ $this->data['data']['modified_user_id'] ])
+            ? $userLookup[ $this->data['data']['modified_user_id'] ]
             : array()
         );
 
@@ -104,39 +103,26 @@ class Loginfo extends FieldTypeAbstract
      * - Update the Modified user with the current user
      * - Update the Created user with the current user if it hasn't already been set before.
      */
-    public function beforeSave( &$data )
+    public function beforeSave()
     {
 
     }
 
 
-    /**
-     * Convert LogInfo for display
-     */
-    public function convertForDisplay( &$data )
+    protected function defaultConvertToFields( $label, $data )
     {
-        $newData = array();
+        $cUser = (!isset($this->data['data']['created_user']['_id']) ? '' :
+            $this->data['data']['created_user']['firstName'] .' '. $this->data['data']['created_user']['lastName']
+        );
+        $mUser = (!isset($this->data['data']['modified_user']['_id']) ? '' :
+            $this->data['data']['modified_user']['firstName'] .' '. $this->data['data']['modified_user']['lastName']
+        );
 
-        // Convert user IDs to Users
-        $newData['created_user'] = '';
-        $newData['modified_user'] = '';
-
-        //Conver dates
-        $newData['created'] = $data['created']; // no action; RFC 2822
-        $newData['modified'] = $data['modified']; // no action; RFC 2822
-
-        // Switch data
-        $data = $newData;
-    }
-
-
-    protected function defaultConvertToFields( $field )
-    {
         return array(
-            'Created' => $field['data']['created'],
-            'Created By' => $field['data']['created_by'],
-            'Modified' => $field['data']['modified'],
-            'Modified By' => $field['data']['modified_by'],
+            'Created' => date('Y-m-d H:i:s', strtotime($this->data['data']['created'])),
+            'Created By' => $cUser,
+            'Modified' => date('Y-m-d H:i:s', strtotime($this->data['data']['modified'])),
+            'Modified By' => $mUser,
         );
     }
 }
