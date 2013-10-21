@@ -51,6 +51,13 @@ Configure::write('Preslog', array(
     'Debug' => array(
         'email' => 'dave@4mation.com.au',
     ),
+
+    /**
+     * regular expressions
+     */
+    'regex' => array(
+        'duration' => '/^(([0-9]{1,3})([h|H]))?(([0-9]{1,3})([m|M]))?(([0-9]{1,3})([s|S]))?$/', //30h20m5s or 20s or 30m20s or 30h10s or 30h or 20m
+    )
 ));
 
 

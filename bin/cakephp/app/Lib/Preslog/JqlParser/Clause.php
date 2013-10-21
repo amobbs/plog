@@ -1,6 +1,7 @@
 <?php
 namespace Preslog\JqlParser;
 
+use Configure;
 use MongoDate;
 use Preslog\JqlParser\JqlFunction\JqlFunction;
 use Preslog\JqlParser\JqlOperator\JqlOperator;
@@ -35,10 +36,41 @@ class Clause {
     public function getField() { return $this->_field; }
 
     public function getFunctionEvaluated() {
+        //convert dates to mongo date
         if (strtotime($this->_value)) {
             return new MongoDate(strtotime($this->_value));
         }
 
+        //cast numbers to int
+        if (is_numeric($this->_value)) {
+            return (int)$this->_value;
+        }
+
+        //convert duration style to seconds
+        $durationRegex = Configure::read('Preslog')['regex']['duration'];
+        $matches = array();
+        if (preg_match($durationRegex, $this->_value, $matches)) {
+            $duration = 0;
+            for($i = 1; $i < sizeof($matches); $i++) {
+               switch ($matches[$i + 1]) {
+                   case 'H':
+                       $duration += ($matches[$i] * 60) * 60;
+                       $i++;
+                       break;
+                   case 'M':
+                       $duration += $matches[$i] * 60;
+                       $i++;
+                       break;
+                   case 'S':
+                       $duration += $matches[$i];
+                       $i++;
+                       break;
+               }
+            }
+            return $duration;
+        }
+
+        //execute any functions found
         return $this->_executeFunctionInValue($this->_value);
     }
 
