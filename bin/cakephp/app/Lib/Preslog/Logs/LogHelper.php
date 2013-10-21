@@ -21,7 +21,6 @@ class LogHelper
      */
     protected $fields = array();
 
-
     /**
      * @var     array       $fieldTypes             Array of field type objects
      */
@@ -312,24 +311,36 @@ class LogHelper
      */
     public function convertForDisplay( &$data )
     {
-        // Sort by field order
-        uasort($data['fields'], function($a, $b)
+        // Only function if the client has been loaded
+        if (empty($this->clientId))
         {
-            return ($a['order'] > $b['order']) ? -1 : 1;
-        });
+            trigger_error("Unable to convert for display - client has not been loaded for LogHelper", E_USER_ERROR);
+        }
 
-        // Process fields to their data equivalents
-        foreach ($data['fields'] as &$field)
+        // Fields
+        if (sizeof($data['fields']))
         {
-            // Get client info fields
-            $data = $this->fields[ $field['field_id'] ]->getFieldDetails();
-            $data['data'] = $field['data'];
+            // Process fields to their data equivalents
+            foreach ($data['fields'] as &$field)
+            {
+                // Get client info fields
+                $fieldData = $this->fields[ $field['field_id'] ]->getFieldDetails();
 
-            // Convert for display purposes
-            $this->fields[ $field['field_id'] ]->convertForDisplay( $data['data'] );
+                // Persist data to client info collection
+                $fieldData['data'] = $field['data'];
 
-            // Switch
-            $field = $data;
+                // Convert for display purposes
+                $this->fields[ $field['field_id'] ]->convertForDisplay( $fieldData['data'] );
+
+                // Switch content
+                $field = $fieldData;
+            }
+
+            // Apply field sort
+            usort($data['fields'], function($a, $b)
+            {
+                return ($a['order'] > $b['order']) ? 1 : -1;
+            });
         }
 
         // Process Attribute to their data equivalents, using the attributeHierarchy as the tree
