@@ -4,6 +4,7 @@ namespace Preslog\PreslogParser;
 
 use ClassRegistry;
 use MongoId;
+use MongoRegex;
 use Preslog\JqlParser\Clause;
 use Preslog\JqlParser\JqlKeyword\JqlKeyword;
 use Preslog\JqlParser\JqlParser;
@@ -84,6 +85,7 @@ class PreslogParser extends JqlParser {
 
         $fieldIds = array();
         $dataField = '';
+        $isText = false;
 
         $clientModel = ClassRegistry::init('Client');
 
@@ -103,9 +105,19 @@ class PreslogParser extends JqlParser {
             }
             else
             {
+                $schema = $clientField->getMongoSchema();
                 $schemaKeys = array_keys( $clientField->getMongoSchema() );
                 $dataField = $schemaKeys[0];
+                if($schema[$dataField]['type'] == 'string')
+                {
+                    $isText = true;
+                }
             }
+        }
+
+        if ($isText)
+        {
+            $value = new MongoRegex("/^$value$/i");
         }
 
         return array(

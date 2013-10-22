@@ -188,6 +188,14 @@ abstract class FieldTypeAbstract
 
     }
 
+    /**
+     * convert the given $data
+     * @param $data
+     */
+    public function convertForMongo( &$data )
+    {
+
+    }
 
     /**
      * Fetch the field details from $this->fieldData

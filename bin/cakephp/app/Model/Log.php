@@ -254,32 +254,30 @@ class Log extends AppModel
                 '$unwind' => '$fields',
             );
 
+            $clientModel = ClassRegistry::init('Client');
+
             $fieldIds = array();
             $orderByDataFieldName = '';
             foreach($clients as $clientDetails) {
-                //check each format for the field we are ordering on
-                foreach($clientDetails['fields'] as $format) {
-                    //exact name match, search on this field
-                    if ($format['name'] == strtolower($orderBy)) {
-                        $fieldIds[] = array(
-                            '$eq' => array(
-                                '$fields.field_id',
-                                new MongoId($format['_id']),
-                            ),
-                        );
+                $clientEntity = $clientModel->getClientEntityById((string)$clientDetails['_id']);
 
-                        $orderByDataFieldName = 'seconds'; //TODO add data field name for each field type
-                    } else if ($format['name'] == 'loginfo' && //TODO clean up, we should get data field off type object
-                        (strtolower($orderBy) == 'created' || strtolower($orderBy) == 'modified')) {
-                        $fieldIds[] = array(
-                            '$eq' => array(
-                                '$fields.field_id',
-                                new MongoId($format['_id']),
-                            ),
-                        );
+                $clientField = $clientEntity->getFieldTypeByName( strtolower($orderBy) );
+                $clientFieldSettings = $clientField->getFieldSettings();
+                $fieldIds[] = array(
+                    '$eq' => array(
+                        '$fields.field_id',
+                        new MongoId($clientFieldSettings['_id']),
+                    ),
+                );
 
-                        $orderByDataFieldName = strtolower($orderBy);
-                    }
+                if (strtolower($orderBy) == 'created' || strtolower($orderBy) == 'modified' || strtolower($orderBy) == 'version')
+                {
+                    $orderByDataFieldName = strtolower($orderBy);
+                }
+                else
+                {
+                    $schemaKeys = array_keys( $clientField->getMongoSchema() );
+                    $orderByDataFieldName = $schemaKeys[0];
                 }
             }
 
