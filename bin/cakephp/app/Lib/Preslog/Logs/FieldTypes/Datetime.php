@@ -85,19 +85,9 @@ class Datetime extends FieldTypeAbstract
     }
 
 
-    /**
-     * Convert data to timestamp.
-     */
-    public function convertForDisplay( &$data )
+    protected function defaultConvertToFields( $label, $field )
     {
-        // Nothing required
-        // ['data']['datetime'] will show as RFC 2822
-    }
-
-
-    protected function defaultConvertToFields( $field )
-    {
-        return array($this->fieldDetails['label'] => $field['data']['datetime']);
+        return array($label => date('Y-m-d H:i:s', strtotime($field['data']['datetime'])));
     }
 
 }

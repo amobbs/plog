@@ -4,8 +4,8 @@
  * Log Model
  */
 
-use Preslog\JqlParser\JqlParser;
-use Preslog\Logs\LogHelper;
+use Preslog\Logs\Entities\LogEntity;
+use Preslog\PreslogParser\PreslogParser;
 
 App::uses('AppModel', 'Model');
 
@@ -30,9 +30,6 @@ class Log extends AppModel
             ),
         ),
         'attributes'    => array('type' => 'array'),
-        'version'       => array('type' => 'integer'),
-        'created'       => array('type' => 'datetime', 'mongoType'=>'mongoDate'),
-        'modified'      => array('type' => 'datetime', 'mongoType'=>'mongoDate'),
     );
 
 
@@ -63,11 +60,11 @@ class Log extends AppModel
         }
 
         // Load the schema
-        $logHelper = new LogHelper;
-        $logHelper->loadSchema($client);
+        $log = new LogEntity;
+        $log->setClientEntity($client);
 
         // Validate the data, using $this->validator() for errors
-        $errors = $logHelper->validates( $this->data );
+        $errors = $log->validates( $this->data );
         foreach ($errors as $field=>$error)
         {
             $this->validator()->invalidate($field, $error);
@@ -110,7 +107,7 @@ class Log extends AppModel
         }
 
         // Process schema of the fields
-        $logHelper->convertToDocument( $this->data[ $this->name ] );
+        $logHelper->beforeSave( $this->data[ $this->name ] );
 
         return true;
     }
@@ -135,6 +132,9 @@ class Log extends AppModel
             return $results;
         }
 
+        // Load client Model
+        $clientModel = ClassRegistry::init('Client');
+
         // Do not try to do the next step is the client_id doesn't exist
         foreach ($results as &$result)
         {
@@ -145,73 +145,28 @@ class Log extends AppModel
                 continue;
             }
 
-            // Get the field helper instance for this client_id
-            if (!$logHelper = $this->getLogHelperByClientId( $result[ $this->name ]['client_id'] ))
+            // Get the client object instance for this log
+            if (!$client = $clientModel->getClientEntityById( $result[ $this->name ]['client_id'] ))
             {
                 continue;
             }
 
-            // Convert the data
-            $logHelper->convertToArray( $result[ $this->name ] );
-        }
+            // Establish the entity
+            $log = new LogEntity;
+            $log->setDataSource( $this->getDataSource() );
+            $log->setClientEntity($client);
 
+            // Populate
+            $log->fromDocument($result[ $this->name ]);
+
+            // After Find tasks
+            $log->afterFind();
+
+            // Put results
+            $result[ $this->name ] = $log->toArray();
+        }
 
         return $results;
-    }
-
-
-    /**
-     * Fetch a LogHelper object by the given $client_id
-     * - Attempts to cache these requests per client, otherwise the lookup could take a long, long time.
-     * @param       string          $client_id      Client ID to load data for
-     * @return      LogHelper|bool                Field Helper Object, or false if client unavailable
-     */
-    public function getLogHelperByClientId( $client_id )
-    {
-        // Load poor-mans cache for this pageload
-        $clientLogHelperCache = Configure::read('Preslog.cache.clientLogHelper');
-        if (!is_array($clientLogHelperCache))
-        {
-            $clientLogHelperCache = array();
-        }
-
-        // Attempt to load the ClientSchema from cache before calling up a new one.
-        if ( isset($clientLogHelperCache[ $client_id ]))
-        {
-            return $clientLogHelperCache[ $client_id ];
-        }
-        else
-        {
-            // Fetch the Client Schema
-            $clientModel = ClassRegistry::init('Client');
-            $client = $clientModel->find('first', array(
-                'conditions'=>array(
-                    '_id' => $client_id,
-                )
-            ));
-
-            // Abort if the client couldn't be loaded from the DB
-            if ( sizeof($client) )
-            {
-                // Initialize field helper
-                // Pass the field types available from config
-                // Pass the schema from Client
-                // Pass the datasource to the helper
-                $logHelper = new LogHelper();
-                $logHelper->setFieldTypes( Configure::read('Preslog.Fields') );
-                $logHelper->loadSchema( $client['Client'] );
-                $logHelper->setDataSource( $this->getDataSource() );
-
-                // Save to cache
-                $clientLogHelperCache[ $client_id ] = $logHelper;
-                Configure::write('Preslog.cache.clientLogHelper', $clientLogHelperCache);
-
-                return $logHelper;
-            }
-        }
-
-        // Fell through - return our failure to find the client/logHelper
-        return false;
     }
 
 
@@ -262,46 +217,68 @@ class Log extends AppModel
      * @throws Exception
      * @return mixed
      */
-    public function findByQuery($query, $start = 0, $limit = 10, $fieldDetails = array(), $orderAsc = true) {
-
+    public function findByQuery($query, $clients = array(), $orderBy = '', $start = 0, $limit = 10, $fieldDetails = array(), $orderAsc = true) {
         if (empty($query)) {
             return array();
         }
 
+        //convert string from jql to mongo array
+        $parser = new PreslogParser();
+        $parser->setSqlFromJql($query);
+        $match = $parser->parse($clients);
+
         //initial match to find records we want
         $criteria[] = array(
-            '$match' => $query,
+            '$match' => $match,
         );
 
-        //rewind the log back together and add the extra 'sort' field so we can sort
-        $group = array(
-            //list all the log fields since there is no 'select *'
-            '_id' => '$_id',
-            'hrid' => array('$first' => '$hrid'),
-            'client_id' => array('$first' => '$client_id'),
-            'fields' => array('$push' => '$fields'),
-            'attributes' => array('$first' => '$attributes'),
-            'deleted' => array('$first' => '$deleted'),
-         );
-
         //are we sorting the results?
-        if (isset($fieldDetails['clientIds']) && !empty($fieldDetails['clientIds'])) {
+        if (!empty($orderBy)) {
+            //used later to rewind the log back together and add the extra 'sort' field so we can sort
+            $group = array(
+                //list all the log fields since there is no 'select *'
+                '_id' => '$_id',
+                'hrid' => array('$first' => '$hrid'),
+                'client_id' => array('$first' => '$client_id'),
+                'fields' => array('$push' => '$fields'),
+                'attributes' => array('$first' => '$attributes'),
+                'deleted' => array('$first' => '$deleted'),
+                'created' => array('$first' => '$created'),
+                'modified' => array('$first' => '$modified'),
+            );
+
+
 
             //split all the fields up so we can order based on sub field
             $criteria[] = array(
                 '$unwind' => '$fields',
             );
 
-            //put the list of field id's we are sorting on into a friendly array
+            $clientModel = ClassRegistry::init('Client');
+
             $fieldIds = array();
-            foreach($fieldDetails['clientIds'] as $id) {
-                //only return the fields we are searching against
+            $orderByDataFieldName = '';
+            foreach($clients as $clientDetails) {
+                $clientEntity = $clientModel->getClientEntityById((string)$clientDetails['_id']);
+
+                $clientField = $clientEntity->getFieldTypeByName( strtolower($orderBy) );
+                $clientFieldSettings = $clientField->getFieldSettings();
                 $fieldIds[] = array(
                     '$eq' => array(
                         '$fields.field_id',
-                        new MongoId($id),
+                        new MongoId($clientFieldSettings['_id']),
                     ),
                 );
+
+                if (strtolower($orderBy) == 'created' || strtolower($orderBy) == 'modified' || strtolower($orderBy) == 'version')
+                {
+                    $orderByDataFieldName = strtolower($orderBy);
+                }
+                else
+                {
+                    $schemaKeys = array_keys( $clientField->getMongoSchema() );
+                    $orderByDataFieldName = $schemaKeys[0];
+                }
             }
 
             //extra field so we can perform the sort
@@ -328,7 +305,7 @@ class Log extends AppModel
             //do the sort
             $criteria[] = array(
                 '$sort' => array(
-                    'sort.' . $fieldDetails['dataFieldName'] => $orderDirection,
+                    'sort.' . $orderByDataFieldName => $orderDirection,
                 )
             );
         }
@@ -363,13 +340,18 @@ class Log extends AppModel
         return $this->_filterResults( $logs );
     }
 
-    public function countByQuery($query) {
+    public function countByQuery($query, $clients) {
+        //convert string from jql to mongo array
+        $parser = new PreslogParser();
+        $parser->setSqlFromJql($query);
+        $match = $parser->parse($clients);
+
         return $this->find('count', array(
-            'conditions' => $query,
+            'conditions' => $match,
         ));
     }
 
-    public function findAggregate($match, $mongoPipeLine = array(), $fields = array()) {
+    public function findAggregate($query, $clients, $mongoPipeLine = array(), $fields = array()) {
         if (empty($match)) {
             return array(
                 'result' => array(),
@@ -377,15 +359,19 @@ class Log extends AppModel
             );
         }
 
+        //convert string from jql to mongo array
+        $parser = new PreslogParser();
+        $parser->setSqlFromJql($query);
+        $match = $parser->parse($clients);
 
         //initial match to get the set we are working on
         $criteria = array(
             array('$match' => $match),
         );
 
-
         //get all the field ids in one array
         $fieldIds = array();
+        $fieldNames = $parser->getFieldList();
         foreach($fields as $name => $ids) {
             $fieldIds = array_merge($fieldIds, $ids);
         }
@@ -561,6 +547,51 @@ class Log extends AppModel
         );
 
         return $options;
+    }
+
+    public function buildMatch($match, $clients) {
+        //convert any named fields to the client mongo id's
+        $newMatch = array();
+        foreach($match as $key => $value) {
+            //we only need to replace conditions that relate to subDocuments (not on the top level of the schema)
+            if ($key == '$or' || $key == '$and') {
+                $newMatch[]['$or'] = $this->buildMatch($value, $clients);
+            } else if (in_array($key, array_keys($this->mongoSchema))) {
+                $newMatch[$key] = $value;
+            } else {
+                //find all instances of this field for each client
+                $fieldIds = array();
+                $dataField = 'seconds';
+                foreach($clients as $client) {
+                    foreach($client['fields'] as $field) {
+                        if ($key == 'loginfo' &&
+                            ($field['name'] == 'created' || $field['name'] == 'modified')) {
+                            $dataField = $field['name'];
+                            $fieldIds[] = $field['_id'];
+                        }
+                        if ($field['name'] == $key) {
+                            $fieldIds[] = $field['_id'];
+                        }
+                    }
+                }
+
+                if (!isset($newMatch['$or'])) {
+                    $newMatch['$or'] = array();
+                }
+
+                $newMatch['$or'][] = array(
+                    'fields.data.' . $dataField => $value,
+                    'fields.field_id' => array(
+                        '$in' => $fieldIds,
+                    ),
+                );
+
+            }
+        }
+
+        return $newMatch;
+
+
     }
 
 }

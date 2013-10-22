@@ -23,13 +23,4 @@ class Textsmall extends Textarea
         'placeholder'   => array('type' => 'string', 'length'=>1024),
     );
 
-
-    /**
-     * Convert for display
-     * @param array $data
-     */
-    public function convertForDisplay( &$data )
-    {
-        // No action required; text
-    }
 }

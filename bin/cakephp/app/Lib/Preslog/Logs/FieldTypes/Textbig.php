@@ -24,12 +24,4 @@ class Textbig extends Textarea
     );
 
 
-    /**
-     * Convert for display
-     * @param array $data
-     */
-    public function convertForDisplay( &$data )
-    {
-        // No action required; text
-    }
 }

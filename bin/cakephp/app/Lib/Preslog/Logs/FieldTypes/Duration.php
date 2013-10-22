@@ -81,8 +81,31 @@ class Duration extends FieldTypeAbstract
     }
 
 
-    protected function defaultConvertToFields( $field )
+    protected function defaultConvertToFields( $label, $field )
     {
-        return array($this->fieldDetails['label'] => $field['data']['duration']);
+        $seconds = $field['data']['seconds'];
+
+        $units = array(
+            604800 => 'w',
+            86400 => 'd',
+            3600 => 'h',
+            60 => 'm',
+            1 => 's'
+        );
+
+        $result = array();
+
+        foreach ($units as $divisor => $unitName) {
+            $units = intval($seconds / $divisor);
+
+            if ($units) {
+                $seconds %= $divisor;
+                $result[] = "$units$unitName";
+            }
+        }
+
+        $time = implode(' ', $result);
+
+        return array($label => $time);
     }
 }

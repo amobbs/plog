@@ -805,19 +805,12 @@ class DashboardsController extends AppController
             return $widgetObject;
         }
 
-        // Translate query to Mongo
-        $jqlParser = new JqlParser();
-        $jqlParser->setSqlFromJql($query);
-        $match = $jqlParser->getMongoCriteria();
-
         $clients = $this->getClientListForUser();
         $allClients = $this->Client->find('all', array(
             'conditions' => array('_id' => array('$in' => $clients))
         ));
 
-        //find which fields we are using in the query
-        $fieldNames = $jqlParser->getFieldList();
-
+        $fieldNames = array();
         //add the fields that are being used for grouping (aggregation)
         foreach($aggregationPipeLine as $fieldName => $fields) {
             foreach($fields as $name => $value) {
@@ -827,8 +820,10 @@ class DashboardsController extends AppController
 
         //get the id's for the fields from each available client
         $fields = array();
+        $fullClients = array();
         foreach ($clients as $clientId) {
             $client = $this->Client->findById($clientId);
+            $fullClients[] = $client['Client'];
             foreach($client['Client']['fields'] as $format) {
                 //does this client have a field with this name?
                 if (in_array($format['name'], $fieldNames)) {
@@ -847,9 +842,9 @@ class DashboardsController extends AppController
 
         //send to database and get results.
         if ($widgetObject->isAggregate()) {
-           $result = $this->Log->findAggregate($match, $aggregationPipeLine, $fields);
+           $result = $this->Log->findAggregate($query, $fullClients, $aggregationPipeLine, $fields);
         } else {
-            $result = $this->Log->findByQuery($match, $aggregationPipeLine);
+            $result = $this->Log->findByQuery($query, $fullClients);
         }
 
         if (isset($result['ok'])) {

@@ -50,18 +50,8 @@ class Textarea extends FieldTypeAbstract
     }
 
 
-    /**
-     * Convert for display
-     * @param array $data
-     */
-    public function convertForDisplay( &$data )
+    protected function defaultConvertToFields( $label, $field )
     {
-        // No action required; text
-    }
-
-
-    protected function defaultConvertToFields( $field )
-    {
-        return array($this->fieldDetails['label'] => $field['data']['text']);
+        return array($label => $field['data']['text']);
     }
 }

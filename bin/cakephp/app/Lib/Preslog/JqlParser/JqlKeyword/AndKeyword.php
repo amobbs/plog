@@ -12,6 +12,6 @@ namespace Preslog\JqlParser\JqlKeyword;
 
 class AndKeyword extends JqlKeyword{
     public function __construct() {
-        parent::__construct(' AND ', ' AND ', '$elementMatch');
+        parent::__construct(' AND ', ' AND ', '$and');
     }
 }

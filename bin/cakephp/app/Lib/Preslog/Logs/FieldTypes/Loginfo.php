@@ -53,32 +53,76 @@ class Loginfo extends FieldTypeAbstract
 
 
     /**
-     * Convert LogInfo for display
+     * Convert LogInfo to Array
+     * - Lookup the users for Created and Modified and populate additional field data
      */
-    public function convertForDisplay( &$data )
+    public function afterFind()
     {
-        $newData = array();
+        parent::afterFind();
 
-        // Convert user IDs to Users
-        $newData['created_user'] = '';
-        $newData['modified_user'] = '';
+        // Collate IDs for IN() search
+        $userList = array();
+        $userList[] = (!empty($this->data['data']['created_user_id']) ? $this->data['data']['created_user_id'] : '');
+        $userList[] = (!empty($this->data['data']['created_user_id']) ? $this->data['data']['modified_user_id'] : '');
 
-        //Conver dates
-        $newData['created'] = $data['created']; // no action; RFC 2822
-        $newData['modified'] = $data['modified']; // no action; RFC 2822
+        // User Model and search
+        $userModel = \ClassRegistry::init('User');
+        $users = $userModel->find('all', array(
+            'conditions'=>array(
+                '_id'=>array('$in'=>$userList),
+            ),
+            'fields'=>array(
+                '_id',
+                'firstName',
+                'lastName'
+            ),
+        ));
 
-        // Switch data
-        $data = $newData;
+        // Convert to lookup
+        $userLookup = array();
+        foreach ($users as $user)
+        {
+            $userLookup[ $user['User']['_id'] ] = $user['User'];
+        }
+
+        // Apply users
+        $this->data['data']['created_user'] = (isset($userLookup[ $this->data['data']['created_user_id'] ])
+            ? $userLookup[ $this->data['data']['created_user_id'] ]
+            : array()
+        );
+        $this->data['data']['modified_user'] = (isset($userLookup[ $this->data['data']['modified_user_id'] ])
+            ? $userLookup[ $this->data['data']['modified_user_id'] ]
+            : array()
+        );
+
     }
 
 
-    protected function defaultConvertToFields( $field )
+    /**
+     * Before save
+     * - Update the Modified user with the current user
+     * - Update the Created user with the current user if it hasn't already been set before.
+     */
+    public function beforeSave()
     {
+
+    }
+
+
+    protected function defaultConvertToFields( $label, $data )
+    {
+        $cUser = (!isset($this->data['data']['created_user']['_id']) ? '' :
+            $this->data['data']['created_user']['firstName'] .' '. $this->data['data']['created_user']['lastName']
+        );
+        $mUser = (!isset($this->data['data']['modified_user']['_id']) ? '' :
+            $this->data['data']['modified_user']['firstName'] .' '. $this->data['data']['modified_user']['lastName']
+        );
+
         return array(
-            'Created' => $field['data']['created'],
-            'Created By' => $field['data']['created_by'],
-            'Modified' => $field['data']['modified'],
-            'Modified By' => $field['data']['modified_by'],
+            'Created' => date('Y-m-d H:i:s', strtotime($this->data['data']['created'])),
+            'Created By' => $cUser,
+            'Modified' => date('Y-m-d H:i:s', strtotime($this->data['data']['modified'])),
+            'Modified By' => $mUser,
         );
     }
 }

@@ -11,19 +11,19 @@ class JqlParser {
      * jql version of expression
      * @var string
      */
-    private $_jql = '';
+    protected $_jql = '';
 
     /**
      * sql version of expression
      * @var string
      */
-    private $_sql = '';
+    protected $_sql = '';
 
     /**
      * generic version of expression
      * @var array
      */
-    private $_expression = array();
+    protected $_expression = array();
 
     public function getJql() {
         return $this->_jql;
@@ -457,7 +457,7 @@ class JqlParser {
         return $count;
     }
 
-    private function _findKeyword($keywordSymbol, $jqlSymbol = TRUE) {
+    protected function _findKeyword($keywordSymbol, $jqlSymbol = TRUE) {
         foreach (JqlKeyword::listKeywords() as $keyword) {
             if ($jqlSymbol) {
                 if (strtoupper($keywordSymbol) == $keyword->getJqlSymbol())
