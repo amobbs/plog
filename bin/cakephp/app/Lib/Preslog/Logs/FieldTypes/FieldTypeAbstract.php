@@ -188,6 +188,14 @@ abstract class FieldTypeAbstract
 
     }
 
+    /**
+     * convert the given $data
+     * @param $data
+     */
+    public function convertForMongo( &$data )
+    {
+
+    }
 
     /**
      * Fetch the field details from $this->fieldData
@@ -196,6 +204,15 @@ abstract class FieldTypeAbstract
     public function getFieldSettings()
     {
         return $this->fieldSettings;
+    }
+
+    /**
+     * fetch the mongo schema
+     * @return  array   details of the schema used in mongo
+     */
+    public function getMongoSchema()
+    {
+        return $this->mongoSchema;
     }
 
 

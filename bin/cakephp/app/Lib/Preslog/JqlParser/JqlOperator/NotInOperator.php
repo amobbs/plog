@@ -16,6 +16,6 @@ class NotInOperator extends JqlOperator {
      * constructor
      */
     public function __construct() {
-        parent::_construct('NOT IN', 'NOT IN', '', true);
+        parent::_construct('NOT IN', 'NOT IN', '$nin', true);
     }
 }

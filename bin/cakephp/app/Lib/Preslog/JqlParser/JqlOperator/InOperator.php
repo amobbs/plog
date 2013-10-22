@@ -16,7 +16,7 @@ class InOperator extends JqlOperator {
      * constructor
      */
     public function __construct() {
-        parent::_construct('IN', 'IN', '', true);
+        parent::_construct('IN', 'IN', '$in', true);
     }
 
     public function formatValueForJql($value) {

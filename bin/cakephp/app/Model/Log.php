@@ -4,8 +4,8 @@
  * Log Model
  */
 
-use Preslog\JqlParser\JqlParser;
 use Preslog\Logs\Entities\LogEntity;
+use Preslog\PreslogParser\PreslogParser;
 
 App::uses('AppModel', 'Model');
 
@@ -209,6 +209,8 @@ class Log extends AppModel
      * fetch a list of logs based on mongo find
      *
      * @param $query
+     * @param array $clients        - list of client details to be used to match field names to their id's if TRUE is passed in all clients are used.
+     * @param string $orderBy
      * @param int $start            - log id to return from
      * @param int $limit            - how many logs top return
      * @param array $fieldDetails   - array('clientIds', 'dataFieldName') list of field ids from each client and the name of the value we want to sort on from the found field.
@@ -217,46 +219,81 @@ class Log extends AppModel
      * @throws Exception
      * @return mixed
      */
-    public function findByQuery($query, $start = 0, $limit = 10, $fieldDetails = array(), $orderAsc = true) {
-
+    public function findByQuery($query, $clients = array(), $orderBy = '', $start = 0, $limit = 10, $fieldDetails = array(), $orderAsc = true) {
         if (empty($query)) {
             return array();
         }
 
+        //double check that the called of this function actually wants to check against all clients. (cron jobs are not logged in but want to check all clients
+        if ($clients === true)
+        {
+            $clientModel = ClassRegistry::init('Client');
+            $clientObjs = $clientModel->find('all');
+            $clients = array();
+            foreach($clientObjs as $c)
+            {
+                $clients[] = $c['Client'];
+            }
+
+        }
+
+        //convert string from jql to mongo array
+        $parser = new PreslogParser();
+        $parser->setSqlFromJql($query);
+        $match = $parser->parse($clients);
+
         //initial match to find records we want
         $criteria[] = array(
-            '$match' => $query,
+            '$match' => $match,
         );
 
-        //rewind the log back together and add the extra 'sort' field so we can sort
-        $group = array(
-            //list all the log fields since there is no 'select *'
-            '_id' => '$_id',
-            'hrid' => array('$first' => '$hrid'),
-            'client_id' => array('$first' => '$client_id'),
-            'fields' => array('$push' => '$fields'),
-            'attributes' => array('$first' => '$attributes'),
-            'deleted' => array('$first' => '$deleted'),
-         );
-
         //are we sorting the results?
-        if (isset($fieldDetails['clientIds']) && !empty($fieldDetails['clientIds'])) {
+        if (!empty($orderBy)) {
+            //used later to rewind the log back together and add the extra 'sort' field so we can sort
+            $group = array(
+                //list all the log fields since there is no 'select *'
+                '_id' => '$_id',
+                'hrid' => array('$first' => '$hrid'),
+                'client_id' => array('$first' => '$client_id'),
+                'fields' => array('$push' => '$fields'),
+                'attributes' => array('$first' => '$attributes'),
+                'deleted' => array('$first' => '$deleted'),
+                'created' => array('$first' => '$created'),
+                'modified' => array('$first' => '$modified'),
+            );
+
+
 
             //split all the fields up so we can order based on sub field
             $criteria[] = array(
                 '$unwind' => '$fields',
             );
 
-            //put the list of field id's we are sorting on into a friendly array
+            $clientModel = ClassRegistry::init('Client');
+
             $fieldIds = array();
-            foreach($fieldDetails['clientIds'] as $id) {
-                //only return the fields we are searching against
+            $orderByDataFieldName = '';
+            foreach($clients as $clientDetails) {
+                $clientEntity = $clientModel->getClientEntityById((string)$clientDetails['_id']);
+
+                $clientField = $clientEntity->getFieldTypeByName( strtolower($orderBy) );
+                $clientFieldSettings = $clientField->getFieldSettings();
                 $fieldIds[] = array(
                     '$eq' => array(
                         '$fields.field_id',
-                        new MongoId($id),
+                        new MongoId($clientFieldSettings['_id']),
                     ),
                 );
+
+                if (strtolower($orderBy) == 'created' || strtolower($orderBy) == 'modified' || strtolower($orderBy) == 'version')
+                {
+                    $orderByDataFieldName = strtolower($orderBy);
+                }
+                else
+                {
+                    $schemaKeys = array_keys( $clientField->getMongoSchema() );
+                    $orderByDataFieldName = $schemaKeys[0];
+                }
             }
 
             //extra field so we can perform the sort
@@ -283,20 +320,26 @@ class Log extends AppModel
             //do the sort
             $criteria[] = array(
                 '$sort' => array(
-                    'sort.' . $fieldDetails['dataFieldName'] => $orderDirection,
+                    'sort.' . $orderByDataFieldName => $orderDirection,
                 )
             );
         }
 
         //offset for pagination
-        $criteria[] = array(
-            '$skip' => (int)$start,
-        );
+        if ($start >= 0)
+        {
+            $criteria[] = array(
+                '$skip' => (int)$start,
+            );
+        }
 
         //limit for pagination
-        $criteria[] = array(
-            '$limit' => (int)$limit,
-        );
+        if ($limit > 0)
+        {
+            $criteria[] = array(
+                '$limit' => (int)$limit,
+            );
+        }
 
         //actually do the query and return result
         $mongo = $this->getMongoDb();
@@ -318,29 +361,38 @@ class Log extends AppModel
         return $this->_filterResults( $logs );
     }
 
-    public function countByQuery($query) {
+    public function countByQuery($query, $clients) {
+        //convert string from jql to mongo array
+        $parser = new PreslogParser();
+        $parser->setSqlFromJql($query);
+        $match = $parser->parse($clients);
+
         return $this->find('count', array(
-            'conditions' => $query,
+            'conditions' => $match,
         ));
     }
 
-    public function findAggregate($match, $mongoPipeLine = array(), $fields = array()) {
-        if (empty($match)) {
+    public function findAggregate($query, $clients, $mongoPipeLine = array(), $fields = array()) {
+        if (empty($query)) {
             return array(
                 'result' => array(),
                 'ok' => 1,
             );
         }
 
+        //convert string from jql to mongo array
+        $parser = new PreslogParser();
+        $parser->setSqlFromJql($query);
+        $match = $parser->parse($clients);
 
         //initial match to get the set we are working on
         $criteria = array(
             array('$match' => $match),
         );
 
-
         //get all the field ids in one array
         $fieldIds = array();
+        $fieldNames = $parser->getFieldList();
         foreach($fields as $name => $ids) {
             $fieldIds = array_merge($fieldIds, $ids);
         }
@@ -516,6 +568,51 @@ class Log extends AppModel
         );
 
         return $options;
+    }
+
+    public function buildMatch($match, $clients) {
+        //convert any named fields to the client mongo id's
+        $newMatch = array();
+        foreach($match as $key => $value) {
+            //we only need to replace conditions that relate to subDocuments (not on the top level of the schema)
+            if ($key == '$or' || $key == '$and') {
+                $newMatch[]['$or'] = $this->buildMatch($value, $clients);
+            } else if (in_array($key, array_keys($this->mongoSchema))) {
+                $newMatch[$key] = $value;
+            } else {
+                //find all instances of this field for each client
+                $fieldIds = array();
+                $dataField = 'seconds';
+                foreach($clients as $client) {
+                    foreach($client['fields'] as $field) {
+                        if ($key == 'loginfo' &&
+                            ($field['name'] == 'created' || $field['name'] == 'modified')) {
+                            $dataField = $field['name'];
+                            $fieldIds[] = $field['_id'];
+                        }
+                        if ($field['name'] == $key) {
+                            $fieldIds[] = $field['_id'];
+                        }
+                    }
+                }
+
+                if (!isset($newMatch['$or'])) {
+                    $newMatch['$or'] = array();
+                }
+
+                $newMatch['$or'][] = array(
+                    'fields.data.' . $dataField => $value,
+                    'fields.field_id' => array(
+                        '$in' => $fieldIds,
+                    ),
+                );
+
+            }
+        }
+
+        return $newMatch;
+
+
     }
 
 }

@@ -76,7 +76,7 @@ Configure::write('Preslog.export.exec', array(
  */
 Configure::write('Preslog.export.layout', array(
     //details for log tables
-    'titleColWidth' => 1440, // in twips
+    'titleColWidth' => 2160, // in twips
     'detailColWidth' => 7200, // in twips
     'titleColor' => '1F497D', //in hex - dark blue
     'cellBorder' => 10, //in twips
