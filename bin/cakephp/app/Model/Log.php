@@ -209,6 +209,8 @@ class Log extends AppModel
      * fetch a list of logs based on mongo find
      *
      * @param $query
+     * @param array $clients
+     * @param string $orderBy
      * @param int $start            - log id to return from
      * @param int $limit            - how many logs top return
      * @param array $fieldDetails   - array('clientIds', 'dataFieldName') list of field ids from each client and the name of the value we want to sort on from the found field.
@@ -220,6 +222,19 @@ class Log extends AppModel
     public function findByQuery($query, $clients = array(), $orderBy = '', $start = 0, $limit = 10, $fieldDetails = array(), $orderAsc = true) {
         if (empty($query)) {
             return array();
+        }
+
+        //double check that the called of this function actually wants to check against all clients. (cron jobs are not logged in but want to check all clients
+        if ($clients === true)
+        {
+            $clientModel = ClassRegistry::init('Client');
+            $clientObjs = $clientModel->find('all');
+            $clients = array();
+            foreach($clientObjs as $c)
+            {
+                $clients[] = $c['Client'];
+            }
+
         }
 
         //convert string from jql to mongo array
@@ -352,7 +367,7 @@ class Log extends AppModel
     }
 
     public function findAggregate($query, $clients, $mongoPipeLine = array(), $fields = array()) {
-        if (empty($match)) {
+        if (empty($query)) {
             return array(
                 'result' => array(),
                 'ok' => 1,

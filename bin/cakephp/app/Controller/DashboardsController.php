@@ -1,6 +1,7 @@
 <?php
 
 
+use Preslog\Logs\FieldTypes\FieldTypeAbstract;
 use Preslog\Logs\FieldTypes\TypeAbstract;
 use Preslog\JqlParser\JqlParser;
 use Swagger\Annotations as SWG;
@@ -711,7 +712,7 @@ class DashboardsController extends AppController
             $mongoPipeLine[$optionName] = array();
 
             foreach($options as $option) {
-                if ($option['fieldType'] instanceof TypeAbstract) {
+                if ($option['fieldType'] instanceof FieldTypeAbstract) {
                     //find all fields for all clients of this type
                     foreach($clients as $clientId) {
                         $client = $this->Client->findById($clientId);

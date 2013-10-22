@@ -20,6 +20,7 @@ class JqlFunction {
             'endOfDay' => new EndOfDayFunction(),
             'endOfWeek' => new EndOfWeekFunction(),
             'endOfMonth' => new EndOfMonthFunction(),
+            'empty' => new EmptyFunction(),
         );
     }
 
