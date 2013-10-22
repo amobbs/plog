@@ -209,7 +209,7 @@ class Log extends AppModel
      * fetch a list of logs based on mongo find
      *
      * @param $query
-     * @param array $clients
+     * @param array $clients        - list of client details to be used to match field names to their id's if TRUE is passed in all clients are used.
      * @param string $orderBy
      * @param int $start            - log id to return from
      * @param int $limit            - how many logs top return
