@@ -30,10 +30,10 @@ angular.module('logWidget', [])
 
                 //download a docx version of this dashboard TODO fix this hard coded url
                 scope.exportXLS = function(query, orderBy, asc) {
-                    window.location = 'http://local.preslog/api/search/export'
-                        + '?query=' + encodeURI(query)
-                        + '&order=' + encodeURI(orderBy)
-                        + '&orderasc=' + encodeURI(asc);
+                    window.location = 'http://local.preslog/api/search/export' +
+                        '?query=' + encodeURI(query) +
+                        '&order=' + encodeURI(orderBy) +
+                        '&orderasc=' + encodeURI(asc);
                 };
 
                 //if any params change get new logs
