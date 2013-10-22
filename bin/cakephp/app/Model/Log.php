@@ -326,14 +326,20 @@ class Log extends AppModel
         }
 
         //offset for pagination
-        $criteria[] = array(
-            '$skip' => (int)$start,
-        );
+        if ($start >= 0)
+        {
+            $criteria[] = array(
+                '$skip' => (int)$start,
+            );
+        }
 
         //limit for pagination
-        $criteria[] = array(
-            '$limit' => (int)$limit,
-        );
+        if ($limit > 0)
+        {
+            $criteria[] = array(
+                '$limit' => (int)$limit,
+            );
+        }
 
         //actually do the query and return result
         $mongo = $this->getMongoDb();

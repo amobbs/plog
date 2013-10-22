@@ -19,22 +19,6 @@ angular.module('logWidget', [])
                 logData: '='
             },
             link: function( scope, element, attrs, ctrl ) {
-                console.log(scope.params);
-                /*
-                 $scope.logWidgetParams = {
-                 page: 1,
-                 total: 0,
-                 perPageOptions: [3, 5, 10, 20],
-                 perPage: 3,
-                 sorting: {
-                 name: 'created'
-                 },
-                 query: '',
-                 logs: [],
-                 lastUpdated: new Date()
-                 };
-                 */
-
                 scope.total = 0; //total number of logs
                 scope.logs = []; //logs to be displayed
 
@@ -43,6 +27,14 @@ angular.module('logWidget', [])
                 scope.showing = 0; //how many logs are currently showing (may differ from prePage)
 
                 scope.orderDirections = ['Asc', 'Desc'];
+
+                //download a docx version of this dashboard TODO fix this hard coded url
+                scope.exportXLS = function(query, orderBy, asc) {
+                    window.location = 'http://local.preslog/api/search/export'
+                        + '?query=' + encodeURI(query)
+                        + '&order=' + encodeURI(orderBy)
+                        + '&orderasc=' + encodeURI(asc);
+                };
 
                 //if any params change get new logs
                 scope.$watch(function() { return scope.params; }, function() {
