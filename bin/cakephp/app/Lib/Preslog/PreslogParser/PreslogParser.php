@@ -83,17 +83,46 @@ class PreslogParser extends JqlParser {
         $fieldName = $keys[0];
         $value = $expression[$fieldName];
 
+        if ($fieldName == 'id')
+        {
+            return array(
+                'hrid' => $value
+            );
+        }
+
+        $clientModel = ClassRegistry::init('Client');
+        if ($fieldName == 'client')
+        {
+            $clientId = '';
+            $clients = $clientModel->find('all');
+            foreach($clients as $client)
+            {
+                if (strtoupper($client['Client']['name']) == $value)
+                {
+                    $clientId = $client['Client']['_id'];
+                }
+            }
+
+            return array(
+                'client_id' => new MongoId($clientId),
+            );
+        }
+
         $fieldIds = array();
         $dataField = '';
         $isText = false;
 
-        $clientModel = ClassRegistry::init('Client');
 
         //go through each client we have access to and get the id for the field we are searching on
         foreach($this->clients as $client) {
             $clientEntity = $clientModel->getClientEntityById((string)$client['_id']);
 
             $clientField = $clientEntity->getFieldTypeByName( $fieldName );
+            if ($clientField == null)
+            {
+                continue;
+            }
+
             $clientFieldSettings = $clientField->getFieldSettings();
 
             $fieldIds[] = new MongoId($clientFieldSettings['_id']);

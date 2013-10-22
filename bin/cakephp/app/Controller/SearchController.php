@@ -67,9 +67,12 @@ class SearchController extends AppController
      */
     public function export()
     {
+        $orderBy =  isset($this->request->query['order']) ? $this->request->query['order'] : '';
+        $asc = isset($this->request->query['orderasc']) ? $this->request->query['orderasc'] == 'true' : true;
+
         // Perform search
         // Returns Logs and Options to accompany
-        $return = $this->executeSearch( $this->request->query );
+        $return = $this->executeSearch( $this->request->query, -1, 0, $orderBy, $asc);
 
         // Generate export XLS from data
         $this->set($return);
@@ -84,7 +87,7 @@ class SearchController extends AppController
     /**
      * Perform the search operation and return a series of log data sufficient for search results.
      */
-    protected function executeSearch( $params, $limit = 3, $start = 1, $orderBy = '', $orderAsc = true)
+    protected function executeSearch( $params, $limit = 3, $start = 0, $orderBy = '', $orderAsc = true)
     {
         $options = array();
 
