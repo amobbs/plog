@@ -457,7 +457,7 @@ class JqlParser {
         return $count;
     }
 
-    private function _findKeyword($keywordSymbol, $jqlSymbol = TRUE) {
+    protected function _findKeyword($keywordSymbol, $jqlSymbol = TRUE) {
         foreach (JqlKeyword::listKeywords() as $keyword) {
             if ($jqlSymbol) {
                 if (strtoupper($keywordSymbol) == $keyword->getJqlSymbol())

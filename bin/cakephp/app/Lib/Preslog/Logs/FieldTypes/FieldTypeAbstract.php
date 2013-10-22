@@ -198,6 +198,15 @@ abstract class FieldTypeAbstract
         return $this->fieldSettings;
     }
 
+    /**
+     * fetch the mongo schema
+     * @return  array   details of the schema used in mongo
+     */
+    public function getMongoSchema()
+    {
+        return $this->mongoSchema;
+    }
+
 
     /**
      * Convert the given field to an Array, based on the field schema

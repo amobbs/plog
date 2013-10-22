@@ -2,6 +2,7 @@
 
 namespace Preslog\PreslogParser;
 
+use ClassRegistry;
 use MongoId;
 use Preslog\JqlParser\Clause;
 use Preslog\JqlParser\JqlKeyword\JqlKeyword;
@@ -76,23 +77,34 @@ class PreslogParser extends JqlParser {
      * @return array
      */
     private function mongoExpressionToPreslog($expression) {
+        //there should only be one field/value pair in the expression
         $keys = array_keys($expression);
         $fieldName = $keys[0];
         $value = $expression[$fieldName];
 
-        //TODO replace with clientEntity
         $fieldIds = array();
-        $dataField = 'seconds';
+        $dataField = '';
+
+        $clientModel = ClassRegistry::init('Client');
+
+        //go through each client we have access to and get the id for the field we are searching on
         foreach($this->clients as $client) {
-            foreach($client['fields'] as $field) {
-                if ($fieldName == 'loginfo' &&
-                    ($field['name'] == 'created' || $field['name'] == 'modified')) {
-                    $dataField = $field['name'];
-                    $fieldIds[] = new MongoId($field['_id']);
-                }
-                if ($field['name'] == $fieldName) {
-                    $fieldIds[] = new MongoId($field['_id']);
-                }
+            $clientEntity = $clientModel->getClientEntityById((string)$client['_id']);
+
+            $clientField = $clientEntity->getFieldTypeByName( $fieldName );
+            $clientFieldSettings = $clientField->getFieldSettings();
+
+            $fieldIds[] = new MongoId($clientFieldSettings['_id']);
+
+            //created/modified/version are actually all inside loginfo, so a stupid special case for them
+            if ($fieldName == 'created' || $fieldName == 'modified' || $fieldName == 'version')
+            {
+                $dataField = $fieldName;
+            }
+            else
+            {
+                $schemaKeys = array_keys( $clientField->getMongoSchema() );
+                $dataField = $schemaKeys[0];
             }
         }
 

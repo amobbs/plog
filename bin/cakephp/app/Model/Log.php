@@ -232,17 +232,6 @@ class Log extends AppModel
             '$match' => $match,
         );
 
-        //rewind the log back together and add the extra 'sort' field so we can sort
-        $group = array(
-            //list all the log fields since there is no 'select *'
-            '_id' => '$_id',
-            'hrid' => array('$first' => '$hrid'),
-            'client_id' => array('$first' => '$client_id'),
-            'fields' => array('$push' => '$fields'),
-            'attributes' => array('$first' => '$attributes'),
-            'deleted' => array('$first' => '$deleted'),
-         );
-
         //are we sorting the results?
         if (!empty($orderBy)) {
             //used later to rewind the log back together and add the extra 'sort' field so we can sort

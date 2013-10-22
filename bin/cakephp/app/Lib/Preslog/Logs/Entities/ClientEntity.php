@@ -157,6 +157,23 @@ class ClientEntity
         $this->fieldTypes = $fieldTypes;
     }
 
+    public function getFieldTypeByName( $fieldName )
+    {
+        if ($fieldName == 'created' || $fieldName == 'modified' || $fieldName == 'version')
+        {
+            $fieldName = 'loginfo';
+        }
+
+
+        foreach( $this->fields as $field )
+        {
+            $fieldSettings = $field->getFieldSettings();
+            if ($fieldSettings['name'] == $fieldName)
+            {
+                return $field;
+            }
+        }
+    }
 
     /**
      * Set Data Source
