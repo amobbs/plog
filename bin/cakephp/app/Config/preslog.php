@@ -57,6 +57,13 @@ Configure::write('Preslog', array(
      */
     'regex' => array(
         'duration' => '/^(([0-9]{1,3})([h|H]))?(([0-9]{1,3})([m|M]))?(([0-9]{1,3})([s|S]))?$/', //30h20m5s or 20s or 30m20s or 30h10s or 30h or 20m
+    ),
+
+    /**
+     * Dashboard IDs
+     */
+    'Dashboards' => array(
+        'unqualified' => '5260bf91ad7cc5782600002a'
     )
 ));
 

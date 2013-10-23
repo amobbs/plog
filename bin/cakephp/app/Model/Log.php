@@ -8,6 +8,8 @@ use Preslog\Logs\Entities\LogEntity;
 use Preslog\PreslogParser\PreslogParser;
 
 App::uses('AppModel', 'Model');
+App::uses('ClassRegistry', 'Utility');
+App::uses('Set', 'Utility');
 
 class Log extends AppModel
 {
@@ -167,6 +169,20 @@ class Log extends AppModel
         }
 
         return $results;
+    }
+
+    /**
+     * After Save Callback
+     *
+     * @param bool $created
+     * @param array $options
+     */
+    public function afterSave($created, $options = array())
+    {
+        /**
+         * @TODO Need to uncomment this once you get the saving of logs done
+         */
+        //$this->sendOutNotifications($created);
     }
 
 
@@ -613,6 +629,114 @@ class Log extends AppModel
         return $newMatch;
 
 
+    }
+
+    /**
+     * Send out email/sms notifications based on what the users are subscribed to
+     *
+     * @param $created
+     */
+    public function sendOutNotifications($created)
+    {
+        // Only if it's a new record
+        if (! $created) {
+            return;
+        }
+
+        // @TODO This should be using the modal data, but is using a test log for right now, should be removed in the future
+        //$data = $this->data[$this->name];
+        $log = $this->findByHrid(6997);
+        $log = $log['Log'];
+
+
+        // Need attributes to do anything else
+        if (empty($log['attributes'])) {
+            return;
+        }
+
+        // grab out attributes
+        $attributes = array();
+        foreach ($log['attributes'] as &$attr) {
+            $attributes[] = (string) $attr;
+        }
+
+        /**
+         * @var $User User
+         */
+        $User = ClassRegistry::init('User');
+
+        /**
+         * @var $Client Client
+         */
+        $Client = ClassRegistry::init('Client');
+
+        $logEntity = new LogEntity;
+        $logEntity->setDataSource($this->getDataSource());
+        $logEntity->setClientEntity($Client->getClientEntityById($log['client_id']));
+
+        $logEntity->fromDocument($log);
+        $log = $logEntity->toDisplay();
+
+
+        $users = $User->find('all', array('conditions' => array(
+            'notifications.clients.attributes' => array('$in' => $attributes)
+        )));
+
+        foreach ($users as $user) {
+            $methods = $user['User']['notifications']['methods'];
+            foreach ($user['User']['notifications']['clients'] as $client) {
+                // Check to see if attributes match
+                if (! array_intersect($client['attributes'], $attributes)) {
+                    continue;
+                }
+
+                // Check severity level of log to severity level the user is interested in
+                /**
+                 * @TODO I have the severity level for the person, but not the proper severity level to check for
+                 * the log.  This needs to be formatted properly in the log so that it can be checked against what
+                 * the user wants to be notified about
+                 *
+                 * $log['Severity'] should be either 'severity-one', 'severity-two', or 'other'
+                 */
+
+                // This is for testing purposes so the code below works!!!
+                $log['Severity'] = 'severity-two';
+                if (property_exists($client['types'], $log['Severity']) && $client['types']->{$log['Severity']}) {
+                    /**
+                     * If the person wants email and it's either severity-one or severity-two, send them the email
+                     */
+                    if ($methods['email'] && in_array($log['Severity'], array('severity-one', 'severity-two'))) {
+                        $this->sendNotificationEmail($log, $user);
+                    }
+
+                    /**
+                     * If the person wants SMS's and it's a severity-one, send them the sms
+                     */
+                    if ($methods['sms'] && 'severity-one' === $log['Severity']) {
+                        $this->sendNotificationSMS($log, $user);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * @TODO This needs to send out an email to the user to be notified of a log
+     *
+     * @param $log
+     * @param $user
+     */
+    protected function sendNotificationEmail($log, $user) {
+        debug('send email');
+    }
+
+    /**
+     * @TODO This needs to send out an SMS to the user to be notified of a log
+     * @param $log
+     * @param $user
+     */
+    protected function sendNotificationSMS($log, $user) {
+        debug('send sms');
     }
 
 }
