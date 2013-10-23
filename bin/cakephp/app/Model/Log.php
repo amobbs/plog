@@ -209,7 +209,7 @@ class Log extends AppModel
      * fetch a list of logs based on mongo find
      *
      * @param $query
-     * @param array $clients
+     * @param array $clients        - list of client details to be used to match field names to their id's if TRUE is passed in all clients are used.
      * @param string $orderBy
      * @param int $start            - log id to return from
      * @param int $limit            - how many logs top return
@@ -326,14 +326,20 @@ class Log extends AppModel
         }
 
         //offset for pagination
-        $criteria[] = array(
-            '$skip' => (int)$start,
-        );
+        if ($start >= 0)
+        {
+            $criteria[] = array(
+                '$skip' => (int)$start,
+            );
+        }
 
         //limit for pagination
-        $criteria[] = array(
-            '$limit' => (int)$limit,
-        );
+        if ($limit > 0)
+        {
+            $criteria[] = array(
+                '$limit' => (int)$limit,
+            );
+        }
 
         //actually do the query and return result
         $mongo = $this->getMongoDb();

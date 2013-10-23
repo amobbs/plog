@@ -11,8 +11,8 @@
         </div>
         <div class="span2 text-right">
             <div class="btn-group btn-group-vertical search-buttons">
-                <button class="btn btn-success" ng-click="search()"><i class="icon icon-search"></i> Search</button>
-                <button class="btn btn-info" ng-click="jqlToSql(); queryWizardModal = 1;"><i class="icon icon-wrench"></i> Query Wizard</button>
+                <button class="btn btn-success" ng-click="doSearch()"><i class="icon icon-search"></i> Search</button>
+                <button class="btn btn-info" ng-click="jqlToSql()"><i class="icon icon-wrench"></i> Query Wizard</button>
             </div>
         </div>
     </div>
@@ -28,67 +28,7 @@
                     <h3>Search Results</h3>
                 </div>
                 <div class="widget-content">
-
-                    <div class="row-fluid">
-                        <div class="span6">
-                            <p>Showing <strong>3</strong> of <strong>3</strong> logs</p>
-                        </div>
-                        <div class="span6 text-right">
-                            <div class="control-group control-horizontal">
-
-                                <label class="control-label">Order By</label>
-                                <select>
-                                    <option>Created</option>
-                                </select>
-                                <button class="btn"><i class="icon icon-download-alt"></i> Export to XLS</button>
-                            </div>
-
-                        </div>
-                    </div>
-
-
-
-                    <table class="table table-condensed log-list">
-                        <tbody onclick="parent.location='/log'">
-                        <tr>
-                            <td><label>Log ID</label><div>1234</div></td>
-                            <td><label>Program</label><div>My Show Name Here</div></td>
-                            <td><label>Networks</label><div>Network List Goes here</div></td>
-                        </tr>
-                        <tr>
-                            <td><label>Date</label><div>88-88-8888 88:88:88</div></td>
-                            <td><label>Description</label><div class="truncate">This is a long description This is a long description <br/> This is a long description This is a long description</div></td>
-                            <td><label>Details</label><div>This is a long details item</div></td>
-                        </tr>
-                        <tr>
-                            <td><label>Duration</label><div>1h 57m 3s</div></td>
-                            <td><label>Asset ID</label><div>ABC23456789</div></td>
-                            <td><label>Logged By</label><div>Dave Newson</div></td>
-                        </tr>
-                        <tr>
-                            <td><label>Effect</label><div>Commercial Hotlist (CHL)</div></td>
-                            <td><label>Cause</label><div>Asset Failed to Arrive</div></td>
-                            <td><label>Accountability</label><div>Unresolved</div></td>
-                        </tr>
-                        <tr>
-                            <td><label>Severity</label><div>Level 1</div></td>
-                            <td><label>Impact</label><div>NEGATIVE (OUTAGE)</div></td>
-                            <td><label>Status</label><div>Unresolved</div></td>
-                        </tr>
-                        </tbody>
-                    </table>
-
-                    <div class="pagination pagination-centered">
-                        <ul>
-                            <li class="disabled"><a href="#">&laquo;</a></li>
-                            <li class="active"><a href="#">1</a></li>
-                            <li><a href="#">2</a></li>
-                            <li><a href="#">3</a></li>
-                            <li><a href="#">4</a></li>
-                            <li><a href="#">&raquo;</a></li>
-                        </ul>
-                    </div>
-
+                    <log-widget params="logWidgetParams" />
                 </div>
             </div>
 
@@ -98,16 +38,3 @@
 </div>
 
 <!-- Query Wizard Modal -->
-<div modal="queryWizardModal" options="{backdropFade: true}" close="queryWizardModal = false" tabindex="-1" role="dialog">
-    <div class="modal-header">
-        <button type="button" class="close" ng-click="queryWizardModal = false" aria-hidden="true"><i class="icon icon-remove"></i></button>
-        <h3 id="myModalLabel">Query Builder</h3>
-    </div>
-    <div class="modal-body">
-        <div red-query-builder="" id="rqb">&nbsp;</div>
-    </div>
-    <div class="modal-footer">
-        <button class="btn" data-dismiss="modal" aria-hidden="true" ng-click="queryWizardModal = false">Cancel</button>
-        <button class="btn btn-primary" ng-click="queryWizardModal = false; sqlToJql()">Apply</button>
-    </div>
-</div>

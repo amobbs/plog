@@ -442,12 +442,13 @@ class DashboardsController extends AppController
     {
         $dashboard = $this->Dashboard->findById(new MongoId($dashboardId));
         $dashboard['Dashboard']['_id'] = new MongoId($dashboardId);
+        $widgets = array();
         foreach($dashboard['Dashboard']['widgets'] as $key => $widget) {
-            if ($dashboard['Dashboard']['widgets'][$key]['_id'] == $widgetId) {
-                unset($dashboard['Dashboard']['widgets'][$key]);
-                break;
+            if ($dashboard['Dashboard']['widgets'][$key]['_id'] != $widgetId) {
+                $widgets[] = $dashboard['Dashboard']['widgets'][$key];
             }
         }
+        $dashboard['Dashboard']['widgets'] = $widgets;
 
         $this->Dashboard->save($dashboard['Dashboard']);
         $this->set('success', true);

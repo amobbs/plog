@@ -14,7 +14,7 @@ class LogEntity
     /**
      * @var     array           Log Data, as array
      */
-    protected $data = array();
+    public $data = array();
 
     /**
      * @var     ClientEntity    Client Object

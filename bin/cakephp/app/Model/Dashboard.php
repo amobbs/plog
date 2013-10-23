@@ -18,7 +18,7 @@
 //use Misd\Highcharts\Series\ScatterSeries;
 //use Zend\Json\Json;
 
-use Preslog\Logs\LogHelper;
+use Preslog\Logs\Entities\LogEntity;
 
 App::uses('AppModel', 'Model', 'HttpSocket', 'Network/Http');
 
@@ -204,9 +204,10 @@ class Dashboard extends AppModel
                     $section->addText('No Errors');
                 }
 
+
+                $clientModel = ClassRegistry::init('Client');
+
                 foreach($logs as $log) {
-                    $logHelper = $this->getLogHelperByClientId($log['client_id']);
-                    $logHelper->convertForDisplay($log);
 
                     $table = $section->addTable();
 
@@ -231,30 +232,27 @@ class Dashboard extends AppModel
                     $cell = $table->addCell($layout['detailColWidth'], $cellStyle);
                     $cell->addText($log['hrid'], array(), $paragraphStyle);
 
-//                    //date
-//                    $table->addRow();
-//                    $cell = $table->addCell($layout['titleColWidth'], $cellStyle);
-//                    $cell->addText('Date', $titleStyle, $paragraphStyle);
-//                    $cell = $table->addCell($layout['detailColWidth'], $cellStyle);
-//                    $cell->addText(), array(), $paragraphStyle);
-//
-//                    //time
-//                    $table->addRow();
-//                    $cell = $table->addCell($layout['titleColWidth'], $cellStyle);
-//                    $cell->addText('Time', $titleStyle, $paragraphStyle);
-//                    $cell = $table->addCell($layout['detailColWidth'], $cellStyle);
-//                    $cell->addText(date('h:i:s A', strtotime($log['created'])), array(), $paragraphStyle);
-
+                    $clientEntity = $clientModel->getClientEntityById((string)$log['client_id']);
+                    $logEntity = new LogEntity();
+                    $logEntity->setDataSource($this->getDataSource());
+                    $logEntity->setClientEntity($clientEntity);
+                    $logEntity->fromArray($log);
+                    $logFields = $logEntity->toDisplay();
 
                     //dynamic fields
-                    foreach($log['fields'] as $field) {
-                    //    $format = $fieldHelper['fields'][$field['field_id']];
+                    foreach($logFields as $key => $value) {
 
+                        //TODO why are we getting arrays?
+                        if (is_array($value))
+                        {
+                            continue;
+                        }
                         $table->addRow();
-                        $table->addCell($layout['titleColWidth'])
-                            ->addText('');
-                        $table->addCell($layout['detailColWidth'])
-                            ->addText($field['data']);
+                        $cell = $table->addCell($layout['titleColWidth'], $cellStyle);
+                        $cell->addText($key, $titleStyle, $paragraphStyle);
+                        $cell = $table->addCell($layout['detailColWidth'], $cellStyle);
+                        $cell->addText($value, array(), $paragraphStyle);
+
                     }
 
                     //add a space before next table.
@@ -270,60 +268,6 @@ class Dashboard extends AppModel
         $objWriter->save(TMP . $reportName);
 
         return TMP . $reportName;
-    }
-
-    /**
-     * Fetch a LogHelper object by the given $client_id
-     * - Attempts to cache these requests per client, otherwise the lookup could take a long, long time.
-     * @param       string          $client_id      Client ID to load data for
-     * @return      LogHelper|bool                Field Helper Object, or false if client unavailable
-     */
-    public function getLogHelperByClientId( $client_id )
-    {
-        // Load poor-mans cache for this pageload
-        $clientLogHelperCache = Configure::read('Preslog.cache.clientLogHelper');
-        if (!is_array($clientLogHelperCache))
-        {
-            $clientLogHelperCache = array();
-        }
-
-        // Attempt to load the ClientSchema from cache before calling up a new one.
-        if ( isset($clientLogHelperCache[ $client_id ]))
-        {
-            return $clientLogHelperCache[ $client_id ];
-        }
-        else
-        {
-            // Fetch the Client Schema
-            $clientModel = ClassRegistry::init('Client');
-            $client = $clientModel->find('first', array(
-                'conditions'=>array(
-                    '_id' => $client_id,
-                )
-            ));
-
-            // Abort if the client couldn't be loaded from the DB
-            if ( sizeof($client) )
-            {
-                // Initialize field helper
-                // Pass the field types available from config
-                // Pass the schema from Client
-                // Pass the datasource to the helper
-                $logHelper = new LogHelper();
-                $logHelper->setFieldTypes( Configure::read('Preslog.Fields') );
-                $logHelper->loadSchema( $client['Client'] );
-                $logHelper->setDataSource( $this->getDataSource() );
-
-                // Save to cache
-                $clientLogHelperCache[ $client_id ] = $logHelper;
-                Configure::write('Preslog.cache.clientLogHelper', $clientLogHelperCache);
-
-                return $logHelper;
-            }
-        }
-
-        // Fell through - return our failure to find the client/logHelper
-        return false;
     }
 
 }

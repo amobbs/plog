@@ -27,6 +27,9 @@ angular.module('moduleManager', [
     'validatePassword',
     'permission',
     'logFields',
+    'inputFieldLoginfo',
+    'inputFieldDatetime',
+    'inputFieldDuration',
     'logWidget',
     'fileUpload',
 
