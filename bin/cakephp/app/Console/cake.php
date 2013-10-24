@@ -24,14 +24,16 @@ $dispatcher = 'Cake' . $ds . 'Console' . $ds . 'ShellDispatcher.php';
 if (function_exists('ini_set')) {
 	$root = dirname(dirname(dirname(__FILE__)));
 
+    $cakeCore = $root . $ds . 'Vendor' . $ds . 'pear-pear.cakephp.org' . $ds . 'CakePHP' . $ds;
+
 	// the following line differs from its sibling
 	// /app/Console/cake.php
-	ini_set('include_path', $root . PATH_SEPARATOR . 'C:' . $ds . 'Web_Projects' . $ds . 'webroot' . $ds . 'mediahub' . $ds . 'preslog' . $ds . 'bin' . $ds . 'cakephp' . $ds . 'Vendor' . $ds . 'pear-pear.cakephp.org' . $ds . 'CakePHP' . PATH_SEPARATOR . ini_get('include_path'));
+	ini_set('include_path', $root . PATH_SEPARATOR . $cakeCore . PATH_SEPARATOR . ini_get('include_path'));
 }
 
 if (!include ($dispatcher)) {
 	trigger_error('Could not locate CakePHP core files.', E_USER_ERROR);
 }
-unset($paths, $path, $dispatcher, $root, $ds);
+unset($paths, $path, $dispatcher, $root, $ds, $cakeCore);
 
 return ShellDispatcher::run($argv);

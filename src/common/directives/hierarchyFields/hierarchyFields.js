@@ -39,10 +39,10 @@ angular.module('hierarchyFields', [])
                 function drawHierarchy(fields, hideDeleted, enableDnD, allowEdit) {
                     var triggerSelected = function(id, selected) {
                         if (selected && (scope.hierarchySelected.indexOf(id) === -1 )) {
-                            //scope.hierarchySelected.push(id);
+                            scope.hierarchySelected.push(id);
                         } else if (!selected && (scope.hierarchySelected.indexOf(id) !== -1)) {
                             var index = scope.hierarchySelected.indexOf(id);
-                           // scope.hierarchySelected.splice(index, 1);
+                            scope.hierarchySelected.splice(index, 1);
                         }
                     };
                     var options = {
