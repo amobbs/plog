@@ -9,7 +9,8 @@ angular.module('userService', ['restangular'])
             permissions,
             clients,
             currentClient,
-            dashboards;
+            dashboards,
+            loginPromise;
 
         // Define the service
         var service = {
@@ -70,6 +71,12 @@ angular.module('userService', ['restangular'])
             login: function(userCredentials) {
                 var deferred = $q.defer();
 
+                // Send back cached promise if login request is active
+                if (loginPromise !== undefined)
+                {
+                    return loginPromise;
+                }
+
                 // setup default user object
                 userCredentials = (userCredentials === undefined ? {} : {'User':userCredentials});
 
@@ -89,15 +96,18 @@ angular.module('userService', ['restangular'])
                         $rootScope.global.loggedIn = true;
 
                         // resolve the promise
+                        loginPromise = undefined;
                         deferred.resolve(ret);
                     }
 
                     // Reject the promose on failure
+                    loginPromise = undefined;
                     deferred.reject(ret);
                 });
 
                 // Promise to complete this request
-                return deferred.promise;
+                loginPromise = deferred.promise;
+                return loginPromise;
             },
 
 
