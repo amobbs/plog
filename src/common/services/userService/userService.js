@@ -40,9 +40,8 @@ angular.module('userService', ['restangular'])
 
                     }, function()
                     {
-                        // Abandon the promise, and fire the Auth-LoginRequired event
+                        // Abandon the promise
                         deferred.reject();
-                        $rootScope.$broadcast('event:auth-loginRequired');
                     });
                 } else {
                     deferred.resolve(user);
@@ -78,10 +77,10 @@ angular.module('userService', ['restangular'])
                 }
 
                 // setup default user object
-                userCredentials = (userCredentials === undefined ? {} : {'User':userCredentials});
+                var credentials = (userCredentials === undefined ? {} : {'User':userCredentials});
 
                 // Attempt to login
-                Restangular.all('users/login').post( userCredentials ).then(function (ret) {
+                Restangular.all('users/login').post( credentials ).then(function (ret) {
 
                     // Login OK?
                     if (ret.login.success)
@@ -98,6 +97,12 @@ angular.module('userService', ['restangular'])
                         // resolve the promise
                         loginPromise = undefined;
                         deferred.resolve(ret);
+                    }
+
+                    // If not specifically logging in, raise the loginRequired broadcast.
+                    if (userCredentials === undefined)
+                    {
+                        $rootScope.$broadcast('event:auth-loginRequired');
                     }
 
                     // Reject the promose on failure

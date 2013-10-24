@@ -239,6 +239,16 @@ abstract class FieldTypeAbstract
 
 
     /**
+     * Convert given field data from Array.
+     * @param $field
+     */
+    public function clientFromArray( &$field )
+    {
+        // No action required
+    }
+
+
+    /**
      * Convert the given field to an Array, based on the field schema
      * @param   array   $field      Field data
      */

@@ -92,6 +92,7 @@ angular.module( 'Preslog.auth', [
         }
 
         var requestedPath = null;
+        var loginRequiredInProgress = false;
 
         // Will succeed if the users if logged in, otherwise will instigate the login process.
         userService.getUser().then(function (user) {
@@ -99,6 +100,17 @@ angular.module( 'Preslog.auth', [
 
         // On LoginRequired event; logout the user and go to /login
         $rootScope.$on('event:auth-loginRequired', function () {
+
+            // Only activate this event once per process
+            if (loginRequiredInProgress)
+            {
+                return;
+            }
+
+            // Mark as in progress
+            loginRequiredInProgress = true;
+
+            // Store the request path so we can return to the desired location after login
             var path = $location.path();
             if ('/login' != path && '/' != path) {
                 requestedPath = path;
@@ -118,6 +130,9 @@ angular.module( 'Preslog.auth', [
             if (requestedPath === null) {
                 requestedPath = '/';
             }
+
+            // Mark in-progress as false.
+            loginRequiredInProgress = false;
 
             // Redirect
             $location.path(requestedPath);
@@ -229,8 +244,6 @@ angular.module( 'Preslog.auth', [
                     $scope.serverErrors = {email:data.data.message};
                 }
             );
-
-
         };
 
 

@@ -33,7 +33,7 @@
                             <li ng-repeat="favourite in favourites"><a ng-href="/dashboard/{{favourite._id}}">{{ favourite.name }}</a></li>
                         </ul>
                     </li>
-                    <li><a href="/logs/">Create Log</a></li>
+                    <li><a href="/logs/" ng-click="createLog('/logs/')">Create Log</a></li>
                     <li><a href="/search">Search</a></li>
 
                 </ul>

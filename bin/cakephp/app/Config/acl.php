@@ -66,7 +66,7 @@ Configure::write('auth-acl', array(
         array('controller'=>'Users',    'action'=>'login',      'permissions'=>array('guest')),
         array('controller'=>'Users',    'action'=>'resetPassword',      'permissions'=>array('guest')),
         array('controller'=>'Users',    'action'=>'resetPasswordEmail', 'permissions'=>array('guest')),
-        array('controller'=>'Users',    'action'=>'logout',     'permissions'=>array('user')),
+        array('controller'=>'Users',    'action'=>'logout',     'permissions'=>array('guest')),
         array('controller'=>'Docs',     'action'=>'*',          'permissions'=>array('guest')),
 
         // User Management - Accessible to user-manager only

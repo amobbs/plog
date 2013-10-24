@@ -12,9 +12,11 @@ Configure::write('Preslog', array(
      * Should follow namespace formatting.
      */
     'Notifications' => array(
-        'severity-one'  => new \Preslog\Notifications\Types\SeverityOne,
-        'severity-two'  => new \Preslog\Notifications\Types\SeverityTwo,
-        'others'        => new \Preslog\Notifications\Types\Others,
+        'severity-one'      => new \Preslog\Notifications\Types\SeverityOne,
+        'severity-two'      => new \Preslog\Notifications\Types\SeverityTwo,
+        'severity-three'    => new \Preslog\Notifications\Types\SeverityThree,
+        'impact-affected'   => new \Preslog\Notifications\Types\ImpactAffected,
+        'others'            => new \Preslog\Notifications\Types\Others,
     ),
 
 

@@ -139,22 +139,54 @@
                         </div>
                     </div>
 
+                    <!-- SLA Benchmark -->
+                    <div class="control-group" ng-class="{error: clientForm.benchmark.$invalid}">
+                        <label class="control-label" for="inputBenchmark">SLA Benchmark</label>
+                        <div class="controls">
+                            <div class="input-append"
+                                 tooltip-placement="right"
+                                 tooltip="Service Level Agreement Benchmark value is used to plot SLA compliance in charts.">
+                                <input type="text"
+                                       id="inputBenchmark"
+                                       name="benchmark"
+                                       ng-model="client.benchmark"
+                                       placeholder="eg. 0.123..."
+                                       ng-pattern="/^[0-9\.]{1,7}$/"
+                                       required
+                                       />
+                                <span class="add-on">%</span>
+                                </div>
+                            <span class="help-inline" ng-show="clientForm.benchmark.$dirty && clientForm.benchmark.$invalid && clientForm.benchmark.$error.required">Must not be empty.</span>
+                            <span class="help-inline" ng-show="clientForm.benchmark.$dirty && clientForm.benchmark.$invalid && clientForm.benchmark.$error.pattern">Must be a floating point value, up to 7 digits.</span>
+                            <span class="help-inline" ng-show="clientForm.benchmark.$error.validateServer" ng-bind="serverErrors.benchmark"></span>
+                        </div>
+                    </div>
+
                     <!-- Activation Date -->
                     <div class="control-group" ng-class="{error: clientForm.activationDate.$dirty && clientForm.activationDate.$invalid && clientForm.activationDate.$invalid}">
                         <label class="control-label" for="inputActivationDate">Activation Date</label>
                         <div class="controls">
-                            <input type="text"
-                                   id="inputActivationDate"
-                                   name="activationDate"
-                                   placeholder="YYYY-MM-DD.."
-                                   ng-model="client.activationDate"
-                                   required
-                                   ng-pattern="/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/"
-                                   tooltip-placement="right"
-                                   tooltip="The Activation Date controls when this client will become accessible to users.
+                            <span tooltip-placement="right"
+                                  tooltip="The Activation Date controls when this client will become accessible to users.
                                             Until the activation date has arrived, this client will only be visible to administrators.
                                             Any users assigned directly to an inactive client will not be able to login while the client is inactive."
+                                  >
+                                <input-field-datetime
+                                    type="text"
+                                    part="date"
+                                    id="inputActivationDate"
+                                    name="activationDate"
+                                    placeholder="YYYY-MM-DD.."
+                                    ng-model="client.activationDate"
+                                    required
+                                    ng-pattern="/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/"
                                     />
+                                <input-field-datetime
+                                    part="time"
+                                    ng-model="client.activationDate"
+                                    type="text"
+                                    />
+                            </span>
                             <span class="help-inline" ng-show="clientForm.activationDate.$dirty && clientForm.activationDate.$invalid && clientForm.activationDate.$error.required">Must not be empty.</span>
                             <span class="help-inline" ng-show="clientForm.activationDate.$error.validateServer" ng-bind="serverErrors.activationDate"></span>
                             <span class="help-inline" ng-show="clientForm.activationDate.$dirty && clientForm.activationDate.$invalid && clientForm.activationDate.$error.pattern">Must be formatted as YYYY-MM-DD</span>
@@ -191,6 +223,7 @@
                         <thead>
                             <tr>
                                 <th>&nbsp;</th>
+                                <th>Friendly Label</th>
                                 <th>Field Name</th>
                                 <th>Type</th>
                                 <th>Info</th>
@@ -200,6 +233,7 @@
                         <tbody ui-sortable="fieldSortableOptions">
                             <tr ng-repeat="field in client.fields" ng-show="!field.deleted || showDeleted == true">
                                 <td class="order"><i class="icon icon-resize-vertical"></i></td>
+                                <td>{{ field.label }}</td>
                                 <td>{{ field.name }}</td>
                                 <td>{{ options.fieldTypes[field.type].name }}</td>
                                 <td ng-switch on="field.type">
@@ -219,7 +253,13 @@
                                 <td>&nbsp;</td>
                                 <td>
                                     <input type="text"
-                                           placeholder="Name..."
+                                           placeholder="Friendly Label..."
+                                           ng-model="newField.label"
+                                           required />
+                                </td>
+                                <td>
+                                    <input type="text"
+                                           placeholder="Field Name..."
                                            ng-model="newField.name"
                                            required />
                                 </td>
@@ -261,12 +301,13 @@
                 </div>
             </div>
             <div class="widget-content">
-                <form name="newAttributeForm">
+                <form name="newGroupForm">
                     <table class="table table-admin-fields">
                         <thead>
                             <tr>
                                 <th>&nbsp;</th>
-                                <th>Group Name</th>
+                                <th>Friendly Label</th>
+                                <th>Field Name</th>
                                 <th>Children</th>
                                 <th class="actions">&nbsp;</th>
                             </tr>
@@ -274,6 +315,7 @@
                         <tbody ui-sortable="attributeSortableOptions">
                             <tr ng-repeat="group in client.attributes" ng-show="!group.deleted || showDeletedGroups">
                                 <td class="order"><i class="icon icon-resize-vertical"></i></td>
+                                <td>{{ group.label }}</td>
                                 <td>{{ group.name }}</td>
                                 <td>{{ group.children.length }}</td>
                                 <td>
@@ -286,12 +328,18 @@
                             <tr>
                                 <td>&nbsp;</td>
                                 <td>
-                                    <form name="newGroupForm">
+                                    <input type="text"
+                                           placeholder="Label.."
+                                           ng-model="newGroup.label"
+                                           required
+                                           />
+                                </td>
+                                <td>
                                     <input type="text"
                                            placeholder="Name.."
                                            ng-model="newGroup.name"
-                                           required />
-                                    </form>
+                                           required
+                                           />
                                 </td>
                                 <td>&nbsp;</td>
                                 <td>

@@ -6,10 +6,6 @@
 angular.module('inputFieldDatetime', [])
     .directive('inputFieldDatetime', ['$templateCache', '$compile', '$filter', function ( $templateCache, $compile, $filter ) {
 
-
-        // TODO: This linker
-        // See $formatters: http://stackoverflow.com/questions/18061757/angular-js-and-html5-date-input-value-how-to-get-firefox-to-show-a-readable-d
-
         /**
          * Linker.
          * - Process logDate field into date/time picker
@@ -19,19 +15,20 @@ angular.module('inputFieldDatetime', [])
          */
         var linker = function( scope, element, attrs, ctrl ) {
 
-            // Prevent watch being triggered during field update, and causing recusive watch
-            var denyWatch = false;
+            scope.denyWatch = false;
+
+            // Deny watched of the model when the user is changing the data
+            element.bind('focus', function() { scope.denyWatch = true; });
+            element.bind('blur',  function() { scope.denyWatch = false; });
 
             // On source change
             scope.$watch(function() { return scope.ngModel; }, function(value) {
 
                 // Abort if empty
-                if (value === undefined || denyWatch)
+                if (value === undefined || scope.denyWatch)
                 {
                     return;
                 }
-
-                denyWatch = true;
 
                 // Convert to object
                 var date = new Date(value);
@@ -48,22 +45,20 @@ angular.module('inputFieldDatetime', [])
                     element[0].value =  $filter('date')(date, 'hh:mm:ss');
                 }
 
-                denyWatch = false;
             });
 
             // On editor change
             scope.$watch(function() { return element[0].value; }, function(value) {
 
                 // Abort if empty
-                if (value === undefined || denyWatch)
+                if (value === undefined)
                 {
                     return;
                 }
 
-                denyWatch = true;
-
                 // Fetch the data from the model
                 var date = new Date(scope.ngModel);
+                var newDate = null;
 
                 // if part == date, update the Date section only.
                 if (scope.part == 'date')
@@ -87,11 +82,8 @@ angular.module('inputFieldDatetime', [])
                 if (!isNaN( date.getTime()))
                 {
                     // RFC 2822
-                    scope.ngModel = $filter('date')(date, 'EEE, MM MMM yyyy hh:mm:ss Z');
-                    console.log(scope.ngModel);
+                    scope.ngModel = $filter('date')(date, 'EEE, dd MMM yyyy hh:mm:ss Z');
                 }
-
-                denyWatch = false;
             });
 
         };

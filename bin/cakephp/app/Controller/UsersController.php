@@ -181,15 +181,19 @@ class UsersController extends AppController
         // Delete client token
         $this->Cookie->delete('preslog_login-token');
 
-        // Write token out of DB
-        $user = array(
-            '_id'=>$this->PreslogAuth->user('_id'),
-            'login-token'=>null
-        );
-        $this->User->save(array('User'=>$user));
+        if ($this->PreslogAuth->user('id'))
+        {
 
-        // Logout
-        $this->PreslogAuth->logout();
+            // Write token out of DB
+            $user = array(
+                '_id'=>$this->PreslogAuth->user('_id'),
+                'login-token'=>null
+            );
+            $this->User->save(array('User'=>$user));
+
+            // Logout
+            $this->PreslogAuth->logout();
+        }
 
         // Response
         $response = array(

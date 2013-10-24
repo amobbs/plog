@@ -1,4 +1,4 @@
-<!-- Select Field -->
+<!-- Select-Severity Field -->
 
     <div class="control-group" ng-class="{error: fieldForm.label.$dirty && fieldForm.label.$invalid && fieldForm.label.$dirty}">
         <label class="control-label" for="inputName">Friendly Label</label>
@@ -51,6 +51,7 @@
             <tr>
                 <th>&nbsp;</th>
                 <th>Name</th>
+                <th>Level</th>
                 <th><button class="btn" ng-click="showDeleted = !showDeleted"><i class="icon icon-eye-open"></i> {{ showDeleted && 'Hide' || 'Show' }} Deleted Options</button></th>
             </tr>
         </thead>
@@ -61,6 +62,13 @@
                 </td>
                 <td>
                     <input type="text" ng-model="option.name" placeholder="Name..." />
+                </td>
+                <td>
+                    <select ng-model="option.severity"
+                            ng-options="key as option for (key, option) in options.severities"
+                            required
+                            placeholder="Severity level...">
+                    </select>
                 </td>
                 <td>
                     <button ng-show="option.deleted == false" class="btn btn-danger" ng-confirm-click="Deleting this item will prevent it being selected in new logs. Existing logs will retain their selection of this item. Are you sure?" ng-click="option.deleted = 1"><i class="icon icon-remove"></i> Delete</button>

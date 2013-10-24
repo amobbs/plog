@@ -39,11 +39,47 @@ class ClientEntity
 
     /**
      * Parse data from an array
-     * @param   array       $data
+     * @param   array       $clientData
      */
-    public function fromArray( $data )
+    public function fromArray( $clientData )
     {
-        $this->data = $data;
+        if ( isset($clientData['fields']) )
+        {
+            // Re-structure fields by the field_id so we don't have to search for them.
+            foreach ($clientData['fields'] as &$field)
+            {
+                // Load the field type
+                if (!isset($this->fieldTypes[ $field['type'] ]))
+                {
+                    trigger_error("Unable to locate specified field type '{$field['type']}' for client {$clientData['_id']}", E_USER_ERROR);
+                }
+
+                // Clone the type for individual use on this client
+                $type = clone $this->fieldTypes[ $field['type'] ];
+
+                // Initialise field obj
+                $type->setDataSource( $this->dataSource );
+
+                // Convert the client data so it's usable
+                $type->clientFromArray( $field );
+
+                // Apply settings to the field
+                $type->setFieldSettings( $field );
+
+                // Store type for use in lookup
+                $this->fields[ $field['_id'] ] = $type;
+            }
+        }
+
+        // Store resultant client data
+        $this->data = $clientData;
+
+        // Walk the Attributes groups and create a flat attribute lookup.
+        // This map is used later on for converting fields.
+        if (isset($this->data['attributes']))
+        {
+            $this->attributeLookup = $this->getFlatAttributesList( $this->data['attributes'] );
+        }
     }
 
 
@@ -59,7 +95,7 @@ class ClientEntity
         // Use mongo datasource to convert Array to Document in fields
         foreach ($doc['fields'] as &$field)
         {
-            $this->fields[ $field['field_id'] ]->clientToDocument($field);
+            $this->fields[ $field['_id'] ]->clientToDocument($field);
         }
 
         return $doc;

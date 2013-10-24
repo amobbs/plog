@@ -12,7 +12,7 @@ angular.module( 'Preslog.nav', [])
 /**
  * Nav Controller
  */
-    .controller( 'NavCtrl', function NavController( $q, $scope, userService ) {
+    .controller( 'NavCtrl', function NavController( $q, $scope, userService, $location, $route ) {
 
         /**
          * Init
@@ -58,6 +58,23 @@ angular.module( 'Preslog.nav', [])
                 $scope.client = client;
             });
 
+        };
+
+
+        /**
+         * Create Log
+         * Force a reload of the state if the uer re-clicks the link
+         */
+        $scope.createLog = function( link )
+        {
+            // Force reload if on the Log Edit page
+            if ($location.path() == link)
+            {
+                window.location.href = link;
+            }
+
+            // Change path
+            $location.path(link);
         };
 
 

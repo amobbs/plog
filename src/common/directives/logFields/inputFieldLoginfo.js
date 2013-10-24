@@ -6,10 +6,6 @@
 angular.module('inputFieldLoginfo', [])
     .directive('inputFieldLoginfoDatetime', ['$templateCache', '$compile', '$filter', function ( $templateCache, $compile, $filter ) {
 
-
-        // TODO: This linker
-        // See $formatters: http://stackoverflow.com/questions/18061757/angular-js-and-html5-date-input-value-how-to-get-firefox-to-show-a-readable-d
-
         /**
          * Linker.
          * - Process logDate field into date/time picker

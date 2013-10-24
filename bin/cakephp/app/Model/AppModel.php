@@ -23,4 +23,16 @@ App::uses('Model', 'Model');
  * @package       app.Model
  */
 class AppModel extends Model {
+
+
+
+    public function validate_datetime_rfc2822($check, $key)
+    {
+        $date = $check[$key];
+
+        // Date format must match, else problem.
+        return ($date == date('r', strtotime($date)));
+
+    }
+
 }

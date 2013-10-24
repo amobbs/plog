@@ -263,6 +263,7 @@ angular.module( 'Preslog.clients', [
             var field = {
                 '_id': null,
                 'name': $scope.newField.name,
+                'label': $scope.newField.label,
                 'type': $scope.newField.type,
                 'order': $scope.client.fields.length,
                 'data': {},
@@ -319,6 +320,18 @@ angular.module( 'Preslog.clients', [
             var options = $.map($scope.options.fieldTypes, function(v,k){ if (v.alias == field.type) { return v; } });
             options = options[0];
 
+            // Sortable options on Fields
+            $scope.fieldEditSortableOptions = {
+                update: function(e, ui) {
+                    // Resolve order of items to data
+                    for (var i in $scope.field.data.options)
+                    {
+                        $scope.fields.data.options[i].order = i;
+                    }
+                },
+                handle: '.order'
+            };
+
             // Open the Modal
             var modal = $modal.open({
                 templateUrl: 'modules/clients/modals/admin-client-edit-field.tpl.html',
@@ -361,6 +374,7 @@ angular.module( 'Preslog.clients', [
             var group = {
                 '_id': null,
                 'name': $scope.newGroup.name,
+                'label': $scope.newGroup.label,
                 'order': $scope.client.attributes.length,
                 'children': [],
                 'newGroup': true
@@ -642,7 +656,7 @@ angular.module( 'Preslog.clients', [
                     }
                 }
             });
-        }
+        };
 
 
         /**
@@ -716,5 +730,3 @@ angular.module( 'Preslog.clients', [
     })
 
 ;
-
-

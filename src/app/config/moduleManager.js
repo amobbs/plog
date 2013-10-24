@@ -19,6 +19,7 @@ angular.module('moduleManager', [
     'userService',
     'errorHandler',
     'loadingHandler',
+    'httpAuthInterceptor',
 
     // Directives
     'ngConfirmClick',

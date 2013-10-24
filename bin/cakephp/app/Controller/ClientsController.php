@@ -4,8 +4,13 @@
  * Class ClientsController
  */
 
-use Swagger\Annotations as SWG;
+use Swagger\Annotations  as SWG;
 
+/**
+ * Class ClientsController
+ * @property    Log     Log
+ * @property    Client  Client
+ */
 class ClientsController extends AppController
 {
     public $uses = array('Client', 'Log');
@@ -29,6 +34,7 @@ class ClientsController extends AppController
                 '_id',
                 'name',
                 'activationDate',
+                'benchmark',
                 'created',
                 'deleted',
             )
@@ -108,9 +114,6 @@ class ClientsController extends AppController
 
         // Get Logo
         $client['Client']['logo-img'] = $this->Client->getLogoPath($client['Client']);
-
-        // Truncate the activation date
-        $client['Client']['activationDate'] = date('Y-m-d', strtotime($client['Client']['activationDate']));
 
         // Output
         $this->set($client);

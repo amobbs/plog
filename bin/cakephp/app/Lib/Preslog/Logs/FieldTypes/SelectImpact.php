@@ -14,7 +14,6 @@ class SelectImpact extends Select
     protected $alias = 'select-impact';
     protected $name = 'Drop-down Select Box for On-Air Impact';
     protected $description = 'A drop-down selection box, including validation between Impact and Duration.';
-
     protected $aggregationDetails = array(
         'select' => array(
             'dataLocation' => 'selected',
@@ -24,6 +23,30 @@ class SelectImpact extends Select
             'aggregate' => false,
         ),
     );
+
+    /**
+     * @var array       List of Impact Types
+     */
+    protected $impacts = array(
+        'affected'=>'Transmission Affected',
+        'not-affected'=>'No Affect',
+    );
+
+
+    /**
+     * Fetch properties for this field type
+     * @return  array
+     */
+    public function getPropertyList()
+    {
+        // Create list
+        $return = parent::getPropertyList();
+        $return['impacts'] = $this->impacts;
+
+        // Return data
+        return $return;
+    }
+
 
     /***
      * used to create a human readable list for the aggregation details that can be used in the interface

@@ -34,7 +34,11 @@
                         {{client.name}}
                     </td>
                     <td data-title="'Activation Date'" sortable="activationDate">
-                        {{client.activationDate}}
+                        {{client.activationDate|date:'yyyy-MM-dd'}}
+                    </td>
+                    </td>
+                    <td data-title="'SLA Benchmark'">
+                        {{client.benchmark}}%
                     </td>
                     <td data-title="'Number of Logs'">
                         {{ client.stats.numLogs }}

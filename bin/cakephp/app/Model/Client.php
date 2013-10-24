@@ -14,7 +14,6 @@ class Client extends AppModel
 {
     public $name = "Client";
 
-    public $actsAs = array('Mongodb.Schema');
 
     /**
      * @var array   Schema definition for this document
@@ -44,7 +43,10 @@ class Client extends AppModel
         ),
         'activationDate' => array(
             'type' => 'datetime',
-            'mongoType' => 'MongoDate'
+            'mongoType' => 'mongoDate'
+        ),
+        'benchmark' => array(
+            'type' => 'float',
         ),
         'fields' => array(
             'type' => 'subCollection',
@@ -128,7 +130,7 @@ class Client extends AppModel
                 'required'=>true,
             ),
             'noCollision'=>array(
-                'rule'=>array('checkCollision'),
+                'rule'=>array('checkCollision', 'name'),
                 'message'=>'This name is already in use',
                 'required'=>true,
             )
@@ -150,7 +152,7 @@ class Client extends AppModel
                 'required'=>true
             ),
             'noCollision'=>array(
-                'rule'=>array('checkCollision'),
+                'rule'=>array('checkCollision', 'shortName'),
                 'message'=>'This short name is already in use',
                 'required'=>true,
             )
@@ -172,7 +174,7 @@ class Client extends AppModel
                 'required'=>true
             ),
             'noCollision'=>array(
-                'rule'=>array('checkCollision'),
+                'rule'=>array('checkCollision', 'logPrefix'),
                 'message'=>'This log prefix is already in use',
                 'required'=>true,
             )
@@ -185,10 +187,17 @@ class Client extends AppModel
                 'allowEmpty'=>true,
             ),
         ),
+        'benchmark'=>array(
+            'date'=>array(
+                'rule'=>array('between', 0, 100),
+                'message'=>'Must be a percentage between 0 and 100',
+                'required'=>true,
+            ),
+        ),
         'activationDate'=>array(
             'date'=>array(
-                'rule'=>array('date', 'ymd'),
-                'message'=>'Must be a valid date format  of YYYY-MM-DD',
+                'rule'=>array('validate_datetime_rfc2822', 'activationDate'),
+                'message'=>'Must be a valid RFC-2822 date.',
                 'required'=>true,
             ),
         )
@@ -203,17 +212,16 @@ class Client extends AppModel
     public function checkCollision($check)
     {
         $ds = $this->getDataSource();
-        $this->save();
 
         // Find a collision
-        $found = $this->find('first', array(
+        $count = $this->find('count', array(
             'conditions'=>array(
                 $check
             )
         ));
 
         // Return true if no collision
-        return empty($found);
+        return ($count == 0);
     }
 
 
@@ -233,6 +241,22 @@ class Client extends AppModel
         {
             return $ok;
         }
+
+        // Convert to an Array
+        // Initialize a client entity
+        $client = new ClientEntity();
+        $client->setDataSource( $this->getDataSource() );
+        $client->setFieldTypes( Configure::read('Preslog.Fields') );
+
+        // Load to the entity
+        $client->fromArray( $this->data['Client'] );
+
+        // Perform beforeSave tasks
+        $client->beforeSave();
+
+        // Prep for save by outputting as a document
+        $this->data['Client'] = $client->toDocument();
+
 
         //TODO clean up this horrible code
         // Ensure the _id mongoId
@@ -283,22 +307,6 @@ class Client extends AppModel
         $client['attributes'] = $groups;
         $this->data['Client'] = $client;
 
-
-        // Convert to an Array
-        // Initialize a client entity
-        $client = new ClientEntity();
-        $client->setDataSource( $this->getDataSource() );
-        $client->setFieldTypes( Configure::read('Preslog.Fields') );
-
-        // Load to the entity
-        $client->fromArray( $this->data['Client'] );
-
-        // Perform beforeSave tasks
-        $client->beforeSave();
-
-        // Prep for save by outputting as a document
-        $this->data['Client'] = $client->toDocument();
-
         return true;
     }
 
@@ -340,7 +348,7 @@ class Client extends AppModel
             $client->fromDocument($result[ $this->name ]);
 
             // Perform after find
-            $client->afterFind(  );
+            $client->afterFind();
 
             // Put to an array rather than a doc
             $result[ $this->name ] = $client->toArray();

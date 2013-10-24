@@ -1,4 +1,4 @@
-    <div class="span6">
+    <div class="span6" ng-show="log.data.created">
         <label class="control-label">Created</label>
         <div class="controls input-fill">
             <input-field-loginfo-datetime
@@ -17,7 +17,7 @@
         </div>
     </div>
 
-    <div class="span6">
+    <div class="span6" ng-show="log.data.created">
         <label class="control-label">Modified</label>
         <div class="controls controls-modified">
             <span><input-field-loginfo-datetime
