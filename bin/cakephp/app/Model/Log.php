@@ -447,8 +447,21 @@ class Log extends AppModel
 
             //only return the fields we are searching against
             foreach($axisFields as $fieldName => $value) {
-                if (isset($fields[$fieldName])) {
+                if (isset($fields[$fieldName]))
+                {
                     foreach($fields[$fieldName] as $id) {
+                        $axisFieldIds[] = array(
+                            '$eq' => array(
+                                '$fields.field_id',
+                                $id,
+                            ),
+                        );
+                    }
+                }
+
+                if (isset($fields['loginfo']) && ($fieldName == 'created' || $fieldName == 'modified'))
+                {
+                    foreach($fields['loginfo'] as $id) {
                         $axisFieldIds[] = array(
                             '$eq' => array(
                                 '$fields.field_id',
@@ -544,7 +557,10 @@ class Log extends AppModel
         }
 
         $criteria[] = $group;
-        $criteria[] = $sort;
+        if ( !empty($sort['$sort']) )
+        {
+            $criteria[] = $sort;
+        }
         $criteria[] = $project;
 
         $mongo = $this->getMongoDb();

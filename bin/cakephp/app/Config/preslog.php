@@ -33,6 +33,10 @@ Configure::write('Preslog', array(
         'textbig'           => new \Preslog\Logs\FieldTypes\Textbig,
     ),
 
+    'Quantities' => array(
+        'BHPM' => 730, //broadcast hours per month - per network
+        'decimalPlacesForPercentages' => 4,
+    ),
 
     /**
      * SMS Notification API

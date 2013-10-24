@@ -2,8 +2,8 @@
 
 
 use Preslog\Logs\FieldTypes\FieldTypeAbstract;
-use Preslog\Logs\FieldTypes\TypeAbstract;
-use Preslog\JqlParser\JqlParser;
+use Preslog\Logs\FieldTypes\Datetime;
+use Preslog\Widgets\Types\BenchmarkWidget;
 use Swagger\Annotations as SWG;
 use Preslog\Widgets\WidgetFactory;
 
@@ -724,8 +724,9 @@ class DashboardsController extends AppController
                                 $xOptions[$format['name']] = $option['fieldType']->listDetails($format['name']);
                             }
 
-                            //find the type the widget is using
-                            if($xName == $format['name']) {
+                            //find the type the widget is using, loginfo is a special case since it holds many types of data
+                            if ( $xName == $format['name'] )
+                            {
                                 $aggregationDetails = $option['fieldType']->getProperties('aggregationDetails');
                                 $mongoPipeLine[$optionName][$format['name']] = $aggregationDetails[$xOperation];
                             }
@@ -751,8 +752,18 @@ class DashboardsController extends AppController
                             }
                             break;
                         case 'created':
-                            break;
                         case 'modified':
+                            if ($xName == 'created' || $xName == 'modified')
+                            {
+                                $mongoPipeLine[$optionName][$option['fieldType']] = array(
+                                    'dataLocation' => $option['fieldType'],
+                                    'groupBy' => array(
+                                        'year' => '$year',
+                                        'month' => '$month',
+                                    ),
+                                    'aggregate' => false,
+                                );
+                            }
                             break;
                         case 'client':
                             $xOptions['client'] = array(
@@ -825,15 +836,25 @@ class DashboardsController extends AppController
         $fullClients = array();
         foreach ($clients as $clientId) {
             $client = $this->Client->findById($clientId);
-            $fullClients[] = $client['Client'];
+            $fullClients[] = $this->Client->afterFind($client);
             foreach($client['Client']['fields'] as $format) {
                 //does this client have a field with this name?
-                if (in_array($format['name'], $fieldNames)) {
+                if ( in_array($format['name'], $fieldNames) ) {
                     if (!isset($fields[$format['name']])) {
                         $fields[$format['name']] = array();
                     }
                     //add the id for this clients version of the field.
                     $fields[$format['name']][] =  new MongoId($format['_id']);
+                }
+
+                if ($format['name'] == 'loginfo'
+                        && (in_array('created', $fieldNames) || in_array('modified', $fieldNames))
+                    )
+                    {
+                        if (!isset($fields[$format['name']])) {
+                            $fields['loginfo'] = array();
+                        }
+                        $fields['loginfo'][] = new MongoId($format['_id']);
                 }
             }
         }
@@ -854,69 +875,85 @@ class DashboardsController extends AppController
                 throw new Exception('Error in database query: ' . $result['errmsg']);
             }
 
-            //remove any mongo'ids from series to show field value
-            $seriesTypeDetails = explode(':', $widgetObject->getDetail('series'));
-            $seriesType = $seriesTypeDetails[0];
-            $dataLocation = '';
+
             $parsedResult = array();
-            foreach($widgetObject->getOptions()['series'] as $option) {
-                $fieldType = $option['fieldType'];
-                if ($fieldType instanceof TypeAbstract) {
-                    if ($fieldType->getProperties('alias') == $seriesTypeDetails[1]) {
-                        $seriesType = $fieldType;
-                        $aggregationDetails = $fieldType->getProperties('aggregationDetails');
-                        foreach($aggregationDetails as $name => $details) {
-                            if ($name = $seriesTypeDetails[1]) {
-                                $dataLocation = $details['dataLocation'];
-                            }
-                        }
-                    }
-                }
-            }
 
-            if ($seriesType instanceof TypeAbstract) {
-                $parsedPoint = array();
-                foreach($result['result'] as $point) {
-                    $parsedPoint = $point;
-                    if ($point['series'][$dataLocation] instanceof MongoId) {
-                        foreach($allClients as $client) {
-                            foreach($client['Client']['fields'] as $format) {
-
-                                //it is some kind of select so search through the options for the value
-                                if (isset($format['data']) && isset($format['data']['options'])) {
-                                    foreach($format['data']['options'] as $option) {
-                                        if ($option['_id'] == $point['series'][$dataLocation]) {
-                                            $parsedPoint['series'] = $option['name'];
-                                        }
-                                    }
-                                } else if ($format['_id'] == $point['series']) { //client
-                                    $parsedPoint['series'] = $client['Client']['name'];
+            //remove any mongo'ids from series to show field value
+            if ( isset($widgetObject->getOptions()['series']) )
+            {
+                $seriesTypeDetails = explode(':', $widgetObject->getDetail('series'));
+                $seriesType = $seriesTypeDetails[0];
+                $dataLocation = '';
+                foreach($widgetObject->getOptions()['series'] as $option) {
+                    $fieldType = $option['fieldType'];
+                    if ($fieldType instanceof FieldTypeAbstract) {
+                        if ($fieldType->getProperties('alias') == $seriesTypeDetails[1]) {
+                            $seriesType = $fieldType;
+                            $aggregationDetails = $fieldType->getProperties('aggregationDetails');
+                            foreach($aggregationDetails as $name => $details) {
+                                if ($name = $seriesTypeDetails[1]) {
+                                    $dataLocation = $details['dataLocation'];
                                 }
                             }
                         }
                     }
-                    $parsedResult[] = $parsedPoint;
                 }
 
-            } else {
-                switch ($seriesType) {
-                    case 'client':
-                        foreach($result['result'] as $point) {
-                            if ($point['series'] instanceof MongoId) {
-                                $client = $this->Client->findById($point['series']);
-                                $point['series'] = $client['Client']['name'];
+                if ($seriesType instanceof FieldTypeAbstract) {
+                    $parsedPoint = array();
+                    foreach($result['result'] as $point) {
+                        $parsedPoint = $point;
+                        if ($point['series'][$dataLocation] instanceof MongoId) {
+                            foreach($allClients as $client) {
+                                foreach($client['Client']['fields'] as $format) {
+
+                                    //it is some kind of select so search through the options for the value
+                                    if (isset($format['data']) && isset($format['data']['options'])) {
+                                        foreach($format['data']['options'] as $option) {
+                                            if ($option['_id'] == $point['series'][$dataLocation]) {
+                                                $parsedPoint['series'] = $option['name'];
+                                            }
+                                        }
+                                    } else if ($format['_id'] == $point['series']) { //client
+                                        $parsedPoint['series'] = $client['Client']['name'];
+                                    }
+                                }
                             }
-                            $parsedResult[] = $point;
                         }
+                        $parsedResult[] = $parsedPoint;
+                    }
 
-                        break;
+                } else {
+                    switch ($seriesType) {
+                        case 'client':
+                            foreach($result['result'] as $point) {
+                                if ($point['series'] instanceof MongoId) {
+                                    $client = $this->Client->findById($point['series']);
+                                    $point['series'] = $client['Client']['name'];
+                                }
+                                $parsedResult[] = $point;
+                            }
+
+                            break;
+                    }
                 }
+
+                $widgetObject->setSeries($parsedResult);
+            }
+            else
+            {
+                $widgetObject->setSeries($result['result']);
             }
 
-            $widgetObject->setSeries($parsedResult);
+            //add widget specific values
+            if ( $widgetObject instanceof BenchmarkWidget )
+            {
+                $widgetObject->setClients( $fullClients );
+            }
+
 
         } else {
-            $widgetObject->setSeries($result);
+            $widgetObject->setSeries( $result );
         }
 
         return $widgetObject;

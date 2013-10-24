@@ -519,7 +519,7 @@ angular.module( 'Preslog.clients', [
     /**
      * Client Edit: Field Editor Modal
      */
-    .controller( 'AdminClientEditAttributeCtrl', function AdminClientEditAttributeController( $scope, $modalInstance, group, index ) {
+    .controller( 'AdminClientEditAttributeCtrl', function AdminClientEditAttributeController( $scope, $modalInstance, $modal, group, index ) {
 
         // Assign scope vars
         $scope.index = index;
@@ -601,7 +601,8 @@ angular.module( 'Preslog.clients', [
         /**
          * set all selected elements to deleted
          */
-        $scope.deleteAttr = function() {
+        $scope.deleteAttr = function()
+        {
             $scope.setDeletedOnChildren(true);
             $scope.hierarchySelected = [];
         };
@@ -609,10 +610,40 @@ angular.module( 'Preslog.clients', [
         /**
          * undelete any selected elements
          */
-        $scope.restoreAttr = function() {
+        $scope.restoreAttr = function()
+        {
             $scope.setDeletedOnChildren(false);
             $scope.hierarchySelected = [];
         };
+
+        $scope.setLiveDate = function()
+        {
+            var modal = $modal.open({
+                templateUrl: 'modules/clients/modals/admin-client-network-live-date.tpl.html',
+                controller: 'AdminClientLiveDateCtrl'
+            });
+
+            /**
+             * Modal Save
+             */
+            modal.result.then(function(liveDate) {
+
+                //find any ids that are selected and deleted state
+                for(var itemId in $scope.group.children) {
+                    if ($scope.hierarchySelected.indexOf($scope.group.children[itemId]._id) != -1) {
+                        $scope.group.children[itemId].live_date = liveDate;
+                    }
+                    //TODO do we want to display an error or something if someone selects to set a live date on a sub child
+                    // don't forget to check the children
+                    for(var subItemId in $scope.group.children[itemId].children) {
+                        if ($scope.hierarchySelected.indexOf($scope.group.children[itemId].children[subItemId]._id) != -1) {
+                            $scope.group.children[itemId].children[subItemId].live_date = liveDate;
+                        }
+                    }
+                }
+            });
+        }
+
 
         /**
          * find any selected elements and set the deleted option to passed in value
@@ -657,6 +688,31 @@ angular.module( 'Preslog.clients', [
             $modalInstance.dismiss();
         };
 
+    })
+
+    /**
+     *  set go live date for selected network ( from edit attribute screen )
+     */
+    .controller( 'AdminClientLiveDateCtrl', function AdminClientLiveDateController( $scope, $modalInstance ) {
+
+        /**
+         * Save changes
+         */
+        $scope.save = function()
+        {
+            // Close, and pass back the Field we've edited with the new changes.
+            $modalInstance.close({
+                'liveDate': $scope.liveDate
+            });
+        };
+
+        /**
+         * Dismiss modal, cancelling changes
+         */
+        $scope.dismiss = function()
+        {
+            $modalInstance.dismiss();
+        };
     })
 
 ;

@@ -12,6 +12,7 @@ class PieWidget extends Widget {
 
     public function __construct($data) {
         $this->type = 'pie';
+        $this->chartType = 'pie';
         $this->aggregate = true;
         if (isset($data['details'])) {
             if (!is_array($this->details)) {
