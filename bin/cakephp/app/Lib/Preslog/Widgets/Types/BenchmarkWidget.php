@@ -69,7 +69,7 @@ class BenchmarkWidget extends Widget {
 
         $chart->chart = array(
             'type' => $this->chartType,
-            'marginRight' => 120,
+            'marginRight' => 220,
             'marginBottom' => 100,
         );
 
@@ -112,28 +112,43 @@ class BenchmarkWidget extends Widget {
                 'title' => array(
                     'text' => '',
                 ),
+                'endOnTick' => true,
+                'useHTML' => true,
             );
 
             $series = array(
                 array(
                     'name' => 'OAT',
                     'data' => array(),
+                    'yAxis' => 0,
+                    'tooltip' => array(
+                        'valueSuffix' => '%',
+                    ),
+                    'dataLabels' => array(
+                        'enable' => true,
+                        'format' => '{value}%',
+                    ),
                 ),
             );
             $categorieData = array();
+            $dates = array();
             foreach ($this->series as $point)
             {
+                $dates[] = mktime(0, 0, 0, $point['xAxis']['month'], 1, $point['xAxis']['year']);
                 $date = $point['xAxis']['month'] . '/' . substr($point['xAxis']['year'], 2);
                 $series[0]['data'][] = $this->asPercentageOfBHPM($point['yAxis']);
-                $categorieData[] = $date;
+                $categorieData[] = $date . '<br/>' . $this->_formatDuration($point['yAxis'])  ;
             }
             $categories = array_values($categorieData);
 
             $chart->xAxis->categories = $categories;
 
-            $chart->yAxis = array(
+            $oatYAxis = array(
                 'title' => array(
-                    'text' => '',
+                    'text' => 'OAT',
+                ),
+                'labels' => array(
+                    'format' => '{value}%',
                 ),
                 'plotLines' => array(
                     array(
@@ -141,21 +156,26 @@ class BenchmarkWidget extends Widget {
                         'width' => 1,
                         'color' => '#808080'
                     )
-                )
+                ),
+                'min' => 0,
+            );
+             //yAxis two, BHPM
+            $bhpmYAxis = array(
+                'title' => array(
+                    'text' => 'BHPM',
+                ),
+                'labels' => array(
+                    'format' => '{value} hours',
+                ),
+                'min' => null,
+                'max' => null,
+                'opposite' => true,
+            );
+            $yAxis = array(
+                $oatYAxis,
             );
 
-            $chart->tooltip = array(
-                'valueSuffix' => '%'
-            );
-
-            if ( isset($this->details['bhpm']) && $this->details['bhpm'])
-            {
-                $series[] = array(
-                    'name' => 'BHMP',
-                    'type' => 'line',
-                    'data' => $this->calculateBHPM($categories),
-                );
-            }
+            $chart->tooltip->shared = true;
 
             if (isset($this->details['trendLine']) && $this->details['trendLine'])
             {
@@ -173,6 +193,7 @@ class BenchmarkWidget extends Widget {
                         'name' => 'Linear ' . $s['name'],
                         'type' => 'line',
                         'data' =>  $this->calculateTrendLine($s['data']),
+                        'yAxis' => $s['yAxis'],
                         'marker' => array(
                             'enabled' => false,
                         ),
@@ -182,6 +203,29 @@ class BenchmarkWidget extends Widget {
                 }
                 $series = $seriesWithTrends;
             }
+
+            if ( isset($this->details['bhpm']) && $this->details['bhpm'])
+            {
+                $min = 0;
+                $bhpmArray = $this->calculateBHPM($dates, $min);
+                $series[] = array(
+                    'name' => 'BHMP',
+                    'type' => 'line',
+                    'data' => $bhpmArray,
+                    'yAxis' => 1,
+                    'tooltip' => array(
+                        'valueSuffix' => ' Hours',
+                    ),
+                );
+
+                //put BHPM line roughly 2/3 of the way up
+                $minThirds = $min / 3;
+                $bhpmYAxis['min'] = $min - $minThirds * 2;
+                $bhpmYAxis['max'] = $min + $minThirds;
+                $yAxis[] = $bhpmYAxis;
+            }
+
+            $chart->yAxis = $yAxis;
 
             $chart->series = $series;
         }
@@ -206,7 +250,7 @@ class BenchmarkWidget extends Widget {
         return floor($percent * $decimalPlaces) / $decimalPlaces; //round to number of places required
     }
 
-    private function calculateBHPM($dates)
+    private function calculateBHPM($dates, &$min = 0)
     {
         //find all the times whena  network comes live for the affected clients
         $bhpmDates = array();
@@ -231,7 +275,7 @@ class BenchmarkWidget extends Widget {
             }
         }
 
-        $bhpm = Configure::read('Preslog')['Quantities']['bhpm'];
+        $bhpm = Configure::read('Preslog')['Quantities']['BHPM'];
         $bhpmTotal = 0;
 
         //find BHPM total before start of graph
@@ -242,6 +286,7 @@ class BenchmarkWidget extends Widget {
                 $bhpmTotal += $bhpm;
             }
         }
+        $min = $bhpmTotal;
 
         //calculate running total of bhpm during graph period
         $result = array();
@@ -251,7 +296,8 @@ class BenchmarkWidget extends Widget {
             $endOfMonth = mktime(23, 59, 59, date('n', $date), date('t', $date), date('y', $date));
             foreach( $bhpmDates as $bDate )
             {
-                if ( $bDate > $startOfMonth and $bDate < $endOfMonth)
+                $formattedBDate = strtotime($bDate);
+                if ( $formattedBDate > $startOfMonth and $formattedBDate < $endOfMonth)
                 {
                     $bhpmTotal += $bhpm;
                 }
@@ -260,5 +306,22 @@ class BenchmarkWidget extends Widget {
         }
 
         return $result;
+    }
+
+    private function _formatDuration($duration) {
+        $hours = floor($duration / 3600);
+        $minutes = floor(($duration % 3600) / 60);
+        $seconds = $duration - ($hours *3600) - ($minutes * 60);
+
+        $string = $hours > 0 ? $hours . 'h ': '';
+        $string .= $minutes > 0 ? $minutes . 'm ': '';
+        $string .= $seconds > 0 ? $seconds . 's ': '';
+
+        //not likely but if the string is empty show somehting
+        if (empty($string)) {
+            $string = '0s';
+        }
+
+        return $string;
     }
 }
