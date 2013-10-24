@@ -115,8 +115,14 @@ class PreslogParser extends JqlParser {
 
         //go through each client we have access to and get the id for the field we are searching on
         foreach($this->clients as $client) {
-            $clientEntity = $clientModel->getClientEntityById((string)$client['_id']);
-
+            if ( isset($client['Client']) )
+            {
+                $clientEntity = $clientModel->getClientEntityById($client['Client']['_id']);
+            }
+            else
+            {
+                $clientEntity = $clientModel->getClientEntityById((string)$client['_id']);
+            }
             $clientField = $clientEntity->getFieldTypeByName( $fieldName );
             if ($clientField == null)
             {

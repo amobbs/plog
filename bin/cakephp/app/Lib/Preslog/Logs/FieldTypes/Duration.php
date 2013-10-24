@@ -21,13 +21,13 @@ class Duration extends FieldTypeAbstract
             'dataLocation' => 'seconds',
             'groupBy' => '$sum',
             'aggregate' => true,
-            ),
-            'minutes' => array(
-                'dataLocation' => 'seconds',
-                'groupBy' => '$sum',
-                'aggregate' => true,
-            ),
-        );
+        ),
+        'minutes' => array(
+            'dataLocation' => 'seconds',
+            'groupBy' => '$sum',
+            'aggregate' => true,
+        ),
+    );
 
     protected $mongoSchema = array(
         'seconds'  => array('type' => 'int'),

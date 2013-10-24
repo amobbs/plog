@@ -4,6 +4,7 @@ namespace Preslog\Widgets;
 
 
 use Preslog\Widgets\Types\BarWidget;
+use Preslog\Widgets\Types\BenchmarkWidget;
 use Preslog\Widgets\Types\LineWidget;
 use Preslog\Widgets\Types\ListWidget;
 use Preslog\Widgets\Types\PieWidget;
@@ -29,6 +30,9 @@ class WidgetFactory {
                 break;
             case 'list':
                 $widget = new ListWidget($data);
+                break;
+            case 'benchmark':
+                $widget = new BenchmarkWidget($data);
                 break;
         }
 

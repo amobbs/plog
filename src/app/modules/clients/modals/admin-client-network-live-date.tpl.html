@@ -1,0 +1,21 @@
+<div class="modal-header">
+    <button type="button"  ng-click="dismiss()" class="close" data-dismiss="modal" aria-hidden="true"><i class="icon icon-remove"></i></button>
+    <h3 id="myModalLabel">Set Live Date</h3>
+    <span>Date that defines when the network will be included in broadcast hours per month calculation </span>
+</div>
+<div class="modal-body">
+    <div class="control-group">
+        <label class="control-label">Date </label>
+        <div class="controls">
+            <input type="text" placeholder="YYYY-MM-DD" value="" ng-model="liveDate"/>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button class="btn"
+            ng-click="dismiss()">Cancel</button>
+    <button class="btn btn-success"
+            ng-click="save()"
+            ng-disabled="fieldForm.$invalid"
+            >Save changes</button>
+</div>

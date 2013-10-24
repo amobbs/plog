@@ -11,6 +11,7 @@ class ListWidget extends Widget {
 
     public function __construct($data) {
         $this->type = 'list';
+        $this->chartType = 'list';
         $this->maxWidth = 3;
         $this->aggregate = false;
 
