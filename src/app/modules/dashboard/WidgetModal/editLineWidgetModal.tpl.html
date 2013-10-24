@@ -1,6 +1,6 @@
 <div class="modal-header">
     <button type="button" class="close" ng-click="cancel()" aria-hidden="true"><i class="icon icon-remove"></i></button>
-    <h3 id="myModalLabel">Edit pie widget</h3>
+    <h3 id="myModalLabel">Edit {{ widget.type }} widget</h3>
 </div>
 <div class="modal-body form-horizontal" id="editModalWidget">
     <div class="control-group">
@@ -21,30 +21,61 @@
             <textarea placeholder="Filter..." ng-model="widget.details.query" required></textarea>
         </div>
     </div>
+
     <div class="control-group">
-        <label class="control-label">Count</label>
+        <label class="control-label">X Axis </label>
         <div class="controls">
             <select
-                    ng-model="widget.details.yAxis"
-                    ng-options="field.id as field.name for field in widget.options.yAxis"
-                    >
+                    ng-model="widget.details.xAxis"
+                    ng-options="field.id as field.name for field in widget.options.xAxis"
+                    required >
             </select>
         </div>
     </div>
     <div class="control-group">
-        <label class="control-label">Group By</label>
+        <label class="control-label">Trend Line </label>
+        <div class="controls">
+            <input
+                type="checkbox"
+                ng-model="widget.details.trendLine" />
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label">Y Axis </label>
+        <div class="controls">
+            <select
+                    ng-model="widget.details.yAxis"
+                    ng-options="field.id as field.name for field in widget.options.yAxis"
+                    required
+            >
+            </select>
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label">Series</label>
         <div class="controls">
             <select
                     ng-model="widget.details.series"
                     ng-options="field.id as field.name for field in widget.options.series"
-                    >
+                    required
+            >
+            </select>
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label">Column Span </label>
+        <div class="controls">
+            <select
+                ng-model="widget.maxWidth"
+                ng-options="value for value in spanOptions"
+            >
             </select>
         </div>
     </div>
     <div class="control-group">
         <label class="control-label">Refresh Interval </label>
         <div class="controls">
-            <input type="text" placeholder="Minutes..." ng-model="widget.data.refresh" integer/>
+            <input type="text" placeholder="Minutes..." value="" ng-model="widget.data.refresh" />
         </div>
     </div>
 </div>

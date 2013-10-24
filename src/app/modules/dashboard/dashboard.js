@@ -30,8 +30,19 @@ angular.module( 'Preslog.dashboard', [
             },
             resolve: {
                 source: ['$q', 'Restangular', '$stateParams', function($q, Restangular, $stateParams) {
-                    // Fetch dashboard
+                    // Fetch dashboard TODO not a static id
                     return Restangular.one('dashboards', '5260a7d7ad7cc5441b00002b');
+                }],
+                dashboard: ['$q', 'Restangular', '$stateParams', function($q, Restangular, $stateParams) {
+                    var deferred = $q.defer();
+
+                    Restangular.one('dashboards', '5260a7d7ad7cc5441b00002b')
+                        .get()
+                        .then(function(dashboard) {
+                            deferred.resolve(dashboard);
+                        });
+
+                    return deferred.promise;
                 }]
             }
         });
@@ -47,6 +58,17 @@ angular.module( 'Preslog.dashboard', [
                 source: ['$q', 'Restangular', '$stateParams', function($q, Restangular, $stateParams) {
                     // Fetch dashboard
                    return Restangular.one('dashboards', $stateParams.dashboard_id);
+                }],
+                dashboard: ['$q', 'Restangular', '$stateParams', function($q, Restangular, $stateParams) {
+                    var deferred = $q.defer();
+
+                    Restangular.one('dashboards', $stateParams.dashboard_id)
+                        .get()
+                        .then(function(dashboard) {
+                            deferred.resolve(dashboard);
+                        });
+
+                    return deferred.promise;
                 }]
             }
         });
@@ -56,13 +78,13 @@ angular.module( 'Preslog.dashboard', [
     /**
      * Dashboard Controller
      */
-    .controller( 'DashboardCtrl', function DashboardController( $scope, $http, $window, $location, $timeout, $modal, userService, titleService, Restangular, source) {
+    .controller( 'DashboardCtrl', function DashboardController( $scope, $http, $window, $location, $timeout, $modal, userService, titleService, Restangular, source, dashboard) {
         titleService.setTitle( 'Dashboard' );
 
-        $scope.id = '';//mongoid for dashboard
-        $scope.dashboard = '';
-        $scope.favourites = '';
-        $scope.clients = '';
+        $scope.id = dashboard.dashboard.id;//mongoid for dashboard
+        $scope.dashboard = dashboard.dashboard;
+        $scope.favourites = dashboard.favourites;
+        $scope.clients = dashboard.clients;
         $scope.allDashboards = [];
         $scope.presetDashboards = [];
 
@@ -71,12 +93,11 @@ angular.module( 'Preslog.dashboard', [
         $scope.addDashboard = undefined;
 
         //populate data about this dashboard for the first time
-        source.get().then(function (result) {
-            $scope.id = result.dashboard.id;
-            $scope.dashboard = result.dashboard;
-            $scope.favourites = result.favourites;
-            $scope.clients = result.clients;
-        });
+//        source.get().then(function (result) {
+//            $scope.id = result.dashboard.id;
+//            $scope.favourites = result.favourites;
+//            $scope.clients = result.clients;
+//        });
 
         Restangular.one('dashboards').get().then(function(result) {
             $scope.allDashboards = result.dashboards;
@@ -162,7 +183,7 @@ angular.module( 'Preslog.dashboard', [
         };
 
         $scope.setRefreshTimer = function(widgetId, interval) {
-            var promise = $timeout($scope.refreshCallback(widgetId), (interval * 1000));
+            var promise = $timeout($scope.refreshCallback(widgetId), ((interval * 1000) * 60));
 
             $scope.refreshTimers.push({
                 widgetId: widgetId,
@@ -185,7 +206,10 @@ angular.module( 'Preslog.dashboard', [
             }
 
             //add new times
-            $scope.setRefreshTimer(widgetId, newInterval);
+            if ( newInterval > 0 )
+            {
+                $scope.setRefreshTimer(widgetId, newInterval);
+            }
         };
 
         $scope.refreshWidget = function(widgetId) {
@@ -211,7 +235,7 @@ angular.module( 'Preslog.dashboard', [
                 });
         };
 
-        //download a docx version of this dashboard
+        //download a docx version of this dashboard TODO fix this hard coded url
         $scope.exportReport = function() {
             window.location = 'http://local.preslog/api/dashboards/' + $scope.id + '/export';
         };
@@ -270,7 +294,8 @@ angular.module( 'Preslog.dashboard', [
                 templateUrl: 'modules/dashboard/widgetModal/addWidgetModal.tpl.html',
                 controller: 'WidgetCtrl',
                 resolve: {
-                    widget: function() { return {}; }
+                    widget: function() { return {}; },
+                    clients: function() { return []; }
                 }
             });
             addWidgetModal.result.then(function(data) {
@@ -288,7 +313,8 @@ angular.module( 'Preslog.dashboard', [
                 templateUrl: $scope.getEditTemplate(widget.type),
                 controller: 'WidgetCtrl',
                 resolve: {
-                    widget: function() { return angular.copy(widget); }
+                    widget: function() { return angular.copy(widget); },
+                    clients: function() { return $scope.splitClients(); }
                 }
             });
             editWidgetModal.result.then(function(data) {
@@ -322,6 +348,9 @@ angular.module( 'Preslog.dashboard', [
                     break;
                 case 'list':
                     tmpl +=  'ListWidgetModal.tpl.html';
+                    break;
+                case 'benchmark':
+                    tmpl +=  'BenchmarkWidgetModal.tpl.html';
                     break;
                 default:
                     tmpl +=  'LineWidgetModal.tpl.html';
@@ -372,7 +401,7 @@ angular.module( 'Preslog.dashboard', [
         $scope.isFavourite = function() {
             var found = false;
             for(var id in $scope.favourites) {
-                if ($scope.favourites[id]._id = $scope.id) {
+                if ($scope.favourites[id]._id == $scope.id) {
                     found = true;
                 }
             }
@@ -415,12 +444,12 @@ angular.module( 'Preslog.dashboard', [
             //i had some issues adding the watch inside the loop, so just watch all widgets and re-update
             // log list on any widget changes (not ideal)
             $scope.$watch(
-                'dashboard.widgets',
+                'dashboard.widgets[w]',
                 function() {
                     for(var id in $scope.dashboard.widgets) {
                         var widget = $scope.dashboard.widgets[id];
-                        if (widget.type == 'list') {
-
+                        if (widget.type == 'list')
+                        {
                             $scope.updateLogList(widget);
                         }
                     }
@@ -469,12 +498,29 @@ angular.module( 'Preslog.dashboard', [
         };
 
         //watch any changes in widgets so we can do some work needed to display log lists
-        $scope.$watch(
-            function() { return $scope.dashboard.widgets; },
-            function() {
-                $scope.setUpLogList();
+//        $scope.$watch(
+//            function() { return $scope.dashboard.widgets; },
+//            function() {
+//                $scope.setUpLogList();
+//            }
+//        );
+
+        $scope.applyLogListWatch = function()
+        {
+            for (var id in $scope.dashboard.widgets)
+            {
+                var widget = $scope.dashboard.widgets[id];
+                if ( widget.type == 'list' )
+                {
+                    $scope.$watch(
+                        'dashboard.widgets[id].params',
+                         $scope.setUpLogList
+
+                    );
+                }
             }
-        );
+        };
+        $scope.applyLogListWatch();
 
         //start all the timers to refresh widgets regularly
         $scope.startWidgetRefresh();
