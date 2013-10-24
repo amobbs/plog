@@ -71,6 +71,7 @@ class Client extends AppModel
                 ),
                 'name' => array('type' => 'string', 'length'=>64),
                 'deleted' => array('type' => 'boolean'),
+                'network' => array('type' => 'boolean'),
                 'children' => array(
                     'type' => 'subCollection',
                     'schema' => array(
@@ -80,6 +81,10 @@ class Client extends AppModel
                             'mongoType' => 'mongoId'
                         ),
                         'name' => array('type' => 'string', 'length'=>64),
+                        'live_date' => array(
+                            'type' => 'datetime',
+                            'mongoType' => 'mongoDate'
+                        ),
                         'deleted' => array('type' => 'boolean'),
                         'children' => array(
                             'type' => 'subCollection',
