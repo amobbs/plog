@@ -9,19 +9,21 @@ class Widget {
     protected $id; //mongo id for instance of widget
     protected $order; //order displayed on screen
     protected $name; //shown in title bar of widget
-    protected $type; //determines type of graph or method used to display widget
+    protected $type; //determine the type of widget (options that will be shown in the interface)
+    protected $chartType; //determines type of graph or method used to display widget
     protected $details; //information used to render the graph (title, refresh rate, options available to generate the graph
     protected $options = array(); //all possible options that are shown when picking details to generate the graphs
     protected $displayOptions = array(); //parsed options that are are sent to interface
     protected $maxWidth = 1; //how much space the widget should take up on screen
     protected $series = array(); //data used to populate graph
     protected $aggregate; //is the result of the data an aggregate or just a list of logs?
-
+    protected $clients = array();
 
     public function setId($id) { $this->id = $id; }
     public function setSeries($series) { $this->series = $series; }
     public function setDetail($key, $value) { $this->details[$key] = $value; }
     public function setDisplayOptions($key, $value) { $this->displayOptions[$key] = $value; }
+    public function setClients( $clients ) { $this->clients = $clients; }
 
 
     public function getDetail($key) { return isset($this->details[$key]) ? $this->details[$key] : ''; }
@@ -53,9 +55,10 @@ class Widget {
     public function toArray($forMongo = true) {
         $widget = array(
             '_id' => (string)$this->id,
+            'type' => $this->type,
             'order' => $this->order,
             'name' => $this->name,
-            'type' => $this->type,
+            'chartType' => $this->chartType,
             'details' => $this->details,
             'maxWidth' => $this->maxWidth,
         );
@@ -72,4 +75,41 @@ class Widget {
     public function getDisplayData() {
        return array();
     }
+
+    /**
+     * given an array of x values return an array of y values that will draw a trend (simple regression) line on the graph
+     * @param array $data
+     *
+     * @return array
+     */
+    protected function calculateTrendLine($data = array()) {
+        $n = sizeOf($data);
+
+        $sumX = 0;
+        $sumY = 0;
+        $sumXY = 0;
+        for ($x = 1; $x < sizeof($data) -1; $x++)
+        {
+            $y = $data[$x - 1];
+
+            $sumX += $x;
+            $sumY += $y;
+            $sumXY += ($x * $y);
+        }
+        $meanX = $sumX / $n;
+        $meanY = $sumY / $n;
+
+        $slope = (($sumXY - ($n * $meanX * $meanY)) / ($sumX - ($n * ($meanX ^ 2))) / $n);
+
+        $yIntercept = $meanY - ($slope * $meanX);
+
+        $y = array();
+        for($x = 0; $x < sizeof($data); $x++)
+        {
+            $y[] = ($slope * $x) + $yIntercept;
+        }
+
+        return $y;
+    }
+
 }
