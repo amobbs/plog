@@ -128,6 +128,7 @@ class MongodbSource extends DboSource {
     protected $_defaultTypeValues = array(
         'string' => null,
         'integer' => null,
+        'float' => null,
         'mongoId' => null,
         'mongoDate' => null,
         'datetime' => null,
