@@ -1574,10 +1574,15 @@ class MongodbSource extends DboSource {
                         }
                         break;
                     case 'mongoDate':
+
                         if ($toArray) {
-                            $doc[$fieldKey] = date('r', $doc[$fieldKey]->sec);
+                            if (is_object($doc[$fieldKey])) {
+                                $doc[$fieldKey] = date('r', $doc[$fieldKey]->sec);
+                            }
                         } elseif (! empty($doc[$fieldKey]) && ! $doc[$fieldKey] instanceof MongoDate) {
-                            $doc[$fieldKey] = new MongoDate(strtotime($doc[$fieldKey]));
+                            if (! is_object($doc[$fieldKey])) {
+                                $doc[$fieldKey] = new MongoDate(strtotime($doc[$fieldKey]));
+                            }
                         }
 
                         break;
