@@ -73,7 +73,7 @@ class JqlFunction {
 
         if ($date == 0) $date = mktime(date('H'), date('i'), date('s'), date('n'), date('j'), date('y'));
 
-        $date = $this->_evaluateInterval($value, $date);
+       // $date = $this->_evaluateInterval($value, $date);
         return $date;
     }
 
@@ -83,6 +83,8 @@ class JqlFunction {
             $sign = '-';
             $string = substr($string, 1);
         }
+
+        $string = strtolower($string);
 
         $string = preg_replace('%(\d+)s%', $sign . '${1}seconds', $string);
         $string = preg_replace('%(\d+)min%', $sign . '${1}minutes', $string);

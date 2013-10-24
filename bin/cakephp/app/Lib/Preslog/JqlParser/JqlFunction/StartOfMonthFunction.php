@@ -8,7 +8,7 @@ class StartOfMonthFunction extends JqlFunction {
      * construtor
      */
     public function __construct() {
-        parent::_construct('startofweek');
+        parent::_construct('startofmonth');
     }
 
     /**
