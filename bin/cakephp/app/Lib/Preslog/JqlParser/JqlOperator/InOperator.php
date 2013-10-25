@@ -33,4 +33,25 @@ class InOperator extends JqlOperator {
         return $value;
     }
 
+    public function matches($value1, $value2)
+    {
+        $value2 = str_replace('(', '', $value2);
+        $value2 = str_replace(')', '', $value2);
+
+        $values = explode(',', $value2);
+
+        $foundMatch = false;
+        foreach( $values as $value )
+        {
+            if (is_numeric($value1) && is_numeric($value))
+            {
+                $foundMatch = $foundMatch ? true : $value1 == $value2;
+            }
+
+            $foundMatch = $foundMatch ? true : strtolower($value1) == strtolower($value);
+        }
+
+        return $foundMatch;
+    }
+
 }

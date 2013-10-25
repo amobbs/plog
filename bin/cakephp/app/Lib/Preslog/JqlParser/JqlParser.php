@@ -217,10 +217,11 @@ class JqlParser {
 
         //find any groups
         $openPos = FALSE;
-        $lastChar = '';
+        $lastChar = ' ';
+        $thisChar = '';
         $i = 0;
         //a group starts with a ( which is preceded with a space or another ( anything else and it is a function
-        while (!$openPos) {
+        while ( ! $openPos && $thisChar !== false) {
             $thisChar = substr($string, $i, 1);
             if($thisChar == '(' && ($lastChar == '(' || $lastChar == ' ')) {
                 $openPos = $i + 1;
@@ -229,18 +230,22 @@ class JqlParser {
             $i++;
         }
 
+        //find corrosponding close ) and count number of groups in the string
         $close = -1;
         $groupCount = 0;
-        for($i = $openPos; $i < strlen($string); $i++) {
-            $char = substr($string, $i, 1);
-            if($char == '(') {
-                $groupCount++;
-            } else if ($char == ')') {
-                if ($groupCount > 0) {
-                    $groupCount--;
-                } else {
-                    $close = $i - $openPos;
-                    break;
+        if ($openPos !== false) //if there are no opens no need to find a close.
+        {
+            for($i = $openPos; $i < strlen($string); $i++) {
+                $char = substr($string, $i, 1);
+                if($char == '(') {
+                    $groupCount++;
+                } else if ($char == ')') {
+                    if ($groupCount > 0) {
+                        $groupCount--;
+                    } else {
+                        $close = $i - $openPos;
+                        break;
+                    }
                 }
             }
         }
@@ -331,7 +336,7 @@ class JqlParser {
         }
 
         if (!$this->_findFirstKeyword($string, $jql)) { //there are no keywords just one clause
-            return new Clause($string);
+            return new Clause($string, $jql);
         }
 
         //there are some keywords, seperate them
@@ -452,7 +457,7 @@ class JqlParser {
     private function _countFunctionsInString($string) {
         $count = 0;
         foreach (JqlFunction::listFunctions() as $function) {
-            $count += substr_count($string, $function->getName() . '(');
+            $count += substr_count(strtoupper($string), $function->getName() . '(');
         }
         return $count;
     }

@@ -13,7 +13,7 @@ class JqlOperator {
             '<' => new LessThanOperator(),
             'NOT IN' => new NotInOperator(),
             'IN' => new InOperator(),
-            'LIKE' => new LikeOperator(),
+            '~' => new LikeOperator(),
         );
     }
 
@@ -84,6 +84,21 @@ class JqlOperator {
     public function getMongoInline ()
     {
         return $this->_mongoInline;
+    }
+
+    /**
+     * used to evaluate in code if the value1 'operator' value2 = true
+     * the idea is to use this in the case where we need to evaluate the operation in code and not the db
+     * eg: in preslog the slect field data is stored on the client in mongo not the log field so we can not
+     * use the db to do LIKE operators.
+     * @param $value1
+     * @param $value2
+     *
+     * @return bool
+     */
+    public function matches($value1, $value2)
+    {
+        return true;
     }
 
 

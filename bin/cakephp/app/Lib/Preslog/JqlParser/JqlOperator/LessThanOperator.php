@@ -19,4 +19,14 @@ class LessThanOperator extends JqlOperator {
         parent::_construct('<', '<', '$lt', false);
     }
 
+    public function matches($value1, $value2)
+    {
+        if (is_numeric($value1) && is_numeric($value2))
+        {
+            return $value1 > $value2;
+        }
+
+        return strtolower($value1) < strtolower($value2);
+    }
+
 }

@@ -186,7 +186,8 @@ class LineWidget extends Widget {
                         'width' => 1,
                         'color' => '#808080'
                     )
-                )
+                ),
+                'min' => 0,
             );
 
             if (isset($this->details['trendLine']) && $this->details['trendLine'])
