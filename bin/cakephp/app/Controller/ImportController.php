@@ -2,6 +2,11 @@
 
 //App::uses('CakeLogInterface', 'Log');
 
+/**
+ * Import Controller
+ * - Wipes data from Preslog Log, Client, User tables
+ * - Imports from Preslog/Mediahub SQL databases, converting content to Mongo
+ */
 class ImportController extends AppController
 {
     public $uses = array('Client', 'Log', 'User');
@@ -13,11 +18,21 @@ class ImportController extends AppController
 
     private $timezone = 'Australia/Sydney';
 
+    protected $userLookup = array();
+    protected $userDefault = null;
+
+    /**
+     * Log messages
+     * @param $msg
+     */
     private function _log($msg) {
         CakeLog::write('activity', $msg);
         $this->arrayLog[] = $msg;
     }
 
+    /**
+     * Perform the import process
+     */
     function runImport() {
 
         set_time_limit(0);
@@ -70,6 +85,11 @@ class ImportController extends AppController
 
     }
 
+    /**
+     * Fetch an SQL db connection
+     * @param $dbName
+     * @throws Exception
+     */
     private function _getDbConn($dbName) {
         $this->mysqli = new mysqli("127.0.0.1", "root", "", $dbName);
         if ($this->mysqli->connect_errno) {
@@ -77,6 +97,10 @@ class ImportController extends AppController
         }
     }
 
+    /**
+     * Initialise the Client list.
+     * @return array
+     */
     private function _initDetails() {
         $baseFormats = $this->_getBaseFormats();
         $clients = array(
@@ -151,6 +175,10 @@ class ImportController extends AppController
         return $clients;
     }
 
+    /**
+     * Create the basic log format
+     * @return array
+     */
     private function _getBaseFormats() {
         $order = 0;
         $baseFormats = array(
@@ -295,6 +323,11 @@ class ImportController extends AppController
         return $baseFormats;
     }
 
+    /**
+     * Create a client
+     * @param $client
+     * @return mixed
+     */
     private function _createClient($client) {
         $onairImpactId = -1;
         $severityId = -1;
@@ -516,6 +549,11 @@ class ImportController extends AppController
         return $returnClient;
     }
 
+    /**
+     * Create users
+     * @param $clients
+     * @return array
+     */
     private function _createUsers($clients) {
         $this->_log('-importing users');
 
@@ -527,11 +565,13 @@ class ImportController extends AppController
         while (($line = fgets($file)) !== false) {
             $parts = explode(',', $line);
 
-            if ($parts[0] == 'email' || empty($parts[0])) //ignore column headers and blank lines
+            //ignore column headers and blank lines or incomplete rows
+            if ($parts[0] == 'email' || empty($parts[0]))
                 continue;
             if (sizeof($parts) < 7)
                 continue;
 
+            // Prep object
             $user =  array(
                 '_id' => new MongoId(),
                 'password' => Security::hash('nopassword', 'blowfish', false),
@@ -551,10 +591,11 @@ class ImportController extends AppController
                 ),
             );
 
-            //all users are active according to data sent from mediahub
-            $user['deleted'] = false;
+            // Set deleted/active
+            $user['deleted'] = ($parts[5] == 'TRUE');
 
-            if (isset($parts[7])) { //TODO convert name to mongo id
+            // Attach client_id if we can find it from the given company name
+            if (isset($parts[7])) {
                 $clientId = null;
                 foreach($clients as $client) {
                     if (strtolower($client['name']) == strtolower($user['company'])) {
@@ -567,18 +608,26 @@ class ImportController extends AppController
                 }
             }
 
-            //TODO ignoring alias as not provided by media hub
-//            $alias = array();
-//            if(sizeof($parts) > 8) {
-//                for($i = 8; $i < sizeof($parts); $i++) {
-//                    $a = preg_replace('/"/', '', trim($parts[$i]));
-//                    $alias[] = $a;
-//                }
-//                $user['alias'] = $alias;
-//            }
-
+            // Save user to DB
             $this->User->create($user);
             $this->User->save();
+
+            // Set default user
+            if (empty($this->userDefault))
+            {
+                $this->userDefault = $user['_id'];
+            }
+
+            // Create alias lookup
+            if(isset($parts[9]) && !empty($parts[9])) {
+                $aliases = explode(',', $parts[9]);
+
+                // Add to lookup list
+                foreach ($aliases as $alias)
+                {
+                    $this->userLookup[ $alias ] = $user['_id'];
+                }
+            }
 
             $users[] = $user;
         }
@@ -589,6 +638,12 @@ class ImportController extends AppController
         return $users;
     }
 
+    /**
+     * Locate an existing user in the user list; from the $existing users, find $user
+     * @param $existing
+     * @param $user
+     * @return bool|int|string
+     */
     private function _findExistingUser($existing, $user) {
         foreach($existing as $cleanName => $eUser) {
             foreach($eUser as $u) {
@@ -601,6 +656,11 @@ class ImportController extends AppController
         return false;
     }
 
+    /**
+     * Create logs from the database, for $client using $users
+     * @param $client
+     * @param $users
+     */
     private function _createLogs($client, $users) {
         $this->_log('creating logs for ' . $client['name']);
         $sql = 'SELECT lognum as hrid, logdate, logtime, duration, cause, impact, description, details, loggedby,
@@ -613,17 +673,29 @@ class ImportController extends AppController
         if($result = $this->mysqli->query($sql)) {
             while ($row = $result->fetch_assoc()) {
 
-                $modifiedBy = '';
-                if ((int)$row['version'] == 1) {
-                    $modifiedBy = $row['loggedby'];
+                // User lookup
+                if (isset($this->userLookup[ $row['loggedby'] ]))
+                {
+                    $userId = $this->userLookup[ $row['loggedby'] ];
+                }
+                else
+                {
+                    $userId = $this->userDefault;
                 }
 
+                // Apply modified if not v1
+                $modifiedBy = '';
+                if ((int)$row['version'] == 1) {
+                    $modifiedBy = $userId;
+                }
+
+                // Log fields
                 $fields = array(
                     array(
                         'field_id' => $this->_getMongoIDFromFormatByName($client['fields'], 'loginfo'),
                         'data' => array(
                             'created' => new MongoDate(strtotime($row['created'] .' '. $this->timezone)),
-                            'created_user_id' => $row['loggedby'],
+                            'created_user_id' => $userId,
                             'modified' => new MongoDate(strtotime($row['modified'] .' '. $this->timezone)),
                             'modified_user_id' => $modifiedBy,
                             'version' => (int)$row['version']
@@ -735,12 +807,27 @@ class ImportController extends AppController
                 }
 
                 // Network selection to Attr list
-                $netSql = "SELECT log_id, channel_id, network_id FROM ". $client['database_prefix'] ."_dailylog_networks WHERE log_id = '{$row['hrid']}'";
+                $netSql = "
+                    SELECT
+                        NETWORK
+                    FROM
+                        ". $client['database_prefix'] ."_dailylog_networks AS dln
+                        LEFT JOIN ". $client['database_prefix'] ."_networks AS n ON n.id = dln.network_id
+                    WHERE
+                        log_id = '{$row['hrid']}'
+                ";
+
                 if($netResult = $this->mysqli->query($netSql)) {
                     while ($netRow = $netResult->fetch_assoc()) {
 
-                        // insert magic here
-                        $netRow;
+                        // Don't try to save a null value.
+                        if (empty($netRow['NETWORK']))
+                        {
+                            continue;
+                        }
+
+                        // Append MongoID to attr
+                        $attr[] = $this->_getMongoIdForAttr($client['attributes'], $netRow['NETWORK']);
                     }
                 }
 
@@ -766,6 +853,13 @@ class ImportController extends AppController
         $this->_log("$logCount logs added for " . $client['name']);
     }
 
+    /**
+     * Fetch the MongoID for the field $name from $formats
+     * @param $formats
+     * @param $name
+     * @return mixed
+     * @throws Exception
+     */
     private function _getMongoIDFromFormatByName($formats, $name) {
         foreach($formats as $format) {
             if ($format['name'] == mb_convert_encoding($name, 'utf8')) {
@@ -775,6 +869,14 @@ class ImportController extends AppController
         throw new Exception("could not find name[$name] in format provided");
     }
 
+    /**
+     * Fetch the MongoID from field $name in $format, with selected $id
+     * @param $formats
+     * @param $name
+     * @param $id
+     * @return string
+     * @throws Exception
+     */
     private function _getMongoIdForOptionInSelect($formats, $name, $id) {
 
         if (empty($id))
@@ -796,19 +898,65 @@ class ImportController extends AppController
         throw new Exception("unable to find option in [$name] for id [$id]");
     }
 
-    private function _getMongoIdForAttr($attrs, $name) {
-        $name = mb_convert_encoding($name, 'utf8');
-        foreach($attrs as $attr) {
-            if(is_array($attr)) {
-                foreach($attr['children'] as $child) {
-                    if ($child['name'] == $name)
-                        return $child['_id'];
+    /**
+     * Fetch the MongoID for the selected $name attribute in $attrs
+     * @param $attrs
+     * @param $name
+     * @param $recursed
+     * @return mixed
+     * @throws Exception
+     */
+    private function _getMongoIdForAttr($attrs, $name, $recursed=false) {
+
+        // On first pass, convert the name string
+        if (!$recursed)
+        {
+            $name = mb_convert_encoding($name, 'utf8');
+        }
+
+        // is this array an entry?
+        if (isset($attrs['name']))
+        {
+            if ($attrs['name'] == $name)
+            {
+                return $attrs['_id'];
+            }
+        }
+        else
+        {
+            foreach($attrs as $attr)
+            {
+                // Check this item
+                $result = $this->_getMongoIdForAttr($attr, $name, true);
+
+                if ($result !== false)
+                {
+                    return $result;
+                }
+
+                // Do we have children? Check those too.
+                if (sizeof($attr['children']))
+                {
+                    $result = $this->_getMongoIdForAttr($attr['children'], $name, true);
+                }
+
+                if ($result !== false)
+                {
+                    return $result;
                 }
             }
-            if ($attr['name'] == $name)
-                return $attr['_id'];
         }
-        throw new Exception("unable to find attr with name [$name]");
+
+        // Failed to find anything at all?
+        // Recursive calls get to go back with a false, but non-recursive means we throw an exception.
+        if ($recursed)
+        {
+            return false;
+        }
+        else
+        {
+            throw new Exception("unable to find attr with name [$name]");
+        }
     }
 
 }
