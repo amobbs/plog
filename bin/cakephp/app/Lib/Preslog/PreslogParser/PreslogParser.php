@@ -8,6 +8,7 @@ use MongoRegex;
 use Preslog\JqlParser\Clause;
 use Preslog\JqlParser\JqlKeyword\JqlKeyword;
 use Preslog\JqlParser\JqlParser;
+use Preslog\Logs\FieldTypes\Select;
 
 class PreslogParser extends JqlParser {
 
@@ -40,7 +41,7 @@ class PreslogParser extends JqlParser {
         }
 
         if ($expression instanceof Clause) {
-            return $this->mongoExpressionToPreslog($expression->getMongoCriteria());
+            return $this->mongoExpressionToPreslog($expression);
         }
 
         $conditions = array();
@@ -62,8 +63,7 @@ class PreslogParser extends JqlParser {
                     );
                 }
             } else {
-                $exp = $clause->getMongoCriteria();
-                $conditions[] = $this->mongoExpressionToPreslog($exp);
+                $conditions[] = $this->mongoExpressionToPreslog($clause);
             }
         }
 
@@ -73,16 +73,20 @@ class PreslogParser extends JqlParser {
     /**
      * replace field name ain expression with list of client field id's
      *
-     * @param $expression
+     * @param $clause
+     *
+     * @internal param $expression
      *
      * @return array
      */
-    private function mongoExpressionToPreslog($expression) {
+    private function mongoExpressionToPreslog($clause) {
+        $expression = $clause->getMongoCriteria();
         //there should only be one field/value pair in the expression
         $keys = array_keys($expression);
         $fieldName = $keys[0];
         $value = $expression[$fieldName];
 
+        //hard replace hrid (db name) with a more human readable "id"
         if ($fieldName == 'id')
         {
             return array(
@@ -90,6 +94,8 @@ class PreslogParser extends JqlParser {
             );
         }
 
+        //add the option to search for clients using 'client' field
+        //match client id to name
         $clientModel = ClassRegistry::init('Client');
         if ($fieldName == 'client')
         {
@@ -111,10 +117,12 @@ class PreslogParser extends JqlParser {
         $fieldIds = array();
         $dataField = '';
         $isText = false;
-
+        $isSelect = false;
+        $selectIn = array();
 
         //go through each client we have access to and get the id for the field we are searching on
         foreach($this->clients as $client) {
+            //sometimes we get mongoIds some times we get strings (not sure why)
             if ( isset($client['Client']) )
             {
                 $clientEntity = $clientModel->getClientEntityById($client['Client']['_id']);
@@ -147,12 +155,37 @@ class PreslogParser extends JqlParser {
                 {
                     $isText = true;
                 }
+
+                //select fields dont store the data on the log, only a reference to the option set on the client field
+                if ( $clientField instanceof Select )
+                {
+                    $isText = false;
+                    $isSelect = true;
+
+                    $operator = $clause->getOperator();
+                    //loop through the actual values for the select and find which ones match since we can not do it in the db
+                    $options = $clientField->getFieldSettings()['data']['options'];
+                    foreach( $options as $option )
+                    {
+                        if ( $operator->matches($option['name'], $value) )
+                        {
+                            $selectIn[] = new MongoId($option['_id']);
+                        }
+                    }
+                }
             }
         }
 
         if ($isText)
         {
             $value = new MongoRegex("/^$value$/i");
+        }
+
+        if ( $isSelect )
+        {
+            $value = array(
+                '$in' => $selectIn,
+            );
         }
 
         return array(

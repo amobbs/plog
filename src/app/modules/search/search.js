@@ -36,7 +36,7 @@ angular.module( 'Preslog.search', [
 
        // $scope.jql = '(created > startofweek[] AND created < startofday[-1d]) AND operator not in ("jim", "pete") AND (duration > 1d AND duration < 1d10m) ';
         //$scope.jql = 'id=1 and (id = 2 or (id = 3 or id = 3.1))';
-        $scope.jql = 'duration > 0';
+        $scope.jql = 'accountability ~ mediahub error';
         $scope.sql = 'SELECT * FROM "LOGS" WHERE "DURATION" > ?';
 
         $scope.args = ['1'];

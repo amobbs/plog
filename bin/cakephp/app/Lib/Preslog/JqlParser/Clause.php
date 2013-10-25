@@ -33,6 +33,10 @@ class Clause {
         return $this->_operator->formatValueForSql($this->_value);
     }
 
+    public function getOperator() {
+        return $this->_operator;
+    }
+
     public function getField() { return $this->_field; }
 
     public function getFunctionEvaluated() {
@@ -103,6 +107,12 @@ class Clause {
     private function _populateFields() {
         $parts = $this->_explodeClause($this->_originallyJql);
 
+        if ( sizeof($parts) == 0 )
+        {
+            //TODO fail??
+            throw new Exception("invalid jql clause " . $this->_unparsedClause);
+        }
+
         $this->_field = strtolower($this->_stripTableName($parts['field']));
         $this->_operator = $this->_findOperator($parts['operator']);
         $this->_value = $parts['value'];
@@ -110,6 +120,8 @@ class Clause {
 
     private function _explodeClause() {
         $parts = array();
+
+        $operators = JqlOperator::listOperators();
 
         foreach(JqlOperator::listOperators() as $operator) {
             $operatorPos = false;

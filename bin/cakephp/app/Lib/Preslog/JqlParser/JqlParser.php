@@ -336,7 +336,7 @@ class JqlParser {
         }
 
         if (!$this->_findFirstKeyword($string, $jql)) { //there are no keywords just one clause
-            return new Clause($string);
+            return new Clause($string, $jql);
         }
 
         //there are some keywords, seperate them

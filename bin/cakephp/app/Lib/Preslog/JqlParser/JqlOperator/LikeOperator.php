@@ -12,11 +12,16 @@ namespace Preslog\JqlParser\JqlOperator;
 
 class LikeOperator extends JqlOperator{
 
-    public function _construct() {
+    public function __construct() {
         parent::_construct('~', 'LIKE', '', true);
     }
 
     public function formatValueForSql($value) {
         return '%' . $value . '%';
+    }
+
+    public function matches($value1, $value2)
+    {
+        return strpos(strtolower($value1), strtolower($value2)) !== false;
     }
 }
