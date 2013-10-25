@@ -393,7 +393,7 @@ class ImportController extends AppController
                     $n = array(
                         '_id' => new MongoId(),
                         'name' => mb_convert_encoding($row['name'], 'utf8'),
-                        'live_date' => new MongoDate('1970-01-01T00:00:00Z'),
+                        'live_date' => new MongoDate(0),
                         'deleted' => (bool)$row['deleted'],
                         'children' => array(),
                     );
@@ -459,7 +459,7 @@ class ImportController extends AppController
                 $states['children'][] = array(
                     '_id' => new MongoId(),
                     'name' => $state,
-                    'live_date' =>  new MongoDate('1970-01-01T00:00:00Z'),
+                    'live_date' =>  new MongoDate(0),
                     'deleted' => false,
                     'children' => array(),
                 );
@@ -477,14 +477,14 @@ class ImportController extends AppController
                     array(
                         '_id' => new MongoId(),
                         'name' => 'City',
-                        'live_date' =>  new MongoDate('1970-01-01T00:00:00Z'),
+                        'live_date' =>  new MongoDate(0),
                         'deleted' => false,
                         'children' => array(),
                     ),
                     array(
                         '_id' => new MongoId(),
                         'name' => 'State',
-                        'live_date' =>  new MongoDate('1970-01-01T00:00:00Z'),
+                        'live_date' =>  new MongoDate(0),
                         'deleted' => false,
                         'children' => array(),
                     ),
