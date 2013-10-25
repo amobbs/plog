@@ -34,9 +34,8 @@ angular.module( 'Preslog.search', [
     .controller( 'SearchCtrl', function SearchCtrl( $scope, $http, $modal, titleService, Restangular ) {
        titleService.setTitle( 'Search' );
 
-       // $scope.jql = '(created > startofweek[] AND created < startofday[-1d]) AND operator not in ("jim", "pete") AND (duration > 1d AND duration < 1d10m) ';
-        //$scope.jql = 'id=1 and (id = 2 or (id = 3 or id = 3.1))';
-        $scope.jql = 'accountability ~ mediahub error';
+        //$scope.jql = 'accountability = mediahub error and (created > startofmonth("-1months") and created < endofmonth("-1months"))';
+        $scope.jql = '';
         $scope.sql = 'SELECT * FROM "LOGS" WHERE "DURATION" > ?';
 
         $scope.args = ['1'];
@@ -62,7 +61,10 @@ angular.module( 'Preslog.search', [
             $scope.search();
         }, true);
 
-        $scope.queryMeta = {
+        $scope.queryMeta = {};
+
+        $scope.tq =
+        {
                 "tables": [
                     {
                         "name": "LOGS",
@@ -251,6 +253,7 @@ angular.module( 'Preslog.search', [
                 ]
             };
 
+
         $scope.doSearch = function() {
             $scope.logWidgetParams.page = 1;
             $scope.search();
@@ -316,10 +319,11 @@ angular.module( 'Preslog.search', [
                                 queryMeta: function() { return $scope.queryMeta; }
                             }
                        });
-//                       modal.result.then(function(jql) {
-//                            debugger;
-//                       });
 
+                       modal.result.then(function(sql) {
+                           $scope.sql = sql;
+                           $scope.sqlToJql();
+                       });
                    }
                });
 
@@ -331,8 +335,6 @@ angular.module( 'Preslog.search', [
             return {
                 restrict:'E',
                 transclude: true,
-
-                // Data binding on two fields
                 scope: {
                     sql: '=',
                     args: '=',
@@ -340,41 +342,30 @@ angular.module( 'Preslog.search', [
                 },
 
                 link : function(scope, element, attrs) {
-
-//                    Restangular.one('search/wizard/params').get({jql : scope.jql}).then(function(data) {
-//                        if (data) {
-//                            scope.sql = data.sql;
-//                            scope.args = data.args;
-//
-//                            $timeout(function() {
-                                RedQueryBuilderFactory.create({
-                                        targetId : 'rqb',
-                                        meta : scope.queryMeta
-//                                        onSqlChange : function(sql, args) {
-//                                            scope.sql = sql;
-//                                            scope.args = args;
-//                                        },
-//                                        enumerate : function(request, response) {
-//                                            if (request.columnName == 'CATEGORY') {
-//                                                response([{value:'A', label:'Small'}, {value:'B', label:'Medium'}]);
-//                                            } else {
-//                                                response([{value:'M', label:'Male'}, {value:'F', label:'Female'}]);
-//                                            }
-//                                        },
-//                                        editors : [ {
-//                                            name : 'DATE',
-//                                            format : 'dd.MM.yyyy'
-//                                        } ],
-//                                        suggest: function(args, callback) {
-//                                            console.log(args);
-//                                        }
-                                    },
-                                    'select * from "LOGS" where ID = ?',
-                                    //scope.sql,
-                                    scope.args);
-                            //}//, 100);
-                        //}
-                    //});
+                    RedQueryBuilderFactory.create({
+                            targetId : 'rqb',
+                            meta : scope.queryMeta,
+                            onSqlChange : function(sql, args) {
+                                scope.sql = sql;
+                                scope.args = args;
+                            },
+                            enumerate : function(request, response) {
+                                if (request.columnName == 'CATEGORY') {
+                                    response([{value:'A', label:'Small'}, {value:'B', label:'Medium'}]);
+                                } else {
+                                    response([{value:'M', label:'Male'}, {value:'F', label:'Female'}]);
+                                }
+                            },
+                            editors : [ {
+                                name : 'DATE',
+                                format : 'dd.MM.yyyy'
+                            } ],
+                            suggest: function(args, callback) {
+                                console.log(args);
+                            }
+                        },
+                        scope.sql,
+                        scope.args);
                 }
             };
         }
