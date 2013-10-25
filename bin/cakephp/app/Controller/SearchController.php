@@ -2,6 +2,7 @@
 
 App::uses('AppController', 'Controller');
 
+use Preslog\JqlParser\JqlOperator\JqlOperator;
 use Preslog\JqlParser\JqlParser;
 use Swagger\Annotations as SWG;
 
@@ -360,29 +361,7 @@ class SearchController extends AppController
         $parser->setSqlFromJql($jql);
 
         //get list of fields that can be used to query against (red query builder format)
-        $fieldList = array(
-            "tables" => array(
-                'name' => 'LOGS',
-                'columns' => array(
-                    'name' => '',
-                    'label' => '',
-                    'type' => '',
-                    'size' => '',
-                ),
-                'fks' => array(),
-            ),
-            'types' => array(
-                array(
-                    'editor' => '',
-                    'name' => '',
-                    'operators' => array(
-                        'name' => '',
-                        'label' => '',
-                        'cardinality' => 'ONE',
-                    ),
-                ),
-            ),
-        );
+        $fieldList = $this->_getQueryBuilderMeta();
 
         $this->set('sql', $parser->getSql());
         $this->set('args', $parser->getArguments());
@@ -390,7 +369,106 @@ class SearchController extends AppController
         $this->set('_serialize', array('sql', 'args', 'fieldList'));
     }
 
+    private function _getQueryBuilderMeta()
+    {
+        //list clients this user has access to
+        $clientIds = $this->getClientListForUser();
 
+
+        //get all the unique fields that can be used from all the clients this user has access to
+
+        $columns = array(
+            'ID' => array(
+                'name' => 'ID',
+                'label' => 'ID',
+                'type' => 'TEXT', //$clientField->getProperties('alias'),
+                'size' => 10,
+            ),
+            'created' => array(
+                'name' => 'Created',
+                'label' => 'Created',
+                'type' => 'TEXT', //$clientField->getProperties('alias'),
+                'size' => 10,
+            ),
+            'modified' => array(
+                'name' => 'Modified',
+                'label' => 'Modified',
+                'type' => 'TEXT', //$clientField->getProperties('alias'),
+                'size' => 10,
+            ),
+            'version' => array(
+                'name' => 'Version',
+                'label' => 'Version',
+                'type' => 'TEXT', //$clientField->getProperties('alias'),
+                'size' => 10,
+            ),
+        );
+
+        $types = array();
+        foreach($clientIds as $id)
+        {
+            $clientEntity = $this ->Client->getClientEntityById($id);
+            foreach($clientEntity->fields as $fieldId => $clientField)
+            {
+                $fieldSettings = $clientField->getFieldSettings();
+                $title = $fieldSettings['label'];
+                if (isset($columns[$title]) || $fieldSettings['type'] == 'loginfo')
+                {
+                    continue;
+                }
+
+                $columns[$title] = array(
+                    'name' => $title,
+                    'label' => $title,
+                    'type' => 'TEXT', //$clientField->getProperties('alias'),
+                    'size' => 10,
+                );
+
+            }
+        }
+
+        $types[] = array(
+            'editor' => 'TEXT',
+            'name' => 'TEXT',
+            'operators' => $this->listOperators(),
+        );
+
+        $fieldList = array(
+            'tables' => array(
+                array(
+                    'name' => 'LOGS',
+                    'columns' => array_values($columns),
+//                    'columns' => array(
+//                        array(
+//                            'name' => 'ID',
+//                            'label' => 'ID',
+//                            'type' => 'TEXT',
+//                            'size' => 10,
+//                        ),
+//                    ),
+                    'fks' => array(),
+                ),
+            ),
+            'types' => array_values($types),
+        );
+
+        return $fieldList;
+    }
+
+    private function listOperators()
+    {
+        $operators = array();
+        foreach(JqlOperator::listOperators() as $label => $operator)
+        {
+            $operators[] = array(
+                'name' => $operator->getJqlSymbol(),
+                'label' => $label,
+                'cardinality' => 'ONE',
+            );
+        }
+
+        return $operators;
+    }
     /**
      * Translate between QueryBuilder SQL and JQL
      *
@@ -431,6 +509,27 @@ class SearchController extends AppController
         $this->set('jql', $parser->getJql());
         $this->set('args', $parser->getArguments());
         $this->set('_serialize', array('jql', 'args'));
+    }
+
+
+
+    //TODO this code is duplicated in dashboard controoller, put it in a common place
+    /**
+     * get the list of clients the logged in user can access
+     * @return mixed
+     */
+    private function getClientListForUser() {
+        $user = $this->User->findById(
+            $this->PreslogAuth->user('_id')
+        );
+
+        $clients = $this->User->listAvailableClientsForUser($user['User']);
+
+        $clientIds = array();
+        foreach($clients as $client) {
+            $clientIds[] = $client['_id'];
+        }
+        return $clientIds;
     }
 
 }

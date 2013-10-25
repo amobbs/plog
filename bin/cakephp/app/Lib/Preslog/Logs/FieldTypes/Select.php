@@ -18,9 +18,7 @@ class Select extends FieldTypeAbstract
     protected $aggregationDetails = array(
         'select' => array(
             'dataLocation' => 'selected',
-            'groupBy' => array(
-                'select' => ''
-            ),
+            'groupBy' => array(),
             'aggregate' => false,
         ),
     );
