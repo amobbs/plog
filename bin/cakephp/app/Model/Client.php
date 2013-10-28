@@ -278,7 +278,7 @@ class Client extends AppModel
             } else {
                 $group['_id'] = new mongoId($group['_id']);
             }
-            $children = [];
+            $children = array();
             foreach($group['children'] as $child) {
                 if (!($child['_id'] instanceof mongoId)) {
                     if ($child['_id'] == null || (isset($child['newGroup']) && $child['newChild']) || strlen($child['_id']) != 24) {
