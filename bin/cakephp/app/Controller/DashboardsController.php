@@ -879,12 +879,13 @@ class DashboardsController extends AppController
             $parsedResult = array();
 
             //remove any mongo'ids from series to show field value
-            if ( isset($widgetObject->getOptions()['series']) )
+            $options = $widgetObject->getOptions();
+            if ( isset($options['series']) )
             {
                 $seriesTypeDetails = explode(':', $widgetObject->getDetail('series'));
                 $seriesType = $seriesTypeDetails[0];
                 $dataLocation = '';
-                foreach($widgetObject->getOptions()['series'] as $option) {
+                foreach($options['series'] as $option) {
                     $fieldType = $option['fieldType'];
                     if ($fieldType instanceof FieldTypeAbstract) {
                         if ($fieldType->getProperties('alias') == $seriesTypeDetails[1]) {
