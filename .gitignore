@@ -6,6 +6,8 @@
 build/webroot/*
 !build/webroot/api
 
+//dont copy database file around
+bin/cakephp/app/config/database.php
 
 // Bin webroot
 // - track Api
