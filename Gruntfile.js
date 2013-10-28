@@ -220,6 +220,7 @@ module.exports = function (grunt) {
                     banner: '<%= meta.banner %>'
                 },
                 src: [
+                    '<%= vendor_files.js %>',
                     'module.prefix',
                     '<%= build_dir %>/src/**/*.js',
                     '<%= html2js.app.dest %>',

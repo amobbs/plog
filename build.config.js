@@ -95,7 +95,8 @@ module.exports = {
          * Directories to straight copy into the project
          */
         files: [
-            'vendor/RedQueryBuilder/**'
+            'vendor/RedQueryBuilder/**',
+            'src/.htaccess'
         ],
 
         /**
