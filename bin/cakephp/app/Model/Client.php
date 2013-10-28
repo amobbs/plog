@@ -270,7 +270,7 @@ class Client extends AppModel
         }
 
 
-        $groups = [];
+        $groups = array();
         //check all the attributes
         foreach ($client['attributes'] as $group) {
             if ($group['_id'] == null || (isset($group['newGroup']) && $group['newChild']) || strlen($group['_id']) != 24) {
