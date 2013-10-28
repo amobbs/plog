@@ -2,87 +2,87 @@ email,firstname,lastname,company,phone number,active,role,default client (option
 test@example.com,test,example,MediaHub,4045551324,TRUE,super-admin,n/a,n/a
 Zoran.Trajkovski@mediahub.tv,Zoran,Trajkovski,MediaHub,0414770602,TRUE,Admin,Personal Dashboard,n/a
 Alan.Sweeney@mediahub.tv,Alan,Sweeney,MediaHub,0412365109,TRUE,Admin,Personal Dashboard,n/a
-Scott.Jolly@mediahub.tv,Scott,Jolly,MediaHub,0406638482,TRUE,Admin,Personal Dashboard,n/a
-Derek.Curtis@mediahub.tv,Derek,Curtis,MediaHub,0403073040,TRUE,Admin,Personal Dashboard,n/a
-Scott.Whittaker@mediahub.tv,Scott,Whittaker,MediaHub,0425248194,TRUE,Admin,Personal Dashboard,n/a
+Scott.Jolly@mediahub.tv,Scott,Jolly,MediaHub,0406638482,TRUE,Admin,Personal Dashboard,n/a,"scott,scott j,scott jolly,scott."
+Derek.Curtis@mediahub.tv,Derek,Curtis,MediaHub,0403073040,TRUE,Admin,Personal Dashboard,n/a,"d.curtis,d. curtis,dac,derek curtis,disregard,error"
+Scott.Whittaker@mediahub.tv,Scott,Whittaker,MediaHub,0425248194,TRUE,Admin,Personal Dashboard,n/a,"scott whittaker"
 Simon.Scott@mediahub.tv,Simon,Scott,MediaHub,,TRUE,Supervisor,Un-signed off logs,n/a
-Jon.Levin@mediahub.tv,Jon,Levin,MediaHub,0434857640,TRUE,Supervisor,Un-signed off logs,n/a
-Richard.Robson@mediahub.tv,Richard ,Robson,MediaHub,0416063238,TRUE,Supervisor,Un-signed off logs,n/a
+Jon.Levin@mediahub.tv,Jon,Levin,MediaHub,0434857640,TRUE,Supervisor,Un-signed off logs,n/a,"jon,jon levin,les as per jon"
+Richard.Robson@mediahub.tv,Richard ,Robson,MediaHub,0416063238,TRUE,Supervisor,Un-signed off logs,n/a,"rich robson,rich robson.,robson"
 ,,,,,,,,n/a
-Chris.Dawson@mediahub.tv,Chris,Dawson,MediaHub,0403142566,TRUE,Supervisor,Un-signed off logs,n/a
-Grant.McLeod@mediahub.tv,Grant,McLeod,MediaHub,0433900382,TRUE,Supervisor,Un-signed off logs,n/a
-Andrew.White@mediahub.tv,Andrew,White,MediaHub,0422310665,TRUE,Supervisor,Un-signed off logs,n/a
-Adam.Durant@mediahub.tv,Adam,Durant,MediaHub,0416334090,TRUE,Supervisor,Un-signed off logs,n/a
-Jocob.Gorrie@mediahub.tv,Jacob,Gorrie,MediaHub,0421545240,TRUE,Supervisor,Un-signed off logs,n/a
-Grant.Whittaker@mediahub.tv,Grant,Whittaker,MediaHub,0414244135,TRUE,Supervisor,Un-signed off logs,n/a
-Taras.Natalenko@mediahub.tv,Taras,Natalenko,MediaHub,0402469654,TRUE,Supervisor,Un-signed off logs,n/a
-Luke.Surplice@mediahub.tv,Luke,Surplice,MediaHub,0412987876,TRUE,Supervisor,Un-signed off logs,n/a
-Daniel.Gutierrez@mediahub.tv,Daniel,Gutierrez,MediaHub,0423691702,TRUE,Supervisor,Un-signed off logs,n/a
+Chris.Dawson@mediahub.tv,Chris,Dawson,MediaHub,0403142566,TRUE,Supervisor,Un-signed off logs,n/a,"chris dawson,c dawson,cd,chris,chris d,chris dawson,chris dawson/brad thompson,chris dawsonb,chris/alex,chris/brad,chris/matt,chrisd,chrisd.,chrs/brad/crystal"
+Grant.McLeod@mediahub.tv,Grant,McLeod,MediaHub,0433900382,TRUE,Supervisor,Un-signed off logs,n/a,"grant,grant + darren,grant mcleod,grant mcleod/hannan,grant mcleod/syed"
+Andrew.White@mediahub.tv,Andrew,White,MediaHub,0422310665,TRUE,Supervisor,Un-signed off logs,n/a,"andre white,andrew white,andrew white.,andrfew white"
+Adam.Durant@mediahub.tv,Adam,Durant,MediaHub,0416334090,TRUE,Supervisor,Un-signed off logs,n/a,"a durant,adam durant.,adam durant,adam durant/bill swan,adam urant"
+Jocob.Gorrie@mediahub.tv,Jacob,Gorrie,MediaHub,0421545240,TRUE,Supervisor,Un-signed off logs,n/a,"j gorrie,jacb gorrie,jacob gorrie,jacob grrie,jaconb gorrie,jaocb gorrie"
+Grant.Whittaker@mediahub.tv,Grant,Whittaker,MediaHub,0414244135,TRUE,Supervisor,Un-signed off logs,n/a,"grant whittaker,grant whittaker & chris dawson,grant whittaker and sahar,grant whittaker/ d travis,grant whittaker/hayley everitt,grant whttaker,grant/saleem,grantwhittaker,"
+Taras.Natalenko@mediahub.tv,Taras,Natalenko,MediaHub,0402469654,TRUE,Supervisor,Un-signed off logs,n/a,"andrew & taras","taras,taras & andrew,taras n,taras n/frank l,taras natalenko,taras.n,taras/ sahar,taras/sahar,"
+Luke.Surplice@mediahub.tv,Luke,Surplice,MediaHub,0412987876,TRUE,Supervisor,Un-signed off logs,n/a,"luke surplice,lukie surplice"
+Daniel.Gutierrez@mediahub.tv,Daniel,Gutierrez,MediaHub,0423691702,TRUE,Supervisor,Un-signed off logs,n/a,"daniel,daniel gutierrez"
 ,,,,,,,,n/a
-Nicole.Bond@mediahub.tv,Nicole,Bond,MediaHub,0421809853,TRUE,Operator,open to all clients,n/a
-Adam.Zattera@mediahub.tv,Adam,Zattera,MediaHub,0425334087,TRUE,Operator,open to all clients,n/a
-Kael.Shuttleworth@mediahub.tv,Kael,Shuttleworth,MediaHub,0422885902,TRUE,Operator,open to all clients,n/a
-Darren.Langdon@mediahub.tv,Darren,Langdon,MediaHub,0400196579,TRUE,Operator,open to all clients,n/a
-Stephen.Muldoon@mediahub.tv,Stephen,Muldoon,MediaHub,0412581631,TRUE,Operator,open to all clients,n/a
-Sam.Walker@mediahub.tv,Sam,Walker,MediaHub,0406585027,TRUE,Operator,open to all clients,n/a
-Luke.Philip@mediahub.tv,Luke,Phillip,MediaHub,0437902237,TRUE,Operator,open to all clients,n/a
-Mitch.Hahn@mediahub.tv,Mitch,Hahn,MediaHub,0422750741,TRUE,Operator,open to all clients,n/a
-Andrew.Daley@mediahub.tv,Andrew,Daley,MediaHub,0448933411,TRUE,Operator,open to all clients,n/a
-Corey.Farrugia@mediahub.tv,Corey,Farrugia,MediaHub,0423201755,TRUE,Operator,open to all clients,n/a
-Fenton.Bowen@mediahub.tv,Fenton,Bowen,MediaHub,0430637121,TRUE,Operator,open to all clients,n/a
-Cassandra.Power@mediahub.tv,Cassandra,Power,MediaHub,,TRUE,Operator,open to all clients,n/a
-Sahar.Mouk@mediahub.tv,Sahar,Mouk,MediaHub,0433568123,TRUE,Operator,open to all clients,n/a
-Robin.Newlyn@mediahub.tv,Robin,Newlyn,MediaHub,0406555260,TRUE,Operator,open to all clients,n/a
-Joe.Harb@mediahub.tv,Joe,Harb,MediaHub,0403029334,TRUE,Operator,open to all clients,n/a
-Daniel.Kent@mediahub.tv,Daniel,Kent,MediaHub,,TRUE,Operator,open to all clients,n/a
-Alexandra.Hermes@mediahub.tv,Alexander,Hermes,MediaHub,0417445576,TRUE,Operator,open to all clients,n/a
-George.Georgiou@mediahub.tv,George,Georgiou,MediaHub,0414364953,TRUE,Operator,open to all clients,n/a
-Matthew.Frost@mediahub.tv,Matthew,Frost,MediaHub,0416913890,TRUE,Operator,open to all clients,n/a
-Sokuntheary.Lim@mediahub.tv,Sokuntheary,Lim,MediaHub,0488244145,TRUE,Operator,open to all clients,n/a
-Bill.Swan@mediahub.tv,Bill,Swan,MediaHub,0432152074,TRUE,Operator,open to all clients,n/a
-Alex.Littler@mediahub.tv,Alex,Littler,MediaHub,0402777463,TRUE,Operator,open to all clients,n/a
-Will.Shepherd@mediahub.tv,Will,Shepherd,MediaHub,0413553546,TRUE,Operator,open to all clients,n/a
-Vlad.Temelkovski@mediahub.tv,Vlad,Temelkovski,MediaHub,0402719301,TRUE,Operator,open to all clients,n/a
-Gary.Armstrong@mediahub.tv,Gary,Armstrong,MediaHub,0426196477,TRUE,Operator,open to all clients,n/a
-Laura.Hitchcock@mediahub.tv,Laura,Hitchcock,MediaHub,0432293468,TRUE,Operator,open to all clients,n/a
-Bianca.Willmott@mediahub.tv,Bianca,Willmott,MediaHub,0410111333,TRUE,Operator,open to all clients,n/a
-Lawrie.Waller@mediahub.tv,Lawrie,Waller,MediaHub,0404106554,TRUE,Operator,open to all clients,n/a
-Shane.Tane@mediahub.tv,Shane ,Tane,MediaHub,0450309133,TRUE,Operator,open to all clients,n/a
-Brad.Thompson@mediahub.tv,Brad,Thompson,MediaHub,0403854134,TRUE,Operator,open to all clients,n/a
-Saleem.Sheikh@mediahub.tv,Saleem,Sheikh,MediaHub,0410075551,TRUE,Operator,open to all clients,n/a
-Karen.Garman@mediahub.tv,Karen,Garman,MediaHub,0432926466,TRUE,Operator,open to all clients,n/a
-Frank.Lipak@mediahub.tv,Frank,Lipak,MediaHub,0434152045,TRUE,Operator,open to all clients,n/a
-Jorge.Lazo@mediahub.tv,Jorge,Lazo,MediaHub,0401461291,TRUE,Operator,open to all clients,n/a
-Margaret.Chan@mediahub.tv,Margaret,Chan,MediaHub,0425555606,TRUE,Operator,open to all clients,n/a
-Jason.Hines@mediahub.tv,Jason,Hines,MediaHub,0416017874,TRUE,Operator,open to all clients,n/a
-Rameez.Khan@mediahub.tv,Rameez,Khan,MediaHub,0426880381,TRUE,Operator,open to all clients,n/a
-Martin.Rodger@mediahub.tv,Martin,Rodger,MediaHub,0458343241,TRUE,Operator,open to all clients,n/a
-Andrew.Rakuljic@mediahub.tv,Andrew,Rakuljic,MediaHub,0412014249,TRUE,Operator,open to all clients,n/a
-David.McGee@mediahub.tv,David,McGee,MediaHub,0423076131,TRUE,Operator,open to all clients,n/a
-Daniel.West@mediahub.tv,Daniel,West,MediaHub,0498173622,TRUE,Operator,open to all clients,n/a
-Hannan.Zeitouneh@mediahub.tv,Hannan,Zeitouneh,MediaHub,0405279861,TRUE,Operator,open to all clients,n/a
-Todd.King@mediahub.tv,Todd,King,MediaHub,0450338316,TRUE,Operator,open to all clients,n/a
-Barney.Rocks@mediahub.tv,Barney,Rocks,MediaHub,0417476486,TRUE,Operator,open to all clients,n/a
-Josh.Geraedts@mediahub.tv,Josh,Geraedts,MediaHub,0422640863,TRUE,Operator,open to all clients,n/a
+Nicole.Bond@mediahub.tv,Nicole,Bond,MediaHub,0421809853,TRUE,Operator,open to all clients,n/a,"nicole bond,andrew & nicole,james/nicole,nicole,nicole & andrew,nicole bond,nicole bond.,nicole bond/brad,nicole."
+Adam.Zattera@mediahub.tv,Adam,Zattera,MediaHub,0425334087,TRUE,Operator,open to all clients,n/a,"a. zattera / f.bowen,adam,adam & andrew,adam + darren,adam and bill,adam and marty,adam zattera,adam zattera / bill swan,adam zattera.,adam zatterta"
+Kael.Shuttleworth@mediahub.tv,Kael,Shuttleworth,MediaHub,0422885902,TRUE,Operator,open to all clients,n/a,"k.s,kael,kael s,kael shutleworth,kael shuttleworth,kael shuttleworth, natalie hol,kael shuttleworth/garry,kael.,"
+Darren.Langdon@mediahub.tv,Darren,Langdon,MediaHub,0400196579,TRUE,Operator,open to all clients,n/a, "darren langdon,darren,darren + adam,darren + bill,darren + eamon,darren + george,darren + jake,darren + kirsten,darren + margaret,darren + mitch,darren + nicole,darren + renata,darren + steve,darren + vlade,darren and eamon,darren and nicole,darren landgon,darren langdon,darren/andrew,darren/nicole"
+Stephen.Muldoon@mediahub.tv,Stephen,Muldoon,MediaHub,0412581631,TRUE,Operator,open to all clients,n/a,"stephen muldoon,stephen muldoon & nicole bond,stephen muldoon / sahar,stephen muldooon,steve muldoon"
+Sam.Walker@mediahub.tv,Sam,Walker,MediaHub,0406585027,TRUE,Operator,open to all clients,n/a,"sam,sam and so,sam walker,"
+Luke.Philip@mediahub.tv,Luke,Phillip,MediaHub,0437902237,TRUE,Operator,open to all clients,n/a,"l.phillip,luke,luke & andrew,luke & mitch (updated),luke p,luke p, david m,"
+Mitch.Hahn@mediahub.tv,Mitch,Hahn,MediaHub,0422750741,TRUE,Operator,open to all clients,n/a,"mitch,mitch  hahn,mitch & bianca,mitch h,mitch hahn,"
+Andrew.Daley@mediahub.tv,Andrew,Daley,MediaHub,0448933411,TRUE,Operator,open to all clients,n/a,"a. daley,andre daley.,andrew,andrew daley,andrew daley.,andrew daley.l,andrew dalwey,andrew."
+Corey.Farrugia@mediahub.tv,Corey,Farrugia,MediaHub,0423201755,TRUE,Operator,open to all clients,n/a,"corey,corey/alex hermes"
+Fenton.Bowen@mediahub.tv,Fenton,Bowen,MediaHub,0430637121,TRUE,Operator,open to all clients,n/a,"andrew/fenton,f bowen,f lipak,f lipak/c parry,f. bowen,f. bowen.,f.bowen,f.bowen.,f.bowenb,f.bowenh,f.bowenj,f.bowenwa,f.bown,fbowen,fenton bowen,fr.bowen"
+Cassandra.Power@mediahub.tv,Cassandra,Power,MediaHub,,TRUE,Operator,open to all clients,n/a,"cass,cass power,cassandra,cassandra power"
+Sahar.Mouk@mediahub.tv,Sahar,Mouk,MediaHub,0433568123,TRUE,Operator,open to all clients,n/a,"anthony and sahar,anthony/sahar,sahar,sahar moukahal,"
+Robin.Newlyn@mediahub.tv,Robin,Newlyn,MediaHub,0406555260,TRUE,Operator,open to all clients,n/a,"robin newlyn,robin newlyn/ sahar"
+Joe.Harb@mediahub.tv,Joe,Harb,MediaHub,0403029334,TRUE,Operator,open to all clients,n/a,"joe,joe  harb,joe h,joe harb,joe/frank,"
+Daniel.Kent@mediahub.tv,Daniel,Kent,MediaHub,,TRUE,Operator,open to all clients,n/a,"daniel / bianca,daniel kent"
+Alexandra.Hermes@mediahub.tv,Alexander,Hermes,MediaHub,0417445576,TRUE,Operator,open to all clients,n/a,"alex h,alex hermes,alex/darren"
+George.Georgiou@mediahub.tv,George,Georgiou,MediaHub,0414364953,TRUE,Operator,open to all clients,n/a,"geoge georgiou,george,george and matt,george g peter h,george geogiou.,george george.,george georgiou,george georgiou.,george georigou,george kollias"
+Matthew.Frost@mediahub.tv,Matthew,Frost,MediaHub,0416913890,TRUE,Operator,open to all clients,n/a,"matt frost,matt,"matt  frost,matt f,matt fost,matt frost,matt frost & saleem,matt frost/ sahar,matt frost/saleem,matthew frost"
+Sokuntheary.Lim@mediahub.tv,Sokuntheary,Lim,MediaHub,0488244145,TRUE,Operator,open to all clients,n/a,"so and robin,so and sam,so lim,so/adam,"
+Bill.Swan@mediahub.tv,Bill,Swan,MediaHub,0432152074,TRUE,Operator,open to all clients,n/a,"andrew & bill,bill,bill & andrew,bill swan,bill swan and brad thompson,bill swan.,bill swan/d travis,bill/brad"
+Alex.Littler@mediahub.tv,Alex,Littler,MediaHub,0402777463,TRUE,Operator,open to all clients,n/a,"alex,alex and nicole,alex l,alex littler,alex vb"
+Will.Shepherd@mediahub.tv,Will,Shepherd,MediaHub,0413553546,TRUE,Operator,open to all clients,n/a,"will shepard,will shepherd,will shpeherd"
+Vlad.Temelkovski@mediahub.tv,Vlad,Temelkovski,MediaHub,0402719301,TRUE,Operator,open to all clients,n/a,"vlad / adam z,vlade,vlade & brad,vlade & darren,vlade temelkovski"
+Gary.Armstrong@mediahub.tv,Gary,Armstrong,MediaHub,0426196477,TRUE,Operator,open to all clients,n/a,"g armstrong,gary armstong,gary armstrong,gary armstrongs,gary armstrrong,gay armstrong,"
+Laura.Hitchcock@mediahub.tv,Laura,Hitchcock,MediaHub,0432293468,TRUE,Operator,open to all clients,n/a,"laura,laura  hitchcock,laura & andrew,laura h,laura hitchcock,laura hitchocck,laura hithcocck,laura.hdef,laura/ grace"
+Bianca.Willmott@mediahub.tv,Bianca,Willmott,MediaHub,0410111333,TRUE,Operator,open to all clients,n/a,"bianca,bianca & natalie,bianca wilmott"
+Lawrie.Waller@mediahub.tv,Lawrie,Waller,MediaHub,0404106554,TRUE,Operator,open to all clients,n/a,"lawrie waller,lawrie/martin"
+Shane.Tane@mediahub.tv,Shane ,Tane,MediaHub,0450309133,TRUE,Operator,open to all clients,n/a,"shane,shane + laura,shane tane,shane tane / richard robson,"
+Brad.Thompson@mediahub.tv,Brad,Thompson,MediaHub,0403854134,TRUE,Operator,open to all clients,n/a,"brad,brad  thompson,brad & vlad,brad and monty,brad clarke,brad t^hompson,brad thommpson,brad thomposon,brad thompsdon,brad thompsoin,brad thompson,brad thompson/ stephen muldoon,brad thompsonm,brad thompswon,brad vthompson,brad/ alex,brad/ grant mcleod,brad/adam,brad/crystal,brad/james,brad/kristen,brad/margaret,brad/monty,brad/natalie,brad/saleem,brad/vaughan/vlad,brad/vlad,brad/vlade,brade thompson,braqd thompson,btad thompson,bvrad thompson,"
+Saleem.Sheikh@mediahub.tv,Saleem,Sheikh,MediaHub,0410075551,TRUE,Operator,open to all clients,n/a,"sal,saleeem,saleeem/brad,saleem,saleem & adam,saleem & denial,saleem & grant,saleem / richard,saleem sheikh,saleem sheiklh,saleem/ vlade,saleem/brad,saleem/richard,salem"
+Karen.Garman@mediahub.tv,Karen,Garman,MediaHub,0432926466,TRUE,Operator,open to all clients,n/a,"karen garman,karen garman - saleem"
+Frank.Lipak@mediahub.tv,Frank,Lipak,MediaHub,0434152045,TRUE,Operator,open to all clients,n/a,"frank :lipak,frank lipak,frankl lipak,lipak f,lipak f,lipakf,"
+Jorge.Lazo@mediahub.tv,Jorge,Lazo,MediaHub,0401461291,TRUE,Operator,open to all clients,n/a,"j lazo,jorge,jorge  lazo,jorge l,jorge laoz,jorge lazo,jorge lazo / rich robson,jorgel,jorgelazo,"
+Margaret.Chan@mediahub.tv,Margaret,Chan,MediaHub,0425555606,TRUE,Operator,open to all clients,n/a,"james/  margaret,james / margaret,james/ margaret,james/ margaret,james/margaret,m.chan/taras,margaret,margaret  chan,margaret chan,margaret chan - saleem,margaret, laura + josh,margaret.c/taras.n,margaret/ brad,margaret/ laura,"
+Jason.Hines@mediahub.tv,Jason,Hines,MediaHub,0416017874,TRUE,Operator,open to all clients,n/a,"j. hines,j. hines.,jason h,jason hines"
+Rameez.Khan@mediahub.tv,Rameez,Khan,MediaHub,0426880381,TRUE,Operator,open to all clients,n/a,"r khan,r. khan,rameez,rameez khan,"
+Martin.Rodger@mediahub.tv,Martin,Rodger,MediaHub,0458343241,TRUE,Operator,open to all clients,n/a,"andrew & martin,marftin rodger,martain & andrew,marti rodger,martimn rodger,martin,martin  rodger,martin & andrew,martin rodegr,martin roder,martin rodger,martin rodger/barney rocks,martin rodgerr,martiun rodger,marttin rodger,marty and adam,mrtin rodger"
+Andrew.Rakuljic@mediahub.tv,Andrew,Rakuljic,MediaHub,0412014249,TRUE,Operator,open to all clients,n/a,"anderw rakuljic,andew rakuljic,andrew r,andrew rakuljic,andrew rakuljic /tn,andrew rakuljix,andrew rakuljuc,andrew raluljic,andrew rauljic,"
+David.McGee@mediahub.tv,David,McGee,MediaHub,0423076131,TRUE,Operator,open to all clients,n/a,"david macgee"
+Daniel.West@mediahub.tv,Daniel,West,MediaHub,0498173622,TRUE,Operator,open to all clients,n/a,"daniel west"
+Hannan.Zeitouneh@mediahub.tv,Hannan,Zeitouneh,MediaHub,0405279861,TRUE,Operator,open to all clients,n/a,"hannan  zeitouneh,hannan zeitoneh,hannan zeitouneh,hannan zeitouneh,hannnan zeitouneh,"
+Todd.King@mediahub.tv,Todd,King,MediaHub,0450338316,TRUE,Operator,open to all clients,n/a,"tod king,todd,todd king,todd kiong,todd kling,toddking,tood king"
+Barney.Rocks@mediahub.tv,Barney,Rocks,MediaHub,0417476486,TRUE,Operator,open to all clients,n/a,"barney r/anthony z,barney rcoks,barney rocks,barney rocks/martin rodger,barnye rocks"
+Josh.Geraedts@mediahub.tv,Josh,Geraedts,MediaHub,0422640863,TRUE,Operator,open to all clients,n/a,"j geraedts,josh g,josh geraedts,joshua g,joshua geraedts,"
 Brad.Clarke@mediahub.tv,Brad,Clarke,MediaHub,,TRUE,Operator,open to all clients,n/a
-David.Morrissey@mediahub.tv,David,Morrissey,MediaHub,,TRUE,Operator,open to all clients,n/a
-Jeremy.Wassink@mediahub.tv,Jeremy,Wassink,MediaHub,,TRUE,Operator,open to all clients,n/a
+David.Morrissey@mediahub.tv,David,Morrissey,MediaHub,,TRUE,Operator,open to all clients,n/a,"daivid m.,dave m.,david,david m,david m.,david morrissey"
+Jeremy.Wassink@mediahub.tv,Jeremy,Wassink,MediaHub,,TRUE,Operator,open to all clients,n/a,"j wassink,jeremy,jeremy wassink,"
 Connor.Parry@mediahub.tv,Connor,Parry,MediaHub,,TRUE,Operator,open to all clients,n/a
 ,,,,,,,,n/a
-Andy.Marriott@mediahub.tv,Andy,Marriott,MediaHub,0428097534,TRUE,Operator,open to all clients,n/a
-Lesley.Kelleher@mediahub.tv,Lesley,Kelleher,MediaHub,0416558413,TRUE,Operator,open to all clients,n/a
-Mitch.Oates@mediahub.tv,Mitch,Oates,MediaHub,0421704878,TRUE,Operator,open to all clients,n/a
-Roman.Radoczy@mediahub.tv,Roman,Radoczy,MediaHub,0478513230,TRUE,Operator,open to all clients,n/a
-Sean.Darby@mediahub.tv,Sean,Darby,MediaHub,0411204545,TRUE,Operator,open to all clients,n/a
-Jess.Anderson@mediahub.tv,Jess,Anderson,MediaHub,0408860616,TRUE,Operator,open to all clients,n/a
-Hayley.Everitt@mediahub.tv,Hayley,Everitt,MediaHub,0414061552,TRUE,Operator,open to all clients,n/a
+Andy.Marriott@mediahub.tv,Andy,Marriott,MediaHub,0428097534,TRUE,Operator,open to all clients,n/a,"andy marriott"
+Lesley.Kelleher@mediahub.tv,Lesley,Kelleher,MediaHub,0416558413,TRUE,Operator,open to all clients,n/a,"lesley,lesley kelleher,"
+Mitch.Oates@mediahub.tv,Mitch,Oates,MediaHub,0421704878,TRUE,Operator,open to all clients,n/a,"andrew & mitch,mitch oates,mitch/hayley,mitch/so"
+Roman.Radoczy@mediahub.tv,Roman,Radoczy,MediaHub,0478513230,TRUE,Operator,open to all clients,n/a,"roman radoczy,roman,roman r,roman radoczy,rr,rr test"
+Sean.Darby@mediahub.tv,Sean,Darby,MediaHub,0411204545,TRUE,Operator,open to all clients,n/a,"sean,sean darby,"
+Jess.Anderson@mediahub.tv,Jess,Anderson,MediaHub,0408860616,TRUE,Operator,open to all clients,n/a,"jessica,jessica anderson"
+Hayley.Everitt@mediahub.tv,Hayley,Everitt,MediaHub,0414061552,TRUE,Operator,open to all clients,n/a,"andrew & hayley,hayley,hayley & andrew,hayley everitt"
 ,,,,,,,,n/a
 Stephen.Agyei@mediahub.tv,Stephen,Agyei,MediaHub,0433687422,TRUE,Operator,open to all clients,n/a
 Michael.Kennedy@mediahub.tv,Michael,Kennedy,MediaHub,0402599519,TRUE,Operator,open to all clients,n/a
-Simon.Watts@mediahub.tv,Simon,Watts,MediaHub,,TRUE,Operator,open to all clients,n/a
-Jarrod.Walker@mediahub.tv,Jarrod,Walker,MediaHub,0401445234,TRUE,Operator,open to all clients,n/a
+Simon.Watts@mediahub.tv,Simon,Watts,MediaHub,,TRUE,Operator,open to all clients,n/a,"simon,simon watts"
+Jarrod.Walker@mediahub.tv,Jarrod,Walker,MediaHub,0401445234,TRUE,Operator,open to all clients,n/a,"j.walker / d.curtis"
 Sammie.Azoum@mediahub.tv,Sammie,Azoum,MediaHub,0414801357,TRUE,Operator,open to all clients,n/a
-Stephen.Ta@mediahub.tv,Stephen,Ta,MediaHub,0405605632,TRUE,Operator,open to all clients,n/a
+Stephen.Ta@mediahub.tv,Stephen,Ta,MediaHub,0405605632,TRUE,Operator,open to all clients,n/a,"stephen ta"
 ,,,,,,,,
 Dave.Friend@mediahub.tv,Dave,Friend,MediaHub,0413683124,TRUE,Engineer,,n/a
 Mark.Matthews@mediahub.tv,Mark,Matthews,MediaHub,0431963730,TRUE,Engineer,,n/a
@@ -101,27 +101,27 @@ s.dole@tvn.com.au,Stephen,Dole,TVN,,TRUE,Client,Personal Dashboard,n/a
 d.farnham@tvn.com.au,Darren,Farnham,TVN,,TRUE,Client,Personal Dashboard,n/a
 tvn_report@chiefentertainment.com.au,Chief ,Entertainment,TVN,,TRUE,Client,Personal Dashboard,n/a
 ,,,,,,,,
-Brad.Allen@sbs.com.au  ,Brad,Allen,SBS,,TRUE,Client,Personal Dashboard,n/a
-Sasha.Bennett@sbs.com.au  ,Sasha,Bennett,SBS,,TRUE,Client,Personal Dashboard,n/a
-Ian.Byrne@sbs.com.au  ,Ian,Byrne,SBS,,TRUE,Client,Personal Dashboard,n/a
-Warren.Powell@sbs.com.au  ,Warren,Powell,SBS,,TRUE,Client,Personal Dashboard,n/a
-Chris.Keely@sbs.com.au  ,Chris,Keeley,SBS,,TRUE,Client,Personal Dashboard,n/a
-Laura.Glassman@sbs.com.au  ,Laura,Glassman,SBS,,TRUE,Client,Personal Dashboard,n/a
-Rob.Gray@sbs.com.au  ,Rob ,Gray,SBS,,TRUE,Client,Personal Dashboard,n/a
-Jeremy.Coutts@sbs.com.au  ,Jeremy,Coutts,SBS,,TRUE,Client,Personal Dashboard,n/a
-SBSMCR@sbs.com.au   ,SBS,MCR,SBS,,TRUE,Client,Personal Dashboard,n/a
-Shannon.Reed@sbs.com.au  ,Shannon,Reed,SBS,,TRUE,Client,Personal Dashboard,n/a
+Brad.Allen@sbs.com.au,Brad,Allen,SBS,,TRUE,Client,Personal Dashboard,n/a
+Sasha.Bennett@sbs.com.au,Sasha,Bennett,SBS,,TRUE,Client,Personal Dashboard,n/a
+Ian.Byrne@sbs.com.au,Ian,Byrne,SBS,,TRUE,Client,Personal Dashboard,n/a
+Warren.Powell@sbs.com.au,Warren,Powell,SBS,,TRUE,Client,Personal Dashboard,n/a
+Chris.Keely@sbs.com.au,Chris,Keeley,SBS,,TRUE,Client,Personal Dashboard,n/a
+Laura.Glassman@sbs.com.au,Laura,Glassman,SBS,,TRUE,Client,Personal Dashboard,n/a,"andrew & laura"
+Rob.Gray@sbs.com.au,Rob ,Gray,SBS,,TRUE,Client,Personal Dashboard,n/a
+Jeremy.Coutts@sbs.com.au,Jeremy,Coutts,SBS,,TRUE,Client,Personal Dashboard,n/a
+SBSMCR@sbs.com.au,SBS,MCR,SBS,,TRUE,Client,Personal Dashboard,n/a
+Shannon.Reed@sbs.com.au,Shannon,Reed,SBS,,TRUE,Client,Personal Dashboard,n/a
 Michael.Hanlon@sbs.com.au,Michael,Hanlon,SBS,,TRUE,Client,Personal Dashboard,n/a
-Samantha.Laughton@sbs.com.au,Samantha,Laughton,SBS,,TRUE,Client,Personal Dashboard,n/a
-Jaimileigh.Faulkner@sbs.com.au  ,Jaimileigh,Faulkner,SBS,,TRUE,Client,Personal Dashboard,n/a
-Tanya.Denning@sbs.com.au  ,Tanya,Denning,SBS,,TRUE,Client,Personal Dashboard,n/a
-Peter.Sachs@sbs.com.au  ,Peter,Sachs,SBS,,TRUE,Client,Personal Dashboard,n/a
-Daniel.Daley@sbs.com.au  ,Daniel,Daley,SBS,,TRUE,Client,Personal Dashboard,n/a
-John.Flower-Emblen@sbs.com.au  ,John,Flower-Emblen,SBS,,TRUE,Client,Personal Dashboard,n/a
-Jan.McJannett@sbs.com.au  ,Jan,McJannett,SBS,,TRUE,Client,Personal Dashboard,n/a
-Emma.Hill@sbs.com.au  ,Emma,Hill,SBS,,TRUE,Client,Personal Dashboard,n/a
-Ozgun.Aslan@sbs.com.au  ,Ozgun,Aslan,SBS,,TRUE,Client,Personal Dashboard,n/a
-Jason.Diepeveen@sbs.com.au  ,Jason,Diepeveen,SBS,,TRUE,Client,Personal Dashboard,n/a
+Samantha.Laughton@sbs.com.au,Samantha,Laughton,SBS,,TRUE,Client,Personal Dashboard,n/a,"samantha,samantha blasonato,"
+Jaimileigh.Faulkner@sbs.com.au,Jaimileigh,Faulkner,SBS,,TRUE,Client,Personal Dashboard,n/a
+Tanya.Denning@sbs.com.au,Tanya,Denning,SBS,,TRUE,Client,Personal Dashboard,n/a
+Peter.Sachs@sbs.com.au,Peter,Sachs,SBS,,TRUE,Client,Personal Dashboard,n/a
+Daniel.Daley@sbs.com.au,Daniel,Daley,SBS,,TRUE,Client,Personal Dashboard,n/a
+John.Flower-Emblen@sbs.com.au,John,Flower-Emblen,SBS,,TRUE,Client,Personal Dashboard,n/a
+Jan.McJannett@sbs.com.au,Jan,McJannett,SBS,,TRUE,Client,Personal Dashboard,n/a
+Emma.Hill@sbs.com.au,Emma,Hill,SBS,,TRUE,Client,Personal Dashboard,n/a
+Ozgun.Aslan@sbs.com.au,Ozgun,Aslan,SBS,,TRUE,Client,Personal Dashboard,n/a
+Jason.Diepeveen@sbs.com.au,Jason,Diepeveen,SBS,,TRUE,Client,Personal Dashboard,n/a
 ,,,,,,,,
 nealon.mark@abc.net.au,Mark,Nealon,ABC,0419243757,TRUE,Client,Personal Dashboard,n/a
 whip.doug@abc.net.au,Doug,Whip,ABC,0467812498,TRUE,Client,Personal Dashboard,n/a
@@ -129,3 +129,46 @@ Jorge.Redhead@abc.net.au,Jorge,Redhead,ABC,,TRUE,Client,Personal Dashboard,n/a
 williams.toni@abc.net.au,Toni,Williams,ABC,0437767920,TRUE,Client,Personal Dashboard,n/a
 ,,,,,,,,
 David.Eunson@australianetwork.com,David,Eunson,AUSNET,0427149490,TRUE,Client,Personal Dashboard,n/a
+,,,,,,,,
+james.baker@unknown.com,James,Baker,MediaHub,,FALSE,Operator,,n/a,"james baker,j baker/ margaret chan,j. baker,jame baker,james,james baker,james naker,jamesw baker,jams baker,jsmes baker"
+ben.park@unknown.com,Ben,Park,MediaHub,,FALSE,Operator,,n/a,"ben park,ben park,ben park/natalie holland"
+juliana.pino@unknown.com,Juliana,Pino,MediaHub,,FALSE,Operator,,n/a,"juliana pino,j pino,juliana pino"
+alex.bledzki@unknown.com,Alex,Bledzki,MediaHub,,FALSE,Operator,,n/a,"alex b,alex bh,alex bledzki,alex bledzki/darren langdon,alex blezki,alexd b,alx bledzki"
+anthony.zaiter@unknown.com,Anthony,Zaiter,MediaHub,,FALSE,Operator,,n/a,"anthony z peter h,anthony z, brad c,anthony z, james c,anthony zaiter,anthony/ranata"
+camelia.drakakis@unknown.com,Camelia,Drakakis,MediaHub,,FALSE,Operator,,n/a,"camelia,camelia & doxia,camelia drakakis"
+crystal.margret@unknown.com,Crystal,Margret,MediaHub,,FALSE,Operator,,n/a,"crystal,crystal + darren,crystal egan,crystal margret,crystal n brad,crystalo"
+d.travis@unknown.com,D,Travis,MediaHub,,FALSE,Operator,,n/a,"d travis,d travis & j clegg,d travis/g mcleod,d travis/m chan/g mcleod,d travis/saleem,d travis/saleem/james"
+dan.gonzalez@unknown.com,Dan,Gonzalez,MediaHub,,FALSE,Operator,,n/a,"dan gonzalez,daniel gonzalez"
+dan.west@unknown.com,Dan,West,MediaHub,,FALSE,Operator,,n/a,"dan west"
+david.r@unknown.com,David,R,MediaHub,,FALSE,Operator,,n/a,"david r,davidr,dr,dr test"
+doxia.brownlow@unknown.com,Doxia,Brownlow,MediaHub,,FALSE,Operator,,n/a,"doxia,doxia brownlow"
+eamon.gannon@unknown.com,Eamon,Gannon,MediaHub,,FALSE,Operator,,n/a,"eamon,eamon & bianca,eamon & darren,eamon for kristen,eamon gannnon,eamon gannon"
+era.nayeem@unknown.com,Era,Nayeem,MediaHub,,FALSE,Operator,,n/a,"era nayeem"
+grace.enilane@unknown.com,Grace,Enilane,MediaHub,,FALSE,Operator,,n/a,"grace,grace e,grace enilane,gracee,"
+hal.leggett@unknown.com,Hal,Leggett,MediaHub,,FALSE,Operator,,n/a,"hal legget,hal leggett,hal leggett/ben park,"
+isabel.gray@unknown.com,Isabel,Gray,MediaHub,,FALSE,Operator,,n/a,"isabel, isabel gg, isabel gray"
+james.clegg@unknown.com,James,Clegg,MediaHub,,FALSE,Operator,,n/a,"james cleg,james clegg,"
+jason.cook@unknown.com,Jason,Cook,MediaHub,,FALSE,Operator,,n/a,"jason cook"
+jenny.hua@unknown.com,Jenny,Hua,MediaHub,,FALSE,Operator,,n/a,"jenny,jenny & hannan,jenny hua"
+jill.farthing@unknown.com,Jill,Farthing,MediaHub,,FALSE,Operator,,n/a,"jill farthing"
+john.friend@unknown.com,John,Friend,MediaHub,,FALSE,Operator,,n/a,"john friend,"
+kat.hawthorne@unknown.com,Kat,Hawthorne,MediaHub,,FALSE,Operator,,n/a,"kat,kat h,kat hawthorne"
+keiryn.brown@unknown.com,Keiryn,Brown,MediaHub,,FALSE,Operator,,n/a,"keiryn,keiryn brown"
+kristen.ohalloran@unknown.com,Kristen,"O'Halloran",MediaHub,,FALSE,Operator,,n/a,"kristen,kristen & sam,kristen o,kristen o'h,kristen o'halloran,"
+latika.chand@unknown.com,Latika,Chand,MediaHub,,FALSE,Operator,,n/a,"latika chand,l chand,latika, chand,latika/kael,"
+laura.merrin@unknown.com,Laura,Merrin,MediaHub,,FALSE,Operator,,n/a,"laura m,laura merrin,laura. h,laura.h"
+matt.meli@unknown.com,Matt,Meli,MediaHub,,FALSE,Operator,,n/a,"m meli,m.meli,m/meli,matt  meli,matt m,matt meli,matt/nat,matthew meli,meli,"
+michael.w@unknown.com,Michael,W,MediaHub,,FALSE,Operator,,n/a,"michael w"
+monty.leadon@unknown.com,Monty,Leadon,MediaHub,,FALSE,Operator,,n/a,"montgmomery leadon,monty (test) leadon,monty and brad,monty and vlade,monty helped by kaels eyes,monty leadon,monty/brad,montyy leadon"
+natalie.holland@unknown.com,Natalie,Holland,MediaHub,,FALSE,Operator,,n/a,"nataie holland,natalie,natalie and sam,natalie holland,natalie holland/matt frost,natalie on behalf of fenton,natalie/kristen,"
+nik.palmer@unknown.com,Nik,Palmer,MediaHub,,FALSE,Operator,,n/a,"nik,nik & camelia,nik palmer,nik palmer.,"
+nitya.h@unknown.com,Nitya,H,MediaHub,,FALSE,Operator,,n/a,"nitya,nitya.h,"
+peter.hill@unknown.com,Peter,Hill,MediaHub,,FALSE,Operator,,n/a,"peter,peter h anthony z,peter hill,"
+renata.burt@unknown.com,Renata,Burt,MediaHub,,FALSE,Operator,,n/a,"renata,renata b,renata burt"
+richard.spivey@unknown.com,Richard,Spivey,MediaHub,,FALSE,Operator,,n/a,"richard spivey,"
+rick.koenig@unknown.com,Rick,Koenig,MediaHub,,FALSE,Operator,,n/a,"rick koenig"
+srdjan.tokic@unknown.com,Srdjan,Tokic,MediaHub,,FALSE,Operator,,n/a,"srdjan / camelia,srdjan t,srdjan t.,srdjan tokic,srdjan.t & camelia.d,srdjant"
+syed.fred@unknown.com,Syed,Fred,MediaHub,,FALSE,Operator,,n/a,"syed,syed fred,syed fred.,"
+tim.iffland@unknown.com,Tim,Iffland,MediaHub,,FALSE,Operator,,n/a,"tim,tim iffland,tim iffland/adam durant,tim iffland/grant mcleod,tim/matt/chris,"
+troy.harris@unknown.com,Troy,Harris,MediaHub,,FALSE,Operator,,n/a,"troy h,troy harris"
+vaughan.healey@unknown.com,Vaughan,Healey,MediaHub,,FALSE,Operator,,n/a,"v healey,v.healey,vaughan,vaughan healey,vaughan healey7,"
