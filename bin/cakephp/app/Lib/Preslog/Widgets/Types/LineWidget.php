@@ -263,7 +263,8 @@ class LineWidget extends Widget {
             }
         }
 
-        $bhpm = Configure::read('Preslog')['Quantities']['bhpm'];
+        $preslogSettings = Configure::read('Preslog');
+        $bhpm = $preslogSettings['Quantities']['bhpm'];
         $bhpmTotal = 0;
 
         //find BHPM total before start of graph
