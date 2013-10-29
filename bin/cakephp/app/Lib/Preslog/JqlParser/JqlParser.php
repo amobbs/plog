@@ -297,6 +297,8 @@ class JqlParser {
             } else {
                 $groups[$firstKeyword] = array($startClause, $clauses);
             }
+        } else {
+            $groups = $clauses;
         }
 
         //get anything after any groups
