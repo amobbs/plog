@@ -14,6 +14,7 @@ class Textarea extends FieldTypeAbstract
     protected $alias = 'textarea';
     protected $name = 'Multi-Line Text Field';
     protected $description = 'A large text area for multiple lines of text.';
+    protected $queryFieldType = 'TEXT';
 
     protected $mongoSchema = array(
         'text'  => array('type' => 'string', 'length'=>65536),      // Arbitrary limit.

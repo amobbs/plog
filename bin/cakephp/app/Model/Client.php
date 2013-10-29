@@ -270,7 +270,7 @@ class Client extends AppModel
         }
 
 
-        $groups = [];
+        $groups = array();
         //check all the attributes
         foreach ($client['attributes'] as $group) {
             if ($group['_id'] == null || (isset($group['newGroup']) && $group['newChild']) || strlen($group['_id']) != 24) {
@@ -278,7 +278,7 @@ class Client extends AppModel
             } else {
                 $group['_id'] = new mongoId($group['_id']);
             }
-            $children = [];
+            $children = array();
             foreach($group['children'] as $child) {
                 if (!($child['_id'] instanceof mongoId)) {
                     if ($child['_id'] == null || (isset($child['newGroup']) && $child['newChild']) || strlen($child['_id']) != 24) {
@@ -287,7 +287,7 @@ class Client extends AppModel
                         $child['_id'] = new mongoId($child['_id']);
                     }
                 }
-                $subChildren = [];
+                $subChildren = array();
                 foreach($child['children'] as $subChild) {
                     if (!($subChild['_id'] instanceof mongoId)) {
                         if ($subChild['_id'] == null || (isset($subChild['newGroup']) && $subChild['newChild']) || strlen($subChild['_id']) != 24) {

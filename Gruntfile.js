@@ -87,17 +87,21 @@ module.exports = function (grunt) {
         /**
          * The directories to delete when `grunt clean` is executed.
          */
-        clean: [
-            '<%= build_dir %>/assets',
-            '<%= build_dir %>/index.html',
-            '<%= build_dir %>/src',
-            '<%= build_dir %>/vendor',
-            '<%= build_dir %>/karma-unit.js',
-            '<%= build_dir %>/templates-app.js',
-            '<%= build_dir %>/templates-common.js',
-            '<%= compile_dir %>/assets',
-            '<%= compile_dir %>/index.html'
-        ],
+        clean: {
+            build: [
+                '<%= build_dir %>/assets',
+                '<%= build_dir %>/index.html',
+                '<%= build_dir %>/src',
+                '<%= build_dir %>/vendor',
+                '<%= build_dir %>/karma-unit.js',
+                '<%= build_dir %>/templates-app.js',
+                '<%= build_dir %>/templates-common.js'
+            ],
+            release: [
+                '<%= compile_dir %>/assets',
+                '<%= compile_dir %>/index.html'
+            ]
+        },
 
         /**
          * The `copy` task just copies files from A to B. We use it here to copy
@@ -216,6 +220,7 @@ module.exports = function (grunt) {
                     banner: '<%= meta.banner %>'
                 },
                 src: [
+                    '<%= vendor_files.js %>',
                     'module.prefix',
                     '<%= build_dir %>/src/**/*.js',
                     '<%= html2js.app.dest %>',
@@ -631,7 +636,7 @@ module.exports = function (grunt) {
      * The `build` task gets your app ready to run for development and testing.
      */
     grunt.registerTask('build', [
-        'clean', 'html2js', 'jshint', 'coffeelint', 'coffee', 'recess:build',
+        'clean:build', 'html2js', 'jshint', 'coffeelint', 'coffee', 'recess:build',
         'copy:build_assets', 'copy:build_appjs', 'copy:build_src_files', 'copy:build_vendor_js', 'copy:build_vendor_files', 'copy:build_vendor_assets', 'replace:build',
         'index:build', 'karmaconfig', 'karma:continuous'
     ]);
@@ -641,7 +646,7 @@ module.exports = function (grunt) {
      * minifying your code.
      */
     grunt.registerTask('compile', [
-        'recess:compile', 'copy:compile_assets', 'copy:compile_vendor_files', 'ngmin', 'concat', 'uglify', 'index:compile'
+        'clean:release', 'recess:compile', 'copy:compile_assets', 'copy:compile_vendor_files', 'ngmin', 'concat', 'uglify', 'index:compile'
     ]);
 
     /**

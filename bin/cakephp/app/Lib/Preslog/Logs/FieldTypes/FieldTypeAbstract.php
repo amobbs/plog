@@ -28,6 +28,12 @@ abstract class FieldTypeAbstract
     protected $description = '';
 
     /**
+     * @var string      type of field that will be used for editing in red query builder (search page)
+     */
+    protected $queryFieldType = '';
+
+
+    /**
      * @var array       list of details needed to aggregate this field type
      */
     protected $aggregationDetails = array();
@@ -97,6 +103,7 @@ abstract class FieldTypeAbstract
             'name'              =>$this->name,
             'description'       =>$this->description,
             'aggregationDetails'=>$this->aggregationDetails,
+            'queryFieldType'    =>$this->queryFieldType,
         );
     }
 

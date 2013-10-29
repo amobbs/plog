@@ -26,7 +26,8 @@ class PreslogParser extends JqlParser {
      */
     public function parse($clients) {
         $this->clients = $clients;
-        return $this->buildPreslog($this->_expression);
+        $result = $this->buildPreslog($this->_expression);
+        return $result;
     }
 
     /**
@@ -46,24 +47,31 @@ class PreslogParser extends JqlParser {
 
         $conditions = array();
         foreach($expression as $keyword => $clause) {
-            $keyword = $this->_findKeyword($keyword);
+            $keywordObj = $this->_findKeyword($keyword);
             $subClauses = $this->buildPreslog($clause);
 
-            if ($keyword instanceof JqlKeyword) {
-                return array(
-                    $keyword->getMongoSymbol() => $subClauses,
-                );
-            }
+            if ($keywordObj instanceof JqlKeyword) {
+                $conditions[$keywordObj->getMongoSymbol()] = $subClauses;
 
-            if (is_array($clause)) {
-                foreach ($clause as $subKeyWord => $subClauses) {
-                    $subKeyWordObj = $this->_findKeyword($subKeyWord);
-                    $conditions[] = array(
-                        $subKeyWordObj->getMongoSymbol() => $this->buildPreslog($subClauses),
-                    );
-                }
+            //TODO not sure if needed i think it is meant to be sub clauses
+//            else if (is_array($clause)) {
+//                foreach ($clause as $subKeyWord => $subClauses) {
+//                    $subKeyWordObj = $this->_findKeyword($subKeyWord);
+//                    $conditions[] = array(
+//                        $subKeyWordObj->getMongoSymbol() => $this->buildPreslog($subClauses),
+//                    );
+//                }
             } else {
-                $conditions[] = $this->mongoExpressionToPreslog($clause);
+                $result = $this->mongoExpressionToPreslog($clause);
+//                if (is_array($result) && sizeof($result) == 2) {
+//                    foreach($result as $field => $value)
+//                    {
+//                        $conditions[$field] = $value;
+//                    }
+//                } else {
+                    $conditions[] = $result;
+//                }
+
             }
         }
 
@@ -164,7 +172,8 @@ class PreslogParser extends JqlParser {
 
                     $operator = $clause->getOperator();
                     //loop through the actual values for the select and find which ones match since we can not do it in the db
-                    $options = $clientField->getFieldSettings()['data']['options'];
+                    $preslogSettings = $clientField->getFieldSettings();
+                    $options = $preslogSettings['data']['options'];
                     foreach( $options as $option )
                     {
                         if ( $operator->matches($option['name'], $value) )

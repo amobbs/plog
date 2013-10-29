@@ -51,7 +51,8 @@ class Clause {
         }
 
         //convert duration style to seconds
-        $durationRegex = Configure::read('Preslog')['regex']['duration'];
+        $preslogSettings = Configure::read('Preslog');
+        $durationRegex = $preslogSettings['regex']['duration'];
         $matches = array();
         if (preg_match($durationRegex, $this->_value, $matches)) {
             $duration = 0;

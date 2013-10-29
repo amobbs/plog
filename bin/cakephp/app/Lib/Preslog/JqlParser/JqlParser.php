@@ -278,7 +278,9 @@ class JqlParser {
             if (sizeof($subGroups) > 1) {
                 $clauses[] = array($this->_findFirstKeyword($groupString, $jql) => $subGroups);
             } else {
-                $clauses[array_keys($subGroups)[0]] = array_values($subGroups)[0];
+                $subGroupKeys = array_keys($subGroups);
+                $subGroupValues = array_values($subGroups);
+                $clauses[$subGroupKeys[0]] = $subGroupValues[0];
             }
         }  else if ($this->_findFirstKeyword($groupString, $jql)) {
             $clauses = $this->_seperateClauses($groupString, $jql);
@@ -293,10 +295,14 @@ class JqlParser {
         //add group to start of string
         if($startClause) {
             if (is_array($clauses)) {
-                $groups[$firstKeyword] = array($startClause, array_keys($clauses)[0] => array_values($clauses)[0]);
+                $clausesKeys = array_keys($clauses);
+                $clausesValues = array_values($clauses);
+                $groups[$firstKeyword] = array($startClause, $clausesKeys[0] => $clausesValues[0]);
             } else {
                 $groups[$firstKeyword] = array($startClause, $clauses);
             }
+        } else {
+            $groups = $clauses;
         }
 
         //get anything after any groups
@@ -320,7 +326,9 @@ class JqlParser {
         }
 
         if (sizeof($groups) == 2) {
-            if (!(is_array(array_values($clauses)[0]) && is_array(array_values($groups)[1]))) {
+            $clausesValues = array_values($clauses);
+            $groupValues = array_values($groups);
+            if (!(is_array($clausesValues[0]) && is_array($groupValues[1]))) {
                 return new Clause($groups, $jql);
             } else {
                 return array($this->_findFirstKeyword($string, $jql) => $groups);

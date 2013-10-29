@@ -62,6 +62,7 @@ angular.module( 'Preslog.search', [
         }, true);
 
         $scope.queryMeta = {};
+        $scope.selectOptions = {};
 
         $scope.tq =
         {
@@ -309,6 +310,7 @@ angular.module( 'Preslog.search', [
                        $scope.sql = data.sql;
                        $scope.args = data.args;
                        $scope.queryMeta = data.fieldList;
+                       $scope.selectOptions = data.selectOptions;
 
                        var modal = $modal.open({
                             templateUrl: 'modules/search/queryModal/sqlQueryModal.tpl.html',
@@ -316,7 +318,8 @@ angular.module( 'Preslog.search', [
                             resolve: {
                                 sql: function() { return $scope.sql; },
                                 args: function() { return $scope.args; },
-                                queryMeta: function() { return $scope.queryMeta; }
+                                queryMeta: function() { return $scope.queryMeta; },
+                                selectOptions: function() { return $scope.selectOptions; }
                             }
                        });
 
@@ -338,7 +341,8 @@ angular.module( 'Preslog.search', [
                 scope: {
                     sql: '=',
                     args: '=',
-                    queryMeta: '='
+                    queryMeta: '=',
+                    selectOptions: '='
                 },
 
                 link : function(scope, element, attrs) {
@@ -350,6 +354,8 @@ angular.module( 'Preslog.search', [
                                 scope.args = args;
                             },
                             enumerate : function(request, response) {
+
+                                //use select options to find options needed
                                 if (request.columnName == 'CATEGORY') {
                                     response([{value:'A', label:'Small'}, {value:'B', label:'Medium'}]);
                                 } else {

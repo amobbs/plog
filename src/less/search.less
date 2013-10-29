@@ -38,51 +38,93 @@
 @queryBuilder-background: #ddd;
 @queryBuilder-border: #ccc;
 
+select.gwt-ListBox
+{
+  margin-bottom: 0px;
+}
+
+div.rqbAndOrOp select.gwt-ListBox
+{
+  width: 70px;
+  z-index: 200;
+  background: @queryBuilder-background;
+  border: 1px solid @queryBuilder-border;
+  border-radius: 4px;
+}
+
+div.rqbAndOrOpUpper
+{
+  z-index: 0;
+}
+
+table.rqbComparison
+{
+  z-index: 200;
+  background: @queryBuilder-background;
+  border: 0px solid #fff;
+  border-radius: 4px;
+  margin-left: 8px;
+
+  td
+  {
+    padding: 2px;
+  }
+
+  td:last-child { padding-right: 4px; }
+
+  table
+  {
+    background: @queryBuilder-background;
+  }
+}
+
 
 .queryBuilderContainer
 {
-    // inputs fix
-    select,input
+  // inputs fix
+  select,input
+  {
+    margin: 0px;
+    width: auto;
+    height: auto;
+  }
+
+  // zindex fix
+  .rqbAndOrOpUpper
+  {
+    z-index: 180;
+  }
+
+  // And/Or selector
+  .rqbAndOrOp
+  {
+    z-index: 200;
+    background: @queryBuilder-background;
+    border: 1px solid @queryBuilder-border;
+    border-radius: 4px;
+  }
+
+  // Comparison
+  .rqbComparison
+  {
+    z-index: 200;
+    background: @queryBuilder-background;
+    border: 0px solid #fff;
+    border-radius: 4px;
+    margin-left: 8px;
+
+
+
+    td
     {
-        margin: 0px;
-        width: auto;
-        height: auto;
+      padding: 2px;
     }
 
-    // zindex fix
-    .rqbAndOrOpUpper
+    td:last-child { padding-right: 4px; }
+
+    table
     {
-        z-index: 180;
+      background: @queryBuilder-background;
     }
-
-    // And/Or selector
-    .rqbAndOrOp
-    {
-        z-index: 200;
-        background: @queryBuilder-background;
-        border: 1px solid @queryBuilder-border;
-        border-radius: 4px;
-    }
-
-    // Comparison
-    .rqbComparison
-    {
-        z-index: 200;
-        background: @queryBuilder-background;
-        border: 0px solid #fff;
-        border-radius: 4px;
-        margin-left: 7px;
-
-        td
-        {
-            padding: 2px;
-        }
-
-        td:last-child { padding-right: 4px; }
-
-        table
-        {
-            background: @queryBuilder-background;
-        }
-    }
+  }
 }

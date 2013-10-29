@@ -35,7 +35,8 @@ class LineWidget extends Widget {
             $this->details['sla'] = isset($data['details']['sla']) ? $data['details']['sla'] : false;
         }
 
-        $fields = Configure::Read('Preslog')['Fields'];
+        $prelogSettings = Configure::Read('Preslog');
+        $fields = $prelogSettings['Fields'];
         $this->options = array(
             'xAxis' => array(
                 array('fieldType' => $fields['datetime']),
@@ -262,7 +263,8 @@ class LineWidget extends Widget {
             }
         }
 
-        $bhpm = Configure::read('Preslog')['Quantities']['bhpm'];
+        $preslogSettings = Configure::read('Preslog');
+        $bhpm = $preslogSettings['Quantities']['bhpm'];
         $bhpmTotal = 0;
 
         //find BHPM total before start of graph

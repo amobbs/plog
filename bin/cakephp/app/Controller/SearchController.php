@@ -361,12 +361,14 @@ class SearchController extends AppController
         $parser->setSqlFromJql($jql);
 
         //get list of fields that can be used to query against (red query builder format)
-        $fieldList = $this->_getQueryBuilderMeta();
+        $meta = $this->_getQueryBuilderMeta();
+
 
         $this->set('sql', $parser->getSql());
         $this->set('args', $parser->getArguments());
-        $this->set('fieldList', $fieldList);
-        $this->set('_serialize', array('sql', 'args', 'fieldList'));
+        $this->set('fieldList', $meta['fieldList']);
+        $this->set('selectOptions', $meta['selectOptions']);
+        $this->set('_serialize', array('sql', 'args', 'fieldList', 'selectOptions'));
     }
 
     private function _getQueryBuilderMeta()
@@ -376,7 +378,6 @@ class SearchController extends AppController
 
 
         //get all the unique fields that can be used from all the clients this user has access to
-
         $columns = array(
             'ID' => array(
                 'name' => 'ID',
@@ -387,13 +388,13 @@ class SearchController extends AppController
             'created' => array(
                 'name' => 'Created',
                 'label' => 'Created',
-                'type' => 'TEXT', //$clientField->getProperties('alias'),
+                'type' => 'DATE', //$clientField->getProperties('alias'),
                 'size' => 10,
             ),
             'modified' => array(
                 'name' => 'Modified',
                 'label' => 'Modified',
-                'type' => 'TEXT', //$clientField->getProperties('alias'),
+                'type' => 'DATE', //$clientField->getProperties('alias'),
                 'size' => 10,
             ),
             'version' => array(
@@ -404,7 +405,8 @@ class SearchController extends AppController
             ),
         );
 
-        $types = array();
+        $types = array(); //defines how a value is displayed in the interface, textbox or drop down etc..
+        $selectOptions = array(); //list of options that are available for SELECt types
         foreach($clientIds as $id)
         {
             $clientEntity = $this ->Client->getClientEntityById($id);
@@ -414,24 +416,72 @@ class SearchController extends AppController
                 $title = $fieldSettings['label'];
                 if (isset($columns[$title]) || $fieldSettings['type'] == 'loginfo')
                 {
+                    //created/modified etc.. are manually added above. so there is nothing else to do for this
                     continue;
+                }
+
+                $fieldType = $clientField->getProperties('queryFieldType');
+
+                //each select field needs their own type because they have different options
+                if ($clientField instanceof \Preslog\Logs\FieldTypes\Select)
+                {
+                    $fieldType = $fieldSettings['name'];
+                    $types[$fieldType] = array(
+                        'editor' => 'SELECT',
+                        'name' => $fieldType,
+                        'operators' => $this->listOperators(),
+                    );
+
+                    $options = array();
+                    foreach($fieldSettings['data']['options'] as $option)
+                    {
+                        $options[] = array(
+                            'value' => $option['_id'],
+                            'label' => $option['name']
+                        );
+                    }
+                    $selectOptions[$fieldType] = $options;
+                }
+                else  if (!isset($types[$fieldType]))
+                {
+                    $types[$fieldType] = array(
+                        'editor' => 'TEXT',
+                        'name' => $fieldType,
+                        'operators' => $this->listOperators(),
+                    );
                 }
 
                 $columns[$title] = array(
                     'name' => $title,
                     'label' => $title,
-                    'type' => 'TEXT', //$clientField->getProperties('alias'),
+                    'type' => $fieldType,
                     'size' => 10,
                 );
 
+
             }
         }
-
-        $types[] = array(
-            'editor' => 'TEXT',
-            'name' => 'TEXT',
-            'operators' => $this->listOperators(),
-        );
+//
+//        $types[] = array(
+//            'editor' => 'TEXT',
+//            'name' => 'TEXT',
+//            'operators' => $this->listOperators(),
+//        );
+//        $types[] = array(
+//            'editor' => 'SELECT',
+//            'name' => 'SELECT',
+//            'operators' => $this->listOperators(),
+//        );
+//        $types[] = array(
+//            'editor' => 'TEXT',
+//            'name' => 'DATE',
+//            'operators' => $this->listOperators(),
+//        );
+//        $types[] = array(
+//            'editor' => 'TEXT',
+//            'name' => 'INT',
+//            'operators' => $this->listOperators(),
+//        );
 
         $fieldList = array(
             'tables' => array(
@@ -452,7 +502,7 @@ class SearchController extends AppController
             'types' => array_values($types),
         );
 
-        return $fieldList;
+        return array('fieldList' => $fieldList, 'selectOptions' => $selectOptions);
     }
 
     private function listOperators()

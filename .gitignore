@@ -6,12 +6,13 @@
 build/webroot/*
 !build/webroot/api
 
+//dont copy database file around
+bin/cakephp/app/config/database.php
 
 // Bin webroot
 // - track Api
 bin/cakephp/Vendor/*
 bin/cakephp/app/tmp/*
-bin/webroot/*
 !bin/webroot/api
 
 // Ignore vendor .get directories
@@ -27,10 +28,12 @@ vendor/*
 // - RedQueryBuilder
 !vendor/php-sql-parser
 !vendor/RedQueryBuilder
-
+!bin/cakephp/Vendor/HighchartsPHP
 
 // Project Files ignored
 .idea
 
 // Empty files get tracked
 !*/empty
+
+!*/tmp/users_20130930.csv
