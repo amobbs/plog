@@ -69,6 +69,7 @@ class JqlParser {
 
     public function setSqlFromJql($jql) {
         if (empty($jql)) {
+            $this->_sql = 'SELECT * FROM "LOGS"';
             return;
         }
 
