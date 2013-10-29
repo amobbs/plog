@@ -80,9 +80,11 @@ angular.module('userService', ['restangular'])
                 var credentials = (userCredentials === undefined ? {} : {'User':userCredentials});
 
                 // Attempt to login
+                // Note: A 301 will never be issued for auto-login attempts.
+                //       This prevents the auto-login firing an "unauthorised" error in the interceptor.
                 Restangular.all('users/login').post( credentials ).then(function (ret) {
 
-                    // Login OK?
+                    // Login OK? Log us in!
                     if (ret.login.success)
                     {
                         // Save user details to service
@@ -99,15 +101,19 @@ angular.module('userService', ['restangular'])
                         deferred.resolve(ret);
                     }
 
-                    // If not specifically logging in, raise the loginRequired broadcast.
-                    if (userCredentials === undefined)
+                    // Failure to login.
+                    else
                     {
-                        $rootScope.$broadcast('event:auth-loginRequired');
-                    }
+                        // If not specifically logging in, raise the loginRequired broadcast.
+                        if (userCredentials === undefined)
+                        {
+                            $rootScope.$broadcast('event:auth-loginRequired');
+                        }
 
-                    // Reject the promose on failure
-                    loginPromise = undefined;
-                    deferred.reject(ret);
+                        // Reject the promose on failure
+                        loginPromise = undefined;
+                        deferred.reject(ret);
+                    }
                 });
 
                 // Promise to complete this request

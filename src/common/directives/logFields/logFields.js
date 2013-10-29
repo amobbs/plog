@@ -52,10 +52,11 @@ angular.module('logFields', [])
             var field = {};
 
             // Track current width. Used for creating row containers
-            var currentWidth = null;
+            var currentWidth = 1;
 
             // Html containers
-            var rowElement = null;
+            var rowElementTemplate = angular.element( '<div class="row-fluid"></div>' );
+            var rowElement = rowElementTemplate;
             var rows = [];
 
             for (var i in scope.fields)
@@ -105,26 +106,23 @@ angular.module('logFields', [])
                 tpl = $compile(tpl)(tplScope);
 
                 // Start a new row if the width is out of range
-                if (currentWidth + type.width > 1 || currentWidth === null)
+                if (currentWidth + type.width > 1)
                 {
-                    // Store current
-                    if (rowElement !== null)
-                    {
-                        rows.push(rowElement);
-                    }
+                    // Prep to object
+                    rowElement = rowElementTemplate.clone();
+                    rows.push(rowElement);
 
-                    // Make new row
-                    rowElement = angular.element( '<div class="row-fluid"></div>' );
+                    // Reset width
                     currentWidth = 0;
                 }
 
-                // Append to row
+                // Append our element to the row
                 rowElement.append(tpl);
                 currentWidth += type.width;
             }
 
 
-            // Condense rows to html
+            // Condense each row to actual html
             for (i in rows)
             {
                 // each row ..
