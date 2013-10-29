@@ -3,6 +3,7 @@ namespace Preslog\JqlParser;
 
 use Configure;
 use MongoDate;
+use PHPSQL\Exception\Exception;
 use Preslog\JqlParser\JqlFunction\JqlFunction;
 use Preslog\JqlParser\JqlOperator\JqlOperator;
 
@@ -116,7 +117,14 @@ class Clause {
 
         $this->_field = strtolower($this->_stripTableName($parts['field']));
         $this->_operator = $this->_findOperator($parts['operator']);
-        $this->_value = $parts['value'];
+
+        $value = $parts['value'];
+        //remove " for encapsulated strings but not every occurance
+        if (substr($value, 0, 1) == '"' && substr($value, -1) == '"')
+        {
+            $value = substr($value, 1, -1);
+        }
+        $this->_value = $value;
     }
 
     private function _explodeClause() {

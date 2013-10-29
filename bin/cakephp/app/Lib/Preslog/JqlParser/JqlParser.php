@@ -356,7 +356,7 @@ class JqlParser {
             return new Clause(substr($workingString,$keywordPos + strlen($keyword)));
         }
 
-        $clause = new Clause($clauseString);
+        $clause = new Clause($clauseString, $jql);
         $workingString = substr($workingString,$keywordPos + strlen($keyword));
         $subClauses = $this->_seperateClauses($workingString, $jql);
         $clauses = array($keyword => array($clause, $subClauses));
@@ -380,10 +380,33 @@ class JqlParser {
             if (!$jql) {
                 $keywordSymbol = $keyword->getSqlSymbol();
             }
-            $keywordPos = strpos($string, $keywordSymbol);
-            if ($keywordPos !== false && $keywordPos < $closestKeywordPos) {
-                $closestKeywordPos = strpos($string, $keywordSymbol);
-                $closestKeyword = $keywordSymbol;
+
+            $offset = 0;
+            $continue = true;
+            while ($continue)
+            {
+                $keywordPos = strpos($string, $keywordSymbol, $offset);
+                if ($keywordPos !== false && $keywordPos < $closestKeywordPos) {
+                    //we found a keyword make sure it is not inside some quotes
+                    //we determine that it is in quotes if there is an odd number of " before the keyword
+                    $quoteCount = substr_count($string, '"', 0, $keywordPos);
+                    if ($quoteCount % 2 == 0)
+                    {
+                        $closestKeywordPos = strpos($string, $keywordSymbol);
+                        $closestKeyword = $keywordSymbol;
+                        $continue = false;
+                    }
+                    else
+                    {
+                        $offset = $keywordPos + 1;
+                        $continue = true;
+                    }
+                }
+                //the keyword was not in the string, stop looking
+                else
+                {
+                    $continue = false;
+                }
             }
         }
         return $closestKeyword;

@@ -85,3 +85,22 @@ Router::connect(
     '/search/wizard/translate',
     array('controller' => 'Search', 'action' => 'wizardTranslate', '[method]' => 'GET')
 );
+
+/**
+ * Serach.Specific: GET (convert quick search into jql)
+ * @SWG\Resource(
+ *      resourcePath="/search",
+ *      @SWG\Api(
+ *          path="/search/wizard/quick",
+ *          @SWG\Operation(
+ *              @SWG\Partial("search.wizard.quick"),
+ *              nickname="search.specific.read",
+ *              httpMethod="GET"
+ *          )
+ *      )
+ * )
+ */
+Router::connect(
+    '/search/wizard/quick',
+    array('controller' => 'Search', 'action' => 'convertQuickSearchToJql', '[method]' => 'GET')
+);

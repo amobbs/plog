@@ -60,6 +60,15 @@ angular.module( 'Preslog.nav', [])
 
         };
 
+        /**
+         * Quick Search
+         * redirect to search page with entered text as initial search
+         */
+        $scope.searchText = '';
+        $scope.quickSearch = function ()
+        {
+            window.location.href= '/search/' + this.searchText;
+        };
 
         /**
          * Create Log
@@ -76,7 +85,6 @@ angular.module( 'Preslog.nav', [])
             // Change path
             $location.path(link);
         };
-
 
         // Observe the User model
         // Change the user properties when they're modified on the user object

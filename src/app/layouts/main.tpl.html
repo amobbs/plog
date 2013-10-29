@@ -39,8 +39,8 @@
                 </ul>
                 <ul class="nav pull-right">
                     <li  tooltip="Enter a numeric ID to jump to a log. Enter text to quickly search all log text fields for that data." tooltip-placement="bottom">
-                    <form class="navbar-search" action="/search">
-                            <input type="text" class="search-query span2" placeholder="Quick Search">
+                    <form class="navbar-search" ng-submit="quickSearch()">
+                            <input type="text" ng-model="searchText" class="search-query span2" placeholder="Quick Search">
                         </form>
                     </li>
                     <li class="divider-vertical"></li>

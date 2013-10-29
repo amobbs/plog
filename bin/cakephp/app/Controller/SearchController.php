@@ -409,6 +409,7 @@ class SearchController extends AppController
         $selectOptions = array(); //list of options that are available for SELECt types
         foreach($clientIds as $id)
         {
+            $fieldTypeName= '';
             $clientEntity = $this ->Client->getClientEntityById($id);
             foreach($clientEntity->fields as $fieldId => $clientField)
             {
@@ -421,14 +422,15 @@ class SearchController extends AppController
                 }
 
                 $fieldType = $clientField->getProperties('queryFieldType');
+                $fieldTypeName = $fieldType;
 
                 //each select field needs their own type because they have different options
                 if ($clientField instanceof \Preslog\Logs\FieldTypes\Select)
                 {
-                    $fieldType = $fieldSettings['name'];
-                    $types[$fieldType] = array(
+                    $fieldTypeName = $title;
+                    $types[$title] = array(
                         'editor' => 'SELECT',
-                        'name' => $fieldType,
+                        'name' => $title,
                         'operators' => $this->listOperators(),
                     );
 
@@ -440,7 +442,7 @@ class SearchController extends AppController
                             'label' => $option['name']
                         );
                     }
-                    $selectOptions[$fieldType] = $options;
+                    $selectOptions[$title] = $options;
                 }
                 else  if (!isset($types[$fieldType]))
                 {
@@ -454,7 +456,7 @@ class SearchController extends AppController
                 $columns[$title] = array(
                     'name' => $title,
                     'label' => $title,
-                    'type' => $fieldType,
+                    'type' => $fieldTypeName,
                     'size' => 10,
                 );
 
@@ -503,6 +505,47 @@ class SearchController extends AppController
         );
 
         return array('fieldList' => $fieldList, 'selectOptions' => $selectOptions);
+    }
+
+    /**
+     * given a string find if it matches a log id or if it is just plain text and return some jql that will find it.
+     *
+     * @SWG\Operation(
+     *      partial="search.wizard.quick",
+     *      summary="return jql from quick search string",
+     *      notes="",
+     *      @SWG\Parameters(
+     *          @SWG\Parameter(
+     *              name="search_text",
+     *              paramType="query",
+     *              dataType="string",
+     *              required="true",
+     *              description="search text that will be converted to jql"
+     *          )
+     *      )
+     * )
+     */
+    public function convertQuickSearchToJql()
+    {
+        $searchText = $this->request->query['search_text'];
+        $jql = '';
+
+        $config = Configure::read('Preslog');
+        $logRegex = $config['regex']['logid'];
+
+        //split the log prefix from numeric log id
+        $parts = array();
+        if ( preg_match($logRegex, $searchText, $parts) )
+        {
+            $jql = 'ID = ' . $searchText;
+        }
+        else
+        {
+            $jql = 'text ~ "' . $searchText . '"';
+        }
+
+        $this->set('jql', $jql);
+        $this->set('_serialize', array('jql'));
     }
 
     private function listOperators()

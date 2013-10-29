@@ -24,6 +24,35 @@ angular.module( 'Preslog.search', [
                     controller: 'SearchCtrl',
                     templateUrl: 'modules/search/search.tpl.html'
                 }
+            },
+            resolve: {
+                query: ['$stateParams', function($stateParams) {
+                    return '';
+                }]
+            }
+        });
+        stateHelperProvider.addState('mainLayout.quickSearch', {
+            url: '/search/{search_text:[0-9a-z]+}',
+            views: {
+                "main@mainLayout": {
+                    controller: 'SearchCtrl',
+                    templateUrl: 'modules/search/search.tpl.html'
+                }
+            },
+            resolve: {
+                query: ['$q', 'Restangular', '$stateParams', function($q, Restangular, $stateParams) {
+                    var deferred = $q.defer();
+
+                    Restangular.one('search/wizard/quick')
+                        .get({
+                            search_text: $stateParams.search_text
+                        })
+                        .then(function(result) {
+                            deferred.resolve(result.jql);
+                        });
+
+                    return deferred.promise;
+                }]
             }
         });
     })
@@ -31,12 +60,12 @@ angular.module( 'Preslog.search', [
 /**
  * And of course we define a controller for our route.
  */
-    .controller( 'SearchCtrl', function SearchCtrl( $scope, $http, $modal, titleService, Restangular ) {
+    .controller( 'SearchCtrl', function SearchCtrl( $scope, $http, $modal, titleService, Restangular, query ) {
        titleService.setTitle( 'Search' );
 
         //$scope.jql = 'accountability = mediahub error and (created > startofmonth("-1months") and created < endofmonth("-1months"))';
-        $scope.jql = '';
-        $scope.sql = 'SELECT * FROM "LOGS" WHERE "DURATION" > ?';
+        $scope.jql = query;
+        $scope.sql = '';
 
         $scope.args = ['1'];
         $scope.results = {
@@ -63,197 +92,6 @@ angular.module( 'Preslog.search', [
 
         $scope.queryMeta = {};
         $scope.selectOptions = {};
-
-        $scope.tq =
-        {
-                "tables": [
-                    {
-                        "name": "LOGS",
-                        "columns": [
-                            {
-                                "name": "ID",
-                                "label": "ID",
-                                "type": "INTEGER",
-                                "size": 10
-                            },
-                            {
-                                "name": "NAME",
-                                "label": "NAME",
-                                "type": "CHAR",
-                                "size": 35
-                            },
-                            {
-                                "name": "COUNTRYCODE",
-                                "label": "COUNTRYCODE",
-                                "type": "CHAR",
-                                "size": 3
-                            },
-                            {
-                                "name": "DISTRICT",
-                                "label": "DISTRICT",
-                                "type": "CHAR",
-                                "size": 20
-                            },
-                            {
-                                "name": "POPULATION",
-                                "label": "POPULATION",
-                                "type": "INTEGER",
-                                "size": 10
-                            }
-                        ],
-                        "fks": []
-                    }
-                ],
-                "types": [
-                    {
-                        "editor": "SUGGEST",
-                        "name": "CHAR",
-                        "operators": [
-                            {
-                                "name": "=",
-                                "label": "is",
-                                "cardinality": "ONE"
-                            },
-                            {
-                                "name": "<>",
-                                "label": "is not",
-                                "cardinality": "ONE"
-                            },
-                            {
-                                "name": "LIKE",
-                                "label": "like",
-                                "cardinality": "ONE"
-                            },
-                            {
-                                "name": "<",
-                                "label": "less than",
-                                "cardinality": "ONE"
-                            },
-                            {
-                                "name": ">",
-                                "label": "greater than",
-                                "cardinality": "ONE"
-                            }
-                        ]
-                    },
-                    {
-                        "editor": "TEXT",
-                        "name": "NUMERIC",
-                        "operators": [
-                            {
-                                "name": "=",
-                                "label": "is",
-                                "cardinality": "ONE"
-                            },
-                            {
-                                "name": "<>",
-                                "label": "is not",
-                                "cardinality": "ONE"
-                            },
-                            {
-                                "name": "<",
-                                "label": "less than",
-                                "cardinality": "ONE"
-                            },
-                            {
-                                "name": ">",
-                                "label": "greater than",
-                                "cardinality": "ONE"
-                            }
-                        ]
-                    },
-                    {
-                        "editor": "TEXT",
-                        "name": "INTEGER",
-                        "operators": [
-                            {
-                                "name": "=",
-                                "label": "is",
-                                "cardinality": "ONE"
-                            },
-                            {
-                                "name": "<>",
-                                "label": "is not",
-                                "cardinality": "ONE"
-                            },
-                            {
-                                "name": "<",
-                                "label": "less than",
-                                "cardinality": "ONE"
-                            },
-                            {
-                                "name": ">",
-                                "label": "greater than",
-                                "cardinality": "ONE"
-                            }
-                        ]
-                    },
-                    {
-                        "editor": "TEXT",
-                        "name": "DECIMAL",
-                        "operators": [
-                            {
-                                "name": "=",
-                                "label": "is",
-                                "cardinality": "ONE"
-                            },
-                            {
-                                "name": "<>",
-                                "label": "is not",
-                                "cardinality": "ONE"
-                            },
-                            {
-                                "name": "<",
-                                "label": "less than",
-                                "cardinality": "ONE"
-                            },
-                            {
-                                "name": ">",
-                                "label": "greater than",
-                                "cardinality": "ONE"
-                            }
-                        ]
-                    },
-                    {
-                        "editor": "TEXT",
-                        "name": "SMALLINT",
-                        "operators": [
-                            {
-                                "name": "=",
-                                "label": "is",
-                                "cardinality": "ONE"
-                            },
-                            {
-                                "name": "<>",
-                                "label": "is not",
-                                "cardinality": "ONE"
-                            },
-                            {
-                                "name": "<",
-                                "label": "less than",
-                                "cardinality": "ONE"
-                            },
-                            {
-                                "name": ">",
-                                "label": "greater than",
-                                "cardinality": "ONE"
-                            }
-                        ]
-                    },
-                    {
-                        "editor": "SELECT",
-                        "name": "BOOLEAN",
-                        "operators": [
-                            {
-                                "name": "=",
-                                "label": "is",
-                                "cardinality": "ONE"
-                            }
-                        ]
-                    }
-                ]
-            };
-
 
         $scope.doSearch = function() {
             $scope.logWidgetParams.page = 1;
@@ -323,8 +161,9 @@ angular.module( 'Preslog.search', [
                             }
                        });
 
-                       modal.result.then(function(sql) {
-                           $scope.sql = sql;
+                       modal.result.then(function(result) {
+                           $scope.sql = result.sql;
+                           $scope.args = result.args;
                            $scope.sqlToJql();
                        });
                    }
@@ -333,11 +172,10 @@ angular.module( 'Preslog.search', [
        };
 
     })
-    .directive('redQueryBuilder', ['$timeout', 'Restangular',
-        function($timeout, Restangular) {
+    .directive('redQueryBuilder', [
+        function() {
             return {
-                restrict:'E',
-                transclude: true,
+                restrict:'A',
                 scope: {
                     sql: '=',
                     args: '=',
@@ -354,13 +192,12 @@ angular.module( 'Preslog.search', [
                                 scope.args = args;
                             },
                             enumerate : function(request, response) {
-
-                                //use select options to find options needed
-                                if (request.columnName == 'CATEGORY') {
-                                    response([{value:'A', label:'Small'}, {value:'B', label:'Medium'}]);
-                                } else {
-                                    response([{value:'M', label:'Male'}, {value:'F', label:'Female'}]);
+                                if (!scope.selectOptions[request.columnName])
+                                {
+                                    response([{value: -1, label: 'Error retrieving list'}]);
+                                    return;
                                 }
+                                response(scope.selectOptions[request.columnName]);
                             },
                             editors : [ {
                                 name : 'DATE',

@@ -3,6 +3,7 @@
 namespace Preslog\PreslogParser;
 
 use ClassRegistry;
+use Configure;
 use MongoId;
 use MongoRegex;
 use Preslog\JqlParser\Clause;
@@ -94,17 +95,44 @@ class PreslogParser extends JqlParser {
         $fieldName = $keys[0];
         $value = $expression[$fieldName];
 
+        $clientModel = ClassRegistry::init('Client');
+
         //hard replace hrid (db name) with a more human readable "id"
         if ($fieldName == 'id')
         {
-            return array(
-                'hrid' => $value
-            );
+            $config = Configure::read('Preslog');
+            $logRegex = $config['regex']['logid'];
+
+            //split the log prefix from numeric log id
+            $parts = array();
+            if ( preg_match($logRegex, $value, $parts) )
+            {
+                $prefix = $parts[1];
+                $numericId = (int)$parts[2];
+
+                //find client the prefix matches
+                $client = $clientModel->find('first', array(
+                    'conditions' => array(
+                        'logPrefix' => $prefix
+                    ),
+                ));
+
+                if ( sizeof($client) !== 1 )
+                {
+                    //umm error!!!!!!!!!
+                    return 'error';
+                }
+
+                return array(
+                    'client_id' => new MongoId($client['Client']['_id']),
+                    'hrid' => $numericId,
+                );
+            }
         }
 
         //add the option to search for clients using 'client' field
         //match client id to name
-        $clientModel = ClassRegistry::init('Client');
+
         if ($fieldName == 'client')
         {
             $clientId = '';
@@ -119,6 +147,14 @@ class PreslogParser extends JqlParser {
 
             return array(
                 'client_id' => new MongoId($clientId),
+            );
+        }
+
+        //we have a special case, to just search all text fields, mostly used for quick search
+        if ($fieldName == 'text')
+        {
+            return array(
+                'fields.data.text' => new MongoRegex("/^$value$/i"),
             );
         }
 
