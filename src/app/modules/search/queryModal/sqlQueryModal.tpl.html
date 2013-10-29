@@ -1,10 +1,10 @@
 <div modal="queryWizardModal" options="{backdropFade: true}" close="cancel()" tabindex="-1" role="dialog">
     <div class="modal-header">
-        <button type="button" class="close" ng-click="queryWizardModal = false" aria-hidden="true"><i class="icon icon-remove"></i></button>
+        <button type="button" class="close" ng-click="cancel()" aria-hidden="true"><i class="icon icon-remove"></i></button>
         <h3 id="myModalLabel">Query Builder</h3>
     </div>
     <div class="modal-body">
-        <red-query-builder sql="sql" args="args" sql-return="sqlreturn" query-meta="queryMeta" select-options="selectOptions" id="rqb">&nbsp;</red-query-builder>
+        <red-query-builder sql="sql" args="args" query-meta="queryMeta" select-options="selectOptions" id="rqb">&nbsp;</red-query-builder>
     </div>
     <div class="modal-footer">
         <button class="btn" data-dismiss="modal" aria-hidden="true" ng-click="cancel()">Cancel</button>

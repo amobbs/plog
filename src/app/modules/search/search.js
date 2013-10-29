@@ -13,7 +13,8 @@
  * specified, as shown below.
  */
 angular.module( 'Preslog.search', [
-        'Preslog.search.sqlModal'
+        'Preslog.search.sqlModal',
+        'redQueryBuilder'
     ])
 
     .config(function(stateHelperProvider) {
@@ -32,7 +33,7 @@ angular.module( 'Preslog.search', [
             }
         });
         stateHelperProvider.addState('mainLayout.quickSearch', {
-            url: '/search/{search_text:[0-9a-z]+}',
+            url: '/search/{search_text}',
             views: {
                 "main@mainLayout": {
                     controller: 'SearchCtrl',
@@ -65,14 +66,17 @@ angular.module( 'Preslog.search', [
 
         //$scope.jql = 'accountability = mediahub error and (created > startofmonth("-1months") and created < endofmonth("-1months"))';
         $scope.jql = query;
-        $scope.sql = '';
 
-        $scope.args = ['1'];
+        /**
+         * Log Widget
+         */
+        //search results
         $scope.results = {
-            data: [],
-            fields: []
+            data: [], //actual returned logs
+            fields: [] //fields that are available in the logs (used for ordering)
         };
 
+        //define how logs should be displayed/details for pagination
         $scope.logWidgetParams = {
             page: 1,
             total: 0,
@@ -86,18 +90,18 @@ angular.module( 'Preslog.search', [
             lastUpdated: new Date()
         };
 
+        //if params change then we need to get new logs
         $scope.$watch('logWidgetParams', function(params) {
             $scope.search();
         }, true);
 
-        $scope.queryMeta = {};
-        $scope.selectOptions = {};
-
+        //new search query, start on page one and get logs
         $scope.doSearch = function() {
             $scope.logWidgetParams.page = 1;
             $scope.search();
         };
 
+        //general search to get logs
         $scope.search = function() {
             if ($scope.jql.length  === 0) {
                 return;
@@ -110,14 +114,13 @@ angular.module( 'Preslog.search', [
             }
 
             Restangular.one('search').get({
-                    query: $scope.jql,
-                    limit: $scope.logWidgetParams.perPage,
-                    start: offset,
-                    order: $scope.logWidgetParams.order,
-                    orderasc: $scope.logWidgetParams.orderDirection == 'Asc'
-                })
+                query: $scope.jql,
+                limit: $scope.logWidgetParams.perPage,
+                start: offset,
+                order: $scope.logWidgetParams.order,
+                orderasc: $scope.logWidgetParams.orderDirection == 'Asc'
+            })
                 .then(function(result) {
-                    console.log(result);
                     $scope.results = result;
                     var params = angular.copy($scope.logWidgetParams);
                     params.total = result.total;
@@ -128,6 +131,19 @@ angular.module( 'Preslog.search', [
             );
         };
 
+        /**
+         * Red Query Builder
+         */
+        //describe tale/columns used for query builder
+        $scope.queryMeta = {};
+        //options available for fields with a drop down box
+        $scope.selectOptions = {};
+        //sql that query builder uses
+        $scope.sql = '';
+        //values for each clause populated by the query builder.
+        $scope.args = [];
+
+        //given sql (from query builder) convert to jql to populate display
         $scope.sqlToJql = function() {
             if ($scope.sql === "") {
                 return;
@@ -140,17 +156,21 @@ angular.module( 'Preslog.search', [
             });
         };
 
-       $scope.jqlToSql = function() {
-           Restangular.one('search/wizard/params')
-               .get({jql : $scope.jql})
-               .then(function(data) {
-                   if (data) {
-                       $scope.sql = data.sql;
-                       $scope.args = data.args;
-                       $scope.queryMeta = data.fieldList;
-                       $scope.selectOptions = data.selectOptions;
+        //given jql, get sql query and options needed to use red query builder
+        $scope.jqlToSql = function() {
+            //convert jql to sql
+            Restangular.one('search/wizard/params')
+                .get({jql : $scope.jql})
+                .then(function(data) {
+                    //populate fields
+                    if (data) {
+                        $scope.sql = data.sql;
+                        $scope.args = data.args;
+                        $scope.queryMeta = data.fieldList;
+                        $scope.selectOptions = data.selectOptions;
 
-                       var modal = $modal.open({
+                        //create modal and pass required data through.
+                        var modal = $modal.open({
                             templateUrl: 'modules/search/queryModal/sqlQueryModal.tpl.html',
                             controller: 'SqlModalCtrl',
                             resolve: {
@@ -159,57 +179,60 @@ angular.module( 'Preslog.search', [
                                 queryMeta: function() { return $scope.queryMeta; },
                                 selectOptions: function() { return $scope.selectOptions; }
                             }
-                       });
+                        });
 
-                       modal.result.then(function(result) {
-                           $scope.sql = result.sql;
-                           $scope.args = result.args;
-                           $scope.sqlToJql();
-                       });
-                   }
-               });
+                        //apply sql changes as jql on screen
+                        modal.result.then(function(result) {
+                            $scope.sql = result.sql;
+                            $scope.args = result.args;
+                            $scope.sqlToJql();
+                        });
+                    }
+                });
 
-       };
-
-    })
-    .directive('redQueryBuilder', [
-        function() {
-            return {
-                restrict:'A',
-                scope: {
-                    sql: '=',
-                    args: '=',
-                    queryMeta: '=',
-                    selectOptions: '='
-                },
-
-                link : function(scope, element, attrs) {
-                    RedQueryBuilderFactory.create({
-                            targetId : 'rqb',
-                            meta : scope.queryMeta,
-                            onSqlChange : function(sql, args) {
-                                scope.sql = sql;
-                                scope.args = args;
-                            },
-                            enumerate : function(request, response) {
-                                if (!scope.selectOptions[request.columnName])
-                                {
-                                    response([{value: -1, label: 'Error retrieving list'}]);
-                                    return;
-                                }
-                                response(scope.selectOptions[request.columnName]);
-                            },
-                            editors : [ {
-                                name : 'DATE',
-                                format : 'dd.MM.yyyy'
-                            } ],
-                            suggest: function(args, callback) {
-                                console.log(args);
-                            }
-                        },
-                        scope.sql,
-                        scope.args);
-                }
-            };
-        }
-    ]);
+        };
+    });
+//    .directive('redQueryBuilder', [
+//        function() {
+//            return {
+//                restrict:'E',
+//                transclude: true,
+//                scope: {
+//                    sql: '=',
+//                    args: '=',
+//                    queryMeta: '=',
+//                    selectOptions: '='
+//                },
+//
+//                link : function(scope, element, attrs) {
+//                    RedQueryBuilderFactory.create({
+//                            targetId : 'rqb',
+//                            meta : scope.queryMeta,
+//                            onSqlChange : function(sql, args) {
+//                                scope.sql = sql;
+//                                scope.args = args;
+//                                scope.$parent.sql = sql;
+//
+//                            },
+//                            enumerate : function(request, response) {
+//                                if (!scope.selectOptions[request.columnName])
+//                                {
+//                                    response([{value: -1, label: 'Error retrieving list'}]);
+//                                    return;
+//                                }
+//                                response(scope.selectOptions[request.columnName]);
+//                            },
+//                            editors : [ {
+//                                name : 'DATE',
+//                                format : 'dd.MM.yyyy'
+//                            } ],
+//                            suggest: function(args, callback) {
+//                                console.log(args);
+//                            }
+//                        },
+//                        scope.sql,
+//                        scope.args);
+//                }
+//            };
+//        }
+//    ]);

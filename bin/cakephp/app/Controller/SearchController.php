@@ -386,22 +386,28 @@ class SearchController extends AppController
                 'size' => 10,
             ),
             'created' => array(
-                'name' => 'Created',
+                'name' => 'CREATED',
                 'label' => 'Created',
                 'type' => 'DATE', //$clientField->getProperties('alias'),
-                'size' => 10,
+                'size' => 50,
             ),
             'modified' => array(
-                'name' => 'Modified',
+                'name' => 'MODIFIED',
                 'label' => 'Modified',
                 'type' => 'DATE', //$clientField->getProperties('alias'),
-                'size' => 10,
+                'size' => 50,
             ),
             'version' => array(
-                'name' => 'Version',
+                'name' => 'VERSION',
                 'label' => 'Version',
                 'type' => 'TEXT', //$clientField->getProperties('alias'),
-                'size' => 10,
+                'size' => 4,
+            ),
+            'text' => array(
+                'name' => 'TEXT',
+                'label' => 'Text',
+                'type' => 'TEXT', //$clientField->getProperties('alias'),
+                'size' => 150,
             ),
         );
 
@@ -454,10 +460,10 @@ class SearchController extends AppController
                 }
 
                 $columns[$title] = array(
-                    'name' => $title,
+                    'name' => strtoupper($title),
                     'label' => $title,
                     'type' => $fieldTypeName,
-                    'size' => 10,
+                    'size' => 100,
                 );
 
 
@@ -544,7 +550,7 @@ class SearchController extends AppController
             $jql = 'text ~ "' . $searchText . '"';
         }
 
-        $this->set('jql', $jql);
+        $this->set('jql', strtoupper($jql));
         $this->set('_serialize', array('jql'));
     }
 

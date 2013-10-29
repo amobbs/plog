@@ -141,7 +141,7 @@ class Clause {
 
             $operatorPos = strpos($this->_unparsedClause, $operatorSymbol);
             if ($operatorPos !== false ) {
-                $parts['field'] = trim(substr($this->_unparsedClause, 0, $operatorPos));
+                $parts['field'] = str_replace('"', '', trim(substr($this->_unparsedClause, 0, $operatorPos)));
                 $parts['operator'] = trim(substr($this->_unparsedClause, $operatorPos, strlen($operatorSymbol)));
                 $parts['value'] = trim(substr($this->_unparsedClause, $operatorPos + strlen($operatorSymbol)));
 
