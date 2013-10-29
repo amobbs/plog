@@ -24,8 +24,8 @@ class PieWidget extends Widget {
 
         }
 
-
-        $fields = Configure::Read('Preslog')['Fields'];
+        $preslogSettings = Configure::read('Preslog');
+        $fields = $preslogSettings['Fields'];
         $this->options = array(
             'yAxis' => array(
                 array('fieldType' => 'count'),

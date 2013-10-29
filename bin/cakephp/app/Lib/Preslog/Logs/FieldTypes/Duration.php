@@ -14,6 +14,7 @@ class Duration extends FieldTypeAbstract
     protected $alias = 'duration';
     protected $name = 'Duration Field (H:M:S)';
     protected $description = 'A field for specifying durations, in H:M:S format.';
+    protected $queryFieldType = 'DURATION';
 
     //describes fields and data to use during aggregation in mongo
     protected $aggregationDetails = array(

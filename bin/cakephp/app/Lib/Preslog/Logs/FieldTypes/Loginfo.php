@@ -14,6 +14,7 @@ class Loginfo extends FieldTypeAbstract
     protected $alias = 'loginfo';
     protected $name = 'Log Information';
     protected $description = 'A block that contains general log information.';
+    protected $queryFieldType = '';
 
     protected $aggregationDetails = array(
         'hour' => array(

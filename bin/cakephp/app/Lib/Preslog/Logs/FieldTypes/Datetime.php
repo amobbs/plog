@@ -14,6 +14,7 @@ class Datetime extends FieldTypeAbstract
     protected $alias = 'datetime';
     protected $name = 'Date and Time field';
     protected $description = 'A field for specifying dates and times.';
+    protected $queryFieldType = 'DATE';
 
     protected $aggregationDetails = array(
         'hour' => array(

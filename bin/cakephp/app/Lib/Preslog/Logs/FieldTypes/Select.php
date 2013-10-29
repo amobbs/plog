@@ -14,6 +14,8 @@ class Select extends FieldTypeAbstract
     protected $alias = 'select';
     protected $name = 'Drop-down Select Box';
     protected $description = 'A drop-down selection box with various preset options.';
+    protected $queryFieldType = 'SELECT';
+
 
     protected $aggregationDetails = array(
         'select' => array(
