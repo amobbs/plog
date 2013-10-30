@@ -1488,7 +1488,7 @@ class MongodbSource extends DboSource {
         }
 
         // If an array, recuse each one on the schema type.
-        if (! $this->_isAssoc($doc)) {
+        if (! $this->_isAssoc($doc) ) {
             foreach ($doc as &$docItem) {
                 $this->convert($docItem, $schema, $fields, $toArray, false);
             }
@@ -1529,7 +1529,7 @@ class MongodbSource extends DboSource {
             }
 
             // Recurse for subDocuments
-            if ('subDocument' === $type) {
+            elseif ('subDocument' === $type) {
                 // Enforce the data to be non-numerical array
                 if (! empty($doc[$fieldKey]) && ! $this->_isAssoc($doc[$fieldKey])) {
                     throw new ErrorException('If using subDocument type, the data must be a non-numerical array');
@@ -1538,59 +1538,87 @@ class MongodbSource extends DboSource {
                 $this->convert($doc[$fieldKey], $fieldOptions['schema'], $fields, $toArray, false);
             }
 
-            // Fix string/integer lengths
-            if (
-                ! empty($fieldOptions['length']) &&
-                (is_string($doc[$fieldKey]) || is_integer($doc[$fieldKey]))
-            ) {
-                $doc[$fieldKey] = substr($doc[$fieldKey], 0, $fieldOptions['length']);
-            }
-
-            // Cast the values to what type they are
-            switch ($type) {
-                case 'object':
-                    $doc[$fieldKey] = (object) $doc[$fieldKey];
-                    break;
-                case 'string':
-                    $doc[$fieldKey] = (string) $doc[$fieldKey];
-                    break;
-                case 'array':
-                    $doc[$fieldKey] = (array) $doc[$fieldKey];
-                    break;
-                case 'boolean':
-                    $doc[$fieldKey] = (boolean) $doc[$fieldKey];
-                    break;
-                case 'integer':
-                    $doc[$fieldKey] = (integer) $doc[$fieldKey];
-                    break;
-            }
-
-            if (! empty($fieldOptions['mongoType'])) {
-                switch ($fieldOptions['mongoType']) {
-                    case 'mongoId':
-                        if ($toArray) {
-                            $doc[$fieldKey] = (string) $doc[$fieldKey];
-                        } elseif (! empty($doc[$fieldKey]) && ! $doc[$fieldKey] instanceof MongoId) {
-                            $doc[$fieldKey] = new MongoId($doc[$fieldKey]);
-                        }
-                        break;
-                    case 'mongoDate':
-
-                        if ($toArray) {
-                            if (is_object($doc[$fieldKey])) {
-                                $doc[$fieldKey] = date('r', $doc[$fieldKey]->sec);
-                            }
-                        } elseif (! empty($doc[$fieldKey]) && ! $doc[$fieldKey] instanceof MongoDate) {
-                            if (! is_object($doc[$fieldKey])) {
-                                $doc[$fieldKey] = new MongoDate(strtotime($doc[$fieldKey]));
-                            }
-                        }
-
-                        break;
+            // Recurse for subArrays with a type
+            elseif ('subArray' === $type) {
+                // Enforce the data to be non-numerical array
+                if ($this->_isAssoc($doc[$fieldKey])) {
+                    throw new ErrorException('If using subArray type, the data must be a numerical array');
                 }
+
+                // Convert subitems
+                foreach ($doc[$fieldKey] as &$field)
+                {
+                    $this->convertValue( $field, $fieldOptions['arraySchema'], $toArray);
+                }
+            }
+
+            // Convert single item
+            else
+            {
+                $this->convertValue( $doc[$fieldKey], $fieldOptions, $toArray);
+            }
+
+
+        }
+    }
+
+
+    public function convertValue( &$value, $fieldOptions, $toArray=false )
+    {
+        // Fix string/integer lengths
+        if (
+            ! empty($fieldOptions['length']) &&
+            (is_string($value) || is_integer($value))
+        ) {
+            $value = substr($value, 0, $fieldOptions['length']);
+        }
+
+        // Cast the values to specified types
+        switch ($fieldOptions['type']) {
+            case 'object':
+                $value = (object) $value;
+                break;
+            case 'string':
+                $value = (string) $value;
+                break;
+            case 'array':
+                $value = (array) $value;
+                break;
+            case 'boolean':
+                $value = (boolean) $value;
+                break;
+            case 'integer':
+                $value = (integer) $value;
+                break;
+        }
+
+        // Convert mongoTypes
+        if (! empty($fieldOptions['mongoType'])) {
+            switch ($fieldOptions['mongoType']) {
+                case 'mongoId':
+                    if ($toArray) {
+                        $value = (string) $value;
+                    } elseif (! empty($value) && ! $value instanceof MongoId) {
+                        $value = new MongoId($value);
+                    }
+                    break;
+                case 'mongoDate':
+
+                    if ($toArray) {
+                        if (is_object($value)) {
+                            $value = date('r', $value->sec);
+                        }
+                    } elseif (! empty($value) && ! $value instanceof MongoDate) {
+                        if (! is_object($value)) {
+                            $value = new MongoDate(strtotime($value));
+                        }
+                    }
+
+                    break;
             }
         }
     }
+
 
     /**
      * Remove fields from the doc that aren't in the Schema
