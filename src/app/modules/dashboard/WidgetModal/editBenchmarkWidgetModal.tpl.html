@@ -15,13 +15,14 @@
             <input type="text" placeholder="Title..." value="" ng-model="widget.details.title"/>
         </div>
     </div>
+
     <div class="control-group">
-        <label class="control-label">Date range</label>
+        <label class="control-label">Search Query</label>
         <div class="controls">
-            <input placeholder="Start Date" ng-model="widget.details.startdate" required>
-            <input placeholder="End Date" ng-model="widget.details.enddate" required>
+            <textarea class="query" placeholder="Filter..." ng-model="widget.details.query"></textarea>
         </div>
     </div>
+
     <div class="control-group">
         <label class="control-label">Trend Lines </label>
         <div class="controls">
@@ -36,6 +37,14 @@
             <input
                     type="checkbox"
                     ng-model="widget.details.bhpm" />
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label">Show SLA </label>
+        <div class="controls">
+            <input
+                    type="checkbox"
+                    ng-model="widget.details.sla" />
         </div>
     </div>
     <div ng-show="clients.length > 0" class="control-group">

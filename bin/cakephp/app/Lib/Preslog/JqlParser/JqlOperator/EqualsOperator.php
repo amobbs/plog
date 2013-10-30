@@ -5,7 +5,18 @@ namespace Preslog\JqlParser\JqlOperator;
 class EqualsOperator extends JqlOperator {
 
     public function __construct() {
-        parent::_construct('=', '=', '', true);
+        parent::_construct(
+            '=',
+            '=',
+            '',
+            'IS',
+            array(
+                'DATE',
+                'TEXT',
+                'DURATION',
+                'SELECT',
+            ),
+            true);
     }
 
     public function matches($value1, $value2)

@@ -16,7 +16,13 @@ class InOperator extends JqlOperator {
      * constructor
      */
     public function __construct() {
-        parent::_construct('IN', 'IN', '$in', true);
+        parent::_construct(
+            'IN',
+            'IN',
+            '$in',
+            'IN',
+            array(),
+            true);
     }
 
     public function formatValueForJql($value) {
@@ -43,6 +49,7 @@ class InOperator extends JqlOperator {
         $foundMatch = false;
         foreach( $values as $value )
         {
+            $value = trim($value);
             if (is_numeric($value1) && is_numeric($value))
             {
                 $foundMatch = $foundMatch ? true : $value1 == $value2;

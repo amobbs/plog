@@ -6,10 +6,11 @@ angular.module('Preslog.search.sqlModal', [])
         $scope.queryMeta = queryMeta;
         $scope.selectOptions = selectOptions;
 
-        $scope.ok = function() {
+        $scope.ok = function(doSearch) {
             var result = {
                 sql: $scope.sql,
-                args: $scope.args
+                args: $scope.args,
+                search: doSearch
             };
             $modalInstance.close(result);
         };

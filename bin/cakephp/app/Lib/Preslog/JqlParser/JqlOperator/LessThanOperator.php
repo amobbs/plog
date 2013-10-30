@@ -16,7 +16,16 @@ class LessThanOperator extends JqlOperator {
      * constructor
      */
     public function __construct() {
-        parent::_construct('<', '<', '$lt', false);
+        parent::_construct(
+            '<',
+            '<',
+            '$lt',
+            'LESS THAN',
+            array(
+                'DATE',
+                'DURATION',
+            ),
+            false);
     }
 
     public function matches($value1, $value2)

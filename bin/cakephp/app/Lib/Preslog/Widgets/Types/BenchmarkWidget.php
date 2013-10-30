@@ -25,17 +25,14 @@ class BenchmarkWidget extends Widget {
 
             $this->details['trendLine'] = isset($data['details']['trendLine']) ? $data['details']['trendLine'] : false;
             $this->details['bhpm'] = isset($data['details']['bhpm']) ? $data['details']['bhpm'] : false;
-            $this->details['startdate'] = isset($data['details']['startdate']) ? $data['details']['startdate'] : false;
-            $this->details['enddate'] = isset($data['details']['enddate']) ? $data['details']['enddate'] : false;
+            $this->details['sla'] = isset($data['details']['sla']) ? $data['details']['sla'] : false;
 
             $this->details['clients'] = isset($data['details']['clients']) ? $data['details']['clients'] : array();
 
             //clients can not change the below values for this widget type
             $this->details['xAxis'] = 'created:month';
             $this->details['yAxis'] = 'duration:minutes';
-            //$this->details['series'] = 'created:month';
 
-            $data['details']['query'] = 'created > ' . $this->details['startdate'] . ' and created < ' . $this->details['enddate'];
             $clientList = '';
             foreach($this->details['clients'] as $client)
             {
@@ -48,7 +45,8 @@ class BenchmarkWidget extends Widget {
             }
         }
 
-        $fields = Configure::Read('Preslog')['Fields'];
+        $preslogSettings = Configure::read('Preslog');
+        $fields = $preslogSettings['Fields'];
         $this->options = array(
             'xAxis' => array(
                 array('fieldType' => 'created'),
@@ -242,7 +240,8 @@ class BenchmarkWidget extends Widget {
      */
     private function asPercentageOfBHPM($value)
     {
-        $quantities = Configure::read('Preslog')['Quantities'];
+        $preslogSettings = Configure::read('Preslog');
+        $quantities = $preslogSettings['Quantities'];
         $bhpmSeconds = $quantities['BHPM'] * 60 * 60;
         $decimalPlaces = pow(10, $quantities['decimalPlacesForPercentages']);
 
@@ -275,7 +274,8 @@ class BenchmarkWidget extends Widget {
             }
         }
 
-        $bhpm = Configure::read('Preslog')['Quantities']['BHPM'];
+        $preslogSettings = Configure::read('Preslog');
+        $bhpm = $preslogSettings['Quantities']['BHPM'];
         $bhpmTotal = 0;
 
         //find BHPM total before start of graph

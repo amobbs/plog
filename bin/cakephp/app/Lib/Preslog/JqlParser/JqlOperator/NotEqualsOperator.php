@@ -5,7 +5,18 @@ namespace Preslog\JqlParser\JqlOperator;
 class NotEqualsOperator extends JqlOperator {
 
     public function __construct() {
-        parent::_construct('!=', '!=', '$not', false);
+        parent::_construct(
+            '!=',
+            '!=',
+            '$not',
+            'IS NOT',
+            array(
+                'DATE',
+                'TEXT',
+                'DURATION',
+                'SELECT',
+            ),
+            false);
     }
 
     public function matches($value1, $value2)

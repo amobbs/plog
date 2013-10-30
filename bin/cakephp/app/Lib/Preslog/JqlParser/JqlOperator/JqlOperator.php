@@ -31,6 +31,8 @@ class JqlOperator {
 
     private $_mongoSymbol;
 
+    private $_humanReadable;
+
     /**
      * when outputting mongo and criteria uses this operator should the value be in its own object?
      * @var Boolean
@@ -38,14 +40,27 @@ class JqlOperator {
     private $_mongoInline;
 
     /**
-     * Constructor
-     * @param $symbol
-     * @param $sqlSymbol
+     * list of query field types (used by red query builder) defines when it is shown
      */
-    public function _construct($jqlSymbol, $sqlSymbol, $mongoSymbol, $mongoInline) {
+    private $_appliesToFields;
+
+    /**
+     * Constructor
+     *
+     * @param $jqlSymbol
+     * @param $sqlSymbol
+     * @param $mongoSymbol
+     * @param $appliedToFields
+     * @param $mongoInline
+     *
+     * @internal param $symbol
+     */
+    public function _construct($jqlSymbol, $sqlSymbol, $mongoSymbol, $humanReadable, $appliedToFields, $mongoInline) {
         $this->_jqlSymbol= $jqlSymbol;
         $this->_sqlSymbol = $sqlSymbol;
         $this->_mongoSymbol = $mongoSymbol;
+        $this->_humanReadable = $humanReadable;
+        $this->_appliesToFields = $appliedToFields;
         $this->_mongoInline = $mongoInline;
 
     }
@@ -68,6 +83,22 @@ class JqlOperator {
 
     public function getMongoSymbol() {
         return $this->_mongoSymbol;
+    }
+
+    public function getHumanReadable() {
+        return $this->_humanReadable;
+    }
+
+    public function isAppliedTo($fieldType) {
+        foreach($this->_appliesToFields as $applies)
+        {
+            if ($fieldType == $applies)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public function formatValueForJql($value) {

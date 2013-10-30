@@ -143,7 +143,7 @@ angular.module( 'Preslog.search', [
         $scope.args = [];
 
         //given sql (from query builder) convert to jql to populate display
-        $scope.sqlToJql = function() {
+        $scope.sqlToJql = function(doSearch) {
             if ($scope.sql === "") {
                 return;
             }
@@ -151,6 +151,11 @@ angular.module( 'Preslog.search', [
                 if (data) {
                     $scope.jql = data.jql;
                     $scope.args = data.args;
+
+                    if (doSearch)
+                    {
+                        $scope.doSearch();
+                    }
                 }
             });
         };
@@ -184,54 +189,11 @@ angular.module( 'Preslog.search', [
                         modal.result.then(function(result) {
                             $scope.sql = result.sql;
                             $scope.args = result.args;
-                            $scope.sqlToJql();
+                            $scope.sqlToJql(result.search);
+
                         });
                     }
                 });
 
         };
     });
-//    .directive('redQueryBuilder', [
-//        function() {
-//            return {
-//                restrict:'E',
-//                transclude: true,
-//                scope: {
-//                    sql: '=',
-//                    args: '=',
-//                    queryMeta: '=',
-//                    selectOptions: '='
-//                },
-//
-//                link : function(scope, element, attrs) {
-//                    RedQueryBuilderFactory.create({
-//                            targetId : 'rqb',
-//                            meta : scope.queryMeta,
-//                            onSqlChange : function(sql, args) {
-//                                scope.sql = sql;
-//                                scope.args = args;
-//                                scope.$parent.sql = sql;
-//
-//                            },
-//                            enumerate : function(request, response) {
-//                                if (!scope.selectOptions[request.columnName])
-//                                {
-//                                    response([{value: -1, label: 'Error retrieving list'}]);
-//                                    return;
-//                                }
-//                                response(scope.selectOptions[request.columnName]);
-//                            },
-//                            editors : [ {
-//                                name : 'DATE',
-//                                format : 'dd.MM.yyyy'
-//                            } ],
-//                            suggest: function(args, callback) {
-//                                console.log(args);
-//                            }
-//                        },
-//                        scope.sql,
-//                        scope.args);
-//                }
-//            };
-//        }
-//    ]);

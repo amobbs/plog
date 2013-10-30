@@ -13,7 +13,15 @@ namespace Preslog\JqlParser\JqlOperator;
 class LikeOperator extends JqlOperator{
 
     public function __construct() {
-        parent::_construct('~', 'LIKE', '', true);
+        parent::_construct(
+            '~',
+            'LIKE',
+            '',
+            'IS LIKE',
+            array(
+                'DURATION',
+            ),
+            true);
     }
 
     public function formatValueForSql($value) {

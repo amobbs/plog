@@ -16,7 +16,16 @@ class GreaterThanOperator extends JqlOperator {
      * constructor
      */
     public function __construct() {
-        parent::_construct('>', '>', '$gt', false);
+        parent::_construct(
+            '>',
+            '>',
+            '$gt',
+            'GREATER THAN',
+            array(
+                'DATE',
+                'DURATION',
+            ),
+            false);
     }
 
     public function matches($value1, $value2)
