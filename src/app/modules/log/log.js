@@ -105,6 +105,12 @@ angular.module( 'Preslog.log', [
         $scope.log = logData.Log;
         $scope.options = logOptions;
 
+
+        /**
+         * Display attributes
+         * @param children
+         * @returns {Array}
+         */
         $scope.attributesDisplay = function(children) {
             var columns = [[], []];
             if (children.length === 0) {
@@ -131,14 +137,11 @@ angular.module( 'Preslog.log', [
         };
 
 
+        /**
+         * Save Log
+         */
         $scope.saveLog = function()
         {
-            // Will not submit without validation passing
-            if ( $scope.logForm.$invalid ) {
-                alert('Your submission is not valid. Please check for errors.');
-                return false;
-            }
-
             // Data Fudge
             logData.Log = $scope.log;
 
@@ -156,10 +159,10 @@ angular.module( 'Preslog.log', [
                 function(response)
                 {
                     // Extrapolate all fields to the scope
-                    $scope.validation = response.data.data;
+                    $scope.serverErrors = response.data.data;
 
                     // If field exists, mark is as invalid
-                    for (var i in $scope.validation)
+                    for (var i in $scope.serverErrors)
                     {
                         if ($scope.logForm[i] !== undefined) {
                             $scope.logForm[i].$setValidity('validateServer', false);

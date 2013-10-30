@@ -216,10 +216,10 @@ angular.module( 'Preslog.clients', [
                 function(response)
                 {
                     // Extrapolate all fields to the scope
-                    $scope.validation = response.data.data;
+                    $scope.serverErrors = response.data.data;
 
                     // If field exists, mark is as invalid
-                    for (var i in $scope.validation)
+                    for (var i in $scope.serverErrors)
                     {
                         if ($scope.clientForm[i] !== undefined) {
                             $scope.clientForm[i].$setValidity('validateServer', false);

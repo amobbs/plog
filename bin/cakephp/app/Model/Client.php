@@ -188,8 +188,8 @@ class Client extends AppModel
             ),
         ),
         'benchmark'=>array(
-            'date'=>array(
-                'rule'=>array('between', 0, 100),
+            'range'=>array(
+                'rule'=>array('range', 0, 100),
                 'message'=>'Must be a percentage between 0 and 100',
                 'required'=>true,
             ),
@@ -246,6 +246,7 @@ class Client extends AppModel
         // Initialize a client entity
         $client = new ClientEntity();
         $client->setDataSource( $this->getDataSource() );
+        $client->setUser( PreslogAuthComponent::getInstance()->user() );
         $client->setFieldTypes( Configure::read('Preslog.Fields') );
 
         // Load to the entity
@@ -343,6 +344,7 @@ class Client extends AppModel
             $client = new ClientEntity();
             $client->setFieldTypes( Configure::read('Preslog.Fields') );
             $client->setDataSource( $this->getDataSource() );
+            $client->setUser( PreslogAuthComponent::getInstance()->user() );
 
             // Load as a doc
             $client->fromDocument($result[ $this->name ]);
@@ -537,7 +539,7 @@ class Client extends AppModel
 
     /**
      * Fetch a Client Entity by the given Client ID
-     * @param   string      $id             Mongo ID of the client
+     * @param   string      $client_id      Mongo ID of the client
      * @return  ClientEntity                Client Entity, after initialisation
      */
     public function getClientEntityById( $client_id )
@@ -558,6 +560,7 @@ class Client extends AppModel
         // Prep client object
         $client = new ClientEntity;
         $client->setDataSource( $this->getDataSource() );
+        $client->setUser( PreslogAuthComponent::getInstance()->user() );
         $client->setFieldTypes( Configure::read('Preslog.Fields') );
 
         // Find the client in the DB
@@ -570,7 +573,7 @@ class Client extends AppModel
         // Catch any errors
         if (empty($clientData))
         {
-            trigger_error("Client could not be loaded by ID '{$id}''", E_USER_ERROR);
+            trigger_error("Client could not be loaded by ID '{$client_id}''", E_USER_ERROR);
         }
 
         // Load from doc

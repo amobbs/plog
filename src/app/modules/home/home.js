@@ -49,6 +49,9 @@ angular.module( 'Preslog.home', [])
 
                     // Certain roles have certain destinations
                     switch( role ) {
+                        case 'engineer':
+                            requestedPath = '/dashboards/live-view';
+                            break;
                         case 'supervisor':
                             requestedPath = '/dashboards/to-be-released';
                             break;

@@ -201,7 +201,7 @@ class ImportController extends AppController
             array(
                 '_id' => null,
                 'order' => $order++,
-                'type' => 'textarea',
+                'type' => 'textbig',
                 'name' => 'program',
                 'label' => 'Program Name',
                 'data' => array('placeholder' => '?'),
@@ -209,7 +209,7 @@ class ImportController extends AppController
             array(
                 '_id' => null,
                 'order' => $order++,
-                'type' => 'textarea',
+                'type' => 'textsmall',
                 'name' => 'asset_id',
                 'label' => 'Asset ID',
                 'data' => array('placeholder' => '?'),
@@ -283,7 +283,7 @@ class ImportController extends AppController
             array(
                 '_id' => null,
                 'order' => $order++,
-                'type' => 'textarea',
+                'type' => 'testsmall',
                 'name' => 'cause',
                 'label' => 'Cause',
                 'data' => array(

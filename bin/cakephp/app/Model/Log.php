@@ -31,7 +31,9 @@ class Log extends AppModel
                 'data'          => array('type' => 'array'),
             ),
         ),
-        'attributes'    => array('type' => 'array'),
+        'attributes'    => array('type' => 'subArray',
+            'arraySchema'=> array( 'type' => 'string', 'length'=>24, 'mongoType'=>'mongoId' )
+        ),
     );
 
 
@@ -45,35 +47,39 @@ class Log extends AppModel
     public function validates($options = array())
     {
         // Validate the core model
-        $coreResult = parent::validates( $options );
+        if (!$coreResult = parent::validates( $options ))
+        {
+            return false;
+        }
 
         // Fetch the Client Schema
         $clientModel = ClassRegistry::init('Client');
-        $client = $clientModel->find('first', array(
-            'conditions'=>array(
-                '_id' => $this->data['client_id'],
-            )
-        ));
+        $clientEntity = $clientModel->getClientEntityById( $this->data['Log']['client_id'] );
 
         // Check the client loaded
-        if ( !sizeof($client) )
+        if ( !$clientEntity )
         {
             return false;
         }
 
         // Load the schema
         $log = new LogEntity;
-        $log->setClientEntity($client);
+        $log->setDataSource( $this->getDataSource() );
+        $log->setClientEntity($clientEntity);
+
+        // Interpret the log data to be saved
+        $log->fromArray( $this->data[ $this->name ] );
+
 
         // Validate the data, using $this->validator() for errors
-        $errors = $log->validates( $this->data );
+        $errors = $log->validates();
         foreach ($errors as $field=>$error)
         {
             $this->validator()->invalidate($field, $error);
         }
 
         // Return the validation result
-        return ($coreResult == false ? false : $result);
+        return (sizeof($this->validator()->errors()) < 1);
     }
 
 
@@ -87,10 +93,7 @@ class Log extends AppModel
     public function beforeSave($options = array())
     {
         // Process any AppModel beforeSave tasks
-        $ok = parent::beforeSave($options);
-
-        // Return if the initial process fails
-        if (!$ok)
+        if (!$ok = parent::beforeSave($options))
         {
             return $ok;
         }
@@ -98,18 +101,54 @@ class Log extends AppModel
         // Client ID must be present or we'll have some serious problems
         if (!isset( $this->data[ $this->name ]['client_id'] ))
         {
-            trigger_error('Log saves must have an appropriate client_id field attached. Log cannot be saved.', E_USER_WARNING);
+            trigger_error('client_id must be present to save a log. Log could not be saved.', E_USER_WARNING);
             return false;
         }
 
-        // Try to load LogHelper from cache first
-        if (!$logHelper = $this->getLogHelperByClientId( $this->data[ $this->name ]['client_id'] ))
+        // Load client model
+        $clientModel = ClassRegistry::init('Client');
+
+        // Fetch the client
+        if (!$client = $clientModel->getClientEntityById( $this->data[ $this->name ]['client_id'] ))
         {
-            trigger_error('The given client_id does not appear to exist. Log cannot be saved.', E_USER_WARNING);
+            trigger_error('Given client_id could not be loaded. Log could not be saved.', E_USER_WARNING);
+            return false;
         }
 
-        // Process schema of the fields
-        $logHelper->beforeSave( $this->data[ $this->name ] );
+        // Establish the entity
+        $log = new LogEntity;
+        $log->setDataSource( $this->getDataSource() );
+        $log->setClientEntity($client);
+
+        // Interpret the log data to be saved
+        $log->fromArray( $this->data[ $this->name ] );
+
+        // Fetch the original log data from the DB, where available
+        if ( $this->data[ $this->name ]['_id'] )
+        {
+            // Fetch original log
+            $sourceLogData = $this->find('first', array('conditions'=>array(
+                '_id'=>$this->data['_id'],
+            )));
+
+            // Load source log as entity
+            $sourceLog = new LogEntity;
+            $sourceLog->setDataSource( $this->getDataSource() );
+            $sourceLog->setClientEntity($client);
+            $sourceLog->fromArray($sourceLogData);
+
+            // Perform overwrite of readonly fields
+            $sourceLog->overwiteWithChanges( $log );
+
+            // Swap entities. We're done with the original.
+            $log = $sourceLog;
+        }
+
+        // Updated required fields
+        $log->beforeSave();
+
+        // Save log
+        $this->save( array('Log'=>$log->toArray()) );
 
         return true;
     }
@@ -164,7 +203,7 @@ class Log extends AppModel
             // After Find tasks
             $log->afterFind();
 
-            // Put results
+            // Put results to array of data
             $result[ $this->name ] = $log->toArray();
         }
 
@@ -581,22 +620,15 @@ class Log extends AppModel
     {
         // Load client
         $clientModel = ClassRegistry::init('Client');
+        $clientEntity = $clientModel->getClientEntityById( $client_id );
 
-        // Client fetch opts
-        $client = $clientModel->find('first', array(
-            'conditions'=>array(
-                '_id'=>$client_id
-            ),
-            'fields'=>array(
-                'fields',
-                'attributes'
-            ),
-        ));
+        // Get the settings limited field list
+        $opt = $clientEntity->getOptions();
 
         // Save only the items relevant to this action
         $options = array(
-            'fields' => $client['Client']['fields'],
-            'attributes' => $client['Client']['attributes'],
+            'fields' => $opt['fields'],
+            'attributes' => $opt['attributes'],
         );
 
         return $options;

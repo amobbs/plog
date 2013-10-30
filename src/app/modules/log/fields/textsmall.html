@@ -1,9 +1,10 @@
-<div class="span6">
+<div class="span6" ng-class="{error: logForm.fields_{{options._id}}.$invalid}">
     <label class="control-label" for="input_{{options._id}}">{{options.label}} </label>
     <div class="controls input-fill">
         <input type="text" placeholder="{{options.data.placeholder}}"
                id="input_{{options._id}}"
                ng-model="log.data.text"
+               name="fields_{{options._id}}"
                 />
     </div>
 </div>

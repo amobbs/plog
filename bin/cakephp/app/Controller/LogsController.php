@@ -51,7 +51,7 @@ class LogsController extends AppController
             $sourceLog = $this->Log->findByHrid( (int) $id );
 
             // Validate: does the log exist?
-            if (false)
+            if (empty($sourceLog))
             {
                 $this->errorNotFound(array('message'=>'Log could not be found'));
             }
@@ -64,8 +64,7 @@ class LogsController extends AppController
             }
 
             // Set the ID log the log to this ID, to be sure.
-            $log['_id'] = $sourceLog['_id'];
-            $log['version'] = $sourceLog['version'] + 1;
+            $log['_id'] = $sourceLog['Log']['_id'];
         }
         else
         {
@@ -77,14 +76,7 @@ class LogsController extends AppController
 
             // Not loading an existing log. Ensure the ID is cleared
             unset($log['_id']);
-            $log['version'] = 1;
-            $log['created'] = date( 'Y-m-d H:i:s' );
-            $log['created_user_id'] = $this->PreslogAuth->user('_id');
         }
-
-        // Update: Last Modified fields
-        $log['modified'] = date( 'Y-m-d H:i:s' );
-        $log['modified_user_id'] = $this->PreslogAuth->user('_id');
 
         // Validate field options
         $this->Log->set( $log );

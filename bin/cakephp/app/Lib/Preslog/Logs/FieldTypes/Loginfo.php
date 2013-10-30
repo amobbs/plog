@@ -2,8 +2,6 @@
 
 namespace Preslog\Logs\FieldTypes;
 
-use Preslog\Logs\FieldTypes\FieldTypeAbstract;
-
 /**
  * Preslog Field Type: Loginfo
  * Handles log information for general logs. Used just to control this items position in the log.
@@ -51,6 +49,19 @@ class Loginfo extends FieldTypeAbstract
     );
 
     protected $mongoClientSchema = array();
+
+
+    /**
+     * Check the field name matches static preset names
+     * @param   string  $name   Field name to check
+     * @return  bool            True is name is a match
+     */
+    public function isName( $name )
+    {
+        // LogInfo has 3 PRESET names you can search on...
+        $names = array('created', 'modified', 'version');
+        return (in_array( $name, $names ));
+    }
 
 
     /**

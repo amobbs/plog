@@ -4,7 +4,7 @@
  */
 
 angular.module('logFields', [])
-    .directive('logFields', ['$templateCache', '$compile', function ( $templateCache, $compile ) {
+    .directive('logFields', ['$templateCache', '$compile', '$interpolate', function ( $templateCache, $compile, $interpolate ) {
 
 
         /**
@@ -129,6 +129,24 @@ angular.module('logFields', [])
                 element.append( rows[i] );
             }
 
+
+            // Attach dynamic elements to the parent form
+            // Find all ng-model references under this item
+            element.find("*[ng-model]").each(function()
+            {
+                // Get the element
+                var fieldElement = angular.element(this);
+                var modelController = fieldElement['inheritedData']('$ngModelController');
+                var formController = fieldElement['inheritedData']('$formController');
+
+                // Interpolate model controller name from scope
+                var elementScope = fieldElement.scope();
+                modelController.$name = $interpolate(modelController.$name)(elementScope.$parent);
+
+                // Tie to eachother
+                formController.$addControl(modelController);
+
+            });
         };
 
 
@@ -137,6 +155,7 @@ angular.module('logFields', [])
          */
         return {
             restrict: "E",
+            priority: -1,
             replace: true,
             transclude: true,
             link: linker,

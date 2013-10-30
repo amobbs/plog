@@ -9,18 +9,18 @@ namespace Preslog\Logs\FieldTypes;
  */
 abstract class FieldTypeAbstract
 {
+    const FLAG_READONLY = 1;        // Field will be read-only
+    const FLAG_HIDDEN = 2;          // Field will be hidden
 
     /**
      * @var string      Unique for this notification type
      */
     protected $alias = '';
 
-
     /**
      * @var string      Human-readable Name of the field
      */
     protected $name = '';
-
 
     /**
      * @var string      Friendly name for user reference
@@ -37,7 +37,6 @@ abstract class FieldTypeAbstract
      * @var array       list of details needed to aggregate this field type
      */
     protected $aggregationDetails = array();
-
 
     /**
      * @var array       Mongo schema definition for this field within Log
@@ -68,6 +67,12 @@ abstract class FieldTypeAbstract
      * @var null|LogEntity      Reference to parent Log Entity
      */
     protected $log = null;
+
+    /**
+     * @var int                 Field flags. Controls certain permissions aspects of the field
+     */
+    protected $flags = 0;
+
 
     /**
      * Fetch a list of properties for this field, or just the one specified.
@@ -163,26 +168,35 @@ abstract class FieldTypeAbstract
 
 
     /**
-     * Validate the given $data, passing errors to the $validator
-     * @param   array   $data           Data to validate
-     * @param   string  $fieldName      Field name being validated
-     * @return  array                   Data
+     * Set flag on this field
+     * @param   int     $flag       Flag to apply
      */
-    public function validate( $data, $fieldName )
+    public function setFlag( $flag )
     {
-        return array();
+        // Add to flags
+        $this->flags = $this->flags|$flag;
+    }
+
+
+    /**
+     * Validate the given $data, passing errors to the $validator
+     * @return  bool        True if field data is valid
+     */
+    public function validates()
+    {
+        // This is not a valid field type
+        return array("Validation for field type '".__CLASS__."' must be overridden.");
     }
 
 
     /**
      * Validate the admin schema of $data, passing errors to the $validator
-     * @param   array   $data           Data to validate
-     * @param   string  $fieldName      Field name being validated
-     * @return  array                   Errors
+     * @return  bool        True if the admin schema is valid
      */
-    public function validateClient( $data, $fieldName )
+    public function validatesSchema()
     {
-        return array();
+        // This is not a valid field type
+        return array("Validation for field type '".__CLASS__."' must be overridden.");
     }
 
 
@@ -300,6 +314,13 @@ abstract class FieldTypeAbstract
      */
     public function toArray()
     {
+        // Do not return data field if set to hidden
+        if ($this->flags & self::FLAG_HIDDEN)
+        {
+            return false;
+        }
+
+        // Return the field data
         return $this->data;
     }
 
@@ -324,10 +345,64 @@ abstract class FieldTypeAbstract
 
 
     /**
+     * Is this field hidden from being displayed in Options?
+     * @return  bool        True if field is hidden from Client Options displays
+     */
+    public function isHiddenFromOptions()
+    {
+        // Check if hidden?
+        if ( $this->flags & self::FLAG_HIDDEN )
+        {
+            return true;
+        }
+
+        // Not hidden
+        return false;
+    }
+
+    /**
+     * Check the field name matches the one given
+     * @param   string  $name   Field name to check
+     * @return  bool            True is name is a match
+     */
+    public function isName( $name )
+    {
+        return ($this->fieldSettings['name'] == $name ? true : false);
+    }
+
+
+    /**
+     * Subroutine for LogEntity::overwriteWithChanges
+     * Should return null if this field cannot overwrite the original log's data
+     * Otherwise return the array of overwriting data, for the entire field
+     * @param   array       $field      Field data
+     * @return  array|null              Field data if writable, or null.
+     */
+    public function overwriteWithChanges( $field )
+    {
+        // Hidden fields don't overwrite
+        if ($this->flags & self::FLAG_HIDDEN)
+        {
+            return null;
+        }
+
+        // Readonly fields don't overwrite
+        if ($this->flags & self::FLAG_READONLY)
+        {
+            return null;
+        }
+
+        // Return the field data
+        return $field;
+    }
+
+
+    /**
      * afterFind callback
      */
     public function afterFind()
     {
+        // This space intentionally left blank
     }
 
     /**
@@ -335,6 +410,7 @@ abstract class FieldTypeAbstract
      */
     public function beforeSave()
     {
+        // This space intentionally left blank
     }
 
 }

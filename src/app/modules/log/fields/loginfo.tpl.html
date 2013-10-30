@@ -5,6 +5,7 @@
                 type="text"
                 disabled
                 ng-model="log.data.created"
+                name="fields_{{options._id}}_created"
                 />
         </div>
         <br />
@@ -13,6 +14,7 @@
             <input type="text"
                    disabled
                    value="{{log.data.created_user.firstName}} {{log.data.created_user.lastName}}"
+                   name="fields_{{options._id}}_created_user"
                     />
         </div>
     </div>
@@ -20,12 +22,15 @@
     <div class="span6" ng-show="log.data.created">
         <label class="control-label">Modified</label>
         <div class="controls controls-modified">
-            <span><input-field-loginfo-datetime
-                class="input-date"
-                type="text"
-                disabled
-                ng-model="log.data.modified"
-                /></span>
+            <span>
+                <input-field-loginfo-datetime
+                    class="input-date"
+                    type="text"
+                    disabled
+                    ng-model="log.data.modified"
+                    name="fields_{{options._id}}_modified"
+                    />
+            </span>
             V <input class="input-version"
                      type="text"
                      disabled
@@ -38,6 +43,7 @@
             <input type="text"
                    disabled
                    value="{{log.data.modified_user.firstName}} {{log.data.modified_user.lastName}}"
+                   name="fields_{{options._id}}_modified_user"
                     />
         </div>
     </div>

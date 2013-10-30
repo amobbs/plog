@@ -2,6 +2,10 @@
 
 namespace Preslog\Logs\Entities;
 
+use Preslog\Logs\FieldTypes\FieldTypeAbstract;
+use DataSource;
+use User;
+use ClassRegistry;
 
 /**
  * Class FieldHelper
@@ -12,19 +16,55 @@ class ClientEntity
 {
 
     /**
-     * @var     array       Client data
+     * @var     array                   Client data
      */
     protected $data = array();
 
     /**
-     * @var     array       Fields objects, per field, for this client
+     * @var     FieldTypeAbstract[]     Fields objects, per field, for this client
      */
     public $fields = array();
 
     /**
-     * @var     array       Attribute lookup by _id:name key/value pair
+     * @var     FieldTypeAbstract[]     Array of field types that can exist on a client.
+     */
+    protected $fieldTypes = array();
+
+    /**
+     * @var     DataSource              Data source, connection to DB.
+     */
+    protected $dataSource;
+
+    /**
+     * @var     array                   Attribute lookup by _id:name key/value pair
      */
     public $attributeLookup = array();
+
+    /**
+     * @var     int                     Attribute field permissions
+     */
+    public $attributePermissions = 0;
+
+    /**
+     * @var     array                   User details, used for authentication
+     */
+    protected $user;
+
+    /**
+     * @var     User                    User model, used for authentication
+     */
+    protected $userModel;
+
+
+    /**
+     * Constructor
+     * - Initialise an instance of the User model.
+     */
+    public function __construct()
+    {
+        // Instigate user model
+        $this->userModel = ClassRegistry::init('User');
+    }
 
 
     /**
@@ -51,7 +91,7 @@ class ClientEntity
                 // Load the field type
                 if (!isset($this->fieldTypes[ $field['type'] ]))
                 {
-                    trigger_error("Unable to locate specified field type '{$field['type']}' for client {$clientData['_id']}", E_USER_ERROR);
+                    trigger_error("Unable to locate specified field type '{$field['type']}' for client '{$clientData['_id']}'.", E_USER_ERROR);
                 }
 
                 // Clone the type for individual use on this client
@@ -65,6 +105,9 @@ class ClientEntity
 
                 // Apply settings to the field
                 $type->setFieldSettings( $field );
+
+                // Apply permissions rules to the field
+                $this->applyPermissions( $type );
 
                 // Store type for use in lookup
                 $this->fields[ $field['_id'] ] = $type;
@@ -80,6 +123,9 @@ class ClientEntity
         {
             $this->attributeLookup = $this->getFlatAttributesList( $this->data['attributes'] );
         }
+
+        // Apply attribute field permissions
+        $this->applyAttributePermissions();
     }
 
 
@@ -132,6 +178,9 @@ class ClientEntity
                 // Apply settings to the field
                 $type->setFieldSettings( $field );
 
+                // Apply permissions rules to the field
+                $this->applyPermissions( $type );
+
                 // Store type for use in lookup
                 $this->fields[ $field['_id'] ] = $type;
             }
@@ -146,6 +195,9 @@ class ClientEntity
         {
             $this->attributeLookup = $this->getFlatAttributesList( $this->data['attributes'] );
         }
+
+        // Apply attribute field permissions
+        $this->applyAttributePermissions();
     }
 
 
@@ -183,6 +235,34 @@ class ClientEntity
 
 
     /**
+     * Return Client Schema as options, for use in conjunction with Log
+     * - Remove field options that are not visible
+     */
+    public function getOptions()
+    {
+        // Take a copy of the client
+        $data = $this->data;
+
+        // Remove fields
+        foreach ($data['fields'] as $k=>$field)
+        {
+            // If hidden
+            if ( $this->fields[ $field['_id'] ]->isHiddenFromOptions() )
+            {
+                unset( $data['fields'][ $k ] );
+            }
+        }
+
+        // Remove attrs if hidden
+        if ( $this->attributePermissions & FieldTypeAbstract::FLAG_HIDDEN )
+        {
+            $data['attributes'] = array();
+        }
+
+        return $data;
+    }
+
+    /**
      * Set Field Types
      * - Initialise the client with the available field types
      * @param   array       $fieldTypes
@@ -193,23 +273,54 @@ class ClientEntity
         $this->fieldTypes = $fieldTypes;
     }
 
-    public function getFieldTypeByName( $fieldName )
+
+    /**
+     * Set the user accessing this client. Applies a permissions element to the client as a result.
+     * @param       array       $user       User to apply to client
+     */
+    public function setUser( $user )
     {
-        if ($fieldName == 'created' || $fieldName == 'modified' || $fieldName == 'version')
+        $this->user = $user;
+    }
+
+
+    /**
+     * Fetch from $this->fields where Field's "_id" is $id
+     * @param   string      $id             Mongo ID of field
+     * @return  FieldTypeAbstract|bool      Field data
+     */
+    public function getFieldById( $id )
+    {
+        // Return the field by $id if it's available
+        if (isset($this->fields[ $id ]))
         {
-            $fieldName = 'loginfo';
+            return $this->fields[ $id ];
         }
 
+        return false;
+    }
 
+    /**
+     * Get the field type by given $fieldName
+     * @param   string      $fieldName      Name of searchable field
+     * @return  FieldTypeAbstract|bool                 Name of the field, or false is no match is found
+     */
+    public function getFieldTypeByName( $fieldName )
+    {
+        // Loop through fields and find the matching fieldname
         foreach( $this->fields as $field )
         {
-            $fieldSettings = $field->getFieldSettings();
-            if ($fieldSettings['name'] == $fieldName)
+            // Check field names
+            if ($field->isName($fieldName))
             {
+                // Return the field name
                 return $field;
             }
         }
+
+        return false;
     }
+
 
     /**
      * Set Data Source
@@ -223,11 +334,57 @@ class ClientEntity
 
 
     /**
+     * Apply permissions rules to the given $field
+     * Ideally this would be set dynamically in the field data, and then parsed on Client load directly inside the field.
+     * Unfortunately this isn't in the budget, so we code it here and identify the fields by name instead.
+     * Maybe this can be implemented with client control in future.
+     * @param   FieldTypeAbstract   $field      Field object to process
+     */
+    protected function applyPermissions( &$field )
+    {
+        // If user is comment-only..
+        // Everything except CommentOnly is ReadOnly.
+        if ($this->userModel->isAuthorized( 'comment-only', $this->user['role'] ))
+        {
+            if (!$field->isName('comments'))
+            {
+                $field->setFlag( FieldTypeAbstract::FLAG_READONLY );
+            }
+        }
+
+        // If user is not log-accountability...
+        // Accountability and Status fields will not be displayed
+        if (!$this->userModel->isAuthorized( 'log-accountability', $this->user['role'] ))
+        {
+            if ($field->isName('status') || $field->isName('accountability'))
+            {
+                $field->setFlag( FieldTypeAbstract::FLAG_HIDDEN );
+            }
+        }
+    }
+
+    /**
+     * Apply permissions for Attributes based on the user
+     * This raises another point; ideally the Attribute hierarchy would be field data in of itself.
+     * But this would vastly complicate the setup.
+     */
+    protected function applyAttributePermissions()
+    {
+        // If user is "comment-only"
+        // Attributes are set to readonly
+        if ($this->userModel->isAuthorized( 'comment-only', $this->user['role'] ))
+        {
+            $this->attributePermissions = $this->attributePermissions|FieldTypeAbstract::FLAG_READONLY;
+        }
+    }
+
+
+    /**
      * Validate the Client
      */
     public function validates()
     {
-
+        // TODO: Validation of client Edit
     }
 
 
@@ -237,6 +394,7 @@ class ClientEntity
      */
     public function beforeSave()
     {
+        // This space intentionally left blank
     }
 
 
@@ -246,6 +404,7 @@ class ClientEntity
      */
     public function afterFind()
     {
+        // This space intentionally left blank
     }
 
 

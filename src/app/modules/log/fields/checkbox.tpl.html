@@ -1,9 +1,9 @@
-<div class="span6">
+<div class="span6" ng-class="{error: logForm.fields_{{options._id}}.$invalid}">
     <div class="controls">
         <label class="checkbox" for="field_{{options._id}}">
             <input type="checkbox"
                    id="field_{{options._id}}"
-                   name="field_{{options._id}}"
+                   name="fields_{{options._id}}"
                    ng-model="{{log.data.checked}}"> {{options.label}}
         </label>
     </div>

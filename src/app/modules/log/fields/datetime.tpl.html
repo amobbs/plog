@@ -1,11 +1,11 @@
-<div class="span6 group-date">
+<div class="span6 group-date" ng-class="{error: logForm.fields_{{options._id}}.$invalid}">
     <label class="control-label label-date">{{options.label}}</label>
     <div class="controls controls-date">
         <input-field-datetime
                 part="date"
                 type="text"
                 id="field_{{options._id}}_date"
-                name="field_{{options._id}_date}"
+                name="fields_{{options._id}.date}"
                 ng-model="log.data.datetime"
                 required
                 />
@@ -16,7 +16,7 @@
                 part="time"
                 type="text"
                 id="field_{{options._id}}_time"
-                name="field_{{options._id}}_time"
+                name="fields_{{options._id}}.time"
                 ng-model="log.data.datetime"
                 required
                 />

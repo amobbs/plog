@@ -2,6 +2,8 @@
 
 namespace Preslog\Logs\Entities;
 
+use Preslog\Logs\FieldTypes\FieldTypeAbstract;
+
 
 /**
  * Class Log Entity
@@ -22,12 +24,12 @@ class LogEntity
     protected $client = null;
 
     /**
-     * @var     null            Data SOurce
+     * @var     null            Data Source
      */
     protected $dataSource = null;
 
     /**
-     * @var     array           Field list for this log
+     * @var     FieldTypeAbstract[]           Field list for this log
      */
     protected $fields = array();
 
@@ -45,7 +47,13 @@ class LogEntity
         // toArray dynamic fields
         foreach ($this->fields as $field)
         {
-            $data['fields'][] = $field->toArray();
+            $fieldData = $field->toArray();
+
+            // If there's data to put to Array
+            if (is_array($fieldData))
+            {
+                $data['fields'][] = $fieldData;
+            }
         }
 
         return $data;
@@ -61,8 +69,13 @@ class LogEntity
         // Use mongo datasource to convert Array to Document in fields
         foreach ($data['fields'] as &$field)
         {
+            if (!$fieldObject = $this->client->getFieldById( $field['field_id'] ))
+            {
+                trigger_error("Could not read log from array; Client field id '{$field['field_id']}' could not be matched.", E_USER_ERROR);
+            }
+
             // Create each field instance, and load the data
-            $this->fields[ $field['field_id'] ] = clone $this->client->fields[ $field['field_id'] ];
+            $this->fields[ $field['field_id'] ] = clone $fieldObject;
             $this->fields[ $field['field_id'] ]->setLog( $this );
             $this->fields[ $field['field_id'] ]->fromArray($field);
         }
@@ -72,7 +85,6 @@ class LogEntity
 
         // Save data block
         $this->data = $data;
-
     }
 
 
@@ -85,9 +97,9 @@ class LogEntity
         $doc = $this->data;
 
         // Use mongo datasource to convert Array to Document in fields
-        foreach ($doc['fields'] as &$field)
+        foreach ($this->fields as &$field)
         {
-            $this->client->fields[ $field['field_id'] ]->toDocument($field);
+            $field->toDocument($field);
         }
 
         return $doc;
@@ -103,8 +115,13 @@ class LogEntity
         // Use mongo datasource to convert Array to Document in fields
         foreach ($doc['fields'] as &$field)
         {
+            if (!$fieldObject = $this->client->getFieldById( $field['field_id'] ))
+            {
+                trigger_error("Could not read log from document; Client field id '{$field['field_id']}' could not be matched.", E_USER_ERROR);
+            }
+
             // Create each field instance, and load the data
-            $this->fields[ $field['field_id'] ] = clone $this->client->fields[ $field['field_id'] ];
+            $this->fields[ $field['field_id'] ] = clone $fieldObject;
             $this->fields[ $field['field_id'] ]->setLog( $this );
             $this->fields[ $field['field_id'] ]->fromDocument($field);
         }
@@ -124,7 +141,6 @@ class LogEntity
      */
     public function toDisplay( $fieldTypeCallbacks = null )
     {
-        // todo
         $outFields = array();
 
         // Run fields through conversion/callbacks
@@ -142,14 +158,49 @@ class LogEntity
         // Run through attributes, to fetch collapsed list
         foreach ($this->data['attributes'] as $attribute)
         {
-            // TODO make this work properly, k?
-            $outFields[] = $attribute;
+            $outFields[] = $attribute; // TODO - needs to actually list the selected attributes as separated fields
         }
 
         return $outFields;
     }
 
 
+    /**
+     * Merge a series of changes with this log
+     * - If an element is set as READONLY, do NOT overwrite the contents of this log (the original) with $newLog (the changes)
+     * - Conditionally make certain other changes.
+     * @param       LogEntity       $newLog      Long Entity to inherit from
+     */
+    public function overwiteWithChanges( $newLog )
+    {
+        // Note: Standard fields (_id, client_id, deleted, etc) aren't modified on the origin (this) log.
+
+        // Skim $newLog fields - if a field is not READONLY or HIDDEN then update the content of this log.
+        foreach ($newLog->data['fields'] as $field)
+        {
+            // If permissions permit, overwriteWithChanges will return an array with the field data. Otherwise, null.
+            $fieldData = $this->fields[ $field['field_id'] ]->overwriteWithChanges( $field );
+
+            // Returned an updated value?
+            if ($fieldData !== null)
+            {
+                // Apply the field data to the local log field
+                foreach ($this->fields as &$localField)
+                {
+                    if ($localField['field_id'] == $fieldData['field_id'])
+                    {
+                        $localField = $fieldData;
+                    }
+                }
+            }
+        }
+
+        // Attributes; if NOT readonly then use the change version
+        if (!($this->client->attributePermissions & FieldTypeAbstract::FLAG_READONLY))
+        {
+            $this->data['attributes'] = $newLog->data['attributes'];
+        }
+    }
 
 
     /**
@@ -173,40 +224,25 @@ class LogEntity
         $this->dataSource = $dataSource;
     }
 
+
     /**
      * Validate the Log
      */
     public function validates()
     {
-        // TODO - Seriously, fix this.
+        // TODO - This need to actually validate the log fully
         $errors = array();
 
         // Refactor validation fields to associative, by name.
-        $fields = array();
-        foreach ($this->data['fields'] as $field)
+        foreach ($this->fields as &$field)
         {
-            // Does the field exist? Skip anything that's bad, and raise an error.
-            if ( !isset($this->client->fields[ $field['field_id'] ]) )
-            {
-                $errors[ $field['fields'] ] = 'One or more fields could not be found in the log schema.';
-                continue;
-            }
+            $field_id = $field->data['field_id'];
 
-            // Fetch the field name
-            $name = $this->client->fields[ $field['field_id'] ];
-
-            // Refactor the field
-            $fields[ $name ] = $field;
-        }
-
-        // Validate fields
-        foreach ( $fields as $name=>$field)
-        {
             // Validate field content
-            $error = $this->client->fields[ $field['field_id'] ]->validate( $fields, $name );
+            $error = $field->validates();
             if (!empty($error))
             {
-                $errors[ 'fields.'.$field['field_id'] ] = $error;
+                $errors[ 'fields_'.$field_id ] = $error;
             }
         }
 
@@ -219,6 +255,8 @@ class LogEntity
                 $errors['attributes'] = 'One or more attributes could not be found in the log schema.';
             }
         }
+
+        return $errors;
     }
 
 
@@ -247,6 +285,27 @@ class LogEntity
         {
             $field->afterFind();
         }
+    }
+
+
+    /**
+     * Fetch the local field object by it's SEARCHABLE name (not the field->name itself)
+     * @param       string                  $fieldName      Name of the field
+     * @returns     FieldTypeAbstract|bool                  Field object, or false if fields doesn't exist.
+     */
+    public function getFieldByName( $fieldName )
+    {
+        // Find the field by name
+        foreach ( $this->fields as $field)
+        {
+            // Check for field name match
+            if ($field->isName($fieldName))
+            {
+                return $field;
+            }
+        }
+
+        return false;
     }
 
 }

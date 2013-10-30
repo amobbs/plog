@@ -11,15 +11,22 @@ class PreslogAuthComponent extends AuthComponent
 {
     protected $controller;
 
+    protected static $instance = null;
 
     /**
      * Maintain an connection to the initialising controller
      * @param Controller $controller
      */
     public function initialize(Controller $controller) {
+
+        // Store link to controller
         $this->controller = &$controller;
 
+        // Initialize fully
         parent::initialize($controller);
+
+        // Store this instance for fetching statically
+        self::$instance = &$this;
     }
 
 
@@ -127,8 +134,8 @@ class PreslogAuthComponent extends AuthComponent
 
     /**
      * Fetch a users full list of permissions via their role
-     * @params      array       User Data
-     * @returns     array       Permissions
+     * @param   null|array $user        User object. Default user will be used if no user specified.
+     * @return  array                   Permissions available to this user
      */
     public function getUserPermissions( $user=null )
     {
@@ -155,6 +162,17 @@ class PreslogAuthComponent extends AuthComponent
 
         // Return available permissions
         return $config['roles'][ $role ]['permissions'];
+    }
+
+
+    /**
+     * Fetch the static instance of this AuthComponent
+     * - This is used to escape CakePHP's inaccessible authentication routines
+     * @return      PreslogAuthComponent        This auth component instance
+     */
+    public static function getInstance()
+    {
+        return self::$instance;
     }
 
 }
