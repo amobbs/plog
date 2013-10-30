@@ -350,36 +350,53 @@ class SearchController extends AppController
             'ID' => array(
                 'name' => 'ID',
                 'label' => 'ID',
-                'type' => 'TEXT', //$clientField->getProperties('alias'),
-                'size' => 10,
+                'type' => 'TEXT',
+                'size' => 15,
             ),
             'created' => array(
                 'name' => 'CREATED',
                 'label' => 'Created',
-                'type' => 'DATE', //$clientField->getProperties('alias'),
+                'type' => 'DATE',
                 'size' => 50,
             ),
             'modified' => array(
                 'name' => 'MODIFIED',
                 'label' => 'Modified',
-                'type' => 'DATE', //$clientField->getProperties('alias'),
+                'type' => 'DATE',
                 'size' => 50,
             ),
             'version' => array(
                 'name' => 'VERSION',
                 'label' => 'Version',
-                'type' => 'TEXT', //$clientField->getProperties('alias'),
+                'type' => 'TEXT',
                 'size' => 4,
             ),
             'text' => array(
                 'name' => 'TEXT',
                 'label' => 'Text',
-                'type' => 'TEXT', //$clientField->getProperties('alias'),
+                'type' => 'TEXT',
                 'size' => 150,
             ),
         );
 
         $types = array(); //defines how a value is displayed in the interface, textbox or drop down etc..
+        $types['DATE'] = array(
+            'editor' => 'DATE',
+            'name' => 'DATE',
+            'operators' => $this->listOperators('DATE'),
+        );
+        $types['DURATION'] = array(
+            'editor' => 'TEXT',
+            'name' => 'DURATION',
+            'operators' => $this->listOperators('DURATION'),
+        );
+        $types['TEXT'] = array(
+            'editor' => 'TEXT',
+            'name' => 'TEXT',
+            'operators' => $this->listOperators('TEXT'),
+        );
+
+
         $selectOptions = array(); //list of options that are available for SELECt types
         foreach($clientIds as $id)
         {
@@ -402,10 +419,11 @@ class SearchController extends AppController
                 if ($clientField instanceof \Preslog\Logs\FieldTypes\Select)
                 {
                     $fieldTypeName = $title;
-                    $types[$title] = array(
+                    $upperTitle = strtoupper($title);
+                    $types[$upperTitle] = array(
                         'editor' => 'SELECT',
-                        'name' => $title,
-                        'operators' => $this->listOperators(),
+                        'name' => $upperTitle,
+                        'operators' => $this->listOperators('SELECT'),
                     );
 
                     $options = array();
@@ -416,62 +434,78 @@ class SearchController extends AppController
                             'label' => $option['name']
                         );
                     }
-                    $selectOptions[$title] = $options;
-                }
-                else  if (!isset($types[$fieldType]))
-                {
-                    $types[$fieldType] = array(
-                        'editor' => 'TEXT',
-                        'name' => $fieldType,
-                        'operators' => $this->listOperators(),
-                    );
+                    $selectOptions[$upperTitle] = $options;
                 }
 
-                $columns[$title] = array(
+                $columns[strtoupper($title)] = array(
                     'name' => strtoupper($title),
                     'label' => $title,
-                    'type' => $fieldTypeName,
+                    'type' => strtoupper($fieldTypeName),
                     'size' => 100,
                 );
 
 
             }
+
+            //add attributes to the list
+            $clientEntityArray = $clientEntity->toArray();
+            foreach($clientEntityArray['attributes'] as $attribute)
+            {
+                $name = $attribute['name'];
+                if ( ! isset($columns[$name]) )
+                {
+                    $columns[$name] = array(
+                        'name' => $name,
+                        'label' => $name,
+                        'type' => $name,
+                        'size' => 100,
+                    );
+
+                    $types[$name] = array(
+                        'editor' => 'SELECT',
+                        'name' => $name,
+                        'operators' => $this->listOperators('SELECT'),
+                    );
+                }
+
+                $options = array();
+                foreach($attribute['children'] as $child)
+                {
+                    if ( ! $child['deleted'])
+                    {
+                        $options[] = array(
+                            'value' => $child['name'],
+                            'label' => $child['name']
+                        );
+
+                        foreach($child['children'] as $subChild)
+                        {
+                            if ( ! $subChild['deleted'])
+                            {
+                                $options[] = array(
+                                    'value' => $subChild['name'],
+                                    'label' => $subChild['name']
+                                );
+                            }
+                        }
+                    }
+                }
+                if ( isset($selectOptions[$name]) )
+                {
+                    $selectOptions[$name] = array_merge($selectOptions[$name], $options);
+                }
+                else
+                {
+                    $selectOptions[$name] = $options;
+                }
+            }
         }
-//
-//        $types[] = array(
-//            'editor' => 'TEXT',
-//            'name' => 'TEXT',
-//            'operators' => $this->listOperators(),
-//        );
-//        $types[] = array(
-//            'editor' => 'SELECT',
-//            'name' => 'SELECT',
-//            'operators' => $this->listOperators(),
-//        );
-//        $types[] = array(
-//            'editor' => 'TEXT',
-//            'name' => 'DATE',
-//            'operators' => $this->listOperators(),
-//        );
-//        $types[] = array(
-//            'editor' => 'TEXT',
-//            'name' => 'INT',
-//            'operators' => $this->listOperators(),
-//        );
 
         $fieldList = array(
             'tables' => array(
                 array(
                     'name' => 'LOGS',
                     'columns' => array_values($columns),
-//                    'columns' => array(
-//                        array(
-//                            'name' => 'ID',
-//                            'label' => 'ID',
-//                            'type' => 'TEXT',
-//                            'size' => 10,
-//                        ),
-//                    ),
                     'fks' => array(),
                 ),
             ),
@@ -522,16 +556,19 @@ class SearchController extends AppController
         $this->set('_serialize', array('jql'));
     }
 
-    private function listOperators()
+    private function listOperators($type)
     {
         $operators = array();
         foreach(JqlOperator::listOperators() as $label => $operator)
         {
-            $operators[] = array(
-                'name' => $operator->getJqlSymbol(),
-                'label' => $label,
-                'cardinality' => 'ONE',
-            );
+            if ($operator->isAppliedTo($type))
+            {
+                $operators[] = array(
+                    'name' => $operator->getJqlSymbol(),
+                    'label' => $operator->getHumanReadable(),
+                    'cardinality' => 'ONE',
+                );
+            }
         }
 
         return $operators;
