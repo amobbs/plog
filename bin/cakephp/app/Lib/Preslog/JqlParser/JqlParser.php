@@ -391,8 +391,19 @@ class JqlParser {
                 $keywordPos = strpos($string, $keywordSymbol, $offset);
                 if ($keywordPos !== false && $keywordPos < $closestKeywordPos) {
                     //we found a keyword make sure it is not inside some quotes
+
+                    //keyword is at start of string there are no quotes in front
+                    if ($keywordPos == 0)
+                    {
+                        $quoteCount = 0;
+                    }
+                    //keyword has at least one character in front which might be a"
+                    else
+                    {
+                        $quoteCount = substr_count($string, '"', 0, $keywordPos);
+                    }
+
                     //we determine that it is in quotes if there is an odd number of " before the keyword
-                    $quoteCount = substr_count($string, '"', 0, $keywordPos);
                     if ($quoteCount % 2 == 0)
                     {
                         $closestKeywordPos = strpos($string, $keywordSymbol);
