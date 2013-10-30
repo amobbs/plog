@@ -145,7 +145,7 @@ class PreslogParser extends JqlParser {
         $isSelect = false;
         $selectIn = array();
 
-        //go through each client we have access to and get the id for the field we are searching on
+        //get matching field ids so we only search against the fields specified
         foreach($this->clients as $client) {
             //sometimes we get mongoIds some times we get strings (not sure why)
             if ( isset($client['Client']) )
@@ -156,10 +156,48 @@ class PreslogParser extends JqlParser {
             {
                 $clientEntity = $clientModel->getClientEntityById((string)$client['_id']);
             }
+
+
+            $operator = $clause->getOperator();
+
             $clientField = $clientEntity->getFieldTypeByName( $fieldName );
             if ($clientField == null)
             {
-                continue;
+                //the field name does not exist maybe it is an attribute
+                $attributeIds = array();
+                foreach($client['attributes'] as $attr)
+                {
+                    //match fieldname to group name
+                    if (strtolower($fieldName) == strtolower($attr['name']))
+                    {
+                        //check all children for matching attribute
+                        foreach($attr['children'] as $child)
+                        {
+                            if ($operator->matches($child['name'], $value))
+                            {
+                                $attributeIds[] = new MongoId($child['_id']);
+                            }
+                            foreach($child['children'] as $subChild)
+                            {
+                                if ($operator->matches($subChild['name'], $value))
+                                {
+                                    $attributeIds[] = new MongoId($subChild['_id']);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (sizeof($attributeIds) == 0)
+                {
+                    continue;
+                }
+
+                return array(
+                    'attributes' => array(
+                        '$in' => $attributeIds
+                    )
+                );
             }
 
             $clientFieldSettings = $clientField->getFieldSettings();
@@ -187,7 +225,6 @@ class PreslogParser extends JqlParser {
                     $isText = false;
                     $isSelect = true;
 
-                    $operator = $clause->getOperator();
                     //loop through the actual values for the select and find which ones match since we can not do it in the db
                     $preslogSettings = $clientField->getFieldSettings();
                     $options = $preslogSettings['data']['options'];
