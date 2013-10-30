@@ -1,5 +1,6 @@
 email,firstname,lastname,company,phone number,active,role,default client (optional),alias
-test@example.com,test,example,MediaHub,4045551324,TRUE,super-admin,n/a,n/a
+,,,,,,,,n/a
+test@example.com,test,example,MediaHub,4045551324,TRUE,super-admin,n/a,n/a,""
 Zoran.Trajkovski@mediahub.tv,Zoran,Trajkovski,MediaHub,0414770602,TRUE,Admin,Personal Dashboard,n/a
 Alan.Sweeney@mediahub.tv,Alan,Sweeney,MediaHub,0412365109,TRUE,Admin,Personal Dashboard,n/a
 Scott.Jolly@mediahub.tv,Scott,Jolly,MediaHub,0406638482,TRUE,Admin,Personal Dashboard,n/a,"scott,scott j,scott jolly,scott."

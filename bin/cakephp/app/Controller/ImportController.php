@@ -283,7 +283,7 @@ class ImportController extends AppController
             array(
                 '_id' => null,
                 'order' => $order++,
-                'type' => 'testsmall',
+                'type' => 'textsmall',
                 'name' => 'cause',
                 'label' => 'Cause',
                 'data' => array(
@@ -919,7 +919,7 @@ class ImportController extends AppController
         {
             if ($attrs['name'] == $name)
             {
-                return $attrs['_id'];
+                return (string) $attrs['_id'];
             }
         }
         else

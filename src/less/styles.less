@@ -134,19 +134,30 @@ div.loading-screen {
     position: fixed;
     top: 0;
     left: 0;
+    bottom: 0px;
+    right: 0px;
     z-index: 10000;
     background-color: #000;
     opacity: .8;
-    p {
-        margin-top: 300px;
+
+    .loading-block {
+        position: fixed;
+        top: 0px;
+        right: 0px;
+        bottom: 0px;
+        left: 0px;
+        margin: auto;
+        width: 100px;
+        height: 100px;
         text-align: center;
+
         img {
             vertical-align: baseline;
         }
+
         span {
-            text-shadow: 0 2px 0 #0066cc;
             color: #FFF;
-            font-size: 32px;
+            font-size: 14px;
             padding-bottom: 8px;
             margin-left: 10px;
             display: inline-block;
