@@ -1540,6 +1540,13 @@ class MongodbSource extends DboSource {
 
             // Recurse for subArrays with a type
             elseif ('subArray' === $type) {
+
+                // Skip empty arrays
+                if (!sizeof($doc[$fieldKey]))
+                {
+                    continue;
+                }
+
                 // Enforce the data to be non-numerical array
                 if ($this->_isAssoc($doc[$fieldKey])) {
                     throw new ErrorException('If using subArray type, the data must be a numerical array');
@@ -1655,6 +1662,7 @@ class MongodbSource extends DboSource {
      * @return bool
      */
     protected function _isAssoc($array) {
+        // Return assoc vs numeric
         return array_keys($array) !== range(0, count($array) - 1);
     }
 }
