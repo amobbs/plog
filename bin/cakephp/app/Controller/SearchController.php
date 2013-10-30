@@ -168,38 +168,6 @@ class SearchController extends AppController
                         'value' => $log['hrid'],
                         'showTooltip' => false,
                     ),
-
-                    //TODO clean up - when field helper is done
-//                    array(
-//                        'title' => 'Created',
-//                        'value' => $log['created'],
-//                        'showTooltip' => false,
-//                    ),
-//                    array(
-//                        'title' => 'Modified',
-//                        'value' => $log['modified'],
-//                        'showTooltip' => false,
-//                    ),
-//                    array(
-//                        'title' => 'Version',
-//                        'value' => $log['version'],
-//                        'showTooltip' => false,
-//                    ),
-//                    array(
-//                        'title' => 'Created By',
-//                        'value' => $this->_getUserName($log['created_user_id'], $userObjects),
-//                        'showTooltip' => false,
-//                    ),
-//                    array(
-//                        'title' => 'Modified By',
-//                        'value' => $this->_getUserName($log['modified_user_id'], $userObjects),
-//                        'showTooltip' => false,
-//                    ),
-//                    array(
-//                        'title' => 'Company',
-//                        'value' => $this->_getCompanyName($log['client_id'], $options[$log['client_id']]),
-//                        'showTooltip' => false,
-//                    ),
                 ),
             );
 

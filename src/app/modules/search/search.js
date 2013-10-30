@@ -64,7 +64,6 @@ angular.module( 'Preslog.search', [
     .controller( 'SearchCtrl', function SearchCtrl( $scope, $http, $modal, titleService, Restangular, query ) {
        titleService.setTitle( 'Search' );
 
-        //$scope.jql = 'accountability = mediahub error and (created > startofmonth("-1months") and created < endofmonth("-1months"))';
         $scope.jql = query;
 
         /**

@@ -32,7 +32,7 @@ class PreslogParser extends JqlParser {
     }
 
     /**
-     * recursivly convert Preslog\Clauses found into mongo expression needed
+     * recursively convert Preslog\Clauses found into mongo expression needed
      * @param $expression
      *
      * @return array
@@ -53,26 +53,10 @@ class PreslogParser extends JqlParser {
 
             if ($keywordObj instanceof JqlKeyword) {
                 $conditions[$keywordObj->getMongoSymbol()] = $subClauses;
-
-            //TODO not sure if needed i think it is meant to be sub clauses
-//            else if (is_array($clause)) {
-//                foreach ($clause as $subKeyWord => $subClauses) {
-//                    $subKeyWordObj = $this->_findKeyword($subKeyWord);
-//                    $conditions[] = array(
-//                        $subKeyWordObj->getMongoSymbol() => $this->buildPreslog($subClauses),
-//                    );
-//                }
-            } else {
-                $result = $this->mongoExpressionToPreslog($clause);
-//                if (is_array($result) && sizeof($result) == 2) {
-//                    foreach($result as $field => $value)
-//                    {
-//                        $conditions[$field] = $value;
-//                    }
-//                } else {
-                    $conditions[] = $result;
-//                }
-
+            }
+            else
+            {
+                $conditions[] = $subClauses;
             }
         }
 
@@ -90,6 +74,7 @@ class PreslogParser extends JqlParser {
      */
     private function mongoExpressionToPreslog($clause) {
         $expression = $clause->getMongoCriteria();
+
         //there should only be one field/value pair in the expression
         $keys = array_keys($expression);
         $fieldName = $keys[0];
@@ -117,15 +102,11 @@ class PreslogParser extends JqlParser {
                     ),
                 ));
 
-                if ( sizeof($client) !== 1 )
-                {
-                    //umm error!!!!!!!!!
-                    return 'error';
-                }
-
                 return array(
-                    'client_id' => new MongoId($client['Client']['_id']),
-                    'hrid' => $numericId,
+                    '$and' => array(
+                        array('client_id' => new MongoId($client['Client']['_id'])),
+                        array('hrid' => $numericId),
+                    ),
                 );
             }
         }
@@ -221,6 +202,7 @@ class PreslogParser extends JqlParser {
             }
         }
 
+        //make case insensitive
         if ($isText)
         {
             $value = new MongoRegex("/^$value$/i");
@@ -233,9 +215,11 @@ class PreslogParser extends JqlParser {
             );
         }
 
-        return array(
-            'fields.field_id' => array('$in' => $fieldIds),
-            'fields.data.' . $dataField => $value,
+       return array(
+            '$and' => array(
+                array('fields.field_id' => array('$in' => $fieldIds)),
+                array('fields.data.' . $dataField => $value),
+            ),
         );
     }
 }

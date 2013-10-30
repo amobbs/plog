@@ -298,7 +298,7 @@ class JqlParser {
             if (is_array($clauses)) {
                 $clausesKeys = array_keys($clauses);
                 $clausesValues = array_values($clauses);
-                $groups[$firstKeyword] = array($startClause, $clausesKeys[0] => $clausesValues[0]);
+                $groups[$firstKeyword] = array($startClause, array($clausesKeys[0] => $clausesValues[0]));
             } else {
                 $groups[$firstKeyword] = array($startClause, $clauses);
             }
@@ -332,7 +332,9 @@ class JqlParser {
             if (!(is_array($clausesValues[0]) && is_array($groupValues[1]))) {
                 return new Clause($groups, $jql);
             } else {
-                return array($this->_findFirstKeyword($string, $jql) => $groups);
+                return array(
+                    array($this->_findFirstKeyword($string, $jql) => $groups)
+                );
             }
         } else {
             return $groups;
