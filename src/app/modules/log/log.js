@@ -104,6 +104,7 @@ angular.module( 'Preslog.log', [
         // Apply to scope
         $scope.log = logData.Log;
         $scope.options = logOptions;
+        $scope.serverErrors = {};
 
 
         /**

@@ -34,14 +34,10 @@ angular.module('logFields', [])
          */
         var linker = function( scope, element, attrs, ctrl ) {
 
-            // TODO: DELETE ME
             if (scope.data === undefined)
             {
                 scope.data = [];
             }
-
-            console.log(attrs);
-
 
             // Sort the FIELDS data into the correct order.
             scope.fields = scope.fields.sort(function(a,b) {
@@ -71,7 +67,6 @@ angular.module('logFields', [])
                 // Skip if it's deleted and does not contain data.
                 if (field.deleted === true && data === undefined)
                 {
-                    console.log('skipped Field '+field.name); // TODO: DELETE ME
                     continue;
                 }
 
@@ -81,7 +76,6 @@ angular.module('logFields', [])
                 // Unmatched field types get skipped so as not to produce errors
                 if (type.length < 1)
                 {
-                    console.log('skipped Type: '+field.type);   // TODO: DELETE ME
                     continue;
                 }
 
@@ -101,6 +95,7 @@ angular.module('logFields', [])
                 var tplScope = scope.$new();
                 tplScope.log = data;
                 tplScope.options = field;
+                tplScope.serverErrors = scope.serverErrors;
 
                 // Compile to gain scope
                 tpl = $compile(tpl)(tplScope);
@@ -139,13 +134,33 @@ angular.module('logFields', [])
                 var modelController = fieldElement['inheritedData']('$ngModelController');
                 var formController = fieldElement['inheritedData']('$formController');
 
-                // Interpolate model controller name from scope
-                var elementScope = fieldElement.scope();
-                modelController.$name = $interpolate(modelController.$name)(elementScope.$parent);
+                // use element if present
+                if (fieldElement[0].id !== undefined)
+                {
+                    var id = fieldElement[0].id;
+                }
 
-                // Tie to eachother
-                formController.$addControl(modelController);
+                // use element if not empty
+                if (id != '')
+                {
+                    // Interpolate the fieldElement.id using the parent element scope.
+                    // This created a dynamic "name" field by which the ngModel is attached to the form.
+                    // Giving us something to validate against later on.
+                    var elementScope = fieldElement.scope();
 
+                    // Use the parent scope if the "options" value isn't present on this scope.
+                    // Varies from element to element depending on the directive used.
+                    if(elementScope.options === undefined)
+                    {
+                        elementScope = elementScope.$parent;
+                    }
+
+                    // Interpolate the name
+                    modelController.$name = $interpolate(id)(elementScope);
+
+                    // Tie to the form
+                    formController.$addControl(modelController);
+                }
             });
         };
 
@@ -161,7 +176,8 @@ angular.module('logFields', [])
             link: linker,
             scope: {
                 fields: '=',
-                data: '='
+                data: '=',
+                serverErrors: '='
             }
         };
     }]);

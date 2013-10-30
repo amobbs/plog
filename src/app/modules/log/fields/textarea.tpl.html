@@ -1,13 +1,12 @@
 <div class="span12" ng-class="{error: logForm.fields_{{options._id}}.$invalid}">
-    <label class="control-label" for="input_{{options._id}}">{{options.label}}</label>
+    <label class="control-label" for="fields_{{options._id}}">{{options.label}}</label>
     <div class="controls">
         <div class="textarea-fill">
-            <textarea
-                    placeholder="{{options.data.placeholder}}"
-                    rows="3"
-                    id="input_{{options._id}}"
-                    name="fields_{{options._id}}"
-                    ng-model="log.data.text"></textarea>
+            <textarea id="fields_{{options._id}}"
+                      placeholder="{{options.data.placeholder}}"
+                      rows="3"
+                      ng-model="log.data.text"></textarea>
         </div>
     </div>
+    <span class="help-inline" ng-bind="serverErrors.fields_{{options._id}}"></span>
 </div>

@@ -1,10 +1,10 @@
 <div class="span6" ng-class="{error: logForm.fields_{{options._id}}.$invalid}">
     <div class="controls">
-        <label class="checkbox" for="field_{{options._id}}">
-            <input type="checkbox"
-                   id="field_{{options._id}}"
-                   name="fields_{{options._id}}"
+        <label class="checkbox" for="fields_{{options._id}}">
+            <input id="fields_{{options._id}}"
+                   type="checkbox"
                    ng-model="{{log.data.checked}}"> {{options.label}}
         </label>
     </div>
+    <span class="help-inline" ng-show="logForm.fields_{{options._id}}.$error.validateServer" ng-bind="serverErrors.fields_{{options._id}}"></span>
 </div>
