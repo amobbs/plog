@@ -75,6 +75,8 @@ angular.module( 'Preslog.search', [
             fields: [] //fields that are available in the logs (used for ordering)
         };
 
+        $scope.queryValid = true;
+
         //define how logs should be displayed/details for pagination
         $scope.logWidgetParams = {
             page: 1,
@@ -126,7 +128,13 @@ angular.module( 'Preslog.search', [
 
                     if (result.errors)
                     {
+                        $scope.queryValid = false;
                         params.errors = result.errors;
+                    }
+                    else
+                    {
+                        $scope.queryValid = true;
+                        params.errors = [];
                     }
 
                     params.total = result.total;
@@ -177,9 +185,13 @@ angular.module( 'Preslog.search', [
                     if (data) {
                         if (data.errors)
                         {
-                            console.log(data.errors);
+                            $scope.queryValid = false;
+                            $scope.logWidgetParams.errors = data.errors;
                             return;
                         }
+
+                        $scope.queryValid = true;
+                        $scope.logWidgetParams.errors = [];
 
                         $scope.sql = data.sql;
                         $scope.args = data.args;

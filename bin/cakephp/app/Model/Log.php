@@ -312,7 +312,12 @@ class Log extends AppModel
         //convert string from jql to mongo array
         $parser = new PreslogParser();
         $parser->setSqlFromJql($query);
-        $errors = $parser->validate($clients);
+        $errors = $parser->getErrors();
+        if ( sizeof($errors) == 0)
+        {
+            $errors = $parser->validate($clients);
+        }
+
         if ( sizeof($errors) > 0)
         {
             return array(
@@ -449,8 +454,12 @@ class Log extends AppModel
         //convert string from jql to mongo array
         $parser = new PreslogParser();
         $parser->setSqlFromJql($query);
+        $errors = $parser->getErrors();
+        if ( sizeof($errors) == 0 )
+        {
+            $errors = $parser->validate($clients);
+        }
 
-        $errors = $parser->validate($clients);
         if ( sizeof($errors) > 0)
         {
             return array(
@@ -477,8 +486,12 @@ class Log extends AppModel
         //convert string from jql to mongo array
         $parser = new PreslogParser();
         $parser->setSqlFromJql($query);
+        $errors = $parser->getErrors();
+        if ( sizeof($errors) == 0 )
+        {
+            $errors = $parser->validate($clients);
+        }
 
-        $errors = $parser->validate($clients);
         if ( sizeof($errors) > 0)
         {
             return array(

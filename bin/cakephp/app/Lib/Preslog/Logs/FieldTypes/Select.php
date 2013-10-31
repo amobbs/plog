@@ -4,6 +4,7 @@ namespace Preslog\Logs\FieldTypes;
 
 use Preslog\JqlParser\JqlOperator\EqualsOperator;
 use Preslog\JqlParser\JqlOperator\LessThanOperator;
+use Preslog\JqlParser\JqlOperator\LikeOperator;
 use Preslog\JqlParser\JqlOperator\NotEqualsOperator;
 use Preslog\Logs\FieldTypes\FieldTypeAbstract;
 
@@ -52,6 +53,7 @@ class Select extends FieldTypeAbstract
         $this->allowedJqlOperators = array(
             new EqualsOperator(),
             new NotEqualsOperator(),
+            new LikeOperator(),
         );
     }
 

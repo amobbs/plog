@@ -3,6 +3,7 @@
 namespace Preslog\Logs\FieldTypes;
 
 use Preslog\JqlParser\JqlOperator\EqualsOperator;
+use Preslog\JqlParser\JqlOperator\LikeOperator;
 use Preslog\JqlParser\JqlOperator\NotEqualsOperator;
 use Preslog\Logs\FieldTypes\FieldTypeAbstract;
 
@@ -32,6 +33,7 @@ class Textarea extends FieldTypeAbstract
         $this->allowedJqlOperators = array(
             new EqualsOperator(),
             new NotEqualsOperator(),
+            new LikeOperator(),
         );
     }
 

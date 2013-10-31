@@ -12,6 +12,7 @@ use Preslog\JqlParser\JqlKeyword\JqlKeyword;
 use Preslog\JqlParser\JqlOperator\EqualsOperator;
 use Preslog\JqlParser\JqlOperator\GreaterThanOperator;
 use Preslog\JqlParser\JqlOperator\LessThanOperator;
+use Preslog\JqlParser\JqlOperator\LikeOperator;
 use Preslog\JqlParser\JqlOperator\NotEqualsOperator;
 use Preslog\JqlParser\JqlParser;
 use Preslog\Logs\FieldTypes\Select;
@@ -43,10 +44,23 @@ class PreslogParser extends JqlParser {
 
     public function validate($clients)
     {
-        return $this->_validateExpression($this->_expression, $clients);
+        $useClients = array();
+        foreach($clients as $client)
+        {
+            if ( isset($client['Client']) )
+            {
+                $useClients[] = $client['Client'];
+            }
+            else
+            {
+                $useClients[] = $client;
+            }
+        }
+
+        return $this->_validateExpression($this->_expression, $useClients);
     }
 
-    private function _validateExpression($expression, $clients)
+    protected function _validateExpression($expression, $clients)
     {
         if ( $expression instanceof Clause )
         {
@@ -75,9 +89,9 @@ class PreslogParser extends JqlParser {
         return $errors;
     }
 
-    private function _validateClause($clause, $clients)
+    protected function _validateClause($clause, $clients)
     {
-        $errors = array();
+        $errors = parent::_validateClause($clause);
 
         $config = Configure::read('Preslog');
         $operator = $clause->getOperator();
@@ -94,9 +108,42 @@ class PreslogParser extends JqlParser {
 
             if ( ! ($operator instanceof EqualsOperator || $operator instanceof NotEqualsOperator) )
             {
-                $errors[] = "You can only use the Equals or not Equals operator when searching by Log ID";
+                $errors[] = "The operator " . $operator->getHumanReadable() . ' can not be used with the field "ID". Operators allowed are = !=';
+                //"You can only use the Equals or not Equals operator when searching by Log ID";
             }
 
+            return $errors;
+        }
+
+        if ($clause->getField() == 'client')
+        {
+            $allowed = array(
+                new EqualsOperator(),
+                new NotEqualsOperator(),
+                new LikeOperator(),
+            );
+
+            $allowedString = '';
+            if ( ! $this->operatorAllowed($operator, $allowed, $allowedString) )
+            {
+                $errors[] = "The operator " . $operator->getHumanReadable() . ' can not be used with the field "' . $clause->getField() . '". Operators allowed are ' . $allowedString;
+            }
+            return $errors;
+        }
+
+        if ($clause->getField() == 'text')
+        {
+            $allowed = array(
+                new EqualsOperator(),
+                new NotEqualsOperator(),
+                new LikeOperator(),
+            );
+
+            $allowedString = '';
+            if ( ! $this->operatorAllowed($operator, $allowed, $allowedString) )
+            {
+                $errors[] = "The operator " . $operator->getHumanReadable() . ' can not be used with the field "' . $clause->getField() . '". Operators allowed are ' . $allowedString;
+            }
             return $errors;
         }
 
@@ -107,13 +154,13 @@ class PreslogParser extends JqlParser {
                 new EqualsOperator(),
                 new NotEqualsOperator(),
                 new GreaterThanOperator(),
-                new LessThanOperator()
+                new LessThanOperator(),
             );
 
             $allowedString = '';
             if ( ! $this->operatorAllowed($operator, $allowed, $allowedString) )
             {
-                $errors[] = "The operator " . $operator->getHumanReadable() . ' can not be used with the field ' . $clause->getField() . '. Operators allowed are ' . $allowedString;
+                $errors[] = "The operator " . $operator->getHumanReadable() . ' can not be used with the field "' . $clause->getField() . '". Operators allowed are ' . $allowedString;
             }
             //validate date time
             return $errors;

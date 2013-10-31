@@ -19,13 +19,13 @@ class LikeOperator extends JqlOperator{
             '',
             'IS LIKE',
             array(
-                'DURATION',
+                'TEXT',
             ),
             true);
     }
 
     public function formatValueForSql($value) {
-        return '%' . $value . '%';
+        return '' . $value . '';
     }
 
     public function matches($value1, $value2)

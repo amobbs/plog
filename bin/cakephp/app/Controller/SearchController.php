@@ -85,6 +85,69 @@ class SearchController extends AppController
         exit();
     }
 
+    /**
+     * Search using the given query string
+     *
+     * @SWG\Operation(
+     *      partial="search.validate",
+     *      summary="Return any errors that may be in the passed in JQL query",
+     *      notes="Users can only search across those Clients to which they have access.",
+     *      @SWG\Parameters(
+     *          @SWG\Parameter(
+     *              name="query",
+     *              paramType="query",
+     *              dataType="string",
+     *              required="true",
+     *              description="jql to validate"
+     *          )
+     *      )
+     * )
+     */
+    public function validateQuery()
+    {
+        $query = $this->request->query['query'];
+
+        $user = $this->User->findById(
+            $this->PreslogAuth->user('_id')
+        );
+
+        $clients = $this->User->listAvailableClientsForUser($user['User']);
+        $fullClients = array();
+        foreach($clients as $client) {
+            $c = $this->Client->findById($client['_id']);
+            $fullClients[] = $c['Client'];
+            $options[(string)$client['_id']] = $c['Client'];
+        }
+
+        $parser = new PreslogParser();
+        $parser->setSqlFromJql($query);
+
+        $errors = $parser->getErrors();
+        if( sizeof($errors) == 0 )
+        {
+            $errors = $parser->validate($fullClients);
+        }
+
+        $return = array();
+
+        if ( sizeof($errors) > 0 )
+        {
+            $return = array(
+                'ok' => false,
+                'errors' => $errors
+            );
+        }
+        else
+        {
+            $return = array(
+                'ok' => true,
+                'errors' => array(),
+            );
+        }
+
+        $this->set($return);
+        $this->set('_serialize', array_keys($return));
+    }
 
     /**
      * Perform the search operation and return a series of log data sufficient for search results.
@@ -232,6 +295,8 @@ class SearchController extends AppController
                         $formattedField['value'] = $this->_formatDuration($field['data']['seconds']);
                         break;
                     case 'select':
+                    case 'select-impact':
+                    case 'select-severity':
                         $formattedField['value'] = $this->_getSelectValueFromClient($field['data']['selected'], $fieldInfo['data']['options']);
                         break;
                     case 'textarea': //missing break on purpose, same format as default.
@@ -355,8 +420,11 @@ class SearchController extends AppController
 
         $parser = new PreslogParser();
         $parser->setSqlFromJql($jql);
-
-        $errors = $parser->validate($fullClients);
+        $errors = $parser->getErrors();
+        if ( sizeof($errors) == 0 )
+        {
+            $errors = $parser->validate($fullClients);
+        }
 
         if ( sizeof($errors) > 0)
         {
@@ -602,7 +670,7 @@ class SearchController extends AppController
             if ($operator->isAppliedTo($type))
             {
                 $operators[] = array(
-                    'name' => $operator->getJqlSymbol(),
+                    'name' => $operator->getSqlSymbol(),
                     'label' => $operator->getHumanReadable(),
                     'cardinality' => 'ONE',
                 );
@@ -642,7 +710,7 @@ class SearchController extends AppController
         $args = json_decode($this->request->query['args']);
 
         if ($args === null) {
-            throw new Exception('invalid array of args');
+            throw new Exception('invalid array of arguments');
         }
 
         $parser = new PreslogParser();

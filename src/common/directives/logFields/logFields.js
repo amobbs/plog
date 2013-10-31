@@ -134,6 +134,7 @@ angular.module('logFields', [])
                 var formController = fieldElement['inheritedData']('$formController');
                 var id = '';
 
+                var id = '';
                 // use element if present
                 if (fieldElement[0].id !== undefined)
                 {

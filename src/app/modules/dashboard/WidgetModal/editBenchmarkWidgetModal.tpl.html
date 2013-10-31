@@ -3,6 +3,11 @@
     <h3 id="myModalLabel">Edit Benchmark widget</h3>
 </div>
 <div class="modal-body form-horizontal" id="editModalWidget">
+    <div ng-show="!queryValid" class="alert alert-error">
+        <ul ng-repeat="error in queryErrors">
+            <li>{{error}}</li>
+        </ul>
+    </div>
     <div class="control-group">
         <label class="control-label">Name </label>
         <div class="controls">
@@ -16,10 +21,10 @@
         </div>
     </div>
 
-    <div class="control-group">
+    <div class="control-group" ng-class="{error: !queryValid}" >
         <label class="control-label">Search Query</label>
         <div class="controls">
-            <textarea class="query" placeholder="Filter..." ng-model="widget.details.query"></textarea>
+            <textarea class="query" placeholder="Filter..." ng-model="widget.details.query" ></textarea>
         </div>
     </div>
 

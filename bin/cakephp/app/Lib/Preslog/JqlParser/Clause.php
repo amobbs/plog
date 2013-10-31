@@ -2,8 +2,9 @@
 namespace Preslog\JqlParser;
 
 use Configure;
+use Exception;
 use MongoDate;
-use PHPSQL\Exception\Exception;
+use Preslog\JqlParser\JqlExceptions\JqlParseException;
 use Preslog\JqlParser\JqlFunction\JqlFunction;
 use Preslog\JqlParser\JqlOperator\JqlOperator;
 
@@ -111,8 +112,7 @@ class Clause {
 
         if ( sizeof($parts) == 0 )
         {
-            //TODO fail??
-            throw new Exception("invalid jql clause " . $this->_unparsedClause);
+            throw new Exception('invalid jql clause "' . $this->_unparsedClause . '". Clause should be in the form <field name> <operator> <value>');
         }
 
         $this->_field = strtolower($this->_stripTableName($parts['field']));

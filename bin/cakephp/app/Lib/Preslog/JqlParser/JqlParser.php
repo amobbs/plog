@@ -2,8 +2,10 @@
 
 namespace Preslog\JqlParser;
 
+use Exception;
 use Preslog\JqlParser\JqlFunction\JqlFunction as JqlFunction;
 use Preslog\JqlParser\JqlKeyword\JqlKeyword;
+use Preslog\JqlParser\JqlOperator\JqlOperator;
 
 class JqlParser {
 
@@ -25,12 +27,20 @@ class JqlParser {
      */
     protected $_expression = array();
 
+    protected $_errors = array();
+
+
     public function getJql() {
         return $this->_jql;
     }
 
     public function getSql() {
         return $this->_sql;
+    }
+
+    public function getErrors()
+    {
+        return $this->_errors;
     }
 
     public function getArguments() {
@@ -58,7 +68,14 @@ class JqlParser {
         $this->_sql = strtoupper($sql);
         $where = $this->_getWhereFromSql($this->_sql, $args);
 
-        $this->_expression = $this->_seperateIntoGroups($where, false);
+        try
+        {
+            $this->_expression = $this->_seperateIntoGroups($where, false);
+        }
+        catch(Exception $e)
+        {
+            $this->_errors = array($e->getMessage());
+        }
 
         if (!$this->_expression) {
             $this->_jql = "";
@@ -76,7 +93,14 @@ class JqlParser {
         $jql = strtoupper($jql);
         $this->_jql = $jql;
 
-        $this->_expression = $this->_seperateIntoGroups($jql, true);
+        try
+        {
+            $this->_expression = $this->_seperateIntoGroups($jql, true);
+        }
+        catch(Exception $e)
+        {
+            $this->_errors = array($e->getMessage());
+        }
 
         if (!$this->_expression) {
             $this->_sql = "";
@@ -193,8 +217,48 @@ class JqlParser {
         return $ret;
     }
 
+    public function validate()
+    {
+        return $this->_validateExpression($this->_expression);
+    }
 
+    protected function _validateExpression($expression)
+    {
+        if ( $expression instanceof Clause )
+        {
+            return $this->_validateClause($expression);
+        }
 
+        if ( ! is_array($expression) )
+        {
+            return array('Malformed query');
+        }
+
+        $errors = array();
+
+        foreach( $expression as $clause )
+        {
+            if ($clause instanceof Clause)
+            {
+                $errors = array_merge($this->_validateClause($clause), $errors);
+            }
+            else
+            {
+                $errors = array_merge($this->_validateExpression($clause), $errors);
+            }
+        }
+
+        return $errors;
+    }
+
+    protected function _validateClause($clause)
+    {
+        $errors = array();
+
+        //check the functions exist
+
+        return $errors;
+    }
 
 
     /**

@@ -1,8 +1,11 @@
 angular.module('Preslog.dashboard.widgetModal', [])
-    .controller('WidgetCtrl', function ($scope, $modalInstance, widget, clients) {
+    .controller('WidgetCtrl', function ($scope, $modalInstance, Restangular, widget, clients) {
         $scope.widget = widget;
         $scope.spanOptions = [1, 2, 3];
         $scope.clients = clients;
+
+        $scope.queryValid = true;
+        $scope.queryErrors = [];
 
         $scope.addChart = function(type) { //create new widget
             $scope.widget.type = type;
@@ -10,7 +13,19 @@ angular.module('Preslog.dashboard.widgetModal', [])
         };
 
         $scope.saveWidget = function() { //completion of edit widget
-            $modalInstance.close($scope.widget);
+            Restangular.one('search/validate')
+                .get({'query': $scope.widget.details.query})
+                .then(function (result) {
+                    if (result.ok)
+                    {
+                        $modalInstance.close($scope.widget);
+                    }
+                    else
+                    {
+                       $scope.queryValid = false;
+                       $scope.queryErrors = result.errors;
+                    }
+                });
         };
 
         $scope.cancel = function() {

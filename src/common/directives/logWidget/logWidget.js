@@ -166,7 +166,7 @@ angular.module('logWidget', [])
                     }
 
                     //if there are to many pages to show then truncate the end
-                    if (scope.totalPages >= (scope.params.page + 2)) {
+                    if (scope.totalPages > (scope.params.page + 2)) {
                         pages.push({
                             number: -1,
                             display: '...',

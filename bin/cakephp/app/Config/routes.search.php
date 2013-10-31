@@ -26,6 +26,25 @@ Router::connect(
     array('controller' => 'Search', 'action' => 'search', '[method]' => 'GET')
 );
 
+/**
+ * Search: GET (fetch logs based on query)
+ * @SWG\Resource(
+ *      resourcePath="/search",
+ *      @SWG\Api(
+ *          path="/search/validate",
+ *          @SWG\Operation(
+ *              @SWG\Partial("search.validate"),
+ *              nickname="search.validate",
+ *              httpMethod="GET"
+ *          )
+ *      )
+ * )
+ */
+Router::connect(
+    '/search/validate',
+    array('controller' => 'Search', 'action' => 'validateQuery', '[method]' => 'GET')
+);
+
 
 /**
  * Search.Export: GET (fetch and export logs based on query)
