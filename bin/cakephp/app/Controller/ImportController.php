@@ -836,6 +836,7 @@ class ImportController extends AppController
                     '_id' => new MongoId(),
                     'hrid' => $row['hrid'],
                     'deleted' => false,
+                    'hidden' => true,
                     'fields' => $fields,
                     'attributes' => $attr,
                     'client_id' => $client['_id'],
