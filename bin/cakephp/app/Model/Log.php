@@ -54,7 +54,7 @@ class Log extends AppModel
 
         // Fetch the Client Schema
         $clientModel = ClassRegistry::init('Client');
-        $clientEntity = $clientModel->getClientEntityById( $this->data['Log']['client_id'] );
+        $clientEntity = $clientModel->getClientEntityById( $this->data[ $this->name ]['client_id'] );
 
         // Check the client loaded
         if ( !$clientEntity )
@@ -75,7 +75,11 @@ class Log extends AppModel
         $errors = $log->validates();
         foreach ($errors as $field=>$error)
         {
-            $this->validator()->invalidate($field, $error);
+            // Invalidate individual errors
+            foreach ($error as $line)
+            {
+                $this->validator()->invalidate($field, $line);
+            }
         }
 
         // Return the validation result
@@ -124,18 +128,18 @@ class Log extends AppModel
         $log->fromArray( $this->data[ $this->name ] );
 
         // Fetch the original log data from the DB, where available
-        if ( $this->data[ $this->name ]['_id'] )
+        if ( isset($this->data[ $this->name ]['_id']) && !empty($this->data[ $this->name ]['_id']) )
         {
             // Fetch original log
             $sourceLogData = $this->find('first', array('conditions'=>array(
-                '_id'=>$this->data['_id'],
+                '_id'=>$this->data[ $this->name ]['_id'],
             )));
 
             // Load source log as entity
             $sourceLog = new LogEntity;
             $sourceLog->setDataSource( $this->getDataSource() );
             $sourceLog->setClientEntity($client);
-            $sourceLog->fromArray($sourceLogData);
+            $sourceLog->fromArray($sourceLogData[ $this->name ]);
 
             // Perform overwrite of readonly fields
             $sourceLog->overwiteWithChanges( $log );
@@ -147,8 +151,8 @@ class Log extends AppModel
         // Updated required fields
         $log->beforeSave();
 
-        // Save log
-        $this->save( array('Log'=>$log->toArray()) );
+        // Save log changes
+        $this->data['Log'] = $log->toArray();
 
         return true;
     }
@@ -252,12 +256,22 @@ class Log extends AppModel
      */
     public function findByHrid( $hrid )
     {
-        // Fetch all client info
-        return $this->find('first', array(
-            'conditions'=>array(
-                'hrid'=> (int) $hrid
-            )
-        ));
+        // If the HRID matches the format ABC_123, add the # after the underscore.
+        if (preg_match('/([a-zA-Z]+)_([0-9]+)/', (string) $hrid, $matches))
+        {
+            $hrid = $matches[1] .'_#'.$matches[2];
+        }
+
+        // Find log
+        $logs = $this->findByQuery('id="'.$hrid.'"', true);
+
+        // False if no log
+        if (!sizeof($logs))
+        {
+            return false;
+        }
+
+        return $logs[0];
     }
 
     /**

@@ -2,6 +2,7 @@
 
 namespace Preslog\Logs\FieldTypes;
 
+use Preslog\Logs\Entities\LogEntity;
 
 /**
  * Preslog Field Types: Type Abstract
@@ -380,25 +381,25 @@ abstract class FieldTypeAbstract
      * Subroutine for LogEntity::overwriteWithChanges
      * Should return null if this field cannot overwrite the original log's data
      * Otherwise return the array of overwriting data, for the entire field
-     * @param   array       $field      Field data
+     * @param   array       $data       Data from the new log
      * @return  array|null              Field data if writable, or null.
      */
-    public function overwriteWithChanges( $field )
+    public function overwriteWithChanges( $data )
     {
         // Hidden fields don't overwrite
         if ($this->flags & self::FLAG_HIDDEN)
         {
-            return null;
+            return;
         }
 
         // Readonly fields don't overwrite
         if ($this->flags & self::FLAG_READONLY)
         {
-            return null;
+            return;
         }
 
-        // Return the field data
-        return $field;
+        // Overwrite the data
+        $this->data = $data;
     }
 
 

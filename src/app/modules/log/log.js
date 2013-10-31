@@ -12,7 +12,7 @@ angular.module( 'Preslog.log', [
     .factory('LogRestangular', function (Restangular) {
         return Restangular.withConfig(function (RestangularConfigurer) {
             RestangularConfigurer.setRestangularFields({
-                id: 'Log.hrid'
+                id: 'Log.slug'
             });
         });
     })
@@ -24,7 +24,7 @@ angular.module( 'Preslog.log', [
          * Log Editor
          */
         stateHelperProvider.addState('mainLayout.log', {
-            url: '/logs/{log_id:[0-9]*}',
+            url: '/logs/{log_id}',
             views: {
                 "main@mainLayout": {
                     controller: 'LogCtrl',
@@ -34,7 +34,7 @@ angular.module( 'Preslog.log', [
             resolve: {
 
                 // Load log data
-                logData: ['$q', 'LogRestangular', '$stateParams', function($q, LogRestangular, $stateParams) {
+                logData: ['$q', 'LogRestangular', '$stateParams', 'userService', function($q, LogRestangular, $stateParams, userService) {
                     var deferred = $q.defer();
 
                     // If editing an existing log
@@ -45,14 +45,18 @@ angular.module( 'Preslog.log', [
                     }
                     // Creating a log instead - set up base log object.
                     else {
-                        deferred.resolve({
-                            Log: {
-                                _id: null,
-                                deleted: false,
-                                fields: [],
-                                attributes: [],
-                                newLog: true
-                            }
+
+                        userService.getClient().then(function(client) {
+                            var log = LogRestangular.one('logs');
+                            log.Log._id = null;
+                            log.Log.client_id = client._id;
+                            log.Log.slug = '';
+                            log.Log.deleted = false;
+                            log.Log.fields = [];
+                            log.Log.attributes = [];
+                            log.Log.newLog = true;
+
+                            deferred.resolve(log);
                         });
                     }
 
@@ -96,7 +100,7 @@ angular.module( 'Preslog.log', [
 /**
  * And of course we define a controller for our route.
  */
-    .controller( 'LogCtrl', function LogController( $scope, titleService, logData, logOptions, LogRestangular ) {
+    .controller( 'LogCtrl', function LogController( $scope, titleService, logData, logOptions, LogRestangular, $location ) {
 
         // Set title
         titleService.setTitle( 'Create Log' );
@@ -105,6 +109,7 @@ angular.module( 'Preslog.log', [
         $scope.log = logData.Log;
         $scope.options = logOptions;
         $scope.serverErrors = {};
+        $scope.Object = Object;
 
 
         /**
@@ -150,7 +155,7 @@ angular.module( 'Preslog.log', [
             logData.post().then(
 
                 // On success
-                function()
+                function(response)
                 {
                     // Redirect to homepage
                     $location.path('/');

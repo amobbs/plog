@@ -95,7 +95,6 @@ angular.module('logFields', [])
                 var tplScope = scope.$new();
                 tplScope.log = data;
                 tplScope.options = field;
-                tplScope.serverErrors = scope.serverErrors;
 
                 // Compile to gain scope
                 tpl = $compile(tpl)(tplScope);
@@ -133,15 +132,16 @@ angular.module('logFields', [])
                 var fieldElement = angular.element(this);
                 var modelController = fieldElement['inheritedData']('$ngModelController');
                 var formController = fieldElement['inheritedData']('$formController');
+                var id = '';
 
                 // use element if present
                 if (fieldElement[0].id !== undefined)
                 {
-                    var id = fieldElement[0].id;
+                    id = fieldElement[0].id;
                 }
 
                 // use element if not empty
-                if (id != '')
+                if (id !== '')
                 {
                     // Interpolate the fieldElement.id using the parent element scope.
                     // This created a dynamic "name" field by which the ngModel is attached to the form.
@@ -176,8 +176,7 @@ angular.module('logFields', [])
             link: linker,
             scope: {
                 fields: '=',
-                data: '=',
-                serverErrors: '='
+                data: '='
             }
         };
     }]);

@@ -18,7 +18,7 @@ class ClientEntity
     /**
      * @var     array                   Client data
      */
-    protected $data = array();
+    public $data = array();
 
     /**
      * @var     FieldTypeAbstract[]     Fields objects, per field, for this client

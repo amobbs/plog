@@ -117,7 +117,34 @@ class Loginfo extends FieldTypeAbstract
      */
     public function beforeSave()
     {
+        $authObject = \PreslogAuthComponent::getInstance();
 
+        // If no Created date, set it.
+        if (!isset($this->data['data']['created']))
+        {
+            $this->data['data']['created'] = date('r', time());
+        }
+
+        // If no Created user, set it.
+        if (!isset($this->data['data']['created_user_id']))
+        {
+            $this->data['data']['created_user_id'] = $authObject->user('_id');
+        }
+
+        // Update Modified Date
+        $this->data['data']['modified'] = date('r', time());
+
+        // Update Modified Time
+        $this->data['data']['modified_user_id'] = $authObject->user('_id');
+
+        // Establish version if it doesn't exist
+        if (!isset($this->data['data']['version']))
+        {
+            $this->data['data']['version'] = 0;
+        }
+
+        // Version increment
+        $this->data['data']['version'] += 1;
     }
 
 
@@ -136,5 +163,15 @@ class Loginfo extends FieldTypeAbstract
             'Modified' => date('Y-m-d H:i:s', strtotime($this->data['data']['modified'])),
             'Modified By' => $mUser,
         );
+    }
+
+
+    /**
+     * No validation required
+     * @return array|bool
+     */
+    public function validates()
+    {
+        return array();
     }
 }

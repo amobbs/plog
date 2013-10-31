@@ -37,16 +37,11 @@ class Textarea extends FieldTypeAbstract
 
     /**
      * Validate field data
-     * @param   array       $fieldName
-     * @param               $data
      * @return  array|void
      */
-    public function validate( $data, $fieldName )
+    public function validates()
     {
         $errors = array();
-
-        $errors[] = 'Herp a derp';
-
         return $errors;
     }
 

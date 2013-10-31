@@ -73,4 +73,5 @@ class SelectImpact extends Select
                 break;
         }
     }
+
 }

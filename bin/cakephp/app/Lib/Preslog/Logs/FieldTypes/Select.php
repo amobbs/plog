@@ -103,18 +103,16 @@ class Select extends FieldTypeAbstract
 
     /**
      * Validate select field data
-     * @param   array       $fieldName
-     * @param               $data
      * @return  array|void
      */
-    public function validate( $data, $fieldName )
+    public function validates()
     {
         $errors = array();
 
-        $optionId = $data[ $fieldName ]['data']['selected'];
+        $optionId = $this->data['data']['selected'];
 
         // Is the selected option in the array?
-        if ( !isset($this->options[ $optionId ]) )
+        if ( !empty($optionId) && !isset($this->options[ $optionId ]) )
         {
             $errors[] = 'The selected option could not be found in the database schema.';
         }

@@ -24,7 +24,7 @@ use Swagger\Annotations as SWG;
 Router::connect(
     '/logs/:log_id',
     array('controller' => 'Logs', 'action' => 'read', '[method]' => 'GET'),
-    array('pass'=>array('log_id'), 'log_id'=>'[0-9]+')
+    array('pass'=>array('log_id'), 'log_id'=>'([a-zA-Z]+_[0-9]+)')
 );
 
 
@@ -45,7 +45,11 @@ Router::connect(
 Router::connect(
     '/logs/:log_id',
     array('controller' => 'Logs', 'action' => 'edit', '[method]' => 'POST'),
-    array('pass'=>array('log_id'), 'log_id'=>'[0-9]*')
+    array('pass'=>array('log_id'), 'log_id'=>'([a-zA-Z]+_[0-9]+)?')
+);
+Router::connect(
+    '/logs',
+    array('controller' => 'Logs', 'action' => 'edit', '[method]' => 'POST')
 );
 
 
@@ -66,27 +70,7 @@ Router::connect(
 Router::connect(
     '/logs/:log_id',
     array('controller' => 'Logs', 'action' => 'delete', '[method]' => 'DELETE'),
-    array('pass'=>array('log_id'), 'log_id'=>'[0-9]+')
-);
-
-
-/**
- * Logs: POST (create log)
- * @SWG\Resource(
- *      resourcePath="/logs",
- *      @SWG\Api(
- *          path="/logs/create",
- *          @SWG\Operation(
- *              @SWG\Partial("logs.create"),
- *              nickname="logs.create",
- *              httpMethod="post"
- *          )
- *      )
- * )
- */
-Router::connect(
-    '/logs',
-    array('controller' => 'Logs', 'action' => 'edit', '[method]' => 'POST')
+    array('pass'=>array('log_id'), 'log_id'=>'([a-zA-Z]+_[0-9]+)')
 );
 
 
@@ -107,7 +91,7 @@ Router::connect(
 Router::connect(
     '/logs/:log_id',
     array('controller' => 'Logs', 'action' => 'options', '[method]' => 'OPTIONS'),
-    array('pass'=>array('log_id'), 'log_id'=>'[0-9]*')
+    array('pass'=>array('log_id'), 'log_id'=>'([a-zA-Z]+_[0-9]+)?')
 );
 Router::connect(
     '/logs',

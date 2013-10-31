@@ -105,4 +105,24 @@ class Datetime extends FieldTypeAbstract
         return array($label => date('Y-m-d H:i:s', strtotime($field['data']['datetime'])));
     }
 
+
+    /**
+     * Validate date-time
+     * @return array|bool
+     */
+    public function validates()
+    {
+        $errors = array();
+
+        $received = $this->data['data']['datetime'];
+        $expected = date('r', strtotime( $this->data['data']['datetime'] ));
+
+        // Validate as RFC2822
+        if ( $received != $expected )
+        {
+            $errors[] = "Date must be supplied as valid RFC2822 format. Received '{$received}' which was read as '{$expected}'.";
+        }
+
+        return $errors;
+    }
 }

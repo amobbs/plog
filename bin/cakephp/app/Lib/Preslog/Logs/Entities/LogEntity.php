@@ -176,23 +176,10 @@ class LogEntity
         // Note: Standard fields (_id, client_id, deleted, etc) aren't modified on the origin (this) log.
 
         // Skim $newLog fields - if a field is not READONLY or HIDDEN then update the content of this log.
-        foreach ($newLog->data['fields'] as $field)
+        foreach ($newLog->fields as $fieldKey=>$field)
         {
-            // If permissions permit, overwriteWithChanges will return an array with the field data. Otherwise, null.
-            $fieldData = $this->fields[ $field['field_id'] ]->overwriteWithChanges( $field );
-
-            // Returned an updated value?
-            if ($fieldData !== null)
-            {
-                // Apply the field data to the local log field
-                foreach ($this->fields as &$localField)
-                {
-                    if ($localField['field_id'] == $fieldData['field_id'])
-                    {
-                        $localField = $fieldData;
-                    }
-                }
-            }
+            // If permissions permit, overwriteWithChanges will overwrite the current field data with new daat
+            $this->fields[ $fieldKey ]->overwriteWithChanges( $field->data );
         }
 
         // Attributes; if NOT readonly then use the change version
@@ -230,7 +217,6 @@ class LogEntity
      */
     public function validates()
     {
-        // TODO - This need to actually validate the log fully
         $errors = array();
 
         // Refactor validation fields to associative, by name.
@@ -250,9 +236,9 @@ class LogEntity
         foreach( $this->data['attributes'] as $attr)
         {
             // If the attribute can't be found
-            if (!isset($this->client->attrbuteLookup[ $attr ]))
+            if (!isset($this->client->attributeLookup[ $attr ]))
             {
-                $errors['attributes'] = 'One or more attributes could not be found in the log schema.';
+                $errors['attributes'][] = 'One or more attributes could not be found in the log schema.';
             }
         }
 
@@ -271,6 +257,21 @@ class LogEntity
         {
             $field->beforeSave();
         }
+
+        // Convert HRID to just numbers
+        if (!empty($this->data['hrid']) && !is_numeric($this->data['hrid']))
+        {
+            preg_match('/[a-zA-Z]+_\#([0-9]+)/', $this->data['hrid'], $matches);
+            $this->data['hrid'] = $matches[1];
+        }
+
+        // If no _id for this log, lookup the next suitable increment in the database
+        if (!isset($this->data['_id']))
+        {
+            // TODO: Fetch the new log ID from the Mongo database incrementor and apply it to this _id
+            $this->data['hrid'] = '99999';
+        }
+
     }
 
 
@@ -285,6 +286,10 @@ class LogEntity
         {
             $field->afterFind();
         }
+
+        // Convert HRID to prefixed string and slug (for links)
+        $this->data['slug'] = $this->client->data['logPrefix'].'_'.$this->data['hrid'];
+        $this->data['hrid'] = $this->client->data['logPrefix'].'_#'.$this->data['hrid'];
     }
 
 

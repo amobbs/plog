@@ -8,7 +8,7 @@
                     <span class="icon-bar"></span>
                 </a>
 
-                <h2 ng-show="{{log.hrid}}">Log # {{ log.hrid }}</h2>
+                <h2 ng-show="{{log.hrid}}">Log - {{ log.hrid }}</h2>
                 <h2 ng-show="{{!log.hrid}}">Create Log</h2>
 
                 <div class="nav-collapse collapse navbar-responsive-collapse">
@@ -25,13 +25,25 @@
         </div><!-- /navbar-inner -->
     </nav>
 
-
     <div class="container-fluid" id="preslog_log_entry">
+
+        <!-- Validation Errors -->
+        <div class="alert alert-error" ng-show="Object.keys(serverErrors).length > 0">
+            <strong>An error occurred attempting to save the log.</strong>
+            <ul>
+                <li ng-repeat="error in serverErrors">
+                    <div ng-repeat="line in error track by $index">
+                    {{line}}
+                    </div>
+                </li>
+            </ul>
+        </div>
+
         <div class="row-fluid">
 
             <!-- Log Fields -->
             <div class="span8 form-horizontal log-fields">
-                <log-fields data="log.fields" fields="options.fields" server-errors="serverErrors"></log-fields>
+                <log-fields data="log.fields" fields="options.fields"></log-fields>
             </div>
 
             <!-- Hierarchy Fields -->

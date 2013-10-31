@@ -123,4 +123,22 @@ class Duration extends FieldTypeAbstract
 
         return array($label => $time);
     }
+
+
+    /**
+     * Validate duration
+     * @return array|bool
+     */
+    public function validates()
+    {
+        $errors = array();
+
+        // Seconds must be numeric
+        if (!is_numeric($this->data['data']['seconds']))
+        {
+            $errors[] = "Durations must be supplied as numeric values. Received '{$this->data['data']['seconds']}'.";
+        }
+
+        return $errors;
+    }
 }

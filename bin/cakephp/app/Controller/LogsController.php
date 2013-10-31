@@ -48,7 +48,7 @@ class LogsController extends AppController
         if ( !empty($id) )
         {
             // Try to fetch the log
-            $sourceLog = $this->Log->findByHrid( (int) $id );
+            $sourceLog = $this->Log->findByHrid( $id );
 
             // Validate: does the log exist?
             if (empty($sourceLog))
