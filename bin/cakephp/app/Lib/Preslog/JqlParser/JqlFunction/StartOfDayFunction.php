@@ -3,6 +3,8 @@
 namespace Preslog\JqlParser\JqlFunction;
 
 
+use MongoDate;
+
 class StartOfDayFunction extends JqlFunction{
 
     /**
@@ -26,7 +28,7 @@ class StartOfDayFunction extends JqlFunction{
             $date = $this->_convertValueToTimestamp($args);
         }
 
-        return mktime(0, 0, 0, date('n', $date), date('j', $date), date('y', $date));
+        return new MongoDate(mktime(0, 0, 0, date('n', $date), date('j', $date), date('y', $date)));
     }
 
 }

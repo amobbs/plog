@@ -3,6 +3,8 @@
 namespace Preslog\JqlParser\JqlFunction;
 
 
+use MongoDate;
+
 class StartOfMonthFunction extends JqlFunction {
     /**
      * construtor
@@ -25,6 +27,6 @@ class StartOfMonthFunction extends JqlFunction {
             $date = $this->_convertValueToTimestamp($args);
         }
 
-        return mktime(0, 0, 0, date('n', $date), 1, date('y', $date));
+        return new MongoDate(mktime(0, 0, 0, date('n', $date), 1, date('y', $date)));
     }
 }

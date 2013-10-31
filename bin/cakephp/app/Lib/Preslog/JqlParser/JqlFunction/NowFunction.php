@@ -10,6 +10,8 @@
 namespace Preslog\JqlParser\JqlFunction;
 
 
+use MongoDate;
+
 class NowFunction extends JqlFunction{
 
     /**
@@ -21,10 +23,13 @@ class NowFunction extends JqlFunction{
 
     /**
      * returns current server time as unix time stamp
+     *
      * @param $args - no arguments
+     *
+     * @return \MongoDate|void
      */
     public function execute($args = null) {
-        return "ISODate('" . date('Y-m-d H:m:s') . "')"; //mktime(date('H'), date('i'), date('s'), date('n'), date('j'), date('Y'));
+        return new MongoDate(time());
     }
 
 }

@@ -345,8 +345,7 @@ class Log extends AppModel
                 'fields' => array('$push' => '$fields'),
                 'attributes' => array('$first' => '$attributes'),
                 'deleted' => array('$first' => '$deleted'),
-                'created' => array('$first' => '$created'),
-                'modified' => array('$first' => '$modified'),
+                'hidden' => array('$first' => '$hidden'),
             );
 
 

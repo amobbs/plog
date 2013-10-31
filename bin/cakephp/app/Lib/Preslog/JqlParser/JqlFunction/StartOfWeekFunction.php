@@ -3,6 +3,8 @@
 namespace Preslog\JqlParser\JqlFunction;
 
 
+use MongoDate;
+
 class StartOfWeekFunction extends JqlFunction {
     /**
      * construtor
@@ -27,6 +29,6 @@ class StartOfWeekFunction extends JqlFunction {
 
         $dayOfWeek = date('w', $date);
 
-        return mktime(0, 0, 0, date('n', $date), date('j', $date) - (6 - $dayOfWeek), date('y', $date));
+        return new MongoDate(mktime(0, 0, 0, date('n', $date), date('j', $date) - (6 - $dayOfWeek), date('y', $date)));
     }
 }
