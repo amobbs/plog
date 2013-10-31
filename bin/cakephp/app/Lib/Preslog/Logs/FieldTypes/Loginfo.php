@@ -145,6 +145,9 @@ class Loginfo extends FieldTypeAbstract
 
         // Version increment
         $this->data['data']['version'] += 1;
+
+        // Execute parent - convert schema
+        parent::beforeSave();
     }
 
 

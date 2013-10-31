@@ -63,12 +63,15 @@ angular.module( 'Preslog.clients', [
                     }
                     // Not editing a user, just pass back an empty Client
                     else {
-                        deferred.resolve({
-                            Client: {
-                                id: '',
-                                deleted:false
-                            }
-                        });
+                        var client = Restangular.one('admin/clients');
+                        client.Client = {
+                            id: '',
+                            deleted:false,
+                            fields:[],
+                            attributes:[]
+                        };
+
+                        deferred.resolve(client);
                     }
                     return deferred.promise;
                 }],

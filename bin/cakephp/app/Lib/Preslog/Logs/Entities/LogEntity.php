@@ -95,11 +95,12 @@ class LogEntity
     {
         // Copy the data to a doc
         $doc = $this->data;
+        $doc['fields'] = array();
 
         // Use mongo datasource to convert Array to Document in fields
         foreach ($this->fields as &$field)
         {
-            $field->toDocument($field);
+            $doc['fields'][] = $field->toDocument($field);
         }
 
         return $doc;
@@ -173,7 +174,13 @@ class LogEntity
      */
     public function overwiteWithChanges( $newLog )
     {
-        // Note: Standard fields (_id, client_id, deleted, etc) aren't modified on the origin (this) log.
+        // Note: Standard fields (_id, client_id, etc) aren't modified on the origin (this) log.
+
+        // deleted might get updated
+        if ( $this->client->deletePermissions )
+        {
+            $this->data['deleted'] = $newLog->data['deleted'];
+        }
 
         // Skim $newLog fields - if a field is not READONLY or HIDDEN then update the content of this log.
         foreach ($newLog->fields as $fieldKey=>$field)
@@ -266,10 +273,19 @@ class LogEntity
         }
 
         // If no _id for this log, lookup the next suitable increment in the database
-        if (!isset($this->data['_id']))
+        if (!isset($this->data['_id']) || empty($this->data['_id']))
         {
-            // TODO: Fetch the new log ID from the Mongo database incrementor and apply it to this _id
-            $this->data['hrid'] = '99999';
+            // Auto-increment the logIncrement on the client, and fetch the digit
+            $db = $this->dataSource->getMongoDb();
+            $client = $db->clients->findAndModify(
+                array('_id'=>new \MongoId($this->data['client_id'])),
+                array('$inc'=>array('logIncrement'=>1)),
+                array('logIncrement'=>1),
+                array('new'=>true)
+            );
+
+            // Save the new HRID digit
+            $this->data['hrid'] = $client['logIncrement'];
         }
 
     }

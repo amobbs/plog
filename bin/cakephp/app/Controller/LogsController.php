@@ -229,7 +229,7 @@ class LogsController extends AppController
     public function delete( $id )
     {
         // Validate: Does the user have permission to delete anything?
-        if ($this->isAuthorized('log-delete'))
+        if (!$this->isAuthorized('log-delete'))
         {
             $this->errorUnauthorised(array('message'=>'You do not have permission to delete logs'));
         }
@@ -242,24 +242,21 @@ class LogsController extends AppController
         // Validate: Log must be visible to this client
         if ($this->isAuthorized('single-client'))
         {
-            if ($this->PreslogAuth->user('client_id') != $log['client_id'])
+            if ($this->PreslogAuth->user('client_id') != $log['Log']['client_id'])
             {
                 $this->errorUnauthorised(array('message'=>'You do not have permission to delete logs of other clients.'));
             }
         }
 
         // Simple delete save
-        $deleteLog = array(
-            'id'=>$id,
-            'deleted'=>true,
-        );
+        $log['Log']['deleted'] = true;
 
         // Delete
-        $this->Log->save( array('Log'=>$deleteLog) );
+        $ret = $this->Log->save( $log );
 
         // OK Response
-        $this->set('success', true);
-        $this->set('_serialize', array('success'));
-    }
+        $return = array('Success'=>$ret);
+        $this->set($return);
+        $this->set('_serialize', array_keys($return));    }
 
 }

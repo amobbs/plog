@@ -65,12 +65,17 @@ angular.module( 'Preslog.usersAdmin', [
                     // Creating a user instead. Load a blank form.
                     else
                     {
-                        deferred.resolve({
-                            User:{
-                                id:'',
-                                deleted:false
+                        var user = Restangular.one('admin/users');
+                        user.User = {
+                            id:'',
+                            deleted:false,
+                            notifications: {
+                                methods:{},
+                                clients:[]
                             }
-                        });
+                        };
+
+                        deferred.resolve(user);
                     }
 
                     return deferred.promise;
@@ -79,9 +84,20 @@ angular.module( 'Preslog.usersAdmin', [
                 // Fetch edit opts
                 optionsSource: ['$q', 'Restangular', '$stateParams', function($q, Restangular, $stateParams) {
                     var deferred = $q.defer();
-                    Restangular.one('admin/users', $stateParams.user_id).options().then(function(options) {
-                        deferred.resolve(options);
-                    });
+
+                    // Resolve with user ID (client limited) or free-for-all?
+                    if ($stateParams.user_id)
+                    {
+                        Restangular.one('admin/users', $stateParams.user_id).options().then(function(options) {
+                            deferred.resolve(options);
+                        });
+                    }
+                    else
+                    {
+                        Restangular.one('admin/users').options().then(function(options) {
+                            deferred.resolve(options);
+                        });
+                    }
 
                     return deferred.promise;
                 }]
@@ -155,7 +171,7 @@ angular.module( 'Preslog.usersAdmin', [
          * Init
          */
 
-            // Pass options to the form
+        // Pass options to the form
         $scope.options = optionsSource;
 
         // Pass user to form

@@ -77,7 +77,7 @@
                         <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu">
-                        <li ng-show="{{!log.newLog}}"><a href="#"><i class="icon icon-trash"></i> Delete Log</a></li>
+                        <li ng-show="{{!log.newLog}}"><a href="#" ng-click="deleteLog()" ng-confirm-click="This will delete this log and make it invisible to all reports. Are you sure?"><i class="icon icon-trash"></i> Delete Log</a></li>
                     </ul>
                 </div>
 

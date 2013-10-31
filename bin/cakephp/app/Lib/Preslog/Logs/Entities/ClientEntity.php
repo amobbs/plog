@@ -46,6 +46,11 @@ class ClientEntity
     public $attributePermissions = 0;
 
     /**
+     * @var     bool                    Permissions to delete logs?
+     */
+    public $deletePermissions = false;
+
+    /**
      * @var     array                   User details, used for authentication
      */
     protected $user;
@@ -125,7 +130,7 @@ class ClientEntity
         }
 
         // Apply attribute field permissions
-        $this->applyAttributePermissions();
+        $this->applyLogPermissions();
     }
 
 
@@ -197,7 +202,7 @@ class ClientEntity
         }
 
         // Apply attribute field permissions
-        $this->applyAttributePermissions();
+        $this->applyLogPermissions();
     }
 
 
@@ -364,12 +369,19 @@ class ClientEntity
     }
 
     /**
-     * Apply permissions for Attributes based on the user
+     * Apply permissions for log based on the user
      * This raises another point; ideally the Attribute hierarchy would be field data in of itself.
      * But this would vastly complicate the setup.
      */
-    protected function applyAttributePermissions()
+    protected function applyLogPermissions()
     {
+        // If user is "log-delete"
+        // Enable log deletion
+        if ($this->userModel->isAuthorized( 'log-delete', $this->user['role'] ))
+        {
+            $this->deletePermissions = true;
+        }
+
         // If user is "comment-only"
         // Attributes are set to readonly
         if ($this->userModel->isAuthorized( 'comment-only', $this->user['role'] ))

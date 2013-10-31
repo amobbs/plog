@@ -153,7 +153,7 @@ class Log extends AppModel
         $log->beforeSave();
 
         // Save log changes
-        $this->data['Log'] = $log->toArray();
+        $this->data['Log'] = $log->toDocument();
 
         return true;
     }

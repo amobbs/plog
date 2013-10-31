@@ -52,7 +52,7 @@ angular.module( 'Preslog.log', [
                             log.Log.client_id = client._id;
                             log.Log.slug = '';
                             log.Log.deleted = false;
-                            log.Log.fields = [];
+                            log.Log.fields = [
                             log.Log.attributes = [];
                             log.Log.newLog = true;
 
@@ -179,6 +179,22 @@ angular.module( 'Preslog.log', [
             );
         };
 
+        /**
+         * Delete Log
+         */
+        $scope.deleteLog = function()
+        {
+            logData.remove().then(
+                function()
+                {
+                    $location.path('/');
+                },
+                function()
+                {
+                    alert('There was a problem deleting this log.');
+                }
+            );
+        };
     })
 
 

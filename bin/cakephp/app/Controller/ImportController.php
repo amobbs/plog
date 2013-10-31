@@ -217,7 +217,7 @@ class ImportController extends AppController
             array(
                 '_id' => null,
                 'order' => $order++,
-                'type' => 'select',
+                'type' => 'select-impact',
                 'name' => 'impact',
                 'label' => 'On-Air Impact',
                 'data' => array(
@@ -254,7 +254,7 @@ class ImportController extends AppController
             array(
                 '_id' => null,
                 'order' => $order++,
-                'type' => 'select',
+                'type' => 'select-severity',
                 'name' => 'severity',
                 'label' => 'Severity',
                 'data' => array(
@@ -342,6 +342,7 @@ class ImportController extends AppController
             if($client['fields'][$i]['name'] == 'status') $statusId = $i;
         }
 
+        // Impact
         $sql = 'SELECT distinct impact FROM ' . $client['database_prefix'] . '_dailylog';
         if ($result = $this->mysqli->query($sql)) {
             $options = array();
@@ -358,6 +359,15 @@ class ImportController extends AppController
             $client['fields'][$onairImpactId]['data']['options'] = $options;
         }
 
+        // Severity lookyp table
+        $severityLookup = array(
+            1=>'level-1',
+            2=>'level-2',
+            3=>'reported',
+            4=>'reported',
+        );
+
+        // Severity
         $sql = 'SELECT id, severity, level, deleted, `order`, validation FROM ' . $client['database_prefix'] . '_severity ORDER BY `order`';
         if ($result = $this->mysqli->query($sql)) {
             $options = array();
@@ -365,6 +375,7 @@ class ImportController extends AppController
                 $options[] = array(
                     '_id' =>  new MongoId(),
                     'name' => mb_convert_encoding($row['severity'], 'utf8'),
+                    'severity' => $severityLookup[ $row['level'] ],
                     'order' => $row['order'],
                     'deleted' => (bool)$row['deleted'],
                     'old_id' => $row['id'],
@@ -373,6 +384,7 @@ class ImportController extends AppController
             $client['fields'][$severityId]['data']['options'] = $options;
         }
 
+        // Accountability
         $sql = "SELECT id, name, `order`, deleted FROM " . $client['database_prefix'] . '_accountability ORDER BY `order`';
         if ($result = $this->mysqli->query($sql)) {
             $options = array();
@@ -388,6 +400,7 @@ class ImportController extends AppController
             $client['fields'][$accountabilityId]['data']['options'] = $options;
         }
 
+        // Status
         $sql = "SELECT id, name FROM " . $client['database_prefix'] . '_status';
         if ($result = $this->mysqli->query($sql)) {
             $options = array();
@@ -669,6 +682,7 @@ class ImportController extends AppController
          FROM ' . $client['database_prefix'] . '_dailylog ORDER BY created ASC';
 
         $logCount = 0;
+        $maxLog = 0;
 
         if($result = $this->mysqli->query($sql)) {
             while ($row = $result->fetch_assoc()) {
@@ -847,11 +861,22 @@ class ImportController extends AppController
                 $this->Log->save(array('Log'=>$log), array('callbacks'=>false, 'validate'=>false));
                 $logCount++;
                 $this->logTotal++;
+
+                // Track top log
+                $maxLog = ($maxLog < $row['hrid'] ? $row['hrid'] : $maxLog);
             }
 
         }
 
         $this->_log("$logCount logs added for " . $client['name']);
+
+        // Update client with top HRID digit
+        $this->Client->save(array(
+            'Client'=>array(
+                '_id'=>$client['_id'],
+                'logIncrement'=>$maxLog,
+            )
+        ));
     }
 
     /**

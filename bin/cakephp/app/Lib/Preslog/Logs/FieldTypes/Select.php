@@ -111,12 +111,16 @@ class Select extends FieldTypeAbstract
     {
         $errors = array();
 
-        $optionId = $this->data['data']['selected'];
-
-        // Is the selected option in the array?
-        if ( !empty($optionId) && !isset($this->options[ $optionId ]) )
+        // Field may not exist under certain circumstances
+        if (isset($this->data['data']['selected']))
         {
-            $errors[] = 'The selected option could not be found in the database schema.';
+            $optionId = $this->data['data']['selected'];
+
+            // Is the selected option in the array?
+            if ( !empty($optionId) && !isset($this->options[ $optionId ]) )
+            {
+                $errors[] = 'The selected option could not be found in the database schema.';
+            }
         }
 
         return $errors;

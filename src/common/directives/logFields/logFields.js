@@ -63,6 +63,21 @@ angular.module('logFields', [])
                 // Fetch the data from the data array by the ID of the field
                 var data = $.map( scope.data, function(v,k){ if (v.field_id == field._id) { return v; } });
 
+                if ( !data.length )
+                {
+                    // instigate the data object onto scope.data if it's missing
+                    data = {
+                        'field_id':field._id,
+                        'data':{}
+                    };
+                    scope.data.push(data);
+                }
+                else
+                {
+                    // Reduce data array to one item
+                    data = data[0];
+                }
+
                 // Validate: Do we need to display this field?
                 // Skip if it's deleted and does not contain data.
                 if (field.deleted === true && data === undefined)
@@ -81,12 +96,6 @@ angular.module('logFields', [])
 
                 // Reduce type array to one item
                 type = type[0];
-
-                // Reduce data array to one item
-                if (data.length)
-                {
-                    data = data[0];
-                }
 
                 // Fetch template from cache by type
                 var tpl = $templateCache.get(type.template);
@@ -134,7 +143,6 @@ angular.module('logFields', [])
                 var formController = fieldElement['inheritedData']('$formController');
                 var id = '';
 
-                var id = '';
                 // use element if present
                 if (fieldElement[0].id !== undefined)
                 {

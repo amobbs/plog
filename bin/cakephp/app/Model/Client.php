@@ -262,13 +262,6 @@ class Client extends AppModel
         //TODO clean up this horrible code
         // Ensure the _id mongoId
         $client = $this->data['Client'];
-        if (!($client['_id'] instanceof mongoId)) {
-            if ($client['_id'] == null || (isset($client['newGroup']) && $client['newGroup'])) {
-                $client['_id'] = new mongoId();
-            } else {
-                $client['_id'] = new mongoId($client['_id']);
-            }
-        }
 
 
         $groups = array();
@@ -395,6 +388,7 @@ class Client extends AppModel
             }
 
             // Check the permission for single-client. If we get that, we limit on the client_id.
+            // TODO: This need to auth!
             if (false)
             {
                 $conditions['_id'] = $user['client_id'];

@@ -300,6 +300,9 @@ abstract class FieldTypeAbstract
         // Standard conversion
         $this->dataSource->convertToDocument($out['data'], $this->mongoSchema, array());
 
+        // prune fields
+        $this->dataSource->prune($out['data'], $this->mongoSchema);
+
         return $out;
     }
 
