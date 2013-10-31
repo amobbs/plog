@@ -166,7 +166,16 @@ class DashboardsController extends AppController
 
             //edit dashboard
             if (!empty($id)) {
-                //TODO no one can edit preset dashboards
+                $dashboard = $this->Dashboard->findById($id);
+                if (empty($dashboard))
+                {
+                    throw new Exception('We are unable to find this dashboard in the system');
+                }
+
+                if ( $dashboard['Dashboard']['preset'] )
+                {
+                    throw new Exception('Unable to edit Preset Dashboards');
+                }
 
                 if(isset($this->request->data['widgets'])) { //just update the widgets
                     $this->updateDashboardWidgets($id, $this->request->data['widgets']);
@@ -174,8 +183,8 @@ class DashboardsController extends AppController
 
                 //update the name
                 } else {
-                    $dashboard = $this->Dashboard->findById($id);
-                    $dashboard['Dashboard']['name'] = $this->request->data['name'];
+                    $dashboard['Dashboard']['name'] = $this->request->data['name']['name'];
+
                     $this->Dashboard->save($dashboard['Dashboard']);
 
                     $dashboard = $this->_getParsedDashboard($dashboard['Dashboard']);
@@ -183,7 +192,7 @@ class DashboardsController extends AppController
                     $this->set('status', 'success');
                 }
 
-                $dashboard = $this->_getParsedDashboard($dashboard['Dashboard']);
+                $dashboard = $this->_getParsedDashboard($dashboard);
                 $this->set('dashboard', $this->Dashboard->toArray($dashboard));
                 $this->set('status', 'saved');
 
@@ -870,11 +879,16 @@ class DashboardsController extends AppController
             $result = $this->Log->findByQuery($query, $fullClients);
         }
 
-        if (isset($result['ok'])) {
-            if ($result['ok'] != 1) {
-                throw new Exception('Error in database query: ' . $result['errmsg']);
-            }
+        if ( isset($result['ok']) && !$result['ok'] )
+        {
+            return array(
+                'query' => $query,
+                'errors' => $result['errors'],
+            );
+        }
 
+
+        if (isset($result['ok'])) {
 
             $parsedResult = array();
 

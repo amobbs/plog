@@ -4,20 +4,6 @@
  * Dashboard Model
  */
 
-//use Phighchart\Chart;
-//use Phighchart\Options\Container;
-//use Phighchart\Options\ExtendedContainer;
-//use Phighchart\Data;
-//use Phighchart\Renderer\Pie;
-//use Phighchart\Renderer\Line;
-
-//use Misd\Highcharts\Chart;
-//use Misd\Highcharts\DataPoint\DataPoint;
-//use Misd\Highcharts\Renderer\HSRenderer;
-//use Misd\Highcharts\Series\LineSeries;
-//use Misd\Highcharts\Series\ScatterSeries;
-//use Zend\Json\Json;
-
 use Preslog\Logs\Entities\LogEntity;
 
 App::uses('AppModel', 'Model', 'HttpSocket', 'Network/Http');

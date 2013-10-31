@@ -4,6 +4,7 @@ App::uses('AppController', 'Controller');
 
 use Preslog\JqlParser\JqlOperator\JqlOperator;
 use Preslog\JqlParser\JqlParser;
+use Preslog\PreslogParser\PreslogParser;
 use Swagger\Annotations as SWG;
 
 /**
@@ -123,6 +124,15 @@ class SearchController extends AppController
 
         // Do query
         $results = $this->Log->findByQuery($query, $fullClients, $orderBy, $start, $limit, $orderAsc);
+
+        if ( isset($results['ok']) && !$results['ok'] )
+        {
+            return array(
+                'query' => $query,
+                'errors' => $results['errors'],
+            );
+        }
+
         $total = $this->Log->countByQuery($query, $fullClients);
 
         $clients = array();
@@ -153,6 +163,15 @@ class SearchController extends AppController
         //loop through the logs again and reformat them for display
         $logs = array();
         foreach ($results as $k=>$log) {
+            $logClient = null;
+            foreach($fullClients as $client)
+            {
+                if ($client['_id'] == $log['Log']['client_id'])
+                {
+                    $logClient = $client;
+                }
+            }
+
             $allFieldNames['hrid'] = true; // so we can search on log id TODO find a way to give this a better name
 
             $log = $log['Log'];
@@ -165,7 +184,7 @@ class SearchController extends AppController
                 'attributes' => array(
                     array(
                         'title' => 'LogID',
-                        'value' => $log['hrid'],
+                        'value' => $client['logPrefix'] . '_#' . $log['hrid'],
                         'showTooltip' => false,
                     ),
                 ),
@@ -325,8 +344,27 @@ class SearchController extends AppController
     {
         $jql = strtoupper($this->request->query['jql']);
 
-        $parser = new JqlParser();
+        $clients = $this->getClientListForUser();
+        $fullClients = array();
+        foreach($clients as $client) {
+            $c = $this->Client->findById($client);
+            $fullClients[] = $c['Client'];
+            $options[$client] = $c['Client'];
+        }
+
+
+        $parser = new PreslogParser();
         $parser->setSqlFromJql($jql);
+
+        $errors = $parser->validate($fullClients);
+
+        if ( sizeof($errors) > 0)
+        {
+            $this->set('errors', $errors);
+            $this->set('_serialize', array('errors'));
+            return;
+        }
+
 
         //get list of fields that can be used to query against (red query builder format)
         $meta = $this->_getQueryBuilderMeta();
@@ -607,7 +645,7 @@ class SearchController extends AppController
             throw new Exception('invalid array of args');
         }
 
-        $parser = new JqlParser();
+        $parser = new PreslogParser();
         $parser->setJqlFromSql($sql, $args);
 
         $this->set('jql', $parser->getJql());

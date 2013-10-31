@@ -63,7 +63,7 @@ Configure::write('Preslog', array(
      */
     'regex' => array(
         'duration' => '/^(([0-9]{1,3})([h|H]))?(([0-9]{1,3})([m|M]))?(([0-9]{1,3})([s|S]))?$/', //30h20m5s or 20s or 30m20s or 30h10s or 30h or 20m
-        'logid' => '/^([A-Z]{1,6})(\d+)$/i', //upto 6 letters followed by 1 or more numbers, eg: ABC1234
+        'logid' => '/^([A-Z]{1,6})_#(\d+)$/i', //upto 6 letters followed by 1 or more numbers, eg: ABC1234
     ),
 
     /**

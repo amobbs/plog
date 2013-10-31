@@ -2,6 +2,8 @@
 
 namespace Preslog\Logs\FieldTypes;
 
+use Preslog\JqlParser\JqlOperator\EqualsOperator;
+use Preslog\JqlParser\JqlOperator\NotEqualsOperator;
 use Preslog\Logs\FieldTypes\FieldTypeAbstract;
 
 /**
@@ -24,6 +26,14 @@ class Textarea extends FieldTypeAbstract
         'placeholder'   => array('type' => 'string', 'length'=>1024),
     );
 
+
+    public function __construct()
+    {
+        $this->allowedJqlOperators = array(
+            new EqualsOperator(),
+            new NotEqualsOperator(),
+        );
+    }
 
     /**
      * Validate field data

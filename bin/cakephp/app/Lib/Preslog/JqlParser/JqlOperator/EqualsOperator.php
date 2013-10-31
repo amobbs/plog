@@ -9,7 +9,7 @@ class EqualsOperator extends JqlOperator {
             '=',
             '=',
             '',
-            'IS',
+            'EQUALS',
             array(
                 'DATE',
                 'TEXT',

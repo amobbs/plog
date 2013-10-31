@@ -86,7 +86,8 @@ angular.module( 'Preslog.search', [
             orderDirection: 'Asc',
             query: '',
             logs: [],
-            lastUpdated: new Date()
+            lastUpdated: new Date(),
+            errors: []
         };
 
         //if params change then we need to get new logs
@@ -122,6 +123,12 @@ angular.module( 'Preslog.search', [
                 .then(function(result) {
                     $scope.results = result;
                     var params = angular.copy($scope.logWidgetParams);
+
+                    if (result.errors)
+                    {
+                        params.errors = result.errors;
+                    }
+
                     params.total = result.total;
                     params.logs = result.logs;
                     params.sorting = result.fields;
@@ -168,6 +175,12 @@ angular.module( 'Preslog.search', [
                 .then(function(data) {
                     //populate fields
                     if (data) {
+                        if (data.errors)
+                        {
+                            console.log(data.errors);
+                            return;
+                        }
+
                         $scope.sql = data.sql;
                         $scope.args = data.args;
                         $scope.queryMeta = data.fieldList;

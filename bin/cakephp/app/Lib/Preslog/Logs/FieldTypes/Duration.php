@@ -2,6 +2,10 @@
 
 namespace Preslog\Logs\FieldTypes;
 
+use Preslog\JqlParser\JqlOperator\EqualsOperator;
+use Preslog\JqlParser\JqlOperator\GreaterThanOperator;
+use Preslog\JqlParser\JqlOperator\LessThanOperator;
+use Preslog\JqlParser\JqlOperator\NotEqualsOperator;
 use Preslog\Logs\FieldTypes\FieldTypeAbstract;
 
 /**
@@ -36,6 +40,16 @@ class Duration extends FieldTypeAbstract
 
     protected $mongoClientSchema = array(
     );
+
+    public function __construct()
+    {
+        $this->allowedJqlOperators = array(
+            new EqualsOperator(),
+            new NotEqualsOperator(),
+            new GreaterThanOperator(),
+            new LessThanOperator(),
+        );
+    }
 
     /***
      * used to create a human readable list for the aggregation details that can be used in the interface

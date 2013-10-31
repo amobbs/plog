@@ -276,7 +276,10 @@ class Log extends AppModel
      */
     public function findByQuery($query, $clients = array(), $orderBy = '', $start = 0, $limit = 10, $fieldDetails = array(), $orderAsc = true) {
         if (empty($query)) {
-            return array();
+            return array(
+                'ok' => 1,
+                'data' => array(),
+            );
         }
 
         //double check that the called of this function actually wants to check against all clients. (cron jobs are not logged in but want to check all clients
@@ -295,6 +298,15 @@ class Log extends AppModel
         //convert string from jql to mongo array
         $parser = new PreslogParser();
         $parser->setSqlFromJql($query);
+        $errors = $parser->validate($clients);
+        if ( sizeof($errors) > 0)
+        {
+            return array(
+                'ok' => 0,
+                'errors' => $errors,
+            );
+        }
+
         $match = $parser->parse($clients);
 
         //initial match to find records we want
@@ -401,7 +413,10 @@ class Log extends AppModel
         $data = $mongo->selectCollection('logs')->aggregate($criteria);
 
         if ($data['ok'] == 0) {
-            throw new Exception($data['errmsg']);
+            return array(
+                'ok' => 0,
+                'errors' => array($data['errmsg']),
+            );
         }
 
         //pass into cake format (for afterFind)
@@ -420,6 +435,16 @@ class Log extends AppModel
         //convert string from jql to mongo array
         $parser = new PreslogParser();
         $parser->setSqlFromJql($query);
+
+        $errors = $parser->validate($clients);
+        if ( sizeof($errors) > 0)
+        {
+            return array(
+                'ok' => 0,
+                'errors' => $errors,
+            );
+        }
+
         $match = $parser->parse($clients);
 
         return $this->find('count', array(
@@ -438,6 +463,16 @@ class Log extends AppModel
         //convert string from jql to mongo array
         $parser = new PreslogParser();
         $parser->setSqlFromJql($query);
+
+        $errors = $parser->validate($clients);
+        if ( sizeof($errors) > 0)
+        {
+            return array(
+                'ok' => 0,
+                'errors' => $errors,
+            );
+        }
+
         $match = $parser->parse($clients);
 
         //initial match to get the set we are working on
@@ -604,6 +639,12 @@ class Log extends AppModel
 
         $mongo = $this->getMongoDb();
         $data = $mongo->selectCollection('logs')->aggregate($criteria);
+
+        //put err message into same format all other errors come out
+        if ( isset($data['errmsg']) )
+        {
+            $data['errors'] = array('Database Error: ' . $data['errmsg']);
+        }
 
         return $data;
     }

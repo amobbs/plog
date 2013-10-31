@@ -50,6 +50,7 @@ class JqlOperator {
      * @param $jqlSymbol
      * @param $sqlSymbol
      * @param $mongoSymbol
+     * @param $humanReadable
      * @param $appliedToFields
      * @param $mongoInline
      *

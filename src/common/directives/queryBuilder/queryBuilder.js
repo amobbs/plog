@@ -20,8 +20,6 @@ angular.module('redQueryBuilder', [])
             },
 
             link : function(scope, element, attrs) {
-                scope.element = element;
-
                 RedQueryBuilderFactory.create({
                         targetId : 'rqb',
                         meta : scope.queryMeta,
@@ -40,7 +38,7 @@ angular.module('redQueryBuilder', [])
                         },
                         editors : [ {
                             name : 'DATE',
-                            format : 'yyyy/MM/dd'
+                            format : 'dd/mm/yyyy'
                         } ],
                         suggest: function(args, callback) {
                             console.log(args);

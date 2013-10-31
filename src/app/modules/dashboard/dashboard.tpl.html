@@ -36,9 +36,9 @@
                     <button class="btn" ng-click="openCreateModal()" ><i class="icon icon-pencil"></i> Create Dashboard </button>
                     <button class="btn dropdown-toggle"><i class="icon icon-list-alt"></i> More <b class="caret"></b> </button>
                     <ul class="dropdown-menu">
-                        <li><a href="#" ng-click="openEditDashboardModal()"><i class="icon icon-edit"></i> Edit Dashboard </a></li>
-                        <li><a href="#" ng-show="!isFavourite()" ng-click="addToFavourite($scope.id)"><i class="icon icon-star-empty"></i> Add to Favourites </a></li>
-                        <li><a href="#" ng-show="isFavourite()" ng-click="removeFromFavourite()"><i class="icon icon-star"></i> Remove from Favourites </a></li>
+                        <li><a ng-click="openEditDashboardModal()"><i class="icon icon-edit"></i> Edit Dashboard </a></li>
+                        <li><a ng-show="!isFavourite()" ng-click="addToFavourite(id)"><i class="icon icon-star-empty"></i> Add to Favourites </a></li>
+                        <li><a ng-show="isFavourite()" ng-click="removeFromFavourite()"><i class="icon icon-star"></i> Remove from Favourites </a></li>
                         <li><a ng-click="exportReport()"><i class="icon icon-download"></i> Export as Report</a></li>
                     </ul>
 

@@ -67,7 +67,7 @@ angular.module( 'Preslog.nav', [])
         $scope.searchText = '';
         $scope.quickSearch = function ()
         {
-            window.location.href= '/search/' + this.searchText;
+            window.location.href= '/search/' + encodeURIComponent(this.searchText);
         };
 
         /**

@@ -32,6 +32,10 @@ abstract class FieldTypeAbstract
      */
     protected $queryFieldType = '';
 
+    /**
+     * jql operators that can be used to query against these fields
+     */
+    protected $allowedJqlOperators = array();
 
     /**
      * @var array       list of details needed to aggregate this field type
@@ -109,6 +113,7 @@ abstract class FieldTypeAbstract
             'description'       =>$this->description,
             'aggregationDetails'=>$this->aggregationDetails,
             'queryFieldType'    =>$this->queryFieldType,
+            'allowedJqlOperators' => $this->allowedJqlOperators,
         );
     }
 

@@ -2,6 +2,9 @@
 
 namespace Preslog\Logs\FieldTypes;
 
+use Preslog\JqlParser\JqlOperator\EqualsOperator;
+use Preslog\JqlParser\JqlOperator\LessThanOperator;
+use Preslog\JqlParser\JqlOperator\NotEqualsOperator;
 use Preslog\Logs\FieldTypes\FieldTypeAbstract;
 
 /**
@@ -43,6 +46,14 @@ class Select extends FieldTypeAbstract
      * @var     array       $options        Field options that may be selected
      */
     protected $options = array();
+
+    public function __construct()
+    {
+        $this->allowedJqlOperators = array(
+            new EqualsOperator(),
+            new NotEqualsOperator(),
+        );
+    }
 
 
     /***

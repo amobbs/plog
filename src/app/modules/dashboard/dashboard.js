@@ -92,13 +92,6 @@ angular.module( 'Preslog.dashboard', [
         $scope.name = '';
         $scope.addDashboard = undefined;
 
-        //populate data about this dashboard for the first time
-//        source.get().then(function (result) {
-//            $scope.id = result.dashboard.id;
-//            $scope.favourites = result.favourites;
-//            $scope.clients = result.clients;
-//        });
-
         Restangular.one('dashboards').get().then(function(result) {
             $scope.allDashboards = result.dashboards;
             $scope.presetDashboards = result.preset;

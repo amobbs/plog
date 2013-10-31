@@ -9,7 +9,7 @@ class NotEqualsOperator extends JqlOperator {
             '!=',
             '!=',
             '$not',
-            'IS NOT',
+            'NOT EQUALS',
             array(
                 'DATE',
                 'TEXT',

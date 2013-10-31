@@ -4,10 +4,15 @@ namespace Preslog\PreslogParser;
 
 use ClassRegistry;
 use Configure;
+use Exception;
 use MongoId;
 use MongoRegex;
 use Preslog\JqlParser\Clause;
 use Preslog\JqlParser\JqlKeyword\JqlKeyword;
+use Preslog\JqlParser\JqlOperator\EqualsOperator;
+use Preslog\JqlParser\JqlOperator\GreaterThanOperator;
+use Preslog\JqlParser\JqlOperator\LessThanOperator;
+use Preslog\JqlParser\JqlOperator\NotEqualsOperator;
 use Preslog\JqlParser\JqlParser;
 use Preslog\Logs\FieldTypes\Select;
 
@@ -26,9 +31,133 @@ class PreslogParser extends JqlParser {
      * @return array
      */
     public function parse($clients) {
+        $errors = $this->validate($clients);
+        if (sizeof($errors) > 0 )
+        {
+            throw new Exception('Validation errors have been found in the query string');
+        }
         $this->clients = $clients;
         $result = $this->buildPreslog($this->_expression);
         return $result;
+    }
+
+    public function validate($clients)
+    {
+        return $this->_validateExpression($this->_expression, $clients);
+    }
+
+    private function _validateExpression($expression, $clients)
+    {
+        if ( $expression instanceof Clause )
+        {
+            return $this->_validateClause($expression, $clients);
+        }
+
+        if ( ! is_array($expression) )
+        {
+            return array('Malformed query');
+        }
+
+        $errors = array();
+
+        foreach( $expression as $clause )
+        {
+            if ($clause instanceof Clause)
+            {
+                $errors = array_merge($this->_validateClause($clause, $clients), $errors);
+            }
+            else
+            {
+                $errors = array_merge($this->_validateExpression($clause, $clients), $errors);
+            }
+        }
+
+        return $errors;
+    }
+
+    private function _validateClause($clause, $clients)
+    {
+        $errors = array();
+
+        $config = Configure::read('Preslog');
+        $operator = $clause->getOperator();
+
+        if ($clause->getField() == 'id')
+        {
+            $logRegex = $config['regex']['logid'];
+
+            //check logid matches required format
+            if ( !preg_match($logRegex, $clause->getValue()) )
+            {
+                $errors[] = "The Log ID provided does not match the format required. [prefix]_#[numeric id] ";
+            }
+
+            if ( ! ($operator instanceof EqualsOperator || $operator instanceof NotEqualsOperator) )
+            {
+                $errors[] = "You can only use the Equals or not Equals operator when searching by Log ID";
+            }
+
+            return $errors;
+        }
+
+        if ($clause->getField() == 'created' || $clause->getField() == 'modified' )
+        {
+
+            $allowed = array(
+                new EqualsOperator(),
+                new NotEqualsOperator(),
+                new GreaterThanOperator(),
+                new LessThanOperator()
+            );
+
+            $allowedString = '';
+            if ( ! $this->operatorAllowed($operator, $allowed, $allowedString) )
+            {
+                $errors[] = "The operator " . $operator->getHumanReadable() . ' can not be used with the field ' . $clause->getField() . '. Operators allowed are ' . $allowedString;
+            }
+            //validate date time
+            return $errors;
+        }
+
+
+        $clientModel = ClassRegistry::init('Client');
+
+        foreach($clients as $client)
+        {
+            $clientEntity = $clientModel->getClientEntityById($client['_id']);
+            $clientField = $clientEntity->getFieldTypeByName( $clause->getField() );
+            if ($clientField == null)
+            {
+                return array('The field "' . $clause->getField() . '" does not exist.');
+            }
+
+            $allowedString = '';
+            if ( ! $this->operatorAllowed($operator, $clientField->getProperties('allowedJqlOperators'), $allowedString) )
+            {
+                $errors[] = "The operator " . $operator->getHumanReadable() . ' can not be used with the field ' . $clause->getField() . '. Operators allowed are ' . $allowedString;
+            }
+
+            //all so check field value validates against field type (inc functions).
+        }
+
+        return $errors;
+    }
+
+    private function operatorAllowed($operator, $allowedArray, &$allowedString)
+    {
+        $operatorAllowed = false;
+        $allowedString = '';
+        foreach($allowedArray as $allowed)
+        {
+            $allowedString .= $allowed->getJqlSymbol() . ' ';
+            if ($operator instanceof $allowed)
+            {
+                $operatorAllowed = true;
+            }
+        }
+
+        return $operatorAllowed;
+
     }
 
     /**
@@ -90,6 +219,7 @@ class PreslogParser extends JqlParser {
 
             //split the log prefix from numeric log id
             $parts = array();
+
             if ( preg_match($logRegex, $value, $parts) )
             {
                 $prefix = $parts[1];
