@@ -24,11 +24,13 @@ class Duration extends FieldTypeAbstract
     protected $aggregationDetails = array(
         'seconds' => array(
             'dataLocation' => 'seconds',
+            'isTopLevel' => false,
             'groupBy' => '$sum',
             'aggregate' => true,
         ),
         'minutes' => array(
             'dataLocation' => 'seconds',
+            'isTopLevel' => false,
             'groupBy' => '$sum',
             'aggregate' => true,
         ),

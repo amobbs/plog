@@ -23,6 +23,7 @@ class Datetime extends FieldTypeAbstract
     protected $aggregationDetails = array(
         'hour' => array(
             'dataLocation' => 'datetime',
+            'isTopLevel' => false,
             'groupBy' => array(
                 'hour' => '$hour',
             ),
@@ -30,6 +31,7 @@ class Datetime extends FieldTypeAbstract
         ),
         'day' => array(
             'dataLocation' => 'datetime',
+            'isTopLevel' => false,
             'groupBy' => array(
                 'month' => '$month',
                 'day' => '$dayOfMonth',
@@ -38,6 +40,7 @@ class Datetime extends FieldTypeAbstract
         ),
         'month' => array(
             'dataLocation' => 'datetime',
+            'isTopLevel' => false,
             'groupBy' => array(
                 'year' => '$year',
                 'month' => '$month',

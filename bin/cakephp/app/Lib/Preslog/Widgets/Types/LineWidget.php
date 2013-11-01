@@ -82,13 +82,13 @@ class LineWidget extends Widget {
             'navigation' => array(
                 'activeColor' => '#3E576F',
                 'animation' => true,
-        'arrowSize' => 12,
+                'arrowSize' => 12,
                 'inactiveColor' => '#CCC',
                 'style' => array(
-            'fontWeight'=> array('bold',
-                'color'=> '#333',
-                'fontSize' => '12px')
-        ),
+                    'fontWeight'=> array('bold',
+                        'color'=> '#333',
+                        'fontSize' => '12px')
+                ),
             ),
         );
 
@@ -118,6 +118,11 @@ class LineWidget extends Widget {
                     && strtolower($type->getProperties('alias')) == strtolower($xParts[0])) {
                     $xFieldType = $type;
                 }
+                else
+                {
+
+                }
+                //add something here to handle created/modified!!!!
             }
 
             $chart->xAxis = array(
@@ -150,7 +155,12 @@ class LineWidget extends Widget {
 
             //go through each point in the series and
             foreach($this->series as $point) {
-                $seriesId = (string)$point['series'];
+                $seriesId = $point['series'];
+                if ( empty($seriesId) )
+                {
+                    $seriesId = '(Empty)' ;
+                }
+
                 if (!isset($seriesData[$seriesId])) {
                     $seriesData[$seriesId] = array(
                         'name' => $seriesId,
@@ -158,8 +168,41 @@ class LineWidget extends Widget {
                     );
                 }
 
-                $pointLabel = $xFieldType->chartDisplay($point['xAxis'], $xParts[1]);
-                $categorieData[$pointLabel] = $pointLabel;
+                $pointLabel = $point['xAxis'];
+                if ($xFieldType == null)
+                {
+                    $pointLabel = '';
+                }
+                else if ($xFieldType instanceof FieldTypeAbstract)
+                {
+                    $pointLabel = $xFieldType->chartDisplay($point['xAxis'], $xParts[1]);
+                }
+                else if ($xFieldType == 'created' || $xFieldType == 'modified')
+                {
+                    switch ($xParts[1]) {
+                        case 'hour':
+                            $pointLabel = $point['xAxis']['hour'];
+                            break;
+                        case 'day':
+                            $pointLabel = $point['xAxis']['day'] . '/' . $point['xAxis']['month'];
+                            break;
+                        case 'month':
+                            $pointLabel = $point['xAxis']['month'] . '/' . substr($point['xAxis']['year'], 2);
+                            break;
+                        case 'all':
+                            $pointLabel = $point['xAxis']['day'] . '/' . $point['xAxis']['month']. '/' . substr($point['xAxis']['year'], 2);
+                    }
+                }
+
+                if ( empty($pointLabel) )
+                {
+                    $categorieData['(Empty)'] = '(Empty)' ;
+                }
+                else
+                {
+                    $categorieData[$pointLabel] = $pointLabel;
+                }
+
 
                 //format the data depending n the field type
                 $pointValue = 0;

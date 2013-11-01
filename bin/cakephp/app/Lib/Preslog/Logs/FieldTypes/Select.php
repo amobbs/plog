@@ -24,6 +24,7 @@ class Select extends FieldTypeAbstract
     protected $aggregationDetails = array(
         'select' => array(
             'dataLocation' => 'selected',
+            'isTopLevel' => false,
             'groupBy' => array(),
             'aggregate' => false,
         ),

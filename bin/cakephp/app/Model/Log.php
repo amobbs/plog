@@ -539,7 +539,8 @@ class Log extends AppModel
         );
 
         //create the group by conditions for each axis we want to show
-        foreach($mongoPipeLine as $axisName => $axisFields) {
+        foreach($mongoPipeLine as $axisName => $axisFields)
+        {
             if (empty($axisFields)) {
                 continue;
             }
@@ -547,7 +548,8 @@ class Log extends AppModel
             $axisFieldIds = array();
 
             //only return the fields we are searching against
-            foreach($axisFields as $fieldName => $value) {
+            foreach($axisFields as $fieldName => $value)
+            {
                 if (isset($fields[$fieldName]))
                 {
                     foreach($fields[$fieldName] as $id) {
@@ -652,6 +654,11 @@ class Log extends AppModel
                     }
 
                     $project['$project'][$axisName] = '$_id.' . $detailName;
+//                    if ( ! $detail['isTopLevel'])
+//                    {
+//                        $project['$project'][$axisName] .= '.' . $detail['dataLocation'];
+//                    }
+
                 }
 
             }

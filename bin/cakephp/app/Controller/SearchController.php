@@ -237,6 +237,7 @@ class SearchController extends AppController
 
             $allFieldNames['hrid'] = true; // so we can search on log id TODO find a way to give this a better name
 
+
             $log = $log['Log'];
 
             //create the format and add in some fields that will always be there
@@ -265,25 +266,27 @@ class SearchController extends AppController
                     'value' => '',
                     'showTooltip' => false
                 );
-                $includeField = true;
+                $fieldAdded = false;
 
                 $fieldName = $fieldInfo['name'];
                 //different fields get displayed in different ways
                 switch ($fieldInfo['type']) {
                     case 'loginfo':
-                        $formattedField = array(
+                        //created/modified are always there so just add them in
+                        $allFieldNames['Created'] = true;
+                        $parsed['attributes'][] = array(
                             'title' => 'Created',
                             'value' => $field['data']['created'],
                             'showTooltip' => false
                         );
-                        $fieldName = 'Created';
-                        $formattedField = array(
+
+                        $allFieldNames['Modified'] = true;
+                        $parsed['attributes'][] = array(
                             'title' => 'Modified',
                             'value' => $field['data']['modified'],
                             'showTooltip' => false
                         );
-                        $fieldName = 'Modified';
-
+                        $fieldAdded = true;
                         break;
                     case 'datetime':
                         if ($field['data']['datetime'] instanceof MongoDate) {
@@ -305,7 +308,7 @@ class SearchController extends AppController
                         $formattedField['value'] = $field['data']['text'];
                 }
 
-                if ($includeField) {
+                if (!$fieldAdded) {
                     $parsed['attributes'][] = $formattedField;
                     $allFieldNames[$fieldName] = true;
                 }

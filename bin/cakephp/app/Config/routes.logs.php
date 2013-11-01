@@ -47,6 +47,21 @@ Router::connect(
     array('controller' => 'Logs', 'action' => 'edit', '[method]' => 'POST'),
     array('pass'=>array('log_id'), 'log_id'=>'([a-zA-Z]+_[0-9]+)?')
 );
+
+/**
+ * Logs: POST (create log)
+ * @SWG\Resource(
+ *      resourcePath="/logs",
+ *      @SWG\Api(
+ *          path="/logs/create",
+ *          @SWG\Operation(
+ *              @SWG\Partial("logs.create"),
+ *              nickname="logs.create",
+ *              httpMethod="post"
+ *          )
+ *      )
+ * )
+ */
 Router::connect(
     '/logs',
     array('controller' => 'Logs', 'action' => 'edit', '[method]' => 'POST')

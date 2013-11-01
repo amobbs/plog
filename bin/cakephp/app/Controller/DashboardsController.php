@@ -2,10 +2,10 @@
 
 
 use Preslog\Logs\FieldTypes\FieldTypeAbstract;
-use Preslog\Logs\FieldTypes\Datetime;
 use Preslog\Widgets\Types\BenchmarkWidget;
 use Swagger\Annotations as SWG;
 use Preslog\Widgets\WidgetFactory;
+use Preslog\Widgets\Widget;
 
 /**
  * Class DashboardController
@@ -259,11 +259,19 @@ class DashboardsController extends AppController
         if (isset($dashboard['widgets'])) {
             foreach($dashboard['widgets'] as $widget) {
                 $widgetObject = null;
-                if(!($widget instanceof Widget)) {
+                if(!($widget instanceof Widget))
+                {
                     $widgetObject = $this->_createWidgetObject($widget);
-                } else {
+                    if (! ($widgetObject instanceof Widget))
+                    {
+                        throw new Exception($widgetObject['errors'][0]);
+                    }
+                }
+                else
+                {
                     $widgetObject = $widget;
                 }
+
                 $widgets[] = $widgetObject;
             }
         }
@@ -722,7 +730,8 @@ class DashboardsController extends AppController
             $mongoPipeLine[$optionName] = array();
 
             foreach($options as $option) {
-                if ($option['fieldType'] instanceof FieldTypeAbstract) {
+                if ($option['fieldType'] instanceof FieldTypeAbstract)
+                {
                     //find all fields for all clients of this type
                     foreach($clients as $clientId) {
                         $client = $this->Client->findById($clientId);
@@ -741,7 +750,9 @@ class DashboardsController extends AppController
                             }
                         }
                     }
-                } else {
+                }
+                else
+                {
                     //these are mostly hardcoded and computed fields
                     switch ($option['fieldType']) {
                         case 'count':
@@ -755,6 +766,7 @@ class DashboardsController extends AppController
                             if ($xName == 'count') {
                                 $mongoPipeLine[$optionName]['count'] = array(
                                     'dataLocation' => 1,
+                                    'isTopLevel' => true,
                                     'groupBy' => '$sum',
                                     'aggregate' => true,
                                 );
@@ -762,17 +774,55 @@ class DashboardsController extends AppController
                             break;
                         case 'created':
                         case 'modified':
-                            if ($xName == 'created' || $xName == 'modified')
-                            {
-                                $mongoPipeLine[$optionName][$option['fieldType']] = array(
+                            $operations = array(
+                                'hour' => array(
                                     'dataLocation' => $option['fieldType'],
+                                    'isTopLevel' => true,
+                                    'groupBy' => array(
+                                        'hour' => '$hour',
+                                    ),
+                                    'aggregate' => false,
+                                ),
+                                'day' => array(
+                                    'dataLocation' => $option['fieldType'],
+                                    'isTopLevel' => true,
+                                    'groupBy' => array(
+                                        'month' => '$month',
+                                        'day' => '$dayOfMonth',
+                                    ),
+                                    'aggregate' => false,
+                                ),
+                                'month' => array(
+                                    'dataLocation' => $option['fieldType'],
+                                    'isTopLevel' => true,
                                     'groupBy' => array(
                                         'year' => '$year',
                                         'month' => '$month',
                                     ),
                                     'aggregate' => false,
-                                );
+                                ),
+                            );
+
+
+                            if ($xName == 'created' || $xName == 'modified')
+                            {
+                                $mongoPipeLine[$optionName][$xName] = $operations[$xOperation];
                             }
+
+                            $xOptions[$option['fieldType']] = array(
+                                array(
+                                    'name' => $option['fieldType'] . ' By Hour',
+                                    'id' => $option['fieldType'] . ':hour',
+                                ),
+                                array(
+                                    'name' => $option['fieldType'] . ' By Day',
+                                    'id' => $option['fieldType'] . ':day',
+                                ),
+                                array(
+                                    'name' => $option['fieldType'] . ' By Month',
+                                    'id' => $option['fieldType'] . ':month',
+                                ),
+                            );
                             break;
                         case 'client':
                             $xOptions['client'] = array(
@@ -785,6 +835,7 @@ class DashboardsController extends AppController
                             if ($xName == 'client') {
                                 $mongoPipeLine[$optionName]['client'] = array(
                                     'dataLocation' => 'client_id',
+                                    'isTopLevel' => true,
                                     'groupBy' => '',
                                     'aggregate' => false,
                                 );
@@ -918,22 +969,34 @@ class DashboardsController extends AppController
                     $parsedPoint = array();
                     foreach($result['result'] as $point) {
                         $parsedPoint = $point;
-                        if ($point['series'][$dataLocation] instanceof MongoId) {
-                            foreach($allClients as $client) {
-                                foreach($client['Client']['fields'] as $format) {
+                        if ($point['series'][$dataLocation] instanceof MongoId)
+                        {
+                            foreach($allClients as $client)
+                            {
+                                foreach($client['Client']['fields'] as $format)
+                                {
 
                                     //it is some kind of select so search through the options for the value
-                                    if (isset($format['data']) && isset($format['data']['options'])) {
-                                        foreach($format['data']['options'] as $option) {
-                                            if ($option['_id'] == $point['series'][$dataLocation]) {
+                                    if (isset($format['data']) && isset($format['data']['options']))
+                                    {
+                                        foreach($format['data']['options'] as $option)
+                                        {
+                                            if ($option['_id'] == $point['series'][$dataLocation])
+                                            {
                                                 $parsedPoint['series'] = $option['name'];
                                             }
                                         }
-                                    } else if ($format['_id'] == $point['series']) { //client
+                                    }
+                                    else if ($format['_id'] == $point['series'])
+                                    { //client
                                         $parsedPoint['series'] = $client['Client']['name'];
                                     }
                                 }
                             }
+                        }
+                        else
+                        {
+                            $parsedPoint['series'] = $point['series'][$dataLocation];
                         }
                         $parsedResult[] = $parsedPoint;
                     }

@@ -17,6 +17,7 @@ class SelectImpact extends Select
     protected $aggregationDetails = array(
         'select' => array(
             'dataLocation' => 'selected',
+            'isTopLevel' => false,
             'groupBy' => array(),
             'aggregate' => false,
         ),

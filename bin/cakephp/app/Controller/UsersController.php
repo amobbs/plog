@@ -25,7 +25,7 @@ class UsersController extends AppController
      */
     public function debugTask()
     {
-        echo Security::hash('test11', 'blowfish', false);
+        echo Security::hash('nopassword', 'blowfish', false);
     }
 
 
@@ -159,6 +159,8 @@ class UsersController extends AppController
                 'clients' => $clients,              // Accessible client list
             );
         }
+
+      //  $response = Security::hash('nopassword', 'blowfish', false);
 
         // Send response
         $this->set('login', $response);
@@ -749,7 +751,7 @@ class UsersController extends AppController
         }
 
         // Save the new password over this user and remove the existing token
-        $user['User']['password'] = $password;
+        $user['User']['password'] = Security::hash($password, 'blowfish', false);
         $user['User']['password-token'] = null;
         $this->User->save($user['User']);
 
