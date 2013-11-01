@@ -91,6 +91,9 @@ class JqlParser {
         }
 
         $jql = strtoupper($jql);
+
+        $jql = str_replace("\n", ' ', $jql);
+
         $this->_jql = $jql;
 
         try
