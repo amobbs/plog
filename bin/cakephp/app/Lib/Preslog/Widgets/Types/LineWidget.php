@@ -32,6 +32,7 @@ class LineWidget extends Widget {
             $this->details['series'] = isset($data['details']['series']) ? $data['details']['series'] : '';
 
             $this->details['trendLine'] = isset($data['details']['trendLine']) ? $data['details']['trendLine'] : false;
+            $this->details['restrictTrendLineTo'] = isset($data['details']['restrictTrendLineTo']) ? $data['details']['restrictTrendLineTo'] : '';
             $this->details['sla'] = isset($data['details']['sla']) ? $data['details']['sla'] : false;
         }
 
@@ -240,6 +241,15 @@ class LineWidget extends Widget {
                 foreach($series as $s)
                 {
                     $seriesWithTrends[] = $s;
+
+                    //restrict trendline to one series
+                    if ( isset($this->details['restrictTrendLineTo'])
+                        && ( !empty($this->details['restrictTrendLineTo']) && strtolower($this->details['restrictTrendLineTo']) !== strtolower($s['name']))
+                    )
+                    {
+                        continue;
+                    }
+
                     //only add trend lines if we have enough data
                     if (sizeof($s['data']) < 3)
                     {
