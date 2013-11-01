@@ -3,6 +3,8 @@
 namespace Preslog\JqlParser\JqlFunction;
 
 
+use MongoDate;
+
 class EndOfDayFunction extends JqlFunction {
     /**
      * construtor
@@ -25,6 +27,6 @@ class EndOfDayFunction extends JqlFunction {
             $date = $this->_convertValueToTimestamp($args);
         }
 
-        return mktime(23, 59, 59, date('n', $date), date('j', $date), date('y', $date));
+        return new MongoDate(mktime(23, 59, 59, date('n', $date), date('j', $date), date('y', $date)));
     }
 }
