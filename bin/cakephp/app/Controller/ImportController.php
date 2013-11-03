@@ -361,6 +361,7 @@ class ImportController extends AppController
 
         // Severity lookyp table
         $severityLookup = array(
+            0=>'For Information Only',
             1=>'level-1',
             2=>'level-2',
             3=>'reported',
@@ -870,13 +871,20 @@ class ImportController extends AppController
 
         $this->_log("$logCount logs added for " . $client['name']);
 
+        $client = $this->Client->findById($client['_id']);
+        $client['Client']['logIncrement'] = $maxLog;
+
         // Update client with top HRID digit
-        $this->Client->save(array(
-            'Client'=>array(
-                '_id'=>$client['_id'],
-                'logIncrement'=>$maxLog,
-            )
-        ));
+        $this->Client->save(
+            $client
+        );
+
+//            array(
+//            'Client'=>array(
+//                '_id'=>$client['_id'],
+//                'logIncrement'=>$maxLog,
+//            )
+//        ));
     }
 
     /**
