@@ -233,7 +233,10 @@ angular.module( 'Preslog.dashboard', [
             window.location = 'http://local.preslog/api/dashboards/' + $scope.id + '/export';
         };
 
-        //create new dashboard
+
+        /**
+         * Create Dashboard Modal
+         */
         $scope.openCreateModal = function () {
             var createModal = $modal.open({
                 templateUrl: 'modules/dashboard/dashboardModal/createDashboardModal.tpl.html',
@@ -263,7 +266,10 @@ angular.module( 'Preslog.dashboard', [
             });
         };
 
-        //edit dashboard
+
+        /**
+         * Edit Dashboard Modal
+         */
         $scope.openEditDashboardModal = function() {
             var editModal = $modal.open({
                 templateUrl: 'modules/dashboard/dashboardModal/createDashboardModal.tpl.html',
@@ -282,6 +288,10 @@ angular.module( 'Preslog.dashboard', [
             });
         };
 
+
+        /**
+         * Add Widget Modal
+         */
         $scope.openAddWidgetModal = function() {
             var addWidgetModal = $modal.open({
                 templateUrl: 'modules/dashboard/widgetModal/addWidgetModal.tpl.html',
@@ -301,7 +311,14 @@ angular.module( 'Preslog.dashboard', [
             });
         };
 
+
+        /**
+         * Edit Widget Modal
+         * @param widget
+         */
         $scope.openEditWidgetModal = function(widget) {
+
+            // Construct modal
             var editWidgetModal = $modal.open({
                 templateUrl: $scope.getEditTemplate(widget.type),
                 controller: 'WidgetCtrl',
@@ -310,6 +327,8 @@ angular.module( 'Preslog.dashboard', [
                     clients: function() { return $scope.splitClients(); }
                 }
             });
+
+            // Modal Close
             editWidgetModal.result.then(function(data) {
                 Restangular.one('dashboards', $scope.id)
                     .one('widgets', widget._id)
