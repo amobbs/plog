@@ -45,7 +45,7 @@ class Loginfo extends FieldTypeAbstract
         'modified'          => array('type' => 'datetime', 'mongoType'=>'mongoDate'),
         'created_user_id'   => array('type' => 'string', 'length'=>24, 'mongoType'=>'mongoId'),
         'modified_user_id'  => array('type' => 'string', 'length'=>24, 'mongoType'=>'mongoId'),
-        'version'           => array('type' => 'int'),
+        'version'           => array('type' => 'integer'),
     );
 
     protected $mongoClientSchema = array();

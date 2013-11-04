@@ -16,19 +16,37 @@ class SelectImpact extends Select
     protected $description = 'A drop-down selection box, including validation between Impact and Duration.';
     protected $aggregationDetails = array(
         'select' => array(
-            'dataLocation' => 'selected',
-            'isTopLevel' => false,
-            'groupBy' => array(),
-            'aggregate' => false,
+            'dataLocation'  => 'selected',
+            'isTopLevel'    => false,
+            'groupBy'       => array(),
+            'aggregate'     => false,
         ),
     );
+
+
+    /**
+     * Client Schema
+     * - Added: Impact sub-field
+     * @var array
+     */
+    protected $mongoClientSchema = array(
+        'options'           => array('type'=>'subCollection', 'schema'=>array(
+            '_id'               => array('type'=>'string', 'length'=>24, 'mongoType'=>'mongoId'),
+            'name'              => array('type'=>'string', 'length'=>255),
+            'deleted'           => array('type'=>'bool'),
+            'order'             => array('type'=>'integer'),
+            'impact'            => array('type'=>'string', 'length'=>'32'),
+        )),
+        'placeholder'       => array('type'=>'string', 'length'=>1024),
+    );
+
 
     /**
      * @var array       List of Impact Types
      */
     protected $impacts = array(
-        'affected'=>'Transmission Affected',
-        'not-affected'=>'No Affect',
+        'affected'      =>'Transmission Affected',
+        'not-affected'  =>'No Affect',
     );
 
 

@@ -406,8 +406,46 @@ class ClientEntity
      */
     public function beforeSave()
     {
-        // This space intentionally left blank
+        // Sub-field beforeSave
+        foreach ($this->fields as &$field)
+        {
+            $field->clientBeforeSave();
+        }
+
+        // Apply attribute IDs
+        $this->attributeBeforeSave( $this->data['attributes'] );
     }
+
+
+    /**
+     * Recursively parse attribute tree
+     * @param   array       $attributes     Attribute layer to parse
+     */
+    protected function attributeBeforeSave( &$attributes )
+    {
+        // Check each item
+        foreach( $attributes as &$attr )
+        {
+            // If has children, parse children
+            if (isset($attr['children']) && sizeof($attr['children']))
+            {
+                $this->attributeBeforeSave( $attr['children'] );
+            }
+
+            // New item?
+            // isn't set, is empty, not 24 char, or has newGroup or newChild.
+            if (!isset($attr['_id']) || empty($attr['_id']) || strlen($attr['_id']) != 24 || isset($attr['newGroup']) || isset($attr['newChild']))
+            {
+                // Remove notification
+                unset($attr['newChild']);
+                unset($attr['newGroup']);
+
+                // New ID (as string)
+                $attr['_id'] = (string) new \MongoId();
+            }
+        }
+    }
+
 
 
     /**
@@ -416,7 +454,11 @@ class ClientEntity
      */
     public function afterFind()
     {
-        // This space intentionally left blank
+        // Sub-field afterFind
+        foreach ($this->fields as &$field)
+        {
+            $field->clientAfterFind();
+        }
     }
 
 

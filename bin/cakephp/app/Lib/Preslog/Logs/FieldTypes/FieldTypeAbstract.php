@@ -414,10 +414,33 @@ abstract class FieldTypeAbstract
         // This space intentionally left blank
     }
 
+
     /**
      * beforeSave Callback
      */
     public function beforeSave()
+    {
+        // This space intentionally left blank
+    }
+
+
+    /**
+     * beforeSave callback for Client
+     */
+    public function clientBeforeSave()
+    {
+        // Set the MongoID of the field if it doesn't exist (eg. new field)
+        if (!isset($this->fieldSettings['_id']) || empty($this->fieldSettings['_id']))
+        {
+            $this->fieldSettings['_id'] = new \MongoId();
+        }
+    }
+
+
+    /**
+     * afterFind callback for Client
+     */
+    public function clientAfterFind()
     {
         // This space intentionally left blank
     }

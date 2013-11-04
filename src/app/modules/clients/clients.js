@@ -153,7 +153,7 @@ angular.module( 'Preslog.clients', [
     /**
      * Admin Client Edit
      */
-    .controller( 'AdminClientEditCtrl', function AdminClientEditController( $scope, titleService, clientData, clientOptions, $filter, $modal ) {
+    .controller( 'AdminClientEditCtrl', function AdminClientEditController( $scope, titleService, clientData, clientOptions, $location, $filter, $modal ) {
 
         /**
          * Init
@@ -258,9 +258,8 @@ angular.module( 'Preslog.clients', [
          */
         $scope.addField = function()
         {
-            // Fetch type of modal
-            var options = $.grep($scope.options.fieldTypes, function(e){ return e.alias === $scope.newField.type; });
-            options = options[0];
+            // Get the field opts
+            var options = $scope.options.fieldTypes[ $scope.newField.type ];
 
             // Set up the field
             var field = {

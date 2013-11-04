@@ -17,11 +17,27 @@ class SelectSeverity extends Select
 
     protected $aggregationDetails = array(
         'select' => array(
-            'dataLocation' => 'selected',
-            'isTopLevel' => false,
-            'groupBy' => array(),
-            'aggregate' => false,
+            'dataLocation'  => 'selected',
+            'isTopLevel'    => false,
+            'groupBy'       => array(),
+            'aggregate'     => false,
         ),
+    );
+
+    /**
+     * Client Schema
+     * - Added: Severity sub-field
+     * @var array
+     */
+    protected $mongoClientSchema = array(
+        'options'           => array('type'=>'subCollection', 'schema'=>array(
+            '_id'               => array('type'=>'string', 'length'=>24, 'mongoType'=>'mongoId'),
+            'name'              => array('type'=>'string', 'length'=>255),
+            'deleted'           => array('type'=>'bool'),
+            'order'             => array('type'=>'integer'),
+            'severity'          => array('type'=>'string', 'length'=>'32'),
+        )),
+        'placeholder'       => array('type'=>'string', 'length'=>1024),
     );
 
 

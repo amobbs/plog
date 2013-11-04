@@ -39,7 +39,7 @@ class Select extends FieldTypeAbstract
             '_id'       => array('type' => 'string', 'length'=>24, 'mongoType'=>'mongoId'),
             'name'      => array('type' => 'string', 'length'=>255),
             'deleted'   => array('type' => 'bool'),
-            'order'     => array('type' => 'int'),
+            'order'     => array('type' => 'integer'),
         )),
         'placeholder'   => array('type' => 'string', 'length'=>1024),
     );
@@ -141,4 +141,30 @@ class Select extends FieldTypeAbstract
         return array($label => $selected);
     }
 
+
+    /**
+     * Before Save
+     * - Populate SELECT option _ids if not set (eg. new)
+     */
+    public function clientBeforeSave()
+    {
+        // Parent actions
+        parent::clientBeforeSave();
+
+        // Set options as array if not already applies.
+        if (!is_array($this->fieldSettings['data']['options']))
+        {
+            $this->fieldSettings['data']['options'] = array();
+        }
+
+        // Skim all options
+        foreach ($this->fieldSettings['data']['options'] as $option )
+        {
+            // Create mongo ID if not set
+            if (!isset($option['_id']) || empty($options['_id']))
+            {
+                $option['_id'] = new \MongoId();
+            }
+        }
+    }
 }

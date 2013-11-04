@@ -1,0 +1,11 @@
+<div class="span6" ng-class="{error: logForm.fields_{{options._id}}.$invalid}">
+    <label class="control-label" for="fields_{{options._id}}">{{ options.label }}</label>
+    <div class="controls">
+        <select id="fields_{{options._id}}"
+                ng-model="log.data.selected"
+                ng-options="o._id as o.name for o in options.data.options"
+                required
+                >
+        </select>
+    </div>
+</div>

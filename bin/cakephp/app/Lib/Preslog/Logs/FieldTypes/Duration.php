@@ -37,7 +37,7 @@ class Duration extends FieldTypeAbstract
     );
 
     protected $mongoSchema = array(
-        'seconds'  => array('type' => 'int'),
+        'seconds'  => array('type' => 'integer'),
     );
 
     protected $mongoClientSchema = array(
