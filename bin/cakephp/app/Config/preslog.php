@@ -45,6 +45,10 @@ Configure::write('Preslog', array(
         'decimalPlacesForPercentages' => 4,
     ),
 
+    'Primetime' => array(
+        'start' => 17,
+        'end' => 0,
+    ),
 
     /**
      * SMS Notification API
@@ -64,7 +68,6 @@ Configure::write('Preslog', array(
         'email' => 'dave@4mation.com.au',
     ),
 
-
     /**
      * regular expressions
      */
@@ -72,7 +75,6 @@ Configure::write('Preslog', array(
         'duration' => '/^(([0-9]{1,3})([h|H]))?(([0-9]{1,3})([m|M]))?(([0-9]{1,3})([s|S]))?$/', //30h20m5s or 20s or 30m20s or 30h10s or 30h or 20m
         'logid' => '/^([A-Z]{1,6})_#(\d+)$/i', //upto 6 letters followed by 1 or more numbers, eg: ABC1234
     ),
-
 
     /**
      * Dashboard IDs
@@ -98,9 +100,12 @@ Configure::write('Preslog.export.exec', array(
  */
 Configure::write('Preslog.export.layout', array(
     //details for log tables
+    'textSize' => 10,
     'titleColWidth' => 2160, // in twips
     'detailColWidth' => 7200, // in twips
     'titleColor' => '1F497D', //in hex - dark blue
     'cellBorder' => 10, //in twips
-    'cellBorderColor' => 'ffffff' //in hex
+    'cellBorderColor' => 'ffffff', //in hex
+    'red' => 'C00000', //red in hex (taken from sample KPI report)
+    'brown' => '984806', //used for Non-primetime, i guess it is brown-ish (taken from sampel KPI report)
 ));

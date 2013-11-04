@@ -47,6 +47,33 @@
                 ng-model="widget.details.trendLine" />
         </div>
     </div>
+
+    <div class="control-group">
+        <label class="control-label">Legend Location </label>
+        <div class="controls">
+            <select ng-model="widget.details.legendLocation">
+                <option value="1">Right</option>
+                <option value="2">Bottom</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label">Show Labels </label>
+        <div class="controls">
+            <input
+                    type="checkbox"
+                    ng-model="widget.details.showLabels" />
+        </div>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label">Restrict Trend Line to </label>
+        <div class="controls">
+            <input type="text" placeholder="Name..." value="" ng-model="widget.details.restrictTrendLineTo"/>
+        </div>
+    </div>
+
     <div class="control-group">
         <label class="control-label">Y Axis </label>
         <div class="controls">
@@ -82,7 +109,7 @@
     <div class="control-group">
         <label class="control-label">Refresh Interval </label>
         <div class="controls">
-            <input type="text" placeholder="Minutes..." value="" ng-model="widget.data.refresh" />
+            <input type="text" placeholder="Minutes..." value="" ng-model="widget.details.refresh" />
         </div>
     </div>
 </div>

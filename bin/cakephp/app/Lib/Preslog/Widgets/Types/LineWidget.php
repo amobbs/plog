@@ -34,6 +34,9 @@ class LineWidget extends Widget {
             $this->details['trendLine'] = isset($data['details']['trendLine']) ? $data['details']['trendLine'] : false;
             $this->details['restrictTrendLineTo'] = isset($data['details']['restrictTrendLineTo']) ? $data['details']['restrictTrendLineTo'] : '';
             $this->details['sla'] = isset($data['details']['sla']) ? $data['details']['sla'] : false;
+            $this->details['legendLocation'] = isset($data['details']['legendLocation']) ? $data['details']['legendLocation'] : 1;
+            $this->details['showLabels'] = isset($data['details']['showLabels']) ? $data['details']['showLabels'] : false;
+
         }
 
         $prelogSettings = Configure::Read('Preslog');
@@ -73,13 +76,21 @@ class LineWidget extends Widget {
             'x' => - 20,
         );
 
+        $align = 'right';
+        $verticalAlign = 'middle';
+        $legendWidth = 100;
+        if ( isset($this->details['legendLocation']) && $this->details['legendLocation'] === 2) //bottom
+        {
+            $align = 'center';
+            $verticalAlign = 'bottom';
+        }
 
         $chart->legend = array(
-            'align' => 'right',
-            'verticalAlign' => 'middle',
+            'align' => $align,
+            'verticalAlign' => $verticalAlign,
             'borderWidth' => 0,
             'layout' => 'vertical',
-            'width' => 100,
+            'width' => $legendWidth,
             'navigation' => array(
                 'activeColor' => '#3E576F',
                 'animation' => true,
@@ -92,6 +103,15 @@ class LineWidget extends Widget {
                 ),
             ),
         );
+
+        if ($this->details['legendLocation'] === "2") //bottom
+        {
+            $chart->legend['align'] = 'center';
+            $chart->legend['verticalAlign'] = 'bottom';
+            $chart->legend['layout'] = 'horizontal';
+            $chart->chart['marginRight'] = 70;
+            unset($chart->legend['width']);
+        }
 
         if (empty($this->series)) {
             $chart->series = array(
@@ -213,7 +233,13 @@ class LineWidget extends Widget {
                     $pointValue = $point['yAxis'];
                 }
 
-                $seriesData[$seriesId]['data'][] = $pointValue;
+                $data = array();
+                $data['y'] = $pointValue;
+                $data['dataLabels'] = array(
+                    'enabled' => true,
+                );
+
+                $seriesData[$seriesId]['data'][] = $data;
             }
 
             $series = array_values($seriesData);
@@ -256,10 +282,11 @@ class LineWidget extends Widget {
                         continue;
                     }
 
+                    $sData = $this->flattenData($s['data']);
                     $seriesWithTrends[] = array(
                         'name' => 'Linear ' . $s['name'],
                         'type' => 'line',
-                        'data' =>  $this->calculateTrendLine($s['data']),
+                        'data' =>  $this->calculateTrendLine($sData),
                         'marker' => array(
                             'enabled' => false,
                         ),
@@ -289,65 +316,5 @@ class LineWidget extends Widget {
 
         return $chart->renderOptions();
     }
-
-
-    private function calculateSLALine($dates)
-    {
-        //find all the times whena  network comes live for the affected clients
-        $slaDates = array();
-        foreach( $this->clients as $client )
-        {
-            foreach( $client['Client']['attributes'] as $attr)
-            {
-                if ( isset($attr['network']) && $attr['network'] )
-                {
-                    foreach ( $attr['children'] as $child )
-                    {
-                        if ( isset($child['live_date']) )
-                        {
-                            $bhpmDates[] = $child['live_date'];
-                        }
-                        else
-                        {
-                            $bhpmDates[] = '1970-01-01';
-                        }
-                    }
-                }
-            }
-        }
-
-        $preslogSettings = Configure::read('Preslog');
-        $bhpm = $preslogSettings['Quantities']['bhpm'];
-        $bhpmTotal = 0;
-
-        //find BHPM total before start of graph
-        foreach( $bhpmDates as $bDate )
-        {
-            if ( $bDate < $dates[0])
-            {
-                $bhpmTotal += $bhpm;
-            }
-        }
-
-        //calculate running total of bhpm during graph period
-        $result = array();
-        foreach( $dates as $date )
-        {
-            $startOfMonth = mktime(0, 0, 0, date('n', $date), 1, date('y', $date));
-            $endOfMonth = mktime(23, 59, 59, date('n', $date), date('t', $date), date('y', $date));
-            foreach( $bhpmDates as $bDate )
-            {
-                if ( $bDate > $startOfMonth and $bDate < $endOfMonth)
-                {
-                    $bhpmTotal += $bhpm;
-                }
-            }
-            $result[] = $bhpmTotal;
-        }
-
-        return $result;
-
-    }
-
 
 }

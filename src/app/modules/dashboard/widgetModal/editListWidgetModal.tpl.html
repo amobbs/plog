@@ -23,9 +23,18 @@
     </div>
 
     <div class="control-group">
+        <label class="control-label">Include Summary in export </label>
+        <div class="controls">
+            <input
+                    type="checkbox"
+                    ng-model="widget.details.summary" />
+        </div>
+    </div>
+
+    <div class="control-group">
         <label class="control-label">Refresh Interval </label>
         <div class="controls">
-            <input type="text" placeholder="Minutes..." value="" ng-model="widget.data.refresh" />
+            <input type="text" placeholder="Minutes..." value="" ng-model="widget.details.refresh" />
         </div>
     </div>
 </div>
