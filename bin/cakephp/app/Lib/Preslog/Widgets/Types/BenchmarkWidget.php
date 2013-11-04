@@ -180,35 +180,6 @@ class BenchmarkWidget extends Widget {
                 $oatYAxis,
             );
 
-            //we can't combine sla lines, so this only works if one client is selected
-            if ( $this->details['sla'] !== false )
-            {
-                $clientName =  $this->details['sla'];
-                $clientModel = ClassRegistry::init('Client');
-                $client = $clientModel->find('first', array(
-                    'conditions' => array(
-                        'name' => $clientName,
-                    ),
-                ));
-
-                if ( isset($client['Client']) )
-                {
-                    $series[] = array(
-                        'name' => 'SLA',
-                        'type' => 'line',
-                        'color' => '#FF0000',
-                        'data' =>  $this->calculateSLALine($dates, $client['Client']['benchmark']),
-                        'marker' => array(
-                            'enabled' => false,
-                        ),
-                        'dashStyle' => 'dash',
-                        'enableMouseTracking' => false,
-                    );
-                }
-
-            }
-
-
             $chart->tooltip->shared = true;
 
             if (isset($this->details['trendLine']) && $this->details['trendLine'])
@@ -240,6 +211,35 @@ class BenchmarkWidget extends Widget {
                     );
                 }
                 $series = $seriesWithTrends;
+            }
+
+            //we can't combine sla lines, so this only works if one client is selected
+            //also no trend lines for SLA since it is a straight line
+            if ( $this->details['sla'] !== false )
+            {
+                $clientName =  $this->details['sla'];
+                $clientModel = ClassRegistry::init('Client');
+                $client = $clientModel->find('first', array(
+                    'conditions' => array(
+                        'name' => $clientName,
+                    ),
+                ));
+
+                if ( isset($client['Client']) )
+                {
+                    $series[] = array(
+                        'name' => 'SLA',
+                        'type' => 'line',
+                        'color' => '#FF0000',
+                        'data' =>  $this->calculateSLALine($dates, $client['Client']['benchmark']),
+                        'marker' => array(
+                            'enabled' => false,
+                        ),
+                        'dashStyle' => 'dash',
+                        'enableMouseTracking' => false,
+                    );
+                }
+
             }
 
             if ( isset($this->details['bhpm']) && $this->details['bhpm'])
