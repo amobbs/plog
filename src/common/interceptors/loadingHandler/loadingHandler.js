@@ -1,45 +1,138 @@
 /**
- * This module will listen to all requests/responses and trigger
- * a loading event if the total time is over Nth second(s). This event
- * could be used to trigger a "Please Wait While Page Is Loading" message.
+ * Loading Handler
+ * Count requests/responses. When there are active requests, start a timer.
+ * If the timer goes above X seconds, send a broadcast for (loadingHandler.loading", true) (show dialog)
+ * When the requests are completed, wait X milliseconds.
+ * After X milliseconds, if there are no more requests, send a broadcast for (loadingHandler.loading", false) (close dialog)
  */
 angular.module('loadingHandler', [])
+
     /**
-     * Change this if you want the loading events triggered earlier/later
-     * Default is 1 second (1000 milliseconds)
+     * LOADING_MIN_THRESHOLD: Minimum duration that must pass before the loading message is displayed
+     * LOADING_MIN_DISPLAY_DURATION: Minimum time the loading message must be shown for. Prevents "flashes" of the loading screen.
+     * LOADING_EXIT_GRACE: Grace period for Loading dialog dismissal. Prevents sequential requests resulting in the dialog being cleared.
      *
      * @integer - milliseconds
      */
-    .constant('FADE_IN_DELAY', 1000)
-    .constant('FADE_OUT_DELAY', 1500)
-    .config(function($httpProvider, FADE_IN_DELAY, FADE_OUT_DELAY) {
-        var loading = false,
-            numberOfRequests = 0,
-            requestTimer,
-            responseTimer,
-            increaseRequest = function($rootScope, $timeout) {
+    .constant('LOADING_ENTRY_GRACE', 1000)    // 1s
+    .constant('LOADING_MIN_DISPLAY_DURATION', 1000)     // 1s
+    .constant('LOADING_EXIT_GRACE', 100)// 0.2s
+
+    /**
+     * Request handler
+     */
+    .config(function($httpProvider, LOADING_ENTRY_GRACE, LOADING_MIN_DISPLAY_DURATION, LOADING_EXIT_GRACE) {
+        var loading = false,            // Loading process active?
+            loadingDisplayed = false,   // Loading panel visible?
+            loadingGrace = false,       // Grace period for dialog still active?
+            numberOfRequests = 0,       // Request # tracker
+            entryTimer,                 // Timer for pending display
+            graceTimer,                 // Timer for grace period; loader must be open for this period
+            exitTimer,                  // Timer for pending hide
+
+            /**
+             * Increst requests
+             * @param $rootScope
+             * @param $timeout
+             */
+            increaseRequest = function($rootScope, $timeout)
+            {
                 numberOfRequests++;
-                if (! loading) {
+
+                // Only instigate the timer if
+                if (!loading)
+                {
                     loading = true;
-                    $timeout.cancel(responseTimer);
-                    requestTimer = $timeout(function() {
-                        $rootScope.$broadcast('loadingHandler.loading', loading);
-                    }, FADE_IN_DELAY);
+
+                    // If visible
+                    if (!loadingDisplayed)
+                    {
+                        // Timer for entry activity
+                        entryTimer = $timeout(function()
+                        {
+                            // Mark as displayed, and grace period active.
+                            loadingDisplayed = true;
+                            loadingGrace = true;
+
+                            // Broadcast
+                            $rootScope.$broadcast('loadingHandler.loading', loading);
+
+                            // Instigate Exit Timer
+                            // Hide the dialog after grace period, if no longer loading.
+                            graceTimer = $timeout(function()
+                            {
+                                // Clear this timer
+                                loadingGrace = false;
+
+                                // If the dialog should be cleared (no load pending)
+                                if (!loading)
+                                {
+                                    hideLoadingDialog($rootScope, $timeout);
+                                }
+                            }, LOADING_MIN_DISPLAY_DURATION);
+
+                        }, LOADING_ENTRY_GRACE);
+                    }
                 }
             },
+
+            /**
+             * Decrease requests until empty.
+             * @param $rootScope
+             * @param $timeout
+             */
             decreaseRequest = function($rootScope, $timeout) {
-                if (loading) {
+                if (loading)
+                {
                     numberOfRequests--;
-                    if (numberOfRequests === 0) {
+                    if (numberOfRequests === 0)
+                    {
+                        // cancel loader
                         loading = false;
-                        responseTimer = $timeout(function() {
-                            $timeout.cancel(requestTimer);
-                            $rootScope.$broadcast('loadingHandler.loading', loading);
-                        }, FADE_OUT_DELAY);
+
+                        // Clear loading timer if present
+                        $timeout.cancel(entryTimer);
+
+                        // If the dialog is still visible
+                        if (loadingDisplayed)
+                        {
+                            // If the grace period has passed already
+                            if (!loadingGrace)
+                            {
+                                // Clear loader
+                                hideLoadingDialog($rootScope, $timeout);
+                            }
+                        }
                     }
                 }
             };
 
+
+            hideLoadingDialog = function( $rootScope, $timeout )
+            {
+                // Restart the timer
+                $timeout.cancel(exitTimer);
+
+                // Create timer
+                exitTimer = $timeout(function()
+                {
+                    // If the dialog should be cleared (no load pending)
+                    if (!loading)
+                    {
+                        // Hide display
+                        loadingDisplayed = false;
+                        $rootScope.$broadcast('loadingHandler.loading', loading);
+                    }
+                }, LOADING_EXIT_GRACE);
+            };
+
+
+        /**
+         * HTTP Interceptor
+         * - Add count of HTTP activity when a request is commenced
+         * - Remove count of HTTP activity when a request completes or fails.
+         * Note: $timeout is passed as it's unavailable where the functions are defined.
+         */
         $httpProvider.interceptors.push(['$q', '$rootScope', '$timeout', function($q, $rootScope, $timeout) {
             return {
                 'request': function(config) {
