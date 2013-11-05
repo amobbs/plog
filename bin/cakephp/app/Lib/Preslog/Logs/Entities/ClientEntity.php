@@ -119,6 +119,9 @@ class ClientEntity
             }
         }
 
+        // Remove fields from generic data store
+        unset($clientData['fields']);
+
         // Store resultant client data
         $this->data = $clientData;
 
@@ -142,11 +145,14 @@ class ClientEntity
     {
         // Copy the data to a doc
         $doc = $this->data;
+        $doc['fields'] = array();
 
         // Use mongo datasource to convert Array to Document in fields
-        foreach ($doc['fields'] as &$field)
+        foreach ($this->fields as &$field)
         {
-            $this->fields[ $field['_id'] ]->clientToDocument($field);
+            // Convert Entity
+            $f = $field->clientToDocument();
+            $doc['fields'][] = $f;
         }
 
         return $doc;

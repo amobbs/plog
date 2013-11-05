@@ -94,10 +94,6 @@ angular.module( 'Preslog.clients', [
      */
     .controller( 'AdminClientListCtrl', function AdminClientListController( $scope, titleService, ngTableParams, Restangular, $filter, clientList ) {
 
-        /**
-         * On Load
-         */
-
         // Title
         titleService.setTitle( ['Clients', 'Admin'] );
 
@@ -155,9 +151,8 @@ angular.module( 'Preslog.clients', [
      */
     .controller( 'AdminClientEditCtrl', function AdminClientEditController( $scope, titleService, clientData, clientOptions, $location, $filter, $modal ) {
 
-        /**
-         * Init
-         */
+         // ID Pool. Increment a unique ID for field names when created, for their ID.
+        var idPool = 1;
 
         // Title
         titleService.setTitle( ['Clients', 'Admin'] );
@@ -263,7 +258,7 @@ angular.module( 'Preslog.clients', [
 
             // Set up the field
             var field = {
-                '_id': null,
+                '_id': idPool++,
                 'name': $scope.newField.name,
                 'label': $scope.newField.label,
                 'type': $scope.newField.type,
@@ -374,7 +369,7 @@ angular.module( 'Preslog.clients', [
         {
             // Set up the field
             var group = {
-                '_id': null,
+                '_id': idPool++,
                 'name': $scope.newGroup.name,
                 'label': $scope.newGroup.label,
                 'order': $scope.client.attributes.length,

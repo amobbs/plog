@@ -46,6 +46,10 @@
 
     <h3>Drop-down Options</h3>
 
+    <div class="alert alert-info">
+        The severity "Level" selection is used to identify the severity of the issue. These properties are used during dispatching of notifications.
+    </div>
+
     <table class="table table-condensed table-admin-fields">
         <thead>
             <tr>
@@ -83,6 +87,12 @@
                 </td>
                 <td>
                     <input type="text" ng-model="newOption.name" placeholder="Name..." />
+                </td>
+                <td>
+                    <select ng-model="newOption.severity"
+                            ng-options="key as option for (key, option) in options.severities"
+                            placeholder="Severity level...">
+                    </select>
                 </td>
                 <td>
                     <button class="btn btn-primary" ng-click="addOption()"><i class="icon icon-plus"></i> Add Option</button>
