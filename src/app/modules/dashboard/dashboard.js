@@ -462,13 +462,16 @@ angular.module( 'Preslog.dashboard', [
         };
         $scope.finishedUpdating = function(widgetId)
         {
-            for(var id in $scope.updatingWidgets)
-            {
-                if ($scope.updatingWidgets[id] == widgetId)
+            setTimeout(function() {
+                for(var id in $scope.updatingWidgets)
                 {
-                    $scope.updatingWidgets.splice(id, 1);
+                    if ($scope.updatingWidgets[id] == widgetId)
+                    {
+                        $scope.updatingWidgets.splice(id, 1);
+                    }
                 }
-            }
+            }, 500);
+
         };
 
         //log list widget needs some different logic to display
@@ -506,7 +509,7 @@ angular.module( 'Preslog.dashboard', [
                                 $scope.dashboard.widgets[id].params.total = result.total;
                                 $scope.dashboard.widgets[id].params.logs = result.logs;
                                 $scope.dashboard.widgets[id].params.sorting = result.fields;
-                                setTimeout(function() { $scope.finishedUpdating(result.widgetid); }, 1000);
+                                $scope.finishedUpdating(result.widgetid);
                             }
                         }
 
