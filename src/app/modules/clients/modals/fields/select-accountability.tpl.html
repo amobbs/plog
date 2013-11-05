@@ -46,6 +46,10 @@
 
     <h3>Drop-down Options</h3>
 
+    <div class="alert alert-info">
+        The "Accountability" selection is used to identify who is accountable. These properties are used during report generation.
+    </div>
+
     <table class="table table-condensed table-admin-fields">
         <thead>
             <tr>
@@ -83,6 +87,13 @@
                 </td>
                 <td>
                     <input type="text" ng-model="newOption.name" placeholder="Name..." />
+                </td>
+                <td>
+                    <select ng-model="newOption.accountability"
+                            ng-options="key as option for (key, option) in options.accountabilities"
+                            required
+                            placeholder="Accountability...">
+                    </select>
                 </td>
                 <td>
                     <button class="btn btn-primary" ng-click="addOption()"><i class="icon icon-plus"></i> Add Option</button>

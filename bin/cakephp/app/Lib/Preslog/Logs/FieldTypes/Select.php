@@ -158,10 +158,10 @@ class Select extends FieldTypeAbstract
         }
 
         // Skim all options
-        foreach ($this->fieldSettings['data']['options'] as $option )
+        foreach ($this->fieldSettings['data']['options'] as &$option )
         {
             // Create mongo ID if not set
-            if (!isset($option['_id']) || empty($options['_id']))
+            if (!isset($option['_id']) || empty($option['_id']) || strlen($option['_id']) != 24)
             {
                 $option['_id'] = new \MongoId();
             }

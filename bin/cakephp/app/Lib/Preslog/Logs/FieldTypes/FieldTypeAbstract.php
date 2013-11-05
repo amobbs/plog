@@ -256,12 +256,16 @@ abstract class FieldTypeAbstract
 
     /**
      * Convert the given field to an Array, based on the field schema
-     * @param   array   $field      Field data
+     * @return      array       Document version of this field
      */
-    public function clientToDocument( &$field )
+    public function clientToDocument()
     {
-        // Standard conversion
-        $this->dataSource->convertToDocument($field['data'], $this->mongoClientSchema, array());
+        $doc = $this->fieldSettings;
+
+        // Standard conversion of data
+        $this->dataSource->convertToDocument($doc['data'], $this->mongoClientSchema, array());
+
+        return $doc;
     }
 
 
@@ -429,10 +433,10 @@ abstract class FieldTypeAbstract
      */
     public function clientBeforeSave()
     {
-        // Set the MongoID of the field if it doesn't exist (eg. new field)
-        if (!isset($this->fieldSettings['_id']) || empty($this->fieldSettings['_id']))
+        // Set the MongoID of the field if it doesn't exist, or isn't the right format (eg. new field)
+        if (!isset($this->fieldSettings['_id']) || empty($this->fieldSettings['_id']) || strlen($this->fieldSettings['_id']) != 24)
         {
-            $this->fieldSettings['_id'] = new \MongoId();
+            $this->fieldSettings['_id'] = (string) new \MongoId();
         }
     }
 

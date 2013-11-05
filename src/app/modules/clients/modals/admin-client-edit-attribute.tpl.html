@@ -4,22 +4,32 @@
 </div>
 <div class="modal-body">
     <div class="row-fluid">
-        <div class="span8">
-            <div class="form-inline">
-                <label>Name:</label>
-                <input type="text" class="input-large" id="addAttr" ng-model="$parent.newAttrName"/>
-                <button class="btn btn-primary" ng-click="addAttr()"><i class="icon-plus"></i>Add</button>
-            </div>
-            <div class="form-inline">
-                <label class="checkbox">
-                    is Network group
-                    <input
-                        type="checkbox"
-                        ng-model="group.network" />
-                </label>
+        <div hierarchy-fields="group.children" hierarchy-selected="hierarchySelected" hide-deleted="false" drag-and-drop="true" allow-edit="true" ></div>
+    </div>
+</div>
+<div class="modal-footer">
+    <div class="row-fluid">
+        <div class="span4 form-horizontal">
+            <div class="control-group">
+                <div class="pull-left">
+                    <input placeholder="New item name..." type="text" class="input-large" id="addAttr" ng-model="$parent.newAttrName"/>
+                    <button class="btn btn-primary" ng-click="addAttr()"><i class="icon-plus"></i>Add Item</button>
+                </div>
             </div>
         </div>
-        <div class="span4">
+        <div class="span5 form-horizontal">
+            <div class="control-group">
+                <div class="pull-left">
+                    <label class="checkbox">
+                        <input type="checkbox"
+                               ng-model="group.network"
+                               />
+                        This is a Network Group
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="span3">
             <div class="btn-group pull-right">
                 <a class="btn dropdown-toggle" data-toggle="dropdown" gref="#">
                     With selected
@@ -33,12 +43,6 @@
             </div>
         </div>
     </div>
-    <br/>
-    <div class="row-fluid">
-        <div hierarchy-fields="group.children" hierarchy-selected="hierarchySelected" hide-deleted="false" drag-and-drop="true" allow-edit="true" ></div>
-    </div>
-</div>
-<div class="modal-footer">
     <div class="row-fluid">
         <button class="btn btn-danger pull-left" ng-show="!group.newGroup" ng-click="remove()" ng-confirm-click="Are you sure you want to delete this hierarchy group?"><i class="icon icon-remove"></i> Delete Entire Hierarchy</button>
         <button class="btn" ng-click="dismiss()">Discard changes</button>
