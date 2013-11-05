@@ -39,7 +39,7 @@
             <div class="widget-box">
                 <div class="widget-title">
                         <span class="widget-icon">
-                            <i class="icon-user"></i>
+                            <i class="icon-briefcase"></i>
                         </span>
                     <h3>Client Details</h3>
                 </div>
@@ -58,6 +58,40 @@
                                     />
                             <span class="help-inline" ng-show="clientForm.name.$dirty && clientForm.name.$invalid && clientForm.name.$error.required">Must not be empty.</span>
                             <span class="help-inline" ng-show="clientForm.name.$error.validateServer" ng-bind="serverErrors.name"></span>
+                        </div>
+                    </div>
+
+                    <!-- Contact Details -->
+                    <div class="control-group" ng-class="{error: clientForm.contact.$invalid}">
+                        <label class="control-label" for="inputContact">Client Contact</label>
+                        <div class="controls">
+                            <textarea
+                                    rows="4"
+                                    id="inputContact"
+                                    name="contact"
+                                    ng-model="client.contact"
+                                    ></textarea>
+                            <span class="help-inline" ng-show="clientForm.contact.$error.validateServer" ng-bind="serverErrors.contact"></span>
+                        </div>
+                    </div>
+
+                    <!-- Short-hand name -->
+                    <div class="control-group" ng-class="{error: clientForm.shortName.$dirty && clientForm.shortName.$invalid}">
+                        <label class="control-label" for="inputShortName">Short-hand Name</label>
+                        <div class="controls">
+                            <input type="text"
+                                   id="inputShortName"
+                                   name="shortName"
+                                   placeholder="Short-hand Name.."
+                                   ng-model="client.shortName"
+                                   ng-maxlength="6"
+                                   required
+                                   tooltip-placement="right"
+                                   tooltip="Short names are used in locations where space is at a premium, such as SMS notifications."
+                                    />
+                            <span class="help-inline" ng-show="clientForm.shortName.$dirty && clientForm.shortName.$invalid && clientForm.shortName.$error.required">Must not be empty.</span>
+                            <span class="help-inline" ng-show="clientForm.shortName.$dirty && clientForm.shortName.$invalid && clientForm.shortName.$error.maxlength">Must only contain up to 6 characters.</span>
+                            <span class="help-inline" ng-show="clientForm.shortName.$error.validateServer" ng-bind="serverErrors.shortName"></span>
                         </div>
                     </div>
 
@@ -83,27 +117,6 @@
                         </div>
                     </div>
 
-                    <!-- Short-hand name -->
-                    <div class="control-group" ng-class="{error: clientForm.shortName.$dirty && clientForm.shortName.$invalid}">
-                        <label class="control-label" for="inputShortName">Short-hand Name</label>
-                        <div class="controls">
-                            <input type="text"
-                                   id="inputShortName"
-                                   name="shortName"
-                                   placeholder="Short-hand Name.."
-                                   ng-model="client.shortName"
-                                   ng-maxlength="6"
-                                   required
-                                   tooltip-placement="right"
-                                   tooltip="Short names are used in locations where space is at a premium, such as SMS notifications."
-                            />
-                            <span class="help-inline" ng-show="clientForm.shortName.$dirty && clientForm.shortName.$invalid && clientForm.shortName.$error.required">Must not be empty.</span>
-                            <span class="help-inline" ng-show="clientForm.shortName.$dirty && clientForm.shortName.$invalid && clientForm.shortName.$error.maxlength">Must only contain up to 6 characters.</span>
-                            <span class="help-inline" ng-show="clientForm.shortName.$error.validateServer" ng-bind="serverErrors.shortName"></span>
-                        </div>
-                    </div>
-
-
                     <!-- Log Prefix -->
                     <div class="control-group" ng-class="{error: clientForm.logPrefix.$dirty && clientForm.logPrefix.$invalid}">
                         <label class="control-label" for="inputLogPrefix">Log Prefix</label>
@@ -124,23 +137,8 @@
                         </div>
                     </div>
 
-
-                    <!-- Contact Details -->
-                    <div class="control-group" ng-class="{error: clientForm.contact.$invalid}">
-                        <label class="control-label" for="inputContact">Client Contact</label>
-                        <div class="controls">
-                            <textarea
-                                    rows="4"
-                                    id="inputContact"
-                                    name="contact"
-                                    ng-model="client.contact"
-                                    ></textarea>
-                            <span class="help-inline" ng-show="clientForm.contact.$error.validateServer" ng-bind="serverErrors.contact"></span>
-                        </div>
-                    </div>
-
                     <!-- SLA Benchmark -->
-                    <div class="control-group" ng-class="{error: clientForm.benchmark.$invalid}">
+                    <div class="control-group" ng-class="{error: clientForm.benchmark.$invalid && clientForm.benchmark.$dirty}">
                         <label class="control-label" for="inputBenchmark">SLA Benchmark</label>
                         <div class="controls">
                             <div class="input-append"
@@ -203,7 +201,7 @@
         <div class="widget-box">
             <div class="widget-title">
                 <span class="widget-icon">
-                    <i class="icon-user"></i>
+                    <i class="icon-list"></i>
                 </span>
                 <h3>Custom Fields</h3>
                 <div class="widget-buttons">
@@ -251,24 +249,30 @@
                         <tfoot>
                             <tr>
                                 <td>&nbsp;</td>
-                                <td>
-                                    <input type="text"
+                                <td class="control-group" ng-class="{error: newFieldForm.label.$dirty && newFieldForm.label.$invalid}">
+                                    <input name="label"
+                                           type="text"
                                            placeholder="Friendly Label..."
                                            ng-model="newField.label"
                                            required />
                                 </td>
-                                <td>
-                                    <input type="text"
+                                <td class="control-group" ng-class="{error: newFieldForm.name.$dirty && newFieldForm.name.$invalid}">
+                                    <input name="name"
+                                           type="text"
                                            placeholder="Field Name..."
                                            ng-model="newField.name"
-                                           required />
+                                           required
+                                           ng-pattern="/^[a-z\-_]*$/"
+                                            />
                                 </td>
-                                <td>
-                                    <select id="input-newField-fieldType"
+                                <td class="control-group" ng-class="{error: newFieldForm.type.$dirty && newFieldForm.type.$invalid}">
+                                    <select name="type"
+                                        id="input-newField-fieldType"
                                         ng-model="newField.type"
                                         name="newField-fieldType"
                                         ng-options="option.alias as option.name for (key, option) in options.fieldTypes"
                                         required>
+                                        <option value="">Select Type...</option>
                                     </select>
                                 </td>
                                 <td>&nbsp;</td>
@@ -278,6 +282,9 @@
                             </tr>
                         </tfoot>
                     </table>
+
+                    <div class="alert alert-error" ng-show="newFieldForm.name.$dirty && newFieldForm.name.$invalid && newFieldForm.name.$error.pattern">"Field Name" must only contain lowercase characters, dash and underscore.</div>
+
                 </form>
             </div>
         </div>
@@ -286,7 +293,7 @@
         <div class="widget-box">
             <div class="widget-title">
                 <span class="widget-icon">
-                    <i class="icon-user"></i>
+                    <i class="icon-folder-open"></i>
                 </span>
                 <h3>Hierarchical Groups</h3>
                 <div class="widget-buttons">
@@ -327,17 +334,21 @@
                         <tfoot>
                             <tr>
                                 <td>&nbsp;</td>
-                                <td>
-                                    <input type="text"
+                                <td class="control-group" ng-class="{error: newGroupForm.label.$dirty && newGroupForm.label.$invalid}">
+                                    <input name="label"
+                                           type="text"
                                            placeholder="Label.."
                                            ng-model="newGroup.label"
+
                                            required
                                            />
                                 </td>
-                                <td>
-                                    <input type="text"
+                                <td class="control-group" ng-class="{error: newGroupForm.name.$dirty && newGroupForm.name.$invalid}">
+                                    <input name="name"
+                                           type="text"
                                            placeholder="Name.."
                                            ng-model="newGroup.name"
+                                           ng-pattern="/^[a-z\-_]*$/"
                                            required
                                            />
                                 </td>

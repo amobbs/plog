@@ -71,7 +71,8 @@
                     <select ng-model="option.severity"
                             ng-options="key as option for (key, option) in options.severities"
                             required
-                            placeholder="Severity level...">
+                            >
+                        <option value="">Select Severity Level...</option>
                     </select>
                 </td>
                 <td>
@@ -91,7 +92,8 @@
                 <td>
                     <select ng-model="newOption.severity"
                             ng-options="key as option for (key, option) in options.severities"
-                            placeholder="Severity level...">
+                            >
+                        <option value="">Select Severity Level...</option>
                     </select>
                 </td>
                 <td>
