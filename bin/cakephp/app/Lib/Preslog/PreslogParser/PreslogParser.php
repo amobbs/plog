@@ -355,13 +355,10 @@ class PreslogParser extends JqlParser {
             //sometimes we get mongoIds some times we get strings (not sure why)
             if ( isset($client['Client']) )
             {
-                $clientEntity = $clientModel->getClientEntityById($client['Client']['_id']);
-            }
-            else
-            {
-                $clientEntity = $clientModel->getClientEntityById((string)$client['_id']);
+                $client = $client['Client'];
             }
 
+            $clientEntity = $clientModel->getClientEntityById((string)$client['_id']);
 
             $operator = $clause->getOperator();
 
@@ -370,23 +367,26 @@ class PreslogParser extends JqlParser {
             {
                 //the field name does not exist maybe it is an attribute
                 $attributeIds = array();
-                foreach($client['attributes'] as $attr)
+                if ( isset($client['attributes']) )
                 {
-                    //match fieldname to group name
-                    if (strtolower($fieldName) == strtolower($attr['name']))
+                    foreach($client['attributes'] as $attr)
                     {
-                        //check all children for matching attribute
-                        foreach($attr['children'] as $child)
+                        //match fieldname to group name
+                        if (strtolower($fieldName) == strtolower($attr['name']))
                         {
-                            if ($operator->matches($child['name'], $value))
+                            //check all children for matching attribute
+                            foreach($attr['children'] as $child)
                             {
-                                $attributeIds[] = new MongoId($child['_id']);
-                            }
-                            foreach($child['children'] as $subChild)
-                            {
-                                if ($operator->matches($subChild['name'], $value))
+                                if ($operator->matches($child['name'], $value))
                                 {
-                                    $attributeIds[] = new MongoId($subChild['_id']);
+                                    $attributeIds[] = new MongoId($child['_id']);
+                                }
+                                foreach($child['children'] as $subChild)
+                                {
+                                    if ($operator->matches($subChild['name'], $value))
+                                    {
+                                        $attributeIds[] = new MongoId($subChild['_id']);
+                                    }
                                 }
                             }
                         }

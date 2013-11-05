@@ -362,6 +362,11 @@ class Log extends AppModel
                 $clientEntity = $clientModel->getClientEntityById((string)$clientDetails['_id']);
 
                 $clientField = $clientEntity->getFieldTypeByName( strtolower($orderBy) );
+                if ( ! $clientField)
+                {
+                    continue;
+                }
+
                 $clientFieldSettings = $clientField->getFieldSettings();
                 $fieldIds[] = array(
                     '$eq' => array(
