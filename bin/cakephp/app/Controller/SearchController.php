@@ -170,11 +170,14 @@ class SearchController extends AppController
 
         $query = $params['query'];
 
-        // TODO Validate: If the users permissions are "single-client",
         // add a query value which ensures they only get results from their own client_id
-        if (false)
+        if ($this->isAuthorized('single-client'))
         {
-            $query .= 'AND client_id = my_client_id';
+            $user = $this->User->findById(
+                $this->PreslogAuth->user('_id')
+            );
+
+            $query .= 'AND client_id = ' . $user['User']['client_id'] ;
         }
 
 
@@ -241,8 +244,7 @@ class SearchController extends AppController
                 }
             }
 
-            $allFieldNames['hrid'] = true; // so we can search on log id TODO find a way to give this a better name
-
+            $allFieldNames['hrid'] = true; // so we can search on log id
 
             $log = $log['Log'];
 
@@ -327,7 +329,6 @@ class SearchController extends AppController
         return array('query' => $query, 'logs' => $logs,  'fields' => array_keys($allFieldNames),'total' => $total);
     }
 
-    //TODO remove this should be on the field type
     private function _formatDuration($duration) {
         $hours = floor($duration / 3600);
         $minutes = floor(($duration % 3600) / 60);
@@ -730,9 +731,6 @@ class SearchController extends AppController
         $this->set('_serialize', array('jql', 'args'));
     }
 
-
-
-    //TODO this code is duplicated in dashboard controoller, put it in a common place
     /**
      * get the list of clients the logged in user can access
      * @return mixed

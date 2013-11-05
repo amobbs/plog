@@ -296,8 +296,6 @@ class Dashboard extends AppModel
 
         //dynamic fields
         foreach($logFields as $key => $value) {
-
-            //TODO why are we getting arrays?
             if (is_array($value))
             {
                 continue;
