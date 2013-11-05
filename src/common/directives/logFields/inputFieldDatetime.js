@@ -4,88 +4,159 @@
  */
 
 angular.module('inputFieldDatetime', [])
-    .directive('inputFieldDatetime', ['$templateCache', '$compile', '$filter', function ( $templateCache, $compile, $filter ) {
+    .directive('input', ['$templateCache', '$compile', '$filter', function ( $templateCache, $compile, $filter ) {
 
         /**
          * Linker.
-         * - Process logDate field into date/time picker
+         * - Process element into field types
          * @param scope
          * @param element
          * @param attrs
+         * @param ctrl
          */
         var linker = function( scope, element, attrs, ctrl ) {
 
-            scope.denyWatch = false;
+            // Skip non-match types
+            if (attrs.datetime === undefined)
+            {
+                return;
+            }
 
-            // Deny watched of the model when the user is changing the data
-            element.bind('focus', function() { scope.denyWatch = true; });
-            element.bind('blur',  function() { scope.denyWatch = false; });
 
-            // On source change
-            scope.$watch(function() { return scope.ngModel; }, function(value) {
+            /**
+             * Date Parser
+             * Translate the value from YYYY-MM-DD to RFC2822
+             * @param value
+             */
+            var dateParser = function(value)
+            {
+                var date = new Date( ctrl.$modelValue );
+                var newDate = new Date(value+' 00:00:00');
 
-                // Abort if empty
-                if (value === undefined || scope.denyWatch)
+                // Fix the source date if not set, undefined, etc
+                if (isNaN( date.getTime()))
                 {
-                    return;
+                   date = new Date('0001-01-01 00:00:00');
                 }
 
-                // Convert to object
+                // Update data
+                newDate.setHours( date.getHours() );
+                newDate.setMinutes( date.getMinutes() );
+                newDate.setSeconds( date.getSeconds() );
+
+                // Apply, or fail and return original
+                if (!isNaN( newDate.getTime()))
+                {
+                    ctrl.$setValidity('date', true);
+                    return $filter('date')(newDate, 'EEE, dd MMM yyyy hh:mm:ss Z');
+                }
+                else
+                {
+                    ctrl.$setValidity('date', false);
+                    return $filter('date')(date, 'EEE, dd MMM yyyy hh:mm:ss Z');
+                }
+            };
+
+
+            /**
+             * Date Formatter
+             * Translate the value from RFC2822 to YYYY-MM-DD
+             * @param value
+             */
+            var dateFormatter = function(value)
+            {
                 var date = new Date(value);
 
-                // Date
-                if (scope.part == 'date')
-                {
-                    element[0].value =  $filter('date')(date, 'yyyy-MM-dd');
-                }
-
-                // Time
-                else if (scope.part == 'time')
-                {
-                    element[0].value =  $filter('date')(date, 'hh:mm:ss');
-                }
-
-            });
-
-            // On editor change
-            scope.$watch(function() { return element[0].value; }, function(value) {
-
-                // Abort if empty
-                if (value === undefined)
-                {
-                    return;
-                }
-
-                // Fetch the data from the model
-                var date = new Date(scope.ngModel);
-                var newDate = null;
-
-                // if part == date, update the Date section only.
-                if (scope.part == 'date')
-                {
-                    newDate = new Date(value+' 00:00:00');
-                    date.setDate( newDate.getDate() );
-                    date.setMonth( newDate.getMonth() );
-                    date.setYear( newDate.getFullYear() );
-                }
-
-                // if part == time, update the Time section only.
-                else if (scope.part == 'time')
-                {
-                    newDate = new Date('0001-01-01 '+value);
-                    date.setHours( newDate.getHours() );
-                    date.setMinutes( newDate.getMinutes() );
-                    date.setSeconds( newDate.getSeconds() );
-                }
-
-                // Only update the data if the date is a real date
                 if (!isNaN( date.getTime()))
                 {
-                    // RFC 2822
-                    scope.ngModel = $filter('date')(date, 'EEE, dd MMM yyyy hh:mm:ss Z');
+                    return $filter('date')(date, 'yyyy-MM-dd');
                 }
-            });
+                else
+                {
+                    return null;
+                }
+            };
 
+
+            /**
+             * Parser
+             * Translate the value from HH:MM:SS to RFC2822
+             * @param value
+             */
+            var timeParser = function(value)
+            {
+                var date = new Date( ctrl.$modelValue );
+                var newDate = new Date('0001-01-01 '+value);
+
+                // Fix the source date if not set, undefined, etc
+                if (isNaN( date.getTime()))
+                {
+                    date = new Date();
+                }
+
+                // Update data
+                newDate.setDate( date.getDate() );
+                newDate.setMonth( date.getMonth() );
+                newDate.setYear( date.getFullYear() );
+
+                // Apply, or error
+                if (!isNaN( date.getTime()))
+                {
+                    ctrl.$setValidity('time', true);
+                    return $filter('date')(newDate, 'EEE, dd MMM yyyy hh:mm:ss Z');
+                }
+                else
+                {
+                    ctrl.$setValidity('time', false);
+                    return $filter('date')(date, 'EEE, dd MMM yyyy hh:mm:ss Z');
+                }
+
+
+
+            };
+
+
+            /**
+             * Formatter
+             * Translate the value from RFC2822 to HH:MM:SS
+             * @param value
+             */
+            var timeFormatter = function(value)
+            {
+                var date = new Date(value);
+
+                if (!isNaN( date.getTime()))
+                {
+                    return $filter('date')(date, 'hh:mm:ss');
+                }
+                else
+                {
+                    return null;
+                }
+            };
+
+
+            /**
+             * Apply parser/formatter
+             */
+
+            // Only apply to "date" type
+            if (attrs.datetime == 'date')
+            {
+                ctrl.$parsers.unshift(dateParser);
+                ctrl.$formatters.unshift(dateFormatter);
+            }
+            // Only apply to "time" type
+            else if (attrs.datetime == 'time')
+            {
+                ctrl.$parsers.unshift(timeParser);
+                ctrl.$formatters.unshift(timeFormatter);
+            }
+            // Abort this directives actions
+            else
+            {
+                return;
+            }
         };
 
 
@@ -94,12 +165,7 @@ angular.module('inputFieldDatetime', [])
          */
         return {
             restrict: "E",
-            replace: true,
-            template: '<input />',
-            scope: {
-                part: '@',
-                ngModel: '='
-            },
+            require: "?ngModel",
             link: linker
         };
     }]);

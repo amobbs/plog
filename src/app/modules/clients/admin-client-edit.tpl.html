@@ -169,18 +169,19 @@
                                             Until the activation date has arrived, this client will only be visible to administrators.
                                             Any users assigned directly to an inactive client will not be able to login while the client is inactive."
                                   >
-                                <input-field-datetime
+                                <input
                                     type="text"
-                                    part="date"
+                                    datetime="date"
                                     id="inputActivationDate"
                                     name="activationDate"
                                     placeholder="YYYY-MM-DD.."
                                     ng-model="client.activationDate"
                                     required
-                                    ng-pattern="/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/"
                                     />
-                                <input-field-datetime
-                                    part="time"
+                                <input
+                                    type="text"
+                                    datetime="time"
+                                    ng-show="false"
                                     ng-model="client.activationDate"
                                     type="text"
                                     />
@@ -339,7 +340,6 @@
                                            type="text"
                                            placeholder="Label.."
                                            ng-model="newGroup.label"
-
                                            required
                                            />
                                 </td>
