@@ -215,7 +215,7 @@ class Dashboard extends AppModel
                 //create summary
 
                 $createSummary = $widget->getDetail('summary');
-                if ($createSummary !== '')
+                if ($createSummary !== false)
                 {
                     $this->createSummaryPage($primeTime, $nonPrimeTime, sizeof($logs), $section);
                 }
