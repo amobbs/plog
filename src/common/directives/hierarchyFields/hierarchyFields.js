@@ -249,7 +249,7 @@ angular.module('hierarchyFields', [])
 
                     for(var i in fields) {
                         if (! fields.hasOwnProperty(i) ||
-                            (hideDeleted == true && fields[i].deleted)) {
+                            (hideDeleted == "true" && fields[i].deleted)) {
                             continue;
                         }
 
