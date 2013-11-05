@@ -29,18 +29,38 @@ angular.module( 'Preslog.dashboard', [
                 }
             },
             resolve: {
-                source: ['$q', 'Restangular', '$stateParams', function($q, Restangular, $stateParams) {
-                    // Fetch dashboard TODO not a static id
-                    return Restangular.one('dashboards', '5260a7d7ad7cc5441b00002b');
+                source: ['$q', 'Restangular', '$stateParams', 'userService', 'dashboard_live_logs', function($q, Restangular, $stateParams, userService, dashboard_live_logs) {
+                    // Fetch dashboard
+                    var defered = $q.defer();
+
+                    userService.getDashboards().then(function (dashboards) {
+                        var dashId = dashboard_live_logs;
+                        if (dashboards.favourites.length > 0)
+                        {
+                            dashId = dashboards.favourites[0]._id;
+                        }
+
+                        defered.resolve(Restangular.one('dashboards', dashId));
+                    });
+
+                    return defered.promise;
                 }],
-                dashboard: ['$q', 'Restangular', '$stateParams', function($q, Restangular, $stateParams) {
+                dashboard: ['$q', 'Restangular', '$stateParams', 'userService', 'dashboard_live_logs', function($q, Restangular, $stateParams, userService, dashboard_live_logs) {
                     var deferred = $q.defer();
 
-                    Restangular.one('dashboards', '5260a7d7ad7cc5441b00002b')
-                        .get()
-                        .then(function(dashboard) {
-                            deferred.resolve(dashboard);
-                        });
+                    userService.getDashboards().then(function (dashboards) {
+                        var dashId = dashboard_live_logs;
+                        if (dashboards.favourites.length > 0)
+                        {
+                            dashId = dashboards.favourites[0]._id;
+                        }
+
+                        Restangular.one('dashboards', dashId)
+                            .get()
+                            .then(function(dashboard) {
+                                deferred.resolve(dashboard);
+                            });
+                    });
 
                     return deferred.promise;
                 }]
@@ -477,7 +497,7 @@ angular.module( 'Preslog.dashboard', [
         //log list widget needs some different logic to display
         $scope.updateLogList = function(widget) {
             params = widget.params;
-            if (params.query.length === 0) {
+            if (params && params.query.length === 0) {
                 return;
             }
 

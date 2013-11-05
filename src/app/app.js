@@ -23,5 +23,8 @@ angular.module('Preslog', [
         });
     })
 
+    .constant('dashboard_live_logs', '5260a7d7ad7cc5441b00002b')
+    .constant('dashboard_unqualified', '5260bf91ad7cc5782600002a')
+
 ;
 
