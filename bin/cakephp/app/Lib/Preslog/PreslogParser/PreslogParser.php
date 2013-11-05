@@ -27,8 +27,10 @@ class PreslogParser extends JqlParser {
     /**
      * given the expression on this object parse it in a way so that we replace human readable field names (client.fields.name)
      * with mongo critera in the format required
+     *
      * @param $clients
      *
+     * @throws \Exception
      * @return array
      */
     public function parse($clients) {
@@ -190,14 +192,17 @@ class PreslogParser extends JqlParser {
 
         $clientModel = ClassRegistry::init('Client');
 
+        $foundOnce = false; //check the field exists for at least one client
         foreach($clients as $client)
         {
             $clientEntity = $clientModel->getClientEntityById($client['_id']);
             $clientField = $clientEntity->getFieldTypeByName( $clause->getField() );
             if ($clientField == null)
             {
-                return array('The field "' . $clause->getField() . '" does not exist.');
+                continue;
             }
+
+            $foundOnce = true;
 
             $allowedString = '';
             if ( ! $this->operatorAllowed($operator, $clientField->getProperties('allowedJqlOperators'), $allowedString) )
@@ -205,8 +210,14 @@ class PreslogParser extends JqlParser {
                 $errors[] = "The operator " . $operator->getHumanReadable() . ' can not be used with the field ' . $clause->getField() . '. Operators allowed are ' . $allowedString;
             }
 
-            //all so check field value validates against field type (inc functions).
+            //todo: all so check field value validates against field type (inc functions).
         }
+
+        if ( ! $foundOnce )
+        {
+            return array('The field "' . $clause->getField() . '" does not exist.');
+        }
+
 
         return $errors;
     }
