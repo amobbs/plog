@@ -99,7 +99,7 @@ class BenchmarkWidget extends Widget {
             ),
         );
 
-        if ($this->details['legendLocation'] === "2") //bottom
+        if (isset($this->details['legendLocation']) && $this->details['legendLocation'] === "2") //bottom
         {
             $chart->legend['align'] = 'center';
             $chart->legend['verticalAlign'] = 'bottom';

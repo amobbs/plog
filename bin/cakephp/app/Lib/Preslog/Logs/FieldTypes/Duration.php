@@ -74,12 +74,13 @@ class Duration extends FieldTypeAbstract
     }
 
     public function chartDisplay($data, $aggregationType = 'minutes') {
+        $decimalPlaces = pow(10, 2);
         switch ($aggregationType) {
             case 'seconds':
                 return $data;
                 break;
             case 'minutes':
-                return $data / 60;
+                return  floor($data / 60 * $decimalPlaces) / $decimalPlaces;
                 break;
         }
 

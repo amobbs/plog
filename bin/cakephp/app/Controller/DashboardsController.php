@@ -965,6 +965,7 @@ class DashboardsController extends AppController
                     }
                 }
 
+                //parse the output and make sure we show correct data
                 if ($seriesType instanceof FieldTypeAbstract) {
                     $parsedPoint = array();
                     foreach($result['result'] as $point) {

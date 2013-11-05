@@ -39,14 +39,6 @@
             </select>
         </div>
     </div>
-    <div class="control-group">
-        <label class="control-label">Trend Line </label>
-        <div class="controls">
-            <input
-                type="checkbox"
-                ng-model="widget.details.trendLine" />
-        </div>
-    </div>
 
     <div class="control-group">
         <label class="control-label">Legend Location </label>
@@ -68,6 +60,14 @@
     </div>
 
     <div class="control-group">
+        <label class="control-label">Trend Line </label>
+        <div class="controls">
+            <input
+                    type="checkbox"
+                    ng-model="widget.details.trendLine" />
+        </div>
+    </div>
+    <div ng-show="widget.details.trendLine" class="control-group">
         <label class="control-label">Restrict Trend Line to </label>
         <div class="controls">
             <input type="text" placeholder="Name..." value="" ng-model="widget.details.restrictTrendLineTo"/>
