@@ -543,8 +543,6 @@ angular.module( 'Preslog.clients', [
         $scope.index = index;
         $scope.group = group;
         $scope.showDeleted = false;
-        $scope.selectionActions = ['Do nothing', 'Toggle deleted status'];
-        $scope.withSelectedAction = $scope.selectionActions[1];
 
         // list of nodes selected in hierarchy fields
         $scope.hierarchySelected = [];

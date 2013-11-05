@@ -76,21 +76,12 @@ class LineWidget extends Widget {
             'x' => - 20,
         );
 
-        $align = 'right';
-        $verticalAlign = 'middle';
-        $legendWidth = 100;
-        if ( isset($this->details['legendLocation']) && $this->details['legendLocation'] === 2) //bottom
-        {
-            $align = 'center';
-            $verticalAlign = 'bottom';
-        }
-
         $chart->legend = array(
-            'align' => $align,
-            'verticalAlign' => $verticalAlign,
+            'align' => 'right',
+            'verticalAlign' => 'middle',
             'borderWidth' => 0,
             'layout' => 'vertical',
-            'width' => $legendWidth,
+            'width' => 100,
             'navigation' => array(
                 'activeColor' => '#3E576F',
                 'animation' => true,
@@ -139,11 +130,6 @@ class LineWidget extends Widget {
                     && strtolower($type->getProperties('alias')) == strtolower($xParts[0])) {
                     $xFieldType = $type;
                 }
-                else
-                {
-
-                }
-                //add something here to handle created/modified!!!!
             }
 
             $chart->xAxis = array(
@@ -235,9 +221,12 @@ class LineWidget extends Widget {
 
                 $data = array();
                 $data['y'] = $pointValue;
-                $data['dataLabels'] = array(
-                    'enabled' => true,
-                );
+                if ( isset($this->details['showLabels']) && $this->details['showLabels'])
+                {
+                    $data['dataLabels'] = array(
+                        'enabled' => true,
+                    );
+                }
 
                 $seriesData[$seriesId]['data'][] = $data;
             }

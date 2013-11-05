@@ -102,7 +102,7 @@ angular.module('hierarchyFields', [])
                                 /** Return false to disallow dropping this node.
                                  *
                                  */
-                                logMsg("tree.onDragOver(%o, %o, %o)", node, sourceNode, hitMode);
+                                //logMsg("tree.onDragOver(%o, %o, %o)", node, sourceNode, hitMode);
                                 // Prevent dropping a parent below it's own child
                                 if(node.isDescendantOf(sourceNode)){
                                     return false;
@@ -111,6 +111,11 @@ angular.module('hierarchyFields', [])
                                 if( !node.data.isFolder && hitMode === "over" ){
                                     return "after";
                                 }
+                                if (hitMode == 'before')
+                                {
+                                    return 'after';
+                                }
+
                             },
                             onDrop: function(node, sourceNode, hitMode, ui, draggable) {
                                 //move the node in the tree for display
@@ -244,7 +249,7 @@ angular.module('hierarchyFields', [])
 
                     for(var i in fields) {
                         if (! fields.hasOwnProperty(i) ||
-                            (hideDeleted && fields[i].deleted)) {
+                            (hideDeleted == true && fields[i].deleted)) {
                             continue;
                         }
 
