@@ -257,6 +257,24 @@ class User extends AppModel
 
 
     /**
+     * Before Save
+     * - Modify password to hash format
+     * @param   array   $options
+     * @return  bool
+     */
+    public function beforeSave( $options = array() )
+    {
+        // Convert password, if set, to bCrypt password
+        if (isset($this->data['User']['password']))
+        {
+            $this->data['User']['password'] = Security::hash($this->data['User']['password'], 'blowfish');;
+        }
+
+        return parent::beforeSave( $options );
+    }
+
+
+    /**
      * @param   null|string     $permission     Permission we're checking for
      * @param   null|string     $userRole       Role we're checking for the permission
      * @param   null|array      $route          Information about the current route. Supplied from Controller::isAuthorized
@@ -571,7 +589,5 @@ class User extends AppModel
 
         return $clients;
     }
-
-
 
 }

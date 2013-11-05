@@ -100,6 +100,13 @@ angular.module( 'Preslog.clients', [
         // Apply the resolved client list
         $scope.allClients = clientList.clients;
 
+        // Modify clients
+        _.forEach($scope.allClients, function(client)
+        {
+            var datetime = new Date(client.activationDate);
+            client.activationDate = datetime.getTime();
+        });
+
         // Configure table
         $scope.tableParams = new ngTableParams({
             page: 1,                // show first page

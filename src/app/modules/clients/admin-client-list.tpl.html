@@ -28,7 +28,7 @@
             <table ng-table="tableParams" show-filter="true" class="table table-bordered table-condensed">
                 <tr ng-repeat="client in clients">
                     <td data-title="'Logo'">
-                        <img src="{{client.logo}}" width="68" height="20" alt="{{ client.name }}" />
+                        <img src="{{client.logo}}" style="width:68px; height:20px;" alt="{{ client.name }}" />
                     </td>
                     <td data-title="'Client'" sortable="name" filter="{ 'name': 'text' }">
                         {{client.name}}
@@ -38,7 +38,12 @@
                     </td>
                     </td>
                     <td data-title="'SLA Benchmark'">
-                        {{client.benchmark}}%
+                        <span ng-show="client.benchmark">
+                            {{client.benchmark|number:3}}%
+                        </span>
+                        <span ng-show="!client.benchmark">
+                            N/A
+                        </span>
                     </td>
                     <td data-title="'Number of Logs'">
                         {{ client.stats.numLogs }}
