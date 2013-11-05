@@ -92,6 +92,7 @@ angular.module( 'Preslog.search', [
             errors: []
         };
 
+        $scope.updating = false;
         //if params change then we need to get new logs
         $scope.$watch('logWidgetParams', function(params) {
             $scope.search();
@@ -115,34 +116,42 @@ angular.module( 'Preslog.search', [
                 offset = 0;
             }
 
-            Restangular.one('search').get({
-                query: $scope.jql,
-                limit: $scope.logWidgetParams.perPage,
-                start: offset,
-                order: $scope.logWidgetParams.order,
-                orderasc: $scope.logWidgetParams.orderDirection == 'Asc'
-            })
-                .then(function(result) {
-                    $scope.results = result;
-                    var params = angular.copy($scope.logWidgetParams);
+            //used to make sure only one request is sent per update
+            if ( ! $scope.updating )
+            {
+                $scope.updating = true;
+                Restangular.one('search').get({
+                    query: $scope.jql,
+                    limit: $scope.logWidgetParams.perPage,
+                    start: offset,
+                    order: $scope.logWidgetParams.order,
+                    orderasc: $scope.logWidgetParams.orderDirection == 'Asc'
+                })
+                    .then(function(result) {
+                        $scope.results = result;
+                        var params = angular.copy($scope.logWidgetParams);
 
-                    if (result.errors)
-                    {
-                        $scope.queryValid = false;
-                        params.errors = result.errors;
-                    }
-                    else
-                    {
-                        $scope.queryValid = true;
-                        params.errors = [];
-                    }
+                        if (result.errors)
+                        {
+                            $scope.queryValid = false;
+                            params.errors = result.errors;
+                        }
+                        else
+                        {
+                            $scope.queryValid = true;
+                            params.errors = [];
+                        }
 
-                    params.total = result.total;
-                    params.logs = result.logs;
-                    params.sorting = result.fields;
-                    $scope.logWidgetParams = params;
-                }
-            );
+                        params.total = result.total;
+                        params.logs = result.logs;
+                        params.sorting = result.fields;
+                        $scope.logWidgetParams = params;
+                        setTimeout(function() {
+                            $scope.updating = false;
+                        }, 500);
+                    }
+                );
+            }
         };
 
         /**

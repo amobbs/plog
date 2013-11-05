@@ -142,11 +142,7 @@ angular.module( 'Preslog.dashboard', [
                    }
                 }
 
-               source.post('', {'widgets': $scope.dashboard.widgets})
-                    .then(function(data) {
-                        console.log('widget sort saved');
-                    }
-                );
+               source.post('', {'widgets': $scope.dashboard.widgets});
             }
         };
 
@@ -452,6 +448,29 @@ angular.module( 'Preslog.dashboard', [
             );
         };
 
+        $scope.updatingWidgets = [];
+        $scope.isWidgetUpdating = function(widgetId)
+        {
+            for(var id in $scope.updatingWidgets)
+            {
+                if ($scope.updatingWidgets[id] == widgetId)
+                {
+                    return true;
+                }
+            }
+            return false;
+        };
+        $scope.finishedUpdating = function(widgetId)
+        {
+            for(var id in $scope.updatingWidgets)
+            {
+                if ($scope.updatingWidgets[id] == widgetId)
+                {
+                    $scope.updatingWidgets.splice(id, 1);
+                }
+            }
+        };
+
         //log list widget needs some different logic to display
         $scope.updateLogList = function(widget) {
             params = widget.params;
@@ -464,48 +483,46 @@ angular.module( 'Preslog.dashboard', [
                 offset = 0;
             }
 
-            //request new list of logs
-            Restangular.one('search').get({
-                    query: params.query,
-                    limit: params.perPage,
-                    start: offset,
-                    order: params.order,
-                    orderasc: params.orderDirection == 'Asc',
-                    widgetid: widget._id
-                })
-                .then(function(result) {
-                    for(var id in $scope.dashboard.widgets)
-                    {
-                        if ($scope.dashboard.widgets[id]._id == result.widgetid)
+
+            if ( ! $scope.isWidgetUpdating(widget._id) )
+            {
+                $scope.updatingWidgets.push(widget._id);
+
+                //request new list of logs
+                Restangular.one('search').get({
+                        query: params.query,
+                        limit: params.perPage,
+                        start: offset,
+                        order: params.order,
+                        orderasc: params.orderDirection == 'Asc',
+                        widgetid: widget._id
+                    })
+                    .then(function(result) {
+                        for(var id in $scope.dashboard.widgets)
                         {
-                            $scope.results = result;
-                            $scope.dashboard.widgets[id].params.total = result.total;
-                            $scope.dashboard.widgets[id].params.logs = result.logs;
-                            $scope.dashboard.widgets[id].params.sorting = result.fields;
+                            if ($scope.dashboard.widgets[id]._id == result.widgetid)
+                            {
+                                $scope.results = result;
+                                $scope.dashboard.widgets[id].params.total = result.total;
+                                $scope.dashboard.widgets[id].params.logs = result.logs;
+                                $scope.dashboard.widgets[id].params.sorting = result.fields;
+                                setTimeout(function() { $scope.finishedUpdating(result.widgetid); }, 1000);
+                            }
                         }
+
                     }
+                );
 
-                }
-            );
+                widget.details.perPage = params.perPage;
+                widget.details.orderBy = params.order;
+                widget.details.orderDirection = params.orderDirection == 'Asc';
 
-            //TODO find a way to add these params without calling the watch 3 times.
-            widget.details.perPage = params.perPage;
-            widget.details.orderBy = params.order;
-            widget.details.orderDirection = params.orderDirection == 'Asc';
-
-            //save changes to the widget
-            Restangular.one('dashboards', $scope.id)
-                .one('widgets', widget._id)
-                .post('',{'widget': widget});
+                //save changes to the widget
+                Restangular.one('dashboards', $scope.id)
+                    .one('widgets', widget._id)
+                    .post('',{'widget': widget});
+            }
         };
-
-        //watch any changes in widgets so we can do some work needed to display log lists
-//        $scope.$watch(
-//            function() { return $scope.dashboard.widgets; },
-//            function() {
-//                $scope.setUpLogList();
-//            }
-//        );
 
         $scope.applyLogListWatch = function()
         {
