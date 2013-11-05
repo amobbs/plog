@@ -230,7 +230,7 @@ angular.module( 'Preslog.dashboard', [
 
         //download a docx version of this dashboard TODO fix this hard coded url
         $scope.exportReport = function() {
-            window.location = 'http://local.preslog/api/dashboards/' + $scope.id + '/export';
+            window.location = '/api/dashboards/' + $scope.id + '/export';
         };
 
         //create new dashboard
@@ -318,6 +318,7 @@ angular.module( 'Preslog.dashboard', [
                         for(var index = 0; index < $scope.dashboard.widgets.length; index++) {
                             if ($scope.dashboard.widgets[index]._id == result.widget._id) {
                                 $scope.dashboard.widgets[index] = result.widget;
+                                $scope.refreshWidget(result.widget._id);
                                 $scope.updateRefreshTimer(result.widget._id, result.widget.details.refresh);
                             }
                         }
@@ -437,7 +438,7 @@ angular.module( 'Preslog.dashboard', [
             //i had some issues adding the watch inside the loop, so just watch all widgets and re-update
             // log list on any widget changes (not ideal)
             $scope.$watch(
-                'dashboard.widgets[w]',
+                'dashboard.widgets',
                 function() {
                     for(var id in $scope.dashboard.widgets) {
                         var widget = $scope.dashboard.widgets[id];
@@ -469,13 +470,21 @@ angular.module( 'Preslog.dashboard', [
                     limit: params.perPage,
                     start: offset,
                     order: params.order,
-                    orderasc: params.orderDirection == 'Asc'
+                    orderasc: params.orderDirection == 'Asc',
+                    widgetid: widget._id
                 })
                 .then(function(result) {
-                    $scope.results = result;
-                    params.total = result.total;
-                    params.logs = result.logs;
-                    params.sorting = result.fields;
+                    for(var id in $scope.dashboard.widgets)
+                    {
+                        if ($scope.dashboard.widgets[id]._id == result.widgetid)
+                        {
+                            $scope.results = result;
+                            $scope.dashboard.widgets[id].params.total = result.total;
+                            $scope.dashboard.widgets[id].params.logs = result.logs;
+                            $scope.dashboard.widgets[id].params.sorting = result.fields;
+                        }
+                    }
+
                 }
             );
 

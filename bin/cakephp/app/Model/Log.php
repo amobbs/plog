@@ -283,13 +283,12 @@ class Log extends AppModel
      * @param string $orderBy
      * @param int $start            - log id to return from
      * @param int $limit            - how many logs top return
-     * @param array $fieldDetails   - array('clientIds', 'dataFieldName') list of field ids from each client and the name of the value we want to sort on from the found field.
      * @param bool $orderAsc        - should the logs be returned in an ascending order
      *
      * @throws Exception
      * @return mixed
      */
-    public function findByQuery($query, $clients = array(), $orderBy = '', $start = 0, $limit = 10, $fieldDetails = array(), $orderAsc = true) {
+    public function findByQuery($query, $clients = array(), $orderBy = '', $start = 0, $limit = 10, $orderAsc = true) {
         if (empty($query)) {
             return array(
                 'ok' => 1,

@@ -43,6 +43,12 @@ class SearchController extends AppController
         // Returns Logs and Options to accompany
         $return = $this->executeSearch( $this->request->query, $limit, $start, $orderBy, $asc);
 
+        //used for dashboards to determin which widget we are updating.
+        if ( isset($this->request->query['widgetid']) )
+        {
+            $return['widgetid'] = $this->request->query['widgetid'];
+        }
+
         // Return search result
         $this->set($return);
         $this->set('_serialize', array_keys($return));
