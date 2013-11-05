@@ -39,7 +39,7 @@ angular.module( 'Preslog.home', [])
                 }],
 
                 // Force a redirect. This isn't an actual page, just a redirect.
-                redirect: ['$q', 'userService', '$location', function($q, userService, $location) {
+                redirect: ['$q', 'userService', '$location', 'dashboard_live_logs', 'dashboard_unqualified', function($q, userService, $location, dashboard_live_logs, dashboard_unqualified) {
 
                     // If no user, auth will be executed. Otherwise we get the role.
                     var role = userService.getUser().role;
@@ -50,10 +50,10 @@ angular.module( 'Preslog.home', [])
                     // Certain roles have certain destinations
                     switch( role ) {
                         case 'engineer':
-                            requestedPath = '/dashboards/live-view';
+                            requestedPath = '/dashboards/'. dashboard_live_logs;
                             break;
                         case 'supervisor':
-                            requestedPath = '/dashboards/to-be-released';
+                            requestedPath = '/dashboards/' . dashboard_unqualified;
                             break;
                         case 'operator':
                             requestedPath = '/log';
