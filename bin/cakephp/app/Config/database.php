@@ -16,7 +16,7 @@ class DATABASE_CONFIG {
 
         'replicaset' => array(
             'host' => 'mongodb://root:root@192.168.4.125:27017',
-            'options' => array('connect' => true,  'readPreference' => 'primary')
+          'options' => array('connect' => true,  'readPreference' => 'primary')
         ),
 
     );

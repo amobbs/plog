@@ -28,6 +28,11 @@ angular.module('logWidget', [])
 
                 scope.orderDirections = ['Asc', 'Desc'];
 
+                scope.redirectToLog = function(logId)
+                {
+                    console.log(logId);
+                };
+
                 //download a docx version of this dashboard TODO fix this hard coded url
                 scope.exportXLS = function(query, orderBy, asc) {
                     window.location = 'http://local.preslog/api/search/export' +
@@ -43,7 +48,7 @@ angular.module('logWidget', [])
 
                 //logs have been updated in params so display them
                 scope.getLogs = function() {
-                    if (!scope.params.logs || scope.params.logs.length === 0) {
+                    if (!scope.params || !scope.params.logs || scope.params.logs.length === 0) {
                         scope.logs = [];
                         return;
                     }

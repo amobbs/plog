@@ -2,6 +2,7 @@
 
 namespace Preslog\Widgets;
 
+use Configure;
 use Highchart;
 use MongoId;
 
@@ -112,4 +113,31 @@ class Widget {
         return $y;
     }
 
+    protected function flattenData($data)
+    {
+        $seriesData = array();
+        foreach($data as $point)
+        {
+            if ( isset($point['y']))
+            {
+                $seriesData[] = $point['y'];
+            }
+            else
+            {
+                $seriesData[] = $point;
+            }
+        }
+
+        return $seriesData;
+    }
+
+    protected function calculateSLALine($dates, $sla = array())
+    {
+        $result = array();
+        foreach($dates as $date)
+        {
+            $result[] = $sla;
+        }
+        return $result;
+    }
 }

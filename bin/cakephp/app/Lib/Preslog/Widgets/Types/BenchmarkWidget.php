@@ -2,6 +2,7 @@
 
 namespace Preslog\Widgets\Types;
 
+use ClassRegistry;
 use Configure;
 use Highchart;
 use Preslog\Widgets\Widget;
@@ -26,6 +27,9 @@ class BenchmarkWidget extends Widget {
             $this->details['trendLine'] = isset($data['details']['trendLine']) ? $data['details']['trendLine'] : false;
             $this->details['bhpm'] = isset($data['details']['bhpm']) ? $data['details']['bhpm'] : false;
             $this->details['sla'] = isset($data['details']['sla']) ? $data['details']['sla'] : false;
+            $this->details['legendLocation'] = isset($data['details']['legendLocation']) ? $data['details']['legendLocation'] : 1;
+            $this->details['showLabels'] = isset($data['details']['showLabels']) ? (bool)$data['details']['showLabels'] : false;
+
 
             $this->details['clients'] = isset($data['details']['clients']) ? $data['details']['clients'] : array();
 
@@ -54,13 +58,13 @@ class BenchmarkWidget extends Widget {
             'yAxis' => array(
                 array('fieldType' => $fields['duration']),
             ),
-//            'series' => array(
-//                array('fieldType' => 'none'),
-//            ),
         );
 
         parent::__construct($data);
     }
+
+    //note: i have not been able to find away to get the line to start right on the yaxis line because when using catagory
+    //Data to label the x axis it places the point in the middle of each tick, you would need to use a label formatter on the xaxis in order to put each point on the tick.
 
     public function getDisplayData() {
         $chart = new Highchart();
@@ -75,7 +79,6 @@ class BenchmarkWidget extends Widget {
             'text' => isset($this->details['title']) ? $this->details['title'] : '',
             'x' => - 20,
         );
-
 
         $chart->legend = array(
             'align' => 'right',
@@ -96,6 +99,14 @@ class BenchmarkWidget extends Widget {
             ),
         );
 
+        if ($this->details['legendLocation'] === "2") //bottom
+        {
+            $chart->legend['align'] = 'center';
+            $chart->legend['verticalAlign'] = 'bottom';
+            $chart->legend['layout'] = 'horizontal';
+            $chart->chart['marginRight'] = 70;
+            unset($chart->legend['width']);
+        }
 
         if (empty($this->series)) {
             $chart->series = array(
@@ -114,18 +125,13 @@ class BenchmarkWidget extends Widget {
                 'useHTML' => true,
             );
 
-            $series = array(
-                array(
-                    'name' => 'OAT',
-                    'data' => array(),
-                    'yAxis' => 0,
-                    'tooltip' => array(
-                        'valueSuffix' => '%',
-                    ),
-                    'dataLabels' => array(
-                        'enable' => true,
-                        'format' => '{value}%',
-                    ),
+            $oatSeries = array(
+                'name' => 'OAT',
+                'data' => array(),
+                'color' => '#3A4AC7',
+                'yAxis' => 0,
+                'tooltip' => array(
+                    'valueSuffix' => '%',
                 ),
             );
             $categorieData = array();
@@ -134,9 +140,19 @@ class BenchmarkWidget extends Widget {
             {
                 $dates[] = mktime(0, 0, 0, $point['xAxis']['month'], 1, $point['xAxis']['year']);
                 $date = $point['xAxis']['month'] . '/' . substr($point['xAxis']['year'], 2);
-                $series[0]['data'][] = $this->asPercentageOfBHPM($point['yAxis']);
+
+                $data = array();
+                $data['y'] = $this->asPercentageOfBHPM($point['yAxis']);
+                $data['dataLabels'] = array(
+                    'enabled' => true,
+                    'format' => '{y}%',
+                );
                 $categorieData[] = $date . '<br/>' . $this->_formatDuration($point['yAxis'])  ;
+
+                $oatSeries['data'][] = $data;
             }
+
+            $series = array($oatSeries);
             $categories = array_values($categorieData);
 
             $chart->xAxis->categories = $categories;
@@ -148,22 +164,13 @@ class BenchmarkWidget extends Widget {
                 'labels' => array(
                     'format' => '{value}%',
                 ),
-                'plotLines' => array(
-                    array(
-                        'value' => 0,
-                        'width' => 1,
-                        'color' => '#808080'
-                    )
-                ),
                 'min' => 0,
             );
+
              //yAxis two, BHPM
             $bhpmYAxis = array(
                 'title' => array(
-                    'text' => 'BHPM',
-                ),
-                'labels' => array(
-                    'format' => '{value} hours',
+                    'text' => 'BHPM (Hours)',
                 ),
                 'min' => null,
                 'max' => null,
@@ -181,8 +188,11 @@ class BenchmarkWidget extends Widget {
                 foreach($series as $s)
                 {
                     $seriesWithTrends[] = $s;
+
+                    $seriesData = $this->flattenData($s['data']);
+
                     //only add trend lines if we have enough data
-                    if (sizeof($s['data']) < 3)
+                    if (sizeof($seriesData) < 3)
                     {
                         continue;
                     }
@@ -190,7 +200,8 @@ class BenchmarkWidget extends Widget {
                     $seriesWithTrends[] = array(
                         'name' => 'Linear ' . $s['name'],
                         'type' => 'line',
-                        'data' =>  $this->calculateTrendLine($s['data']),
+                        'color' => '#000000',
+                        'data' =>  $this->calculateTrendLine($seriesData),
                         'yAxis' => $s['yAxis'],
                         'marker' => array(
                             'enabled' => false,
@@ -202,6 +213,35 @@ class BenchmarkWidget extends Widget {
                 $series = $seriesWithTrends;
             }
 
+            //we can't combine sla lines, so this only works if one client is selected
+            //also no trend lines for SLA since it is a straight line
+            if ( $this->details['sla'] !== false )
+            {
+                $clientName =  $this->details['sla'];
+                $clientModel = ClassRegistry::init('Client');
+                $client = $clientModel->find('first', array(
+                    'conditions' => array(
+                        'name' => $clientName,
+                    ),
+                ));
+
+                if ( isset($client['Client']) )
+                {
+                    $series[] = array(
+                        'name' => 'SLA',
+                        'type' => 'line',
+                        'color' => '#FF0000',
+                        'data' =>  $this->calculateSLALine($dates, $client['Client']['benchmark']),
+                        'marker' => array(
+                            'enabled' => false,
+                        ),
+                        'dashStyle' => 'dash',
+                        'enableMouseTracking' => false,
+                    );
+                }
+
+            }
+
             if ( isset($this->details['bhpm']) && $this->details['bhpm'])
             {
                 $min = 0;
@@ -209,6 +249,7 @@ class BenchmarkWidget extends Widget {
                 $series[] = array(
                     'name' => 'BHMP',
                     'type' => 'line',
+                    'color' => '#FF0000',
                     'data' => $bhpmArray,
                     'yAxis' => 1,
                     'tooltip' => array(
