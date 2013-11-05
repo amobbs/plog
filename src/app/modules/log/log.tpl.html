@@ -48,15 +48,15 @@
 
             <!-- Hierarchy Fields -->
             <div class="span4 hierarchy-fields">
-                <div ng-repeat="group in options.attributes" id="hf2">
+                <div ng-repeat="group in displayAttributes" id="hf2">
                     <div class="row-fluid">
                         <div class="span12">
                             <legend>{{ group.name }}</legend>
                         </div>
                     </div>
                     <div class="row-fluid" >
-                        <div class="span6" hierarchy-fields="attributesDisplay(group.children)[0]" hierarchy-selected="log.attributes" hide-deleted="true" drag-and-drop="false" allow-edit="false"></div>
-                        <div class="span6" hierarchy-fields="attributesDisplay(group.children)[1]" hierarchy-selected="log.attributes" hide-deleted="true" drag-and-drop="false" allow-edit="false"></div>
+                        <div class="span6" hierarchy-fields="group.children[0]" hierarchy-selected="log.attributes" hide-deleted="true" drag-and-drop="false" allow-edit="false"></div>
+                        <div class="span6" hierarchy-fields="group.children[1]" hierarchy-selected="log.attributes" hide-deleted="true" drag-and-drop="false" allow-edit="false"></div>
                     </div>
                 </div>
 

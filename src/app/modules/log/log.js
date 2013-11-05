@@ -110,6 +110,7 @@ angular.module( 'Preslog.log', [
         $scope.options = logOptions;
         $scope.serverErrors = {};
         $scope.Object = Object;
+        $scope.displayAttributes = [];
 
 
         /**
@@ -142,6 +143,21 @@ angular.module( 'Preslog.log', [
             return columns;
         };
 
+        $scope.convertAttributesForDisplay = function()
+        {
+            $scope.displayAttributes = [];
+            for(var id in $scope.options.attributes)
+            {
+                var group = $scope.options.attributes[id];
+                var attr = {
+                    name: group.name,
+                    children: []
+                };
+                attr.children = $scope.attributesDisplay(group.children);
+                $scope.displayAttributes.push(attr);
+            }
+        };
+        $scope.convertAttributesForDisplay();
 
         /**
          * Save Log
