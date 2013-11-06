@@ -299,6 +299,11 @@ class PreslogParser extends JqlParser {
             //split the log prefix from numeric log id
             $parts = array();
 
+            if ( is_array($value) && sizeof($value) > 0)
+            {
+                $value = array_values($value)[0];
+            }
+
             if ( preg_match($logRegex, $value, $parts) )
             {
                 $prefix = $parts[1];
