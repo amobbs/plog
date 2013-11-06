@@ -136,7 +136,7 @@ class Widget {
         $result = array();
         foreach($dates as $date)
         {
-            $result[] = $sla;
+            $result[] = floatval($sla);
         }
         return $result;
     }

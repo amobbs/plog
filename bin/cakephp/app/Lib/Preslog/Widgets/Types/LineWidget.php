@@ -194,7 +194,8 @@ class LineWidget extends Widget {
                             $pointLabel = $point['xAxis']['day'] . '/' . $point['xAxis']['month'];
                             break;
                         case 'month':
-                            $pointLabel = $point['xAxis']['month'] . '/' . substr($point['xAxis']['year'], 2);
+                            $month = mktime(0, 0, 0, $point['xAxis']['month'], 1, 1);
+                            $pointLabel = date('M', $month) . '-' . substr($point['xAxis']['year'], 2);
                             break;
                         case 'all':
                             $pointLabel = $point['xAxis']['day'] . '/' . $point['xAxis']['month']. '/' . substr($point['xAxis']['year'], 2);

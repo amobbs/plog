@@ -145,10 +145,21 @@ class SearchController extends AppController
         }
         else
         {
-            $return = array(
-                'ok' => true,
-                'errors' => array(),
-            );
+            $result = $this->Log->findByQuery($query, $fullClients);
+            if ( isset($result['ok']) && $result['ok'] === 0 )
+            {
+                $return = array(
+                    'ok' => false,
+                    'errors' => $result['errors'],
+                );
+            }
+            else
+            {
+                $return = array(
+                    'ok' => true,
+                    'errors' => array(),
+                );
+            }
         }
 
         $this->set($return);
