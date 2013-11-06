@@ -132,6 +132,7 @@ angular.module( 'Preslog.dashboard', [
             items: '.widget',
             revert: 150,
             tolerance: 'pointer',
+            handle: '.widget-handle',
             cursorAt: {
                 left: 10,
                 top: 10

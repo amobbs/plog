@@ -51,7 +51,7 @@
             <ul id="widget-area" ui-sortable="sortableOptions" ng-model="dashboard.widgets">
                 <li class="widget" ng-repeat="widget in dashboard.widgets" ng-class="{col3: widget.maxWidth == 3, col2: widget.maxWidth == 2}" id="{{ widget._id }}">
                     <div class="widget-box widget-movable">
-                        <div class="widget-title">
+                        <div class="widget-title widget-handle">
                             <span class="widget-icon">
                                 <i class="icon-signal"></i>
                             </span>

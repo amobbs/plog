@@ -36,6 +36,12 @@ angular.module('logWidget', [])
                         '&orderasc=' + encodeURI(asc);
                 };
 
+                scope.redirectToLog = function(logId)
+                {
+                    logId = logId.replace('#', '');
+                    window.location = '/logs/' + logId;
+                };
+
                 //if any params change get new logs
                 scope.$watch(function() { return scope.params; }, function() {
                     scope.getLogs();
