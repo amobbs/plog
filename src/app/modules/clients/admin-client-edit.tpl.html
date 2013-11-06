@@ -238,6 +238,7 @@
                                 <td ng-switch on="field.type">
                                     <span ng-switch-when="select">{{ field.data.options.length }} options</span>
                                     <span ng-switch-when="select-severity">{{ field.data.options.length }} options</span>
+                                    <span ng-switch-when="select-accountability">{{ field.data.options.length }} options</span>
                                     <span ng-switch-when="select-impact">{{ field.data.options.length }} options</span>
                                     <span ng-switch-default>&nbsp;</span>
                                 </td>
@@ -338,7 +339,7 @@
                                 <td class="control-group" ng-class="{error: newGroupForm.label.$dirty && newGroupForm.label.$invalid}">
                                     <input name="label"
                                            type="text"
-                                           placeholder="Label.."
+                                           placeholder="Friendly Label.."
                                            ng-model="newGroup.label"
                                            required
                                            />
@@ -346,7 +347,7 @@
                                 <td class="control-group" ng-class="{error: newGroupForm.name.$dirty && newGroupForm.name.$invalid}">
                                     <input name="name"
                                            type="text"
-                                           placeholder="Name.."
+                                           placeholder="Field Name.."
                                            ng-model="newGroup.name"
                                            ng-pattern="/^[a-z\-_]*$/"
                                            required

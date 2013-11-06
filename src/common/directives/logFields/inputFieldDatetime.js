@@ -31,7 +31,8 @@ angular.module('inputFieldDatetime', [])
             var dateParser = function(value)
             {
                 var date = new Date( ctrl.$modelValue );
-                var newDate = new Date(value+' 00:00:00');
+                var dateParts = value.split('/');
+                var newDate = new Date(dateParts[2]+'-'+dateParts[1]+'-'+dateParts[0]+' 00:00:00');
 
                 // Fix the source date if not set, undefined, etc
                 if (isNaN( date.getTime()))
@@ -69,7 +70,7 @@ angular.module('inputFieldDatetime', [])
 
                 if (!isNaN( date.getTime()))
                 {
-                    return $filter('date')(date, 'yyyy-MM-dd');
+                    return $filter('date')(date, 'dd/MM/yyyy');
                 }
                 else
                 {

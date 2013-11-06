@@ -278,6 +278,7 @@ angular.module( 'Preslog.clients', [
             var modal = $modal.open({
                 templateUrl: 'modules/clients/modals/admin-client-edit-field.tpl.html',
                 controller: 'AdminClientEditFieldCtrl',
+                backdrop: 'static',
                 resolve: {
                     field: function() { return field; },
                     index: function() { return null; },
@@ -299,6 +300,7 @@ angular.module( 'Preslog.clients', [
 
                 // Clear the field items
                 $scope.newField = {};
+                $scope.newFieldForm.$setPristine();
             });
 
         };
@@ -340,6 +342,7 @@ angular.module( 'Preslog.clients', [
             var modal = $modal.open({
                 templateUrl: 'modules/clients/modals/admin-client-edit-field.tpl.html',
                 controller: 'AdminClientEditFieldCtrl',
+                backdrop: 'static',
                 resolve: {
                     field: function() { return fieldCopy; },
                     index: function() { return index; },
@@ -388,6 +391,7 @@ angular.module( 'Preslog.clients', [
             var modal = $modal.open({
                 templateUrl: 'modules/clients/modals/admin-client-edit-attribute.tpl.html',
                 controller: 'AdminClientEditAttributeCtrl',
+                backdrop: 'static',
                 resolve: {
                     group: function() { return group; },
                     index: function() { return null; }
@@ -406,8 +410,9 @@ angular.module( 'Preslog.clients', [
                 // Append the new element
                 $scope.client.attributes.push(ret.group);
 
-                // Clear the field items
+                // Clear the newGroup form
                 $scope.newGroup = {};
+                $scope.newGroupForm.$setPristine();
             });
 
         };
@@ -432,6 +437,7 @@ angular.module( 'Preslog.clients', [
             var modal = $modal.open({
                 templateUrl: 'modules/clients/modals/admin-client-edit-attribute.tpl.html',
                 controller: 'AdminClientEditAttributeCtrl',
+                backdrop: 'static',
                 resolve: {
                     group: function() { return groupCopy; },
                     index: function() { return index; }
@@ -636,7 +642,8 @@ angular.module( 'Preslog.clients', [
         {
             var modal = $modal.open({
                 templateUrl: 'modules/clients/modals/admin-client-network-live-date.tpl.html',
-                controller: 'AdminClientLiveDateCtrl'
+                controller: 'AdminClientLiveDateCtrl',
+                backdrop: 'static'
             });
 
             /**

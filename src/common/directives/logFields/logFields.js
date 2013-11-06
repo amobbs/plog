@@ -12,16 +12,17 @@ angular.module('logFields', [])
          * @type {Array}
          */
         var fieldTemplates = [
-            {'type':'select',           'width': 0.5,   'template':'modules/log/fields/select.tpl.html'},
-            {'type':'select-severity',  'width': 0.5,   'template':'modules/log/fields/select-severity.tpl.html'},
-            {'type':'select-impact',    'width': 0.5,   'template':'modules/log/fields/select-impact.tpl.html'},
-            {'type':'textarea',         'width': 1,     'template':'modules/log/fields/textarea.tpl.html'},
-            {'type':'textbig',          'width': 1,     'template':'modules/log/fields/textbig.tpl.html'},
-            {'type':'textsmall',        'width': 0.5,   'template':'modules/log/fields/textsmall.tpl.html'},
-            {'type':'datetime',         'width': 0.5,   'template':'modules/log/fields/datetime.tpl.html'},
-            {'type':'checkbox',         'width': 0.5,   'template':'modules/log/fields/checkbox.tpl.html'},
-            {'type':'duration',         'width': 0.5,   'template':'modules/log/fields/duration.tpl.html'},
-            {'type':'loginfo',          'width': 1,     'template':'modules/log/fields/loginfo.tpl.html'}
+            {'type':'select',                   'width': 0.5,   'template':'modules/log/fields/select.tpl.html'},
+            {'type':'select-severity',          'width': 0.5,   'template':'modules/log/fields/select-severity.tpl.html'},
+            {'type':'select-impact',            'width': 0.5,   'template':'modules/log/fields/select-impact.tpl.html'},
+            {'type':'select-accountability',    'width': 0.5,   'template':'modules/log/fields/select-accountability.tpl.html'},
+            {'type':'textarea',                 'width': 1,     'template':'modules/log/fields/textarea.tpl.html'},
+            {'type':'textbig',                  'width': 1,     'template':'modules/log/fields/textbig.tpl.html'},
+            {'type':'textsmall',                'width': 0.5,   'template':'modules/log/fields/textsmall.tpl.html'},
+            {'type':'datetime',                 'width': 0.5,   'template':'modules/log/fields/datetime.tpl.html'},
+            {'type':'checkbox',                 'width': 0.5,   'template':'modules/log/fields/checkbox.tpl.html'},
+            {'type':'duration',                 'width': 0.5,   'template':'modules/log/fields/duration.tpl.html'},
+            {'type':'loginfo',                  'width': 1,     'template':'modules/log/fields/loginfo.tpl.html'}
         ];
 
 

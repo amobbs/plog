@@ -65,7 +65,11 @@
                     <i class="icon icon-resize-vertical"></i>
                 </td>
                 <td>
-                    <input type="text" ng-model="option.name" placeholder="Name..." />
+                    <input ng-model="option.name"
+                           type="text"
+                           placeholder="Name..."
+                           required
+                           />
                 </td>
                 <td>
                     <select ng-model="option.severity"
@@ -83,18 +87,8 @@
         </tbody>
         <tfoot>
             <tr>
-                <td>
+                <td colspan="3">
                     &nbsp;
-                </td>
-                <td>
-                    <input type="text" ng-model="newOption.name" placeholder="Name..." />
-                </td>
-                <td>
-                    <select ng-model="newOption.severity"
-                            ng-options="key as option for (key, option) in options.severities"
-                            >
-                        <option value="">Select Severity Level...</option>
-                    </select>
                 </td>
                 <td>
                     <button class="btn btn-primary" ng-click="addOption()"><i class="icon icon-plus"></i> Add Option</button>

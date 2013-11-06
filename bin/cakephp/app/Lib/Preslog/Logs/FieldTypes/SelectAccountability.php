@@ -46,10 +46,10 @@ class SelectAccountability extends Select
      * @var array   Severities type list
      */
     protected $accountabilities = array(
-        'client'        =>'Client',
-        'mediahub'      =>'MediaHub',
-        'shared'        =>'Shared',
-        'third-party'   =>'Third Party',
+        'client'        =>'Client Error',
+        'mediahub'      =>'MediaHub Error',
+        'shared'        =>'Shared Error',
+        'third-party'   =>'Third Party Error',
         'other'         =>'Other',
     );
 

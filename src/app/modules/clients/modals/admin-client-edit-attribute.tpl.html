@@ -3,6 +3,46 @@
     <h3 id="myModalLabel">Edit Hierarchy Group</h3>
 </div>
 <div class="modal-body">
+    <form name="groupForm" class="form-horizontal">
+        <div class="control-group" ng-class="{error: groupForm.label.$dirty && groupForm.label.$invalid && groupForm.label.$dirty}">
+            <label class="control-label" for="inputName">Friendly Label</label>
+            <div class="controls">
+                <input type="text"
+                       id="inputLabel"
+                       name="label"
+                       placeholder="Friendly Label.."
+                       ng-model="group.label"
+                       required
+                        />
+                <span class="help-inline" ng-show="groupForm.label.$dirty && groupForm.label.$invalid && groupForm.label.$error.required">Must not be empty.</span>
+            </div>
+        </div>
+        <div class="control-group" ng-class="{error: groupForm.name.$dirty && groupForm.name.$invalid && groupForm.name.$dirty}">
+            <label class="control-label" for="inputName">Field Name</label>
+            <div class="controls">
+                <input type="text"
+                       id="inputName"
+                       name="name"
+                       placeholder="Field Name.."
+                       ng-model="group.name"
+                       required
+                       ng-pattern="/^[a-z\-_]*$/"
+                        />
+                <span class="help-inline" ng-show="groupForm.name.$dirty && groupForm.name.$invalid && groupForm.name.$error.required">Must not be empty.</span>
+                <span class="help-inline" ng-show="groupForm.name.$dirty && groupForm.name.$invalid && groupForm.name.$error.pattern">Must only contain lowercase characters, dash and underscore.</span>
+            </div>
+        </div>
+    </form>
+
+    <h3>Hierarchical Groups</h3>
+
+    <div class="alert alert-info">
+        Hierarchical groups are used for multiple-selection fields which may contain a hierarchy, such as networks or states.
+        <br/>These selections are used for statistical analysis and the selective sending of notifications.
+        <br/><strong>To move items around</strong>, drag and drop the item you wish to move within the hierarchy.
+        <br/><strong>To remove an item</strong>, select it in the hierarchy and then click "With Selected > Delete".
+    </div>
+
     <div class="row-fluid">
         <div hierarchy-fields="group.children" hierarchy-selected="hierarchySelected" hide-deleted="false" drag-and-drop="true" allow-edit="true" ></div>
     </div>

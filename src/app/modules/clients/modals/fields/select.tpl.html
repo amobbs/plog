@@ -60,7 +60,11 @@
                     <i class="icon icon-resize-vertical"></i>
                 </td>
                 <td>
-                    <input type="text" ng-model="option.name" placeholder="Name..." />
+                    <input ng-model="option.name"
+                           type="text"
+                           placeholder="Name..."
+                           required
+                           />
                 </td>
                 <td>
                     <button ng-show="option.deleted == false" class="btn btn-danger" ng-confirm-click="Deleting this item will prevent it being selected in new logs. Existing logs will retain their selection of this item. Are you sure?" ng-click="option.deleted = 1"><i class="icon icon-remove"></i> Delete</button>
@@ -70,11 +74,8 @@
         </tbody>
         <tfoot>
             <tr>
-                <td>
+                <td colspan="2">
                     &nbsp;
-                </td>
-                <td>
-                    <input type="text" ng-model="newOption.name" placeholder="Name..." />
                 </td>
                 <td>
                     <button class="btn btn-primary" ng-click="addOption()"><i class="icon icon-plus"></i> Add Option</button>
