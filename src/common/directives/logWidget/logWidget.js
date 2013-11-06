@@ -38,7 +38,6 @@ angular.module('logWidget', [])
 
                 scope.redirectToLog = function(logId)
                 {
-                    logId = logId.replace('#', '');
                     window.location = '/logs/' + logId;
                 };
 

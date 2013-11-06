@@ -46,14 +46,14 @@
         </div>
 
         <table class="table table-condensed log-list">
-            <tbody ng-repeat="log in logs" ng-click="redirectToLog(log.hrid)">
-            <tr ng-repeat="row in log.rows">
-                <td ng-repeat="attribute in row">
-                    <div popover-trigger="mouseenter" popover="{{ attribute.value }}" class="ng-scope">
-                        <label>{{ attribute.title }}</label><div class="truncate">{{ attribute.value }}</div>
-                    </div>
-                </td>
-            </tr>
+            <tbody ng-repeat="log in logs" ng-click="redirectToLog(log.slug)">
+                    <tr ng-repeat="row in log.rows">
+                        <td ng-repeat="attribute in row">
+                            <div popover-trigger="mouseenter" popover="{{ attribute.value }}" class="ng-scope">
+                                <label>{{ attribute.title }}</label><div class="truncate">{{ attribute.value }}</div>
+                            </div>
+                        </td>
+                    </tr>
             </tbody>
         </table>
 

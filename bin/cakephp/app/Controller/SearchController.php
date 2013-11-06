@@ -253,6 +253,7 @@ class SearchController extends AppController
                 'id' => $log['_id'],
                 'deleted' => $log['deleted'],
                 'hrid' => $log['hrid'],
+                'slug' => $log['slug'],
                 'attributes' => array(
                     array(
                         'title' => 'LogID',
