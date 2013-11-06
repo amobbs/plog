@@ -15,6 +15,7 @@ class EqualsOperator extends JqlOperator {
                 'TEXT',
                 'DURATION',
                 'SELECT',
+                'ID',
             ),
             true);
     }

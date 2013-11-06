@@ -468,7 +468,7 @@ class SearchController extends AppController
             'ID' => array(
                 'name' => 'ID',
                 'label' => 'ID',
-                'type' => 'TEXT',
+                'type' => 'ID',
                 'size' => 15,
             ),
             'created' => array(
@@ -498,6 +498,11 @@ class SearchController extends AppController
         );
 
         $types = array(); //defines how a value is displayed in the interface, textbox or drop down etc..
+        $types['ID'] = array(
+            'editor' => 'TEXT',
+            'name' => 'ID',
+            'operators' => $this->listOperators('ID'),
+        );
         $types['DATE'] = array(
             'editor' => 'DATE',
             'name' => 'DATE',

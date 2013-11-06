@@ -108,9 +108,9 @@ class PreslogParser extends JqlParser {
                 $errors[] = "The Log ID provided does not match the format required. [prefix]_#[numeric id] ";
             }
 
-            if ( ! ($operator instanceof EqualsOperator || $operator instanceof NotEqualsOperator) )
+            if ( ! ($operator instanceof EqualsOperator) )
             {
-                $errors[] = "The operator " . $operator->getHumanReadable() . ' can not be used with the field "ID". Operators allowed are = !=';
+                $errors[] = "The operator " . $operator->getHumanReadable() . ' can not be used with the field "ID". Operators allowed are = ';
                 //"You can only use the Equals or not Equals operator when searching by Log ID";
             }
 
@@ -299,15 +299,22 @@ class PreslogParser extends JqlParser {
             //split the log prefix from numeric log id
             $parts = array();
 
+            $checkValue = $value;
             if ( is_array($value) && sizeof($value) > 0)
             {
-                $value = array_values($value)[0];
+                $checkValue = array_values($value)[0];
             }
 
-            if ( preg_match($logRegex, $value, $parts) )
+            if ( preg_match($logRegex, $checkValue, $parts) )
             {
                 $prefix = $parts[1];
                 $numericId = (int)$parts[2];
+
+                $searchArray = array('hrid' => $numericId);
+                if ($clause->getOperator() instanceof NotEqualsOperator)
+                {
+                   $searchArray = array('$not' => $searchArray);
+                }
 
                 //find client the prefix matches
                 $client = $clientModel->find('first', array(
@@ -319,7 +326,7 @@ class PreslogParser extends JqlParser {
                 return array(
                     '$and' => array(
                         array('client_id' => new MongoId($client['Client']['_id'])),
-                        array('hrid' => $numericId),
+                        $searchArray,
                     ),
                 );
             }
