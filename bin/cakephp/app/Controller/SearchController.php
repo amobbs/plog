@@ -682,7 +682,7 @@ class SearchController extends AppController
             if ($operator->isAppliedTo($type))
             {
                 $operators[] = array(
-                    'name' => $operator->getSymbol(),
+                    'name' => $operator->getSqlSymbol(),
                     'label' => $operator->getHumanReadable(),
                     'cardinality' => 'ONE',
                 );
