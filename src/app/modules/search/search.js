@@ -128,6 +128,11 @@ angular.module( 'Preslog.search', [
                     orderasc: $scope.logWidgetParams.orderDirection == 'Asc'
                 })
                     .then(function(result) {
+                        if (!result)
+                        {
+                            return;
+                        }
+                        
                         $scope.results = result;
                         var params = angular.copy($scope.logWidgetParams);
 

@@ -7,8 +7,8 @@ class JqlOperator {
 
     public static function listOperators() {
         return array(
-            '=' => new EqualsOperator(),
             '!=' => new NotEqualsOperator(),
+            '=' => new EqualsOperator(),
             '>' => new GreaterThanOperator(),
             '<' => new LessThanOperator(),
             'NOT IN' => new NotInOperator(),

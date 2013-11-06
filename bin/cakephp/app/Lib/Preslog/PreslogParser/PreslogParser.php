@@ -441,6 +441,12 @@ class PreslogParser extends JqlParser {
                     $isText = false;
                     $isSelect = true;
 
+                    // empty string will not match any mongo id's so force it in.
+                    if ( $operator->matches("", $value) )
+                    {
+                        $selectIn[] = "";
+                    }
+
                     //loop through the actual values for the select and find which ones match since we can not do it in the db
                     $preslogSettings = $clientField->getFieldSettings();
                     $options = $preslogSettings['data']['options'];
