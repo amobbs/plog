@@ -125,7 +125,7 @@ Router::connect(
  */
 Router::connect(
     '/admin/clients/:id',
-    array('controller' => 'Clients', 'action' => 'adminDelete', '[method]' => 'DETELE'),
+    array('controller' => 'Clients', 'action' => 'adminDelete', '[method]' => 'DELETE'),
     array('pass'=>array('id'), 'id'=>'[0-9a-z]+')
 );
 

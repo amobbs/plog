@@ -202,12 +202,12 @@ class ClientsController extends AppController
 
         // Simple delete save
         $client = array(
-            'id'=>$id,
+            '_id'=>$id,
             'deleted'=>true,
         );
 
         // Delete
-        $this->Client->save( array('Client'=>$client) );
+        $this->Client->save( $client );
 
         // OK Response
         $this->set('success', true);
