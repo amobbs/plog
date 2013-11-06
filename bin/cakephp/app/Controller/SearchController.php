@@ -253,6 +253,7 @@ class SearchController extends AppController
                 'id' => $log['_id'],
                 'deleted' => $log['deleted'],
                 'hrid' => $log['hrid'],
+                'slug' => $log['slug'],
                 'attributes' => array(
                     array(
                         'title' => 'LogID',
@@ -681,7 +682,7 @@ class SearchController extends AppController
             if ($operator->isAppliedTo($type))
             {
                 $operators[] = array(
-                    'name' => $operator->getSymbol(),
+                    'name' => $operator->getSqlSymbol(),
                     'label' => $operator->getHumanReadable(),
                     'cardinality' => 'ONE',
                 );

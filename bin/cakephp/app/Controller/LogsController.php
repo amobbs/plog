@@ -122,7 +122,7 @@ class LogsController extends AppController
         $log = $this->Log->findByHrid( $id );
 
         // Validate: does this log exist
-        if (!sizeof($log))
+        if (!$log)
         {
             $this->errorNotFound(array('message'=>'Log could not be found'));
         }
@@ -171,7 +171,7 @@ class LogsController extends AppController
             $log = $this->Log->findByHrid( $id );
 
             // Validate: Does log exist?
-            if (!sizeof($log))
+            if (!$log)
             {
                 $this->errorNotFound(array('message'=>'Log could not be found'));
             }
