@@ -308,6 +308,7 @@ class SearchController extends AppController
                     case 'select':
                     case 'select-impact':
                     case 'select-severity':
+                    case 'select-accountability':
                         $formattedField['value'] = $this->_getSelectValueFromClient($field['data']['selected'], $fieldInfo['data']['options']);
                         break;
                     case 'textarea': //missing break on purpose, same format as default.
