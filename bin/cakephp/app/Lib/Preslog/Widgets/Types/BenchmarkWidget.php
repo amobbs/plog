@@ -25,6 +25,7 @@ class BenchmarkWidget extends Widget {
         {
 
             $this->details['trendLine'] = isset($data['details']['trendLine']) ? $data['details']['trendLine'] : false;
+            $this->details['restrictTrendLineTo'] = isset($data['details']['restrictTrendLineTo']) ? $data['details']['restrictTrendLineTo'] : '';
             $this->details['bhpm'] = isset($data['details']['bhpm']) ? $data['details']['bhpm'] : false;
             $this->details['sla'] = isset($data['details']['sla']) ? $data['details']['sla'] : false;
             $this->details['legendLocation'] = isset($data['details']['legendLocation']) ? $data['details']['legendLocation'] : 1;
@@ -139,7 +140,8 @@ class BenchmarkWidget extends Widget {
             foreach ($this->series as $point)
             {
                 $dates[] = mktime(0, 0, 0, $point['xAxis']['month'], 1, $point['xAxis']['year']);
-                $date = $point['xAxis']['month'] . '/' . substr($point['xAxis']['year'], 2);
+                $month = mktime(0, 0, 0, $point['xAxis']['month'], 1, 1);
+                $date = date('M', $month) . '-' . substr($point['xAxis']['year'], 2);
 
                 $data = array();
                 $data['y'] = $this->asPercentageOfBHPM($point['yAxis']);
@@ -257,10 +259,9 @@ class BenchmarkWidget extends Widget {
                     ),
                 );
 
-                //put BHPM line roughly 2/3 of the way up
-                $minThirds = $min / 3;
+                //put BHPM line roughly 4/5 of the way up
+                $minThirds = $min / 5;
                 $bhpmYAxis['min'] = $min - $minThirds * 2;
-                $bhpmYAxis['max'] = $min + $minThirds;
                 $yAxis[] = $bhpmYAxis;
             }
 

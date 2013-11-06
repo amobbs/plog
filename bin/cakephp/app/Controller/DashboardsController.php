@@ -408,14 +408,21 @@ class DashboardsController extends AppController
             } else { //edit widget
                 $widgetArrayId = $this->Dashboard->findWidgetArrayId($dashboard, $this->request->params['widget_id']);
                 $widget = $this->_createWidgetObject($this->request->data['widget']);
-                $dashboard['widgets'][$widgetArrayId] = $widget->toArray(true);
-                   // $this->Widget->updateWidget($dashboard['widgets'][$widgetArrayId], );
-                $this->Dashboard->save($dashboard);
+                if ( is_array($widget) && isset($widget['errors']))
+                {
+                    $success = false;
+                }
+                else
+                {
+                    $dashboard['widgets'][$widgetArrayId] = $widget->toArray(true);
+                       // $this->Widget->updateWidget($dashboard['widgets'][$widgetArrayId], );
+                    $this->Dashboard->save($dashboard);
 
-                $this->set('widget', $widget->toArray(false));
-                $serialize[] = 'widget';
+                    $this->set('widget', $widget->toArray(false));
+                    $serialize[] = 'widget';
 
-                $success= true;
+                    $success= true;
+                }
             }
         }
 
