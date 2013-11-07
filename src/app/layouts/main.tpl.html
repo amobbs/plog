@@ -14,10 +14,10 @@
             <div class="nav-collapse collapse navbar-responsive-collapse">
                 <ul class="nav">
                     <li class="dropdown" ng-show="clients.length > 1">
-                        <a title="{{client.name}}" href="#" class="dropdown-toggle" data-toggle="dropdown"><img alt="{{client.name}}" src="{{client.logo}}"> <b class="caret"></b></a>
+                        <a title="{{client.name}}" href class="dropdown-toggle" data-toggle="dropdown"><img alt="{{client.name}}" src="{{client.logo}}"> <b class="caret"></b></a>
                         <ul class="dropdown-menu">
                             <li ng-repeat="clientItem in clients" ng-show="clientItem._id != client._id">
-                                <a href="#" ng-click="switchClient( clientItem._id );" title="{{ clientItem.name }}"><img alt="{{ clientItem.name }}" src="{{ clientItem.logo }}"></a>
+                                <a href ng-click="switchClient( clientItem._id );" title="{{ clientItem.name }}"><img alt="{{ clientItem.name }}" src="{{ clientItem.logo }}"></a>
                             </li>
                         </ul>
                     </li>

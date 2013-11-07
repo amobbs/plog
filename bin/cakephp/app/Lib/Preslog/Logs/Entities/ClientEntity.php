@@ -429,6 +429,12 @@ class ClientEntity
      */
     protected function attributeBeforeSave( &$attributes )
     {
+        // Must have attributes!
+        if (!sizeof($attributes))
+        {
+            return;
+        }
+
         // Check each item
         foreach( $attributes as &$attr )
         {

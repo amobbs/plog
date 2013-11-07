@@ -172,7 +172,11 @@ class User extends AppModel
             'email'=>array(
                 'rule'=>array('email'),
                 'message'=>'Must be a valid email address',
-            )
+            ),
+            'collision'=>array(
+                'rule'=>array('checkCollision'),
+                'message'=>'Email address is already in use by another user.'
+            ),
         ),
         'company'=>array(
             'max-length'=>array(
@@ -320,9 +324,10 @@ class User extends AppModel
 
     /**
      * Fetch all available roles and return a simple array
-     * @return array
+     * @param   string      $requiredRole       Role that must be included.
+     * @return  array
      */
-    public function getAvailableRoles()
+    public function getAvailableRoles( $requiredRole=null )
     {
         $rawRoles = Configure::read('auth-acl.roles');
 
@@ -333,6 +338,11 @@ class User extends AppModel
             $item['hidden'] = (isset($role['hidden']) ? $role['hidden'] : false);
             $item['name'] = $role['name'];
             $item['id'] = $roleKey;
+
+            if ($item['hidden'] && $requiredRole != $item['id'])
+            {
+                continue;
+            }
 
             $roles[] = $item;
         }
@@ -507,6 +517,30 @@ class User extends AppModel
         // Attempt to fetch the client and check
         $client = $this->Client->findById( $check['client_id'] );
         return (sizeof($client) > 0);
+    }
+
+
+    /**
+     * Validate for collision on the email address
+     * @param   $check      Field to check
+     * @return  bool        True if valid
+     */
+    public function checkCollision( $check )
+    {
+        // Find by email
+        $conditions = array(
+            'email'=>$check['email'],
+        );
+
+        // Not this user
+        if (isset($this->data['User']['_id']) && !empty($this->data['User']['_id']))
+        {
+            $conditions['_id'] = array('$ne' => $this->data['User']['_id']);
+        }
+
+        $count = $this->find('count', array('conditions'=>$conditions));
+
+        return ($count < 1);
     }
 
 

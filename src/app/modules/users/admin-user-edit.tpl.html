@@ -176,8 +176,8 @@
                 </div>
 
                 <!-- Deleted - Only visible when the user has been removed -->
-                <div class="control-group" ng-show="{{user.deleted}}" ng-class="{error: userForm.deleted.$invalid}">
-                    <label class="control-label" for="inputNotifyEmail">Deleted</label>
+                <div class="control-group alert alert-error" ng-show="{{user.deleted}}" ng-class="{error: userForm.deleted.$invalid}">
+                    <label class="control-label" for="inputDeleted">Deleted</label>
                     <div class="controls">
                         <input type="checkbox"
                                id="inputDeleted"

@@ -33,12 +33,23 @@ angular.module( 'Preslog.log', [
             },
             resolve: {
 
+                // Change the LogID if not compatible
+                logId: ['$stateParams', function($stateParams) {
+                    if ($stateParams.log_id !== undefined)
+                    {
+                        if (!RegExp('[a-zA-Z]+_[0-9]+').test($stateParams.log_id))
+                        {
+                            $stateParams.log_id = undefined;
+                        }
+                    }
+                }],
+
                 // Load log data
                 logData: ['$q', 'LogRestangular', '$stateParams', 'userService', function($q, LogRestangular, $stateParams, userService) {
                     var deferred = $q.defer();
 
                     // If editing an existing log
-                    if ($stateParams.log_id) {
+                    if ($stateParams.log_id !== undefined) {
                         LogRestangular.one('logs', $stateParams.log_id).get().then(function(log) {
                             deferred.resolve(log);
                         });
@@ -68,7 +79,7 @@ angular.module( 'Preslog.log', [
                     var deferred = $q.defer();
 
                     // If an existing log, use that as a basis
-                    if ($stateParams.log_id) {
+                    if ($stateParams.log_id !== undefined) {
 
                         // Fetch the options based off the Log ID
                         var request = Restangular.one('logs', $stateParams.log_id).options().then(function(options) {

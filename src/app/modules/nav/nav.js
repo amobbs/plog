@@ -76,14 +76,8 @@ angular.module( 'Preslog.nav', [])
          */
         $scope.createLog = function( link )
         {
-            // Force reload if on the Log Edit page
-            if ($location.path() == link)
-            {
-                window.location.href = link;
-            }
-
             // Change path
-            $location.path(link);
+            $location.path(link+'?new');
         };
 
         // Observe the User model

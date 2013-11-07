@@ -191,6 +191,19 @@
                             <span class="help-inline" ng-show="clientForm.activationDate.$dirty && clientForm.activationDate.$invalid && clientForm.activationDate.$error.pattern">Must be formatted as YYYY-MM-DD</span>
                         </div>
                     </div>
+
+                    <!-- Deleted - Only visible when the client has been removed -->
+                    <div class="control-group alert alert-error" ng-show="{{client.deleted}}" ng-class="{error: clientForm.deleted.$invalid}">
+                        <label class="control-label" for="inputDeleted">Deleted</label>
+                        <div class="controls">
+                            <input type="checkbox"
+                                   id="inputDeleted"
+                                   ng-model="client.deleted" />
+                            <span class="help-inline">Uncheck and save to restore this client.</span>
+                            <span class="help-inline" ng-show="clientForm.deleted.$error.validateServer" ng-bind="serverErrors.deleted"></span>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>

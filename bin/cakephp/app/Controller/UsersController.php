@@ -462,9 +462,19 @@ class UsersController extends AppController
             )
         ));
 
-        // Flatten the array for simplicity
+        // Fetch roles
+        $rawRoles = Configure::read('auth-acl.roles');
+
         foreach ($users as &$user) {
+
+            // Flatten the array for simplicity
             $user = $user['User'];
+
+            // Fix the role to friendly version
+            if (isset($rawRoles[ $user['role'] ]))
+            {
+                $user['role'] = $rawRoles[ $user['role'] ]['name'];
+            }
         }
 
         // Output
@@ -489,8 +499,18 @@ class UsersController extends AppController
     {
         $options = array();
 
+        if ($userId)
+        {
+            // Fetch the user
+            $user = $this->User->find('first', array('conditions'=>array('_id'=>$userId)));
+        }
+        else
+        {
+            $user['User']['role'] = null;
+        }
+
         // Get all roles
-        $options['roles'] = $this->User->getAvailableRoles();
+        $options['roles'] = $this->User->getAvailableRoles( $user['User']['role'] );
 
         // Get all clients
         $options['clients'] = $this->Client->getClientsAsOptions();
@@ -623,7 +643,7 @@ class UsersController extends AppController
 
         // Simple delete save
         $user = array(
-            'id'=>$id,
+            '_id'=>$id,
             'deleted'=>true,
         );
 

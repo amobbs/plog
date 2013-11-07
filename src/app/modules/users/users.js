@@ -127,6 +127,14 @@ angular.module( 'Preslog.users', [
 
                     // Extrapolate all fields to the scope
                     $scope.serverErrors = response.data.data;
+
+                    // If field exists, mark is as invalid
+                    for (var i in $scope.serverErrors)
+                    {
+                        if ($scope.userForm[i] !== undefined) {
+                            $scope.userForm[i].$setValidity('validateServer', false);
+                        }
+                    }
                 }
             );
         };
