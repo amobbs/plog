@@ -168,7 +168,8 @@ class DashboardsController extends AppController
         } else if ($this->request->is('post')) {
 
             //edit dashboard
-            if (!empty($id)) {
+            if (!empty($id))
+            {
                 $dashboard = $this->Dashboard->findById($id);
                 if (empty($dashboard))
                 {
@@ -184,6 +185,10 @@ class DashboardsController extends AppController
                     $this->updateDashboardWidgets($id, $this->request->data['widgets']);
                     $dashboard = $this->Dashboard->findById($id);
 
+                    $dashboard = $this->_getParsedDashboard($dashboard['Dashboard']);
+                    $this->set('dashboard', $this->Dashboard->toArray($dashboard));
+                    $this->set('status', 'saved');
+
                 //update the name
                 } else {
                     $dashboard['Dashboard']['name'] = $this->request->data['name']['name'];
@@ -194,13 +199,10 @@ class DashboardsController extends AppController
                     $this->set('dashboard', $this->Dashboard->toArray($dashboard, false));
                     $this->set('status', 'success');
                 }
-
-                $dashboard = $this->_getParsedDashboard($dashboard['Dashboard']);
-                $this->set('dashboard', $this->Dashboard->toArray($dashboard));
-                $this->set('status', 'saved');
-
+            }
             //new dashboard
-            } else {
+            else
+            {
 
                 $dashboard = array(
                     '_id' => new MongoId(),
@@ -220,8 +222,12 @@ class DashboardsController extends AppController
             }
         }
 
-        //TODO remove this and make sure we only send a list of clients to admin users.
-        $clients = $this->Client->find('all');
+        $clients = array();
+        if ($this->isAuthorized('admin'))
+        {
+
+            $clients = $this->Client->find('all');
+        }
         $this->set('clients', $clients);
 
         $this->set('favourites', $this->listLoggedInFavouriteDashboards());
