@@ -33,14 +33,15 @@
                                 <input type="email" id="inputEmail" placeholder="Email Address" ng-model="user.email" required>
                             </div>
                         </div>
+
                         <div class="control-group" ng-class="{error:errors.password}">
                             <label class="control-label" for="inputPassword">Password</label>
                             <div class="controls">
                                 <input type="password" id="inputPassword" placeholder="Password" ng-model="user.password" required>
                                 <span class="help-block forgotten-password"><a href="#" ng-click="forgottenPassword()">Forgotten your password?</a></span>
                             </div>
-
                         </div>
+
                         <div class="control-group">
                             <div class="controls">
                                 <label class="checkbox">
@@ -48,9 +49,10 @@
                                 </label>
                             </div>
                         </div>
+
                         <div class="control-group">
                             <div class="controls">
-                                <button type="submit" class="btn btn-primary">Sign in</button>
+                                <input type="submit" class="btn btn-primary" value="Sign in" />
                             </div>
                         </div>
                     </form>

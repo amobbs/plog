@@ -1,4 +1,9 @@
-<div class="span6 group-date" ng-class="{error: logForm.fields_{{options._id}}.$invalid}">
+<div class="span6 control-group group-date" ng-class="{error: logForm.fields_{{options._id}}.$invalid}">
+    <input
+            id="fields_{{options._id}}"
+            type="hidden"
+            ng-model="log.data.datetime"
+            />
     <label class="control-label label-date">{{options.label}}</label>
     <div class="controls controls-date">
         <input
@@ -6,7 +11,6 @@
                 type="text"
                 datetime="date"
                 ng-model="log.data.datetime"
-                required
                 />
     </div>
     <label class="control-label label-time">Time</label>
@@ -16,7 +20,6 @@
                 type="text"
                 datetime="time"
                 ng-model="log.data.datetime"
-                required
                 />
     </div>
 </div>

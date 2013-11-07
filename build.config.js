@@ -72,7 +72,6 @@ module.exports = {
             'vendor/ng-table/ng-table.js',
             'vendor/lodash/dist/lodash.js',
             'vendor/restangular/dist/restangular.js',
-
             'vendor/dynatree/dist/jquery.dynatree.min.js'
         ],
 

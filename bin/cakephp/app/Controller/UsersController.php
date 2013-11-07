@@ -685,9 +685,11 @@ class UsersController extends AppController
         }
 
         // Find the user
-        $user = $this->User->find('first', array('conditions'=>array(
-            'email'=>$emailAddress
-        )));
+        $user = $this->User->find('first', array(
+            'conditions'=>array(
+                'email'=>$emailAddress
+            )
+        ));
 
         // Error if user doesn't exist
         if (empty($user))
@@ -697,10 +699,12 @@ class UsersController extends AppController
 
         // Create a token for the reset
         $token = md5(time().'-preslog-'.$user['User']['company']);
+        $user['User']['password-token'] = $token;
 
         // Save the token
-        $user['User']['password-token'] = $token;
-        $this->User->save($user['User']);
+        $updateData['_id'] = $user['User']['_id'];
+        $updateData['password-token'] = $user['User']['password-token'];
+        $this->User->save($updateData);
 
         // Use debug email if in debug mode
         if (Configure::read('debug') > 0)
@@ -771,7 +775,7 @@ class UsersController extends AppController
         }
 
         // Save the new password over this user and remove the existing token
-        $user['User']['password'] = Security::hash($password, 'blowfish', false);
+        $user['User']['password'] = $password;
         $user['User']['password-token'] = null;
         $this->User->save($user['User']);
 

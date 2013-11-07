@@ -117,6 +117,12 @@ class Datetime extends FieldTypeAbstract
     {
         $errors = array();
 
+        // Must not be empty
+        if (!isset($this->data['data']['datetime']) || empty($this->data['data']['datetime']))
+        {
+            return array("Date/Time must not be empty.");
+        }
+
         $received = $this->data['data']['datetime'];
         $expected = date('r', strtotime( $this->data['data']['datetime'] ));
 

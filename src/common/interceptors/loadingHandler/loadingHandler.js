@@ -108,6 +108,12 @@ angular.module('loadingHandler', [])
             };
 
 
+            /**
+             * Hide the loading dialog
+             * - Instigates a timer with a grace period. When grace passes, loader will be cleared.
+             * @param $rootScope
+             * @param $timeout
+             */
             hideLoadingDialog = function( $rootScope, $timeout )
             {
                 // Restart the timer
@@ -127,6 +133,20 @@ angular.module('loadingHandler', [])
             };
 
 
+            /**
+             * Test for if the Loader should be executed for this url
+             * Specify regex here for URLS you wish to exclude from the global loader.
+             */
+            allowRequest = function (url)
+            {
+                var found = 0;
+                found += RegExp('dashboards/[a-zA-Z0-9]+/widgets/[a-zA-Z0-9]+$').test(url);
+                found += RegExp('search$').test(url);
+
+                return !found;
+            };
+
+
         /**
          * HTTP Interceptor
          * - Add count of HTTP activity when a request is commenced
@@ -136,22 +156,38 @@ angular.module('loadingHandler', [])
         $httpProvider.interceptors.push(['$q', '$rootScope', '$timeout', function($q, $rootScope, $timeout) {
             return {
                 'request': function(config) {
-                    increaseRequest($rootScope, $timeout);
+
+                    if (allowRequest(config.url))
+                    {
+                        increaseRequest($rootScope, $timeout);
+                    }
 
                     return config || $q.when(config);
                 },
                 'requestError': function(rejection) {
-                    decreaseRequest($rootScope, $timeout);
+
+                    if (allowRequest(rejection.url))
+                    {
+                        decreaseRequest($rootScope, $timeout);
+                    }
 
                     return $q.reject(rejection);
                 },
                 'response': function(response) {
-                    decreaseRequest($rootScope, $timeout);
+
+                    if (allowRequest(response.url))
+                    {
+                        decreaseRequest($rootScope, $timeout);
+                    }
 
                     return response || $q.when(response);
                 },
                 'responseError': function(rejection) {
-                    decreaseRequest($rootScope, $timeout);
+
+                    if (allowRequest(rejection.url))
+                    {
+                        decreaseRequest($rootScope, $timeout);
+                    }
 
                     return $q.reject(rejection);
                 }

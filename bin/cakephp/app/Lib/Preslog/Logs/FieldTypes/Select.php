@@ -123,6 +123,10 @@ class Select extends FieldTypeAbstract
                 $errors[] = 'The selected option could not be found in the database schema.';
             }
         }
+        else
+        {
+            //$errors[] = "Must not be empty.";
+        }
 
         return $errors;
     }
