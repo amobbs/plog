@@ -265,7 +265,11 @@ class DashboardsController extends AppController
             $endDate = null;
             foreach($dashboard['widgets'] as $widget)
             {
-                if ($widget['type'] == 'date')
+                if ($widget instanceof Widget)
+                {
+                    echo "hey";
+                }
+                if ($widget['type'] == 'date' && isset($widget['details']['start']) && isset($widget['details']['end']))
                 {
                     $startDate = $widget['details']['start'];
                     $endDate = $widget['details']['end'];
@@ -426,7 +430,7 @@ class DashboardsController extends AppController
         {
             foreach($dashboard['widgets'] as $widget)
             {
-                if ($widget['type'] == 'date')
+                if ($widget['type'] == 'date' && isset($widget['details']['start']) && isset($widget['details']['end']))
                 {
                     $variables['start'] = $widget['details']['start'];
                     $variables['end'] = $widget['details']['end'];
@@ -743,7 +747,7 @@ class DashboardsController extends AppController
             $widgetObject = $this->_populateOptions($options, $optionName, $widgetObject, $mongoPipeLine);
         }
 
-        if ($populateLogSeries && $widgetObject instanceof ListWidget)
+        if (!($widgetObject instanceof ListWidget) ||  ($widgetObject instanceof ListWidget && $populateLogSeries))
         {
             $this->_populateSeries($widgetObject, $mongoPipeLine);
         }

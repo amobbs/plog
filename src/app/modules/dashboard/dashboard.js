@@ -223,8 +223,14 @@ angular.module( 'Preslog.dashboard', [
         };
 
         $scope.refreshWidget = function(widgetId) {
+            variables = {};
+            if ($scope.dashboard.session)
+            {
+                variables = $scope.dashboard.session;
+            }
+
             source.one('widgets', widgetId)
-                .get({start: $scope.dashboard.session.start, end: $scope.dashboard.session.end})
+                .get(variables)
                 .then(function(result) {
                     if (result && result.widget) {
                         //find the widget in memory and update display
@@ -536,17 +542,26 @@ angular.module( 'Preslog.dashboard', [
             {
                 $scope.updatingWidgets.push(widget._id);
 
+                var getRequest = {
+                    query: params.query,
+                    limit: params.perPage,
+                    start: offset,
+                    order: params.order,
+                    orderasc: params.orderDirection == 'Asc',
+                    widgetid: widget._id,
+                };
+
+                if ($scope.dashboard.session && $scope.dashboard.session.start && $scope.dashboard.session.end)
+                {
+                    getRequest.variableStart = $scope.dashboard.session.start;
+                    getRequest.variableEnd = $scope.dashboard.session.end;
+
+                }
+
+
                 //request new list of logs
-                Restangular.one('search').get({
-                        query: params.query,
-                        limit: params.perPage,
-                        start: offset,
-                        order: params.order,
-                        orderasc: params.orderDirection == 'Asc',
-                        widgetid: widget._id,
-                        variableStart: $scope.dashboard.session.start,
-                        variableEnd: $scope.dashboard.session.end
-                    })
+                Restangular.one('search')
+                    .get(getRequest)
                     .then(function(result) {
                         for(var id in $scope.dashboard.widgets)
                         {
