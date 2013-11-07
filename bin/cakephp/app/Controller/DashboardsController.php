@@ -4,6 +4,7 @@
 use Preslog\Logs\FieldTypes\FieldTypeAbstract;
 use Preslog\Widgets\Types\BenchmarkWidget;
 use Preslog\Widgets\Types\DateWidget;
+use Preslog\Widgets\Types\ListWidget;
 use Swagger\Annotations as SWG;
 use Preslog\Widgets\WidgetFactory;
 use Preslog\Widgets\Widget;
@@ -160,7 +161,7 @@ class DashboardsController extends AppController
                 throw new Exception('We are unable to find this dashboard in the system');
             }
 
-            $dashboard = $this->_getParsedDashboard($dashboard['Dashboard']);
+            $dashboard = $this->_getParsedDashboard($dashboard['Dashboard'], false);
             $this->set('dashboard', $this->Dashboard->toArray($dashboard, false));
             $this->set('status', 'success');
 
@@ -255,7 +256,7 @@ class DashboardsController extends AppController
     /*
      * given a dashboard that has just come out from the database replace all the widgets with widget objects
      */
-    private function _getParsedDashboard($dashboard) {
+    private function _getParsedDashboard($dashboard, $populateLogSeries = true) {
         $widgets = array();
 
         if (isset($dashboard['widgets'])) {
@@ -284,7 +285,7 @@ class DashboardsController extends AppController
                         $variables['end'] = $endDate;
                     }
 
-                    $widgetObject = $this->_createWidgetObject($widget, $variables);
+                    $widgetObject = $this->_createWidgetObject($widget, $variables, $populateLogSeries);
                     if (! ($widgetObject instanceof Widget))
                     {
                         throw new Exception($widgetObject['errors'][0]);
@@ -721,7 +722,7 @@ class DashboardsController extends AppController
     /*
      * Create an instance of Preslog\Widget and populate it with data passed in
      */
-    private function _createWidgetObject($widget, $variables = array()) {
+    private function _createWidgetObject($widget, $variables = array(), $populateLogSeries = true) {
         $widgetObject = WidgetFactory::createWidget($widget, $variables);
         //set the id if we have it otherwise it will be random
         if ( isset($widget['_id']) )
@@ -742,7 +743,12 @@ class DashboardsController extends AppController
             $widgetObject = $this->_populateOptions($options, $optionName, $widgetObject, $mongoPipeLine);
         }
 
-        return $this->_populateSeries($widgetObject, $mongoPipeLine);
+        if ($populateLogSeries && $widgetObject instanceof ListWidget)
+        {
+            $this->_populateSeries($widgetObject, $mongoPipeLine);
+        }
+
+        return $widgetObject;
     }
 
     /***
