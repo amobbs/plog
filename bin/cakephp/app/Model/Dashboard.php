@@ -108,7 +108,6 @@ class Dashboard extends AppModel
         foreach($dashboard['widgets'] as $widget) {
             $parsed['widgets'][] = $widget->toArray($forMongo);
         }
-
         return $parsed;
     }
 

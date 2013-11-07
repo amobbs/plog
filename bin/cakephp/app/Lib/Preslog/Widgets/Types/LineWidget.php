@@ -9,7 +9,7 @@ use Preslog\Widgets\Widget;
 
 class LineWidget extends Widget {
 
-    public function __construct($data) {
+    public function __construct($data, $variables = array()) {
         //widget type specific info
         $this->type = 'line';
         $this->chartType = 'line';
@@ -59,7 +59,7 @@ class LineWidget extends Widget {
             ),
         );
 
-        parent::__construct($data);
+        parent::__construct($data, $variables);
     }
 
     public function getDisplayData() {

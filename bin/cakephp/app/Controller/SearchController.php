@@ -39,9 +39,17 @@ class SearchController extends AppController
         $orderBy =  isset($this->request->query['order']) ? $this->request->query['order'] : '';
         $asc = isset($this->request->query['orderasc']) ? $this->request->query['orderasc'] == 'true' : true;
 
+        $variables = array();
+
+        if (isset($this->request->query['variableStart']) && isset($this->request->query['variableEnd']))
+        {
+            $variables['start'] =  $this->request->query['variableStart'];
+            $variables['end'] = $this->request->query['variableEnd'];
+        }
+
         // Perform search
         // Returns Logs and Options to accompany
-        $return = $this->executeSearch( $this->request->query, $limit, $start, $orderBy, $asc);
+        $return = $this->executeSearch( $this->request->query, $limit, $start, $orderBy, $asc, $variables);
 
         //used for dashboards to determin which widget we are updating.
         if ( isset($this->request->query['widgetid']) )
@@ -169,7 +177,7 @@ class SearchController extends AppController
     /**
      * Perform the search operation and return a series of log data sufficient for search results.
      */
-    protected function executeSearch( $params, $limit = 3, $start = 0, $orderBy = '', $orderAsc = true)
+    protected function executeSearch( $params, $limit = 3, $start = 0, $orderBy = '', $orderAsc = true, $variables = array())
     {
         $options = array();
 
@@ -191,6 +199,11 @@ class SearchController extends AppController
             $query .= 'AND client_id = ' . $user['User']['client_id'] ;
         }
 
+        //replace any variables that are passed in
+        foreach($variables as $variable => $value)
+        {
+            $query = str_replace('{' . $variable . '}', $value, $query);
+        }
 
         $user = $this->User->findById(
             $this->PreslogAuth->user('_id')

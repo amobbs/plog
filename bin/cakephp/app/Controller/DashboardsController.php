@@ -3,6 +3,7 @@
 
 use Preslog\Logs\FieldTypes\FieldTypeAbstract;
 use Preslog\Widgets\Types\BenchmarkWidget;
+use Preslog\Widgets\Types\DateWidget;
 use Swagger\Annotations as SWG;
 use Preslog\Widgets\WidgetFactory;
 use Preslog\Widgets\Widget;
@@ -158,6 +159,7 @@ class DashboardsController extends AppController
             if (empty($dashboard)) {
                 throw new Exception('We are unable to find this dashboard in the system');
             }
+
             $dashboard = $this->_getParsedDashboard($dashboard['Dashboard']);
             $this->set('dashboard', $this->Dashboard->toArray($dashboard, false));
             $this->set('status', 'success');
@@ -257,11 +259,32 @@ class DashboardsController extends AppController
         $widgets = array();
 
         if (isset($dashboard['widgets'])) {
+            //find if this has a date widget
+            $startDate = null;
+            $endDate = null;
+            foreach($dashboard['widgets'] as $widget)
+            {
+                if ($widget['type'] == 'date')
+                {
+                    $startDate = $widget['details']['start'];
+                    $endDate = $widget['details']['end'];
+                    break;
+                }
+            }
+
             foreach($dashboard['widgets'] as $widget) {
                 $widgetObject = null;
                 if(!($widget instanceof Widget))
                 {
-                    $widgetObject = $this->_createWidgetObject($widget);
+                    $variables = array();
+
+                    if ($startDate !== null && $endDate !== null)
+                    {
+                        $variables['start'] = $startDate;
+                        $variables['end'] = $endDate;
+                    }
+
+                    $widgetObject = $this->_createWidgetObject($widget, $variables);
                     if (! ($widgetObject instanceof Widget))
                     {
                         throw new Exception($widgetObject['errors'][0]);
@@ -392,13 +415,32 @@ class DashboardsController extends AppController
         $dashboard = $dashboard['Dashboard'];
         $success = false;
 
+        $variables = array();
+        if (isset($this->request->query['start']) && isset($this->request->query['end']))
+        {
+            $variables['start'] = $this->request->query['start'];
+            $variables['end'] = $this->request->query['end'];
+        }
+        else
+        {
+            foreach($dashboard['widgets'] as $widget)
+            {
+                if ($widget['type'] == 'date')
+                {
+                    $variables['start'] = $widget['details']['start'];
+                    $variables['end'] = $widget['details']['end'];
+                    break;
+                }
+            }
+        }
+
         $serialize = array('success');
         $widget = null;
         if ($this->request->is('post'))
         {
             //create widget
             if (!isset( $this->request->params['widget_id'])) {
-                $widget = $this->_createWidgetObject($this->request->data['widget']);
+                $widget = $this->_createWidgetObject($this->request->data['widget'], $variables);
                 $dashboard['widgets'][] = $widget->toArray(true);
                 $this->Dashboard->save($dashboard);
                 $this->set('widget', $widget->toArray(false));
@@ -407,7 +449,7 @@ class DashboardsController extends AppController
                 $success = true;
             } else { //edit widget
                 $widgetArrayId = $this->Dashboard->findWidgetArrayId($dashboard, $this->request->params['widget_id']);
-                $widget = $this->_createWidgetObject($this->request->data['widget']);
+                $widget = $this->_createWidgetObject($this->request->data['widget'], $variables);
                 if ( is_array($widget) && isset($widget['errors']))
                 {
                     $success = false;
@@ -428,7 +470,7 @@ class DashboardsController extends AppController
 
         if ($this->request->is('get')) { //read widget
             $widgetArrayId = $this->Dashboard->findWidgetArrayId($dashboard, $this->request->params['widget_id']);
-            $widget = $this->_createWidgetObject($dashboard['widgets'][$widgetArrayId]);
+            $widget = $this->_createWidgetObject($dashboard['widgets'][$widgetArrayId], $variables);
             $this->set('widget', $widget->toArray(false));
             $serialize[] = 'widget';
         }
@@ -679,10 +721,11 @@ class DashboardsController extends AppController
     /*
      * Create an instance of Preslog\Widget and populate it with data passed in
      */
-    private function _createWidgetObject($widget) {
-        $widgetObject = WidgetFactory::createWidget($widget);
+    private function _createWidgetObject($widget, $variables = array()) {
+        $widgetObject = WidgetFactory::createWidget($widget, $variables);
         //set the id if we have it otherwise it will be random
-        if (isset($widget['_id'])) {
+        if ( isset($widget['_id']) )
+        {
             $widgetObject->setId(new MongoId($widget['_id']));
         }
 
@@ -880,7 +923,7 @@ class DashboardsController extends AppController
      * @return mixed
      */
     private function _populateSeries($widgetObject, $aggregationPipeLine) {
-        $query = $widgetObject->getDetail('query');
+        $query = $widgetObject->getDetail('parsedQuery');
         if (empty($query)) {
             return $widgetObject;
         }

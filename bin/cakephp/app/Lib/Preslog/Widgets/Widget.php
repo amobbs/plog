@@ -2,8 +2,6 @@
 
 namespace Preslog\Widgets;
 
-use Configure;
-use Highchart;
 use MongoId;
 
 class Widget {
@@ -33,7 +31,7 @@ class Widget {
     public function isAggregate() { return $this->aggregate; }
 
 
-    public function __construct($data) {
+    public function __construct($data, $variables = array()) {
         //set all the widget details
         $this->id = isset($data['_id']) ? new MongoId($data['_id']): new MongoId();
         $this->name = isset($data['name']) ? $data['name'] : '';
@@ -46,6 +44,7 @@ class Widget {
         if (isset($data['details'])) {
             $this->details['title'] = isset($data['details']['title']) ? $data['details']['title'] : '';
             $this->details['query'] = isset($data['details']['query']) ? $data['details']['query'] : '';
+            $this->details['parsedQuery'] = $this->replaceVariables($data['details']['query'], $variables);
             $this->details['refresh'] = isset($data['details']['refresh']) ? $data['details']['refresh'] : 0;
         } else {
             $this->data['title'] = '';
@@ -70,6 +69,17 @@ class Widget {
         }
 
         return $widget;
+    }
+
+    private function replaceVariables($query, $variables)
+    {
+        $parsed = $query;
+        foreach($variables as $variable => $value)
+        {
+            $parsed = str_replace('{' . $variable . '}', $value, $parsed);
+        }
+
+        return $parsed;
     }
 
     //return data that is needed to display this widget in the interface

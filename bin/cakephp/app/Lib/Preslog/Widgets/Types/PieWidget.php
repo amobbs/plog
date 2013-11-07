@@ -10,7 +10,7 @@ use Preslog\Widgets\Widget;
 
 class PieWidget extends Widget {
 
-    public function __construct($data) {
+    public function __construct($data, $variables = array()) {
         $this->type = 'pie';
         $this->chartType = 'pie';
         $this->aggregate = true;
@@ -39,7 +39,7 @@ class PieWidget extends Widget {
             ),
         );
 
-        parent::__construct($data);
+        parent::__construct($data, $variables);
     }
 
     public function getDisplayData() {

@@ -1,5 +1,5 @@
 angular.module('Preslog.dashboard.widgetModal', [])
-    .controller('WidgetCtrl', function ($scope, $modalInstance, Restangular, widget, clients) {
+    .controller('WidgetCtrl', function ($scope, $modalInstance, $filter, Restangular, widget, clients) {
         $scope.widget = widget;
         $scope.spanOptions = [1, 2, 3];
         $scope.clients = clients;
@@ -18,6 +18,18 @@ angular.module('Preslog.dashboard.widgetModal', [])
                 .then(function (result) {
                     if (result.ok)
                     {
+                        if ($scope.widget.details.start)
+                        {
+                            startDate = new Date($scope.widget.details.start);
+                            $scope.widget.details.start = $filter('date')(startDate, 'EEE, dd MMM yyyy hh:mm:ss Z');
+                        }
+
+                        if ($scope.widget.details.end)
+                        {
+                            endDate = new Date($scope.widget.details.end);
+                            $scope.widget.details.end = $filter('date')(endDate, 'EEE, dd MMM yyyy hh:mm:ss Z');
+                        }
+
                         $modalInstance.close($scope.widget);
                     }
                     else

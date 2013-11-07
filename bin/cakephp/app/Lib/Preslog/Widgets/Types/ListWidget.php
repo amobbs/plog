@@ -9,7 +9,7 @@ use Preslog\Widgets\Widget;
 
 class ListWidget extends Widget {
 
-    public function __construct($data) {
+    public function __construct($data, $variables = array()) {
         $this->type = 'list';
         $this->chartType = 'list';
         $this->maxWidth = 3;
@@ -25,7 +25,7 @@ class ListWidget extends Widget {
         $this->details['orderDirection'] = isset($data['details']['orderDirection']) ? $data['details']['orderDirection'] : 'Asc';
         $this->details['summary'] = isset($data['details']['summary']) ? $data['details']['summary'] : false;
 
-        parent::__construct($data);
+        parent::__construct($data, $variables);
     }
 
     public function getDisplayData() {

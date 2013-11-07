@@ -33,6 +33,7 @@ angular.module('moduleManager', [
     'inputFieldDuration',
     'logWidget',
     'fileUpload',
+    'dateWidget',
 
     // Site Modules
     'pages',

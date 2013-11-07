@@ -224,7 +224,7 @@ angular.module( 'Preslog.dashboard', [
 
         $scope.refreshWidget = function(widgetId) {
             source.one('widgets', widgetId)
-                .get()
+                .get({start: $scope.dashboard.session.start, end: $scope.dashboard.session.end})
                 .then(function(result) {
                     if (result && result.widget) {
                         //find the widget in memory and update display
@@ -236,6 +236,16 @@ angular.module( 'Preslog.dashboard', [
                                 if (widget.type == 'list') {
                                     $scope.setUpLogList();
                                 }
+                                //specific to dateWidget, we want to be able to change the period without affecting the default.
+                                if (widget.type == 'date')
+                                {
+                                    $scope.dashboard.session = {
+                                        start: new Date(result.widget.details.start),
+                                        end: new Date(result.widget.details.end),
+                                        period: result.widget.details.period
+                                    };
+                                }
+
 
                                 $scope.updateRefreshTimer(widgetId, result.widget.details.refresh);
                                 break;
@@ -245,7 +255,7 @@ angular.module( 'Preslog.dashboard', [
                 });
         };
 
-        //download a docx version of this dashboard TODO fix this hard coded url
+        //download a docx version of this dashboard
         $scope.exportReport = function() {
             window.location = '/api/dashboards/' + $scope.id + '/export';
         };
@@ -335,6 +345,17 @@ angular.module( 'Preslog.dashboard', [
                         for(var index = 0; index < $scope.dashboard.widgets.length; index++) {
                             if ($scope.dashboard.widgets[index]._id == result.widget._id) {
                                 $scope.dashboard.widgets[index] = result.widget;
+
+                                //specific to dateWidget, we want to be able to change the period without affecting the default.
+                                if (result.widget.type == 'date')
+                                {
+                                    $scope.dashboard.session = {
+                                        start: new Date(result.widget.details.start),
+                                        end: new Date(result.widget.details.end),
+                                        period: result.widget.details.period
+                                    };
+                                }
+
                                 $scope.refreshWidget(result.widget._id);
                                 $scope.updateRefreshTimer(result.widget._id, result.widget.details.refresh);
                             }
@@ -362,6 +383,9 @@ angular.module( 'Preslog.dashboard', [
                     break;
                 case 'benchmark':
                     tmpl +=  'BenchmarkWidgetModal.tpl.html';
+                    break;
+                case 'date':
+                    tmpl +=  'DateWidgetModal.tpl.html';
                     break;
                 default:
                     tmpl +=  'LineWidgetModal.tpl.html';
@@ -519,7 +543,9 @@ angular.module( 'Preslog.dashboard', [
                         start: offset,
                         order: params.order,
                         orderasc: params.orderDirection == 'Asc',
-                        widgetid: widget._id
+                        widgetid: widget._id,
+                        variableStart: $scope.dashboard.session.start,
+                        variableEnd: $scope.dashboard.session.end
                     })
                     .then(function(result) {
                         for(var id in $scope.dashboard.widgets)
@@ -548,11 +574,43 @@ angular.module( 'Preslog.dashboard', [
             }
         };
 
-        $scope.applyLogListWatch = function()
+        $scope.initWidgets = function()
         {
+            //set the sessions start/end variables, sorry about the double loop. need to make sure date gets picked up first
             for (var id in $scope.dashboard.widgets)
             {
                 var widget = $scope.dashboard.widgets[id];
+                if (widget.type == 'date')
+                {
+                    //specific to dateWidget, we want to be able to change the period without affecting the default.
+                    $scope.dashboard.session =
+                    {
+                        start: new Date(widget.details.start),
+                        end: new Date(widget.details.end),
+                        period: widget.details.period
+                    };
+                }
+            }
+
+            //add watch to update widgets when date range changes
+            $scope.$watch(
+                function() { return $scope.dashboard.session; },
+                function() {
+                    for(var id in $scope.dashboard.widgets)
+                    {
+                        if ($scope.dashboard.widgets[id].type !== 'date')
+                        {
+                            $scope.refreshWidget($scope.dashboard.widgets[id]._id);
+                        }
+                    }
+                },
+                true
+            );
+
+            for (var id in $scope.dashboard.widgets)
+            {
+                var widget = $scope.dashboard.widgets[id];
+
                 if ( widget.type == 'list' )
                 {
                     $scope.$watch(
@@ -561,9 +619,10 @@ angular.module( 'Preslog.dashboard', [
 
                     );
                 }
+
             }
         };
-        $scope.applyLogListWatch();
+        $scope.initWidgets();
 
         //start all the timers to refresh widgets regularly
         $scope.startWidgetRefresh();

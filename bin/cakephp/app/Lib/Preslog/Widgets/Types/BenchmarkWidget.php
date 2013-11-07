@@ -9,7 +9,7 @@ use Preslog\Widgets\Widget;
 
 class BenchmarkWidget extends Widget {
 
-    public function __construct($data) {
+    public function __construct($data, $variables = array()) {
         $this->type = 'benchmark';
         $this->chartType = 'line';
         $this->aggregate = true;
@@ -61,7 +61,7 @@ class BenchmarkWidget extends Widget {
             ),
         );
 
-        parent::__construct($data);
+        parent::__construct($data, $variables);
     }
 
     //note: i have not been able to find away to get the line to start right on the yaxis line because when using catagory

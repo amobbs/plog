@@ -1,0 +1,30 @@
+<div class="modal-header">
+    <button type="button" class="close" ng-click="cancel()" aria-hidden="true"><i class="icon icon-remove"></i></button>
+    <h3 id="myModalLabel">Edit {{ widget.type }} widget</h3>
+</div>
+<div class="modal-body form-horizontal" id="editModalWidget">
+    <div class="control-group">
+        <label class="control-label">Default Period </label>
+        <div class="controls">
+            <select ng-model="widget.details.period">
+                <option value="Week">Week</option>
+                <option value="Month">Month</option>
+                <option value="Day">Day</option>
+            </select>
+        </div>
+
+        <label class="control-label">Default Start </label>
+        <div class="controls">
+            <input type="text" placeholder="DD/MM/YYYY" ng-model="widget.details.start" />
+        </div>
+
+        <label class="control-label">Default End </label>
+        <div class="controls">
+            <input type="text" placeholder="DD/MM/YYYY" ng-model="widget.details.end" />
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button class="btn" data-dismiss="modal" aria-hidden="true" ng-click="cancel()">Cancel</button>
+    <button class="btn btn-primary" ng-click="saveWidget()">Save</button>
+</div>
