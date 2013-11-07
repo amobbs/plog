@@ -3,14 +3,20 @@
     <div id="preslog_sidebar">
         <ul class="nav nav-tabs nav-stacked">
             <li ng-repeat="dashboard in presetDashboards">
-                <a ng-href="/dashboard/{{dashboard._id}}">{{ dashboard.name }}<i class="icon-chevron-right"></i></a>
+                <a ng-href="/dashboard/{{dashboard._id}}">
+                    <div class="truncate_name">{{ dashboard.name }}</div>
+                    <i class="icon-chevron-right"></i>
+                </a>
             </li>
         </ul>
 
         <h3>Favourite Dashboards</h3>
         <ul class="nav nav-tabs nav-stacked">
             <li ng-repeat="favourite in favourites">
-                <a ng-href="/dashboard/{{favourite._id}}">{{ favourite.name }} <i class="icon-chevron-right"></i></a>
+                <a ng-href="/dashboard/{{favourite._id}}">
+                    <div class="truncate_name">{{ favourite.name }}</div>
+                    <i class="icon-chevron-right"></i>
+                </a>
             </li>
         </ul>
 
@@ -45,7 +51,6 @@
                 </div>
             </div>
         </div>
-
 
         <div class="row-fluid">
             <ul id="widget-area" ui-sortable="sortableOptions" ng-model="dashboard.widgets">
