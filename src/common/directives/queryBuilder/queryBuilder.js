@@ -38,7 +38,7 @@ angular.module('redQueryBuilder', [])
                         },
                         editors : [ {
                             name : 'DATE',
-                            format : 'dd/mm/yyyy'
+                            format : 'dd/MM/yyyy'
                         } ],
                         suggest: function(args, callback) {
                             console.log(args);
