@@ -11,7 +11,10 @@ angular.module('Preslog.dashboard.dashboardModal', [])
         $scope.share ={};
 
         $scope.ok = function() {
-            $modalInstance.close({'name': $scope.name, 'share': $scope.share});
+            $modalInstance.close({
+                name: $scope.name,
+                shares: $scope.share
+            });
         };
 
         $scope.cancel = function() {

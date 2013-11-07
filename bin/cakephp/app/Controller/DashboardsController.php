@@ -191,7 +191,8 @@ class DashboardsController extends AppController
 
                 //update the name
                 } else {
-                    $dashboard['Dashboard']['name'] = $this->request->data['name']['name'];
+                    $dashboard['Dashboard']['name'] = $this->request->data['name'];
+                    //$dashboard['Dashboard']['shares'] = $this->request->data['shares'];
 
                     $this->Dashboard->save($dashboard['Dashboard']);
 

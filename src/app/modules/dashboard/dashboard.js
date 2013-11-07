@@ -201,6 +201,15 @@ angular.module( 'Preslog.dashboard', [
             });
         };
 
+        $scope.removeRefreshTimers = function()
+        {
+            for(var id in refreshTimers)
+            {
+                var timeout = refreshTimers[timeoutId];
+                $timeout.cancel(timeout.promise);
+            }
+        };
+
         $scope.updateRefreshTimer = function(widgetId, newInterval) {
             for(var timeoutId in $scope.refreshTimers) {
                 var timeout = $scope.refreshTimers[timeoutId];
@@ -307,10 +316,10 @@ angular.module( 'Preslog.dashboard', [
                     clients: function() { return []; }
                 }
             });
-            editModal.result.then(function(name) {
-                source.post('', {'name': name})
+            editModal.result.then(function(details) {
+                source.post('', details)
                     .then(function(result) {
-                        $scope.dashboard.name = name;
+                        $scope.dashboard.name = details.name;
                     });
             });
         };
@@ -528,7 +537,7 @@ angular.module( 'Preslog.dashboard', [
         //log list widget needs some different logic to display
         $scope.updateLogList = function(widget) {
             params = widget.params;
-            if (params && params.query.length === 0) {
+            if (!params || params.query.length === 0) {
                 return;
             }
 
@@ -548,7 +557,7 @@ angular.module( 'Preslog.dashboard', [
                     start: offset,
                     order: params.order,
                     orderasc: params.orderDirection == 'Asc',
-                    widgetid: widget._id,
+                    widgetid: widget._id
                 };
 
                 if ($scope.dashboard.session && $scope.dashboard.session.start && $scope.dashboard.session.end)
@@ -622,11 +631,11 @@ angular.module( 'Preslog.dashboard', [
                 true
             );
 
-            for (var id in $scope.dashboard.widgets)
+            for (var i in $scope.dashboard.widgets)
             {
-                var widget = $scope.dashboard.widgets[id];
+                var widgetObj = $scope.dashboard.widgets[i];
 
-                if ( widget.type == 'list' )
+                if ( widgetObj.type == 'list' )
                 {
                     $scope.$watch(
                         'dashboard.widgets[id].params',
