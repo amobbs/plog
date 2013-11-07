@@ -203,12 +203,15 @@ angular.module( 'Preslog.dashboard', [
 
         $scope.removeRefreshTimers = function()
         {
-            for(var id in refreshTimers)
             {
-                var timeout = refreshTimers[timeoutId];
+                var timeout = $scope.refreshTimers[id];
                 $timeout.cancel(timeout.promise);
+                $scope.refreshTimers.splice(id, 1);
             }
         };
+        $scope.$on('$destroy', function() {
+            $scope.removeRefreshTimers();
+        });
 
         $scope.updateRefreshTimer = function(widgetId, newInterval) {
             for(var timeoutId in $scope.refreshTimers) {
