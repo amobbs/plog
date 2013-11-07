@@ -101,6 +101,7 @@ class Dashboard extends AppModel
 
     public function toArray($dashboard, $forMongo = true) {
         $parsed = array();
+
         $parsed['id'] = (String)$dashboard['_id'];
         $parsed['name'] = $dashboard['name'];
         $parsed['type'] = $dashboard['type'];

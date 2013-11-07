@@ -195,7 +195,7 @@ class DashboardsController extends AppController
                     $this->set('status', 'success');
                 }
 
-                $dashboard = $this->_getParsedDashboard($dashboard);
+                $dashboard = $this->_getParsedDashboard($dashboard['Dashboard']);
                 $this->set('dashboard', $this->Dashboard->toArray($dashboard));
                 $this->set('status', 'saved');
 
