@@ -44,7 +44,7 @@ class Widget {
         if (isset($data['details'])) {
             $this->details['title'] = isset($data['details']['title']) ? $data['details']['title'] : '';
             $this->details['query'] = isset($data['details']['query']) ? $data['details']['query'] : '';
-            $this->details['parsedQuery'] = $this->replaceVariables($data['details']['query'], $variables);
+            $this->details['parsedQuery'] = isset($data['details']['query']) ? $this->replaceVariables($data['details']['query'], $variables) : '';
             $this->details['refresh'] = isset($data['details']['refresh']) ? $data['details']['refresh'] : 0;
         } else {
             $this->data['title'] = '';

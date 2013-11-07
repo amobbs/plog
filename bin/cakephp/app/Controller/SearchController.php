@@ -119,6 +119,18 @@ class SearchController extends AppController
      */
     public function validateQuery()
     {
+        if ( ! isset($this->request->query['query']) )
+        {
+            $return = array(
+                'ok' => true,
+                'errors' => array(),
+            );
+
+            $this->set($return);
+            $this->set('_serialize', array_keys($return));
+            return;
+        }
+
         $query = $this->request->query['query'];
 
         $user = $this->User->findById(
