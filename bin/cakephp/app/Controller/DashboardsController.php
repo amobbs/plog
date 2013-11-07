@@ -267,7 +267,7 @@ class DashboardsController extends AppController
             {
                 if ($widget instanceof Widget)
                 {
-                    echo "hey";
+                    echo "hey"; //TODO remove!!!!
                 }
                 if ($widget['type'] == 'date' && isset($widget['details']['start']) && isset($widget['details']['end']))
                 {
