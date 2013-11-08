@@ -275,7 +275,7 @@ angular.module('hierarchyFields', [])
                             dynaField.children = [];
                             dynaField.children = parseHierarchyToDyna(fields[i].children, hideDeleted);
 
-                            if (dynaField.expand == false)
+                            if (dynaField.expand === false)
                             {
                                 for(var id in fields[i].children)
                                 {
