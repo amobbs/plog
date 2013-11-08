@@ -38,11 +38,11 @@
             <div class="span4">
 
                 <div class="btn-group dash-controls pull-right">
-                    <button class="btn" ng-click="openAddWidgetModal()"><i class="icon icon-plus"></i> Add Widget</button>
+                    <button class="btn" ng-show="!dashboard.preset" ng-click="openAddWidgetModal()"><i class="icon icon-plus"></i> Add Widget</button>
                     <button class="btn" ng-click="openCreateModal()" ><i class="icon icon-pencil"></i> Create Dashboard </button>
                     <button class="btn dropdown-toggle"><i class="icon icon-list-alt"></i> More <b class="caret"></b> </button>
                     <ul class="dropdown-menu">
-                        <li><a ng-click="openEditDashboardModal()"><i class="icon icon-edit"></i> Edit Dashboard </a></li>
+                        <li ng-show="!dashboard.preset"><a ng-click="openEditDashboardModal()"><i class="icon icon-edit"></i> Edit Dashboard </a></li>
                         <li><a ng-show="!isFavourite()" ng-click="addToFavourite(id)"><i class="icon icon-star-empty"></i> Add to Favourites </a></li>
                         <li><a ng-show="isFavourite()" ng-click="removeFromFavourite()"><i class="icon icon-star"></i> Remove from Favourites </a></li>
                         <li><a ng-click="exportReport()"><i class="icon icon-download"></i> Export as Report</a></li>
@@ -53,10 +53,11 @@
         </div>
 
         <div class="row-fluid">
+
             <ul id="widget-area" ui-sortable="sortableOptions" ng-model="dashboard.widgets">
                 <li class="widget" ng-repeat="widget in dashboard.widgets" ng-class="{col3: widget.maxWidth == 3, col2: widget.maxWidth == 2}" id="{{ widget._id }}">
-                    <div class="widget-box widget-movable">
-                        <div class="widget-title widget-handle">
+                    <div class="widget-box" ng-class="{'widget-movable': !dashboard.preset}">
+                        <div class="widget-title widget-handle" >
                             <span class="widget-icon">
                                 <i class="icon-signal"></i>
                             </span>

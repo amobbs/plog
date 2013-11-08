@@ -105,6 +105,7 @@ class Dashboard extends AppModel
         $parsed['id'] = (String)$dashboard['_id'];
         $parsed['name'] = $dashboard['name'];
         $parsed['type'] = $dashboard['type'];
+        $parsed['preset'] = $dashboard['preset'];
         $parsed['widgets'] = array();
         foreach($dashboard['widgets'] as $widget) {
             $parsed['widgets'][] = $widget->toArray($forMongo);

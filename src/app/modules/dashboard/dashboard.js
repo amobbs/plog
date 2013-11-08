@@ -128,44 +128,50 @@ angular.module( 'Preslog.dashboard', [
 
         //move the widgets around
         $scope.sortableOptions = {
-            placeholder: 'placeholder',
-            items: '.widget',
-            revert: 150,
-            tolerance: 'pointer',
-            handle: '.widget-handle',
-            cursorAt: {
-                left: 10,
-                top: 10
-            },
-            start: function(event, ui) {
-                if (ui.item.hasClass('col3')) {
-                    ui.placeholder.css('width', '98%');
-                }
+                placeholder: 'placeholder',
+                items: '.widget',
+                revert: 150,
+                tolerance: 'pointer',
+                handle: '.widget-handle',
+                cursorAt: {
+                    left: 10,
+                    top: 10
+                },
+                start: function(event, ui) {
+                    if (ui.item.hasClass('col3')) {
+                        ui.placeholder.css('width', '98%');
+                    }
 
-                if (ui.item.hasClass('col2')) {
-                    ui.placeholder.css('width', '62%');
-                }
-            },
-            change: function(event, ui) {
-                ui.placeholder.before('\n').after('\n');
-            },
-            stop: function(event, ui) {
-                ui.item.before('\n').after('\n');
-            },
-            update: function(event, ui) {
-                var order = $(event.target).sortable("toArray");
+                    if (ui.item.hasClass('col2')) {
+                        ui.placeholder.css('width', '62%');
+                    }
+                },
+                change: function(event, ui) {
+                    ui.placeholder.before('\n').after('\n');
+                },
+                stop: function(event, ui) {
+                    ui.item.before('\n').after('\n');
+                },
+                update: function(event, ui) {
+                    var order = $(event.target).sortable("toArray");
 
-                for(var i = 0; i < order.length; i++) {
-                   for(var w = 0; w < $scope.dashboard.widgets.length; w++) {
-                       if ($scope.dashboard.widgets[w]._id == order[i]) {
-                           $scope.dashboard.widgets[w].order = i;
+                    for(var i = 0; i < order.length; i++) {
+                       for(var w = 0; w < $scope.dashboard.widgets.length; w++) {
+                           if ($scope.dashboard.widgets[w]._id == order[i]) {
+                               $scope.dashboard.widgets[w].order = i;
+                           }
                        }
-                   }
-                }
+                    }
 
-               source.post('', {'widgets': $scope.dashboard.widgets});
-            }
-        };
+                   source.post('', {'widgets': $scope.dashboard.widgets});
+                }
+            };
+
+        if ($scope.dashboard.preset)
+        {
+            $scope.sortableOptions.handle = '.no-handle';
+            $scope.sortableOptions.update = function(event, ui) { };
+        }
 
         $scope.deleteWidget = function(widgetId) {
             source.one('widgets', widgetId)
