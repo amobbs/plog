@@ -109,6 +109,12 @@ class SelectSeverity extends Select
         // parent validation
         $errors = parent::validates();
 
+        if (!isset($this->data['data']['selected']) || empty($this->data['data']['selected']))
+        {
+            return array("You must select an option.");
+        }
+
+
         // Fetch duration field
         $durationField = $this->log->getFieldByName('duration');
         if ( is_object($durationField) )

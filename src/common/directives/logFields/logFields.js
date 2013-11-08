@@ -105,6 +105,7 @@ angular.module('logFields', [])
                 var tplScope = scope.$new();
                 tplScope.log = data;
                 tplScope.options = field;
+                tplScope.logForm = scope.$parent.logForm;
 
                 // Compile to gain scope
                 tpl = $compile(tpl)(tplScope);

@@ -162,6 +162,7 @@ angular.module( 'Preslog.log', [
                 var group = $scope.options.attributes[id];
                 var attr = {
                     name: group.name,
+                    label: group.label,
                     children: []
                 };
                 attr.children = $scope.attributesDisplay(group.children);
@@ -177,6 +178,17 @@ angular.module( 'Preslog.log', [
         {
             // Data Fudge
             logData.Log = $scope.log;
+
+            // Reset validation
+            for (var f in $scope.logForm)
+            {
+                if ( $scope.logForm[f].$invalid === undefined)
+                {
+                    continue;
+                }
+
+                $scope.logForm[f].$setValidity('validateServer', true);
+            }
 
             // Submit
             logData.post().then(
@@ -195,10 +207,12 @@ angular.module( 'Preslog.log', [
                     $scope.serverErrors = response.data.data;
 
                     // If field exists, mark is as invalid
-                    for (var i in $scope.serverErrors)
+                    var keys = Object.keys($scope.serverErrors);
+                    for (var i in keys)
                     {
-                        if ($scope.logForm[i] !== undefined) {
-                            $scope.logForm[i].$setValidity('validateServer', false);
+                        if ($scope.logForm[ keys[i] ] !== undefined)
+                        {
+                            $scope.logForm[ keys[i] ].$setValidity('validateServer', false);
                         }
                     }
 

@@ -136,10 +136,16 @@ class Duration extends FieldTypeAbstract
     {
         $errors = array();
 
+        // Must not be empty
+        if (!isset($this->data['data']['seconds']) || empty($this->data['data']['seconds']))
+        {
+            return array("Duration must not be empty.");
+        }
+
         // Seconds must be numeric
         if (!is_numeric($this->data['data']['seconds']))
         {
-            $errors[] = "Durations must be supplied as numeric values. Received '{$this->data['data']['seconds']}'.";
+            $errors[] = "Durations must be supplied as numeric values in seconds. Received '{$this->data['data']['seconds']}'.";
         }
 
         return $errors;

@@ -39,11 +39,34 @@
             </ul>
         </div>
 
+
         <div class="row-fluid">
 
             <!-- Log Fields -->
             <div class="span8 form-horizontal log-fields">
                 <log-fields data="log.fields" fields="options.fields"></log-fields>
+
+                <!-- Controls -->
+                <div class="row-fluid">
+                    <div class="offset2 span10 text-center">
+                        <br/>
+                        <button class="btn btn-success"
+                                type="submit"
+                                ng-disabled="logForm.$invalid"
+                                ><i class="icon icon-ok"></i> Save Changes</button>
+                        &nbsp;
+                        <div class="btn-group" permissions="log-delete" ng-show="{{!log.newLog}}">
+                            <a class="btn btn-info dropdown-toggle" data-toggle="dropdown" href="#">
+                                <i class="icon icon-fire"></i> Admin Actions
+                                <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li ng-show="{{!log.newLog}}"><a href="#" ng-click="deleteLog()" ng-confirm-click="This will delete this log and make it invisible to all reports. Are you sure?"><i class="icon icon-trash"></i> Delete Log</a></li>
+                            </ul>
+                        </div>
+
+                    </div>
+                </div>
             </div>
 
             <!-- Hierarchy Fields -->
@@ -51,7 +74,7 @@
                 <div ng-repeat="group in displayAttributes" id="hf2">
                     <div class="row-fluid">
                         <div class="span12">
-                            <legend>{{ group.name }}</legend>
+                            <legend>{{ group.label }}</legend>
                         </div>
                     </div>
                     <div class="row-fluid" >
@@ -63,25 +86,5 @@
             </div>
         </div>
 
-        <!-- Controls -->
-        <div class="row-fluid">
-            <div class="span12 text-center">
-                <button class="btn btn-success"
-                        type="submit"
-                        ng-disabled="logForm.$invalid"
-                        ><i class="icon icon-ok"></i> Save Changes</button>
-                &nbsp;
-                <div class="btn-group" permissions="log-delete">
-                    <a class="btn btn-info dropdown-toggle" data-toggle="dropdown" href="#">
-                        <i class="icon icon-fire"></i> Admin Actions
-                        <span class="caret"></span>
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li ng-show="{{!log.newLog}}"><a href="#" ng-click="deleteLog()" ng-confirm-click="This will delete this log and make it invisible to all reports. Are you sure?"><i class="icon icon-trash"></i> Delete Log</a></li>
-                    </ul>
-                </div>
-
-            </div>
-        </div>
     </div>
 </form>

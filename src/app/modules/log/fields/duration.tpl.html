@@ -1,6 +1,11 @@
-<div class="span6" ng-class="{error: logForm.fields_{{options._id}}.$invalid}">
+<div class="span6 control-group" ng-class="{error: logForm.fields_{{options._id}}.$invalid}">
+    <input
+            id="fields_{{options._id}}"
+            type="hidden"
+            ng-model="log.data.seconds"
+            />
     <label class="control-label">{{options.label}}</label>
     <div class="controls">
-        <input-field-duration ng-model="log.data.seconds" id="fields_{{options._id}}" />
+        <input-field-duration ng-model="log.data.seconds" />
     </div>
 </div>

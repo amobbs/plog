@@ -109,9 +109,11 @@
                             <img ng-show="client._id" src="{{ client.logo-img }}" width="68" height="20" />
                             <br/>
                             <input type="file"
-                                   file-upload="logo"
+                                   accept="image/*"
+                                   image="image"
                                    id="inputLogo"
                                    name="logo"
+                                   ng-model="logo"
                                     />
                             <span class="help-inline" ng-show="clientForm.logo.$error.validateServer" ng-bind="serverErrors.logo"></span>
                         </div>
