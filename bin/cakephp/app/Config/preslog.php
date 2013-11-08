@@ -25,6 +25,7 @@ Configure::write('Preslog', array(
      */
     'Fields' => array(
         'loginfo'               => new \Preslog\Logs\FieldTypes\Loginfo,
+        'checkbox'              => new \Preslog\Logs\FieldTypes\Checkbox,
         'datetime'              => new \Preslog\Logs\FieldTypes\Datetime,
         'duration'              => new \Preslog\Logs\FieldTypes\Duration,
         'select'                => new \Preslog\Logs\FieldTypes\Select,
