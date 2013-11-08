@@ -43,17 +43,7 @@ class AppController extends Controller {
      */
     public function errorBadRequest( $options=array() )
     {
-        $this->triggerError( 400, $options);
-    }
-
-
-    /**
-     * Error 404 -  Not Found handler
-     * - Resource does not exist
-     */
-    public function errorNotFound( $options=array() )
-    {
-        return $this->triggerError( 404, $options );
+        return $this->triggerError( 400, $options);
     }
 
 
@@ -69,12 +59,23 @@ class AppController extends Controller {
 
 
     /**
-     * Error 403 - Gateway Time-out
+     * Error 403 - Forbidden
      * @param $options
+     * @return mixed
      */
-    public function errorGateway( $options=array() )
+    public function errorForbidden( $options=array() )
     {
-        return $this->triggerError( 503, $options );
+        return $this->triggerError( 403, $options);
+    }
+
+
+    /**
+     * Error 404 -  Not Found handler
+     * - Resource does not exist
+     */
+    public function errorNotFound( $options=array() )
+    {
+        return $this->triggerError( 404, $options );
     }
 
 
@@ -85,6 +86,16 @@ class AppController extends Controller {
     public function errorGeneric( $options=array() )
     {
         return $this->triggerError( 500, $options );
+    }
+
+
+    /**
+     * Error 503 - Gateway Time-out
+     * @param $options
+     */
+    public function errorGateway( $options=array() )
+    {
+        return $this->triggerError( 503, $options );
     }
 
 

@@ -63,7 +63,7 @@ angular.module('dateWidget', [])
 
                     scope.session.start = start;
                     scope.session.end = end;
-                }
+                };
 
                 scope.backward = function()
                 {

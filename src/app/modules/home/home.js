@@ -13,8 +13,7 @@ angular.module( 'Preslog.home', [])
             url: '/',
             views: {
                 "main@mainLayout": {
-                    controller: 'HomeCtrl',
-                    templateUrl: 'modules/home/home.tpl.html'
+                    controller: 'HomeCtrl'
                 }
             },
 
@@ -39,35 +38,34 @@ angular.module( 'Preslog.home', [])
                 }],
 
                 // Force a redirect. This isn't an actual page, just a redirect.
-                redirect: ['$q', 'userService', '$location', 'dashboard_live_logs', 'dashboard_unqualified', function($q, userService, $location, dashboard_live_logs, dashboard_unqualified) {
+                redirect: ['$q', 'userService', '$location', 'dashboard_live_logs', 'dashboard_unqualified', function($q, userService, dashboard_live_logs, dashboard_unqualified) {
+                    var defer = $q.defer();
 
                     // If no user, auth will be executed. Otherwise we get the role.
-                    var role = userService.getUser().role;
+                    userService.getUser().then(function(user)
+                    {
+                        // Default path
+                        var requestedPath = '/dashboard';
 
-                    // Default path
-                    var requestedPath = '/dashboard';
+                        // Certain roles have certain destinations
+                        switch( user.role ) {
+                            case 'engineer':
+                                requestedPath = '/dashboard/' + dashboard_live_logs;
+                                break;
+                            case 'supervisor':
+                                requestedPath = '/dashboard/' + dashboard_unqualified;
+                                break;
+                            case 'operator':
+                                requestedPath = '/logs/';
+                                break;
+                        }
 
-                    // Certain roles have certain destinations
-                    switch( role ) {
-                        case 'engineer':
-                            requestedPath = '/dashboards/'. dashboard_live_logs;
-                            break;
-                        case 'supervisor':
-                            requestedPath = '/dashboards/' . dashboard_unqualified;
-                            break;
-                        case 'operator':
-                            requestedPath = '/log';
-                            break;
-                    }
+                        // Resolve to close this request
+                        defer.resolve( requestedPath );
+                    });
 
-                    // Redirect
-                    $location.path(requestedPath);
-
-                    // Reject this state change as a matter of course.
-                    var defer = $q.defer();
-                    defer.reject();
+                    // Reject this state change as a matter of course, which will cause a halt.
                     return defer.promise;
-
                 }]
             }
         });
@@ -77,8 +75,11 @@ angular.module( 'Preslog.home', [])
     /**
      * Home Controller
      */
-    .controller( 'HomeCtrl', function HomeController( $scope ) {
-        // Not a real thing
+    .controller( 'HomeCtrl', function HomeController( $scope, $location, redirect ) {
+
+        // Redirect
+        $location.path(redirect);
+
     })
 
 ;

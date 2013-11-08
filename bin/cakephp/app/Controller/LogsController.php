@@ -130,9 +130,9 @@ class LogsController extends AppController
         // Validate: does the given user have access to this log? - Client IDs are a match if user has single-client
         if ($this->isAuthorized('single-client'))
         {
-            if ($this->PreslogAuth->user('client_id') != $log['client_id'])
+            if ($this->PreslogAuth->user('client_id') != $log['Log']['client_id'])
             {
-                $this->errorUnauthorised(array('message'=>'You do not have permission to view this log'));
+                $this->errorForbidden(array('message'=>'You do not have permission to view this log'));
             }
         }
 
@@ -181,10 +181,16 @@ class LogsController extends AppController
         }
         else
         {
-            // Try to fetch the client_id from query string
+            // Validate: Try to fetch the client_id from query string
             if (!$clientId = $this->request->query('client_id'))
             {
                 $this->errorBadRequest(array('message'=>'A valid Client ID must be specified in query string parameter "client_id".'));
+            }
+
+            // Validate: If we do not have permission to create logs, deny getting the log options
+            if (!$this->isAuthorized('log-create'))
+            {
+                $this->errorForbidden(array('message'=>'You do not have permission to create new logs.'));
             }
         }
 

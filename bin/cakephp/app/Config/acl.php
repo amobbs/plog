@@ -18,32 +18,32 @@ Configure::write('auth-acl', array(
         'super-admin'   => array(
             'name'=>'Super Admin',
             'hidden'=>true,
-            'permissions'=>array('guest', 'user', 'dashboards', 'log-create', 'dashboard-export-reports', 'log-accountability', 'log-delete', 'admin', 'user-manager', 'client-manager', 'edit-preset-dashboards', 'super-admin'),
+            'permissions'=>array('guest', 'user', 'log-create', 'dashboard-export-reports', 'log-accountability', 'log-delete', 'admin', 'user-manager', 'client-manager', 'edit-preset-dashboards', 'super-admin'),
         ),
 
         'admin'         => array(
             'name'=>'Administrator',
-            'permissions'=>array('guest', 'user', 'dashboards', 'log-create', 'dashboard-export-reports', 'log-accountability', 'log-delete', 'admin', 'user-manager', 'client-manager'),
+            'permissions'=>array('guest', 'user', 'log-create', 'dashboard-export-reports', 'log-accountability', 'log-delete', 'admin', 'user-manager', 'client-manager'),
         ),
 
         'supervisor'    => array(
             'name'=>'Supervisor',
-            'permissions'=>array('guest', 'user', 'dashboards', 'log-create', 'dashboard-export-reports', 'log-accountability', 'log-delete'),
+            'permissions'=>array('guest', 'user', 'log-create', 'dashboard-export-reports', 'log-accountability', 'log-delete'),
         ),
 
         'operator'      => array(
             'name'=>'Operator',
-            'permissions'=>array('guest', 'user', 'dashboards', 'log-create'),
+            'permissions'=>array('guest', 'user', 'log-create'),
         ),
 
         'engineer'      => array(
             'name'=>'Engineer',
-            'permissions'=>array('guest', 'user', 'dashboards', 'single-client', 'comment-only'),
+            'permissions'=>array('guest', 'user', 'single-client', 'comment-only'),
         ),
 
         'client'        => array(
             'name'=>'Client',
-            'permissions'=>array('guest', 'user', 'dashboards', 'single-client', 'dashboard-export-reports', 'comment-only'),
+            'permissions'=>array('guest', 'user', 'single-client', 'dashboard-export-reports', 'comment-only'),
         ),
 
         'guest'         => array(
@@ -60,31 +60,40 @@ Configure::write('auth-acl', array(
      */
     'routes'=>array(
 
-        // Public routes
-        array('controller'=>'Users',    'action'=>'debugTask',  'permissions'=>array('guest')),     // TODO: DELETE ME
-        array('controller'=>'Import',   'action'=>'runImport',  'permissions'=>array('guest')),     // TODO: DELETE ME
-        array('controller'=>'Users',    'action'=>'login',      'permissions'=>array('guest')),
+        // Super Routes
+        array('controller'=>'Users',    'action'=>'debugTask',          'permissions'=>array('super-admin')),
+        array('controller'=>'Import',   'action'=>'runImport',          'permissions'=>array('super-admin')),
+
+        // Public Routes
+        array('controller'=>'Users',    'action'=>'login',              'permissions'=>array('guest')),
         array('controller'=>'Users',    'action'=>'resetPassword',      'permissions'=>array('guest')),
         array('controller'=>'Users',    'action'=>'resetPasswordEmail', 'permissions'=>array('guest')),
-        array('controller'=>'Users',    'action'=>'logout',     'permissions'=>array('guest')),
-        array('controller'=>'Docs',     'action'=>'*',          'permissions'=>array('guest')),
+        array('controller'=>'Users',    'action'=>'logout',             'permissions'=>array('guest')),
+        array('controller'=>'Docs',     'action'=>'*',                  'permissions'=>array('guest')),
 
-        // User Management - Accessible to user-manager only
+        // User Access - Accessible to user-manager only
         array('controller'=>'Users',    'action'=>'adminList',          'permissions'=>array('user-manager')),
+        array('controller'=>'Users',    'action'=>'adminRead',          'permissions'=>array('user-manager')),
         array('controller'=>'Users',    'action'=>'adminEdit',          'permissions'=>array('user-manager')),
         array('controller'=>'Users',    'action'=>'adminEditOptions',   'permissions'=>array('user-manager')),
+        array('controller'=>'Users',    'action'=>'adminDelete',        'permissions'=>array('user-manager')),
 
-        // Client Management - Accessible ot client-manager only
-        array('controller'=>'Clients',    'action'=>'adminList',          'permissions'=>array('user-manager')),
-        array('controller'=>'Clients',    'action'=>'adminEdit',          'permissions'=>array('user-manager')),
-        array('controller'=>'Clients',    'action'=>'adminEditOptions',   'permissions'=>array('user-manager')),
+        // User "My*" Access - Accessible to users
+        array('controller'=>'Users',    'action'=>'*',                  'permissions'=>array('user')),
 
-        // Logs TODO - make this correct
-        array('controller'=>'Logs',     'action'=>'*',                      'permissions'=>array('guest')),
+        // Client Access - Accessible ot client-manager only
+        array('controller'=>'Clients',  'action'=>'*',                  'permissions'=>array('client-manager')),
 
+        // Log Access - Everyone
+        array('controller'=>'Logs',     'action'=>'read',               'permissions'=>array('user')),
+        array('controller'=>'Logs',     'action'=>'options',            'permissions'=>array('user')),
+        array('controller'=>'Logs',     'action'=>'edit',               'permissions'=>array('user')),
+        array('controller'=>'Logs',     'action'=>'delete',             'permissions'=>array('log-delete')),
 
-        // TODO - DEBUG - DELETE ME - Super-Admin can do anything
-        array('controller'=>'*', 'action'=>'*', 'permissions'=>array('super-admin')),
+        // Dashboards and Widgets - Everyone
+        array('controller'=>'Dashboards',   'action'=>'*',              'permissions'=>array('user')),
+        array('controller'=>'Search',       'action'=>'*',              'permissions'=>array('user')),
+        array('controller'=>'Pages',        'action'=>'*',              'permissions'=>array('user')),
     )
 
 ));

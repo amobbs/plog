@@ -14,11 +14,11 @@
 
     <div ng-show="logs.length > 0">
 
-        <div class="row-fluid">
-            <div class="span3">
+        <div class="row-fluid control-row">
+            <div class="span4">
                 <p>Showing <strong>{{ showing }}</strong> of <strong>{{ params.total }}</strong> logs</p>
             </div>
-            <div class="span6">
+            <div class="span4 control-pagination">
                 <div class="pagination pagination-centered">
                     <ul>
                         <li ng-class="{'disabled': params.page === 1}"><a ng-click="params.page = 1">&laquo;</a></li>
@@ -27,7 +27,7 @@
                     </ul>
                 </div>
             </div>
-            <div class="span3 text-right">
+            <div class="span4 text-right">
                 <div class="control-group control-horizontal">
                     <label class="control-label">Order By</label>
                     <select
@@ -57,9 +57,9 @@
             </tbody>
         </table>
 
-        <div class="row-fluid">
-            <div class="span3"></div>
-            <div class="span6">
+        <div class="row-fluid control-row">
+            <div class="span4"></div>
+            <div class="span4 control-pagination">
                 <div class="pagination pagination-centered">
                     <ul>
                         <li ng-class="{'disabled': params.page === 1}"><a ng-click="params.page = 1">&laquo;</a></li>
@@ -68,7 +68,7 @@
                     </ul>
                 </div>
             </div>
-            <div class="span3">
+            <div class="span4 text-right">
                 Per Page:
                 <button type="button"
                         class="btn btn-mini"
