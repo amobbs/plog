@@ -601,6 +601,18 @@ angular.module( 'Preslog.dashboard', [
             }
         };
 
+        //debounce only run once the user stop spamming
+        $scope.refreshAllWidgets = _.debounce(function()
+        {
+            for(var id in $scope.dashboard.widgets)
+            {
+                if ($scope.dashboard.widgets[id].type !== 'date')
+                {
+                    $scope.refreshWidget($scope.dashboard.widgets[id]._id);
+                }
+            }
+        }, 1000);
+
         $scope.initWidgets = function()
         {
             //set the sessions start/end variables, sorry about the double loop. need to make sure date gets picked up first
@@ -620,15 +632,17 @@ angular.module( 'Preslog.dashboard', [
             }
 
             //add watch to update widgets when date range changes
+            var init = true;
             $scope.$watch(
                 function() { return $scope.dashboard.session; },
                 function() {
-                    for(var id in $scope.dashboard.widgets)
+                    if (init)
                     {
-                        if ($scope.dashboard.widgets[id].type !== 'date')
-                        {
-                            $scope.refreshWidget($scope.dashboard.widgets[id]._id);
-                        }
+                        $timeout(function() { init = false; });
+                    }
+                    else
+                    {
+                        $scope.refreshAllWidgets();
                     }
                 },
                 true
