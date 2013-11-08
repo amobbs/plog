@@ -705,9 +705,10 @@ class Log extends AppModel
         $opt = $clientEntity->getOptions();
 
         // Save only the items relevant to this action
+        // note: Array_keys is used because arrays MUST be sequential numeric.
         $options = array(
-            'fields' => $opt['fields'],
-            'attributes' => $opt['attributes'],
+            'fields' => array_values($opt['fields']),
+            'attributes' => array_values($opt['attributes']),
         );
 
         return $options;

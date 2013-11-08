@@ -1,0 +1,44 @@
+    <!-- Date-time field -->
+
+    <div class="control-group" ng-class="{error: fieldForm.label.$dirty && fieldForm.label.$invalid && fieldForm.label.$dirty}">
+        <label class="control-label" for="inputName">Friendly Label</label>
+        <div class="controls">
+            <input type="text"
+                   id="inputLabel"
+                   name="label"
+                   placeholder="Label.."
+                   ng-model="field.label"
+                   required
+                    />
+            <span class="help-inline" ng-show="fieldForm.label.$dirty && fieldForm.label.$invalid && fieldForm.label.$error.required">Must not be empty.</span>
+        </div>
+    </div>
+
+    <div class="control-group" ng-class="{error: fieldForm.name.$dirty && fieldForm.name.$invalid && fieldForm.name.$dirty}">
+        <label class="control-label" for="inputName">Field Name</label>
+        <div class="controls">
+            <input type="text"
+                   id="inputName"
+                   name="name"
+                   placeholder="Name.."
+                   ng-model="field.name"
+                   required
+                   ng-pattern="/^[a-z\-_]*$/"
+                    />
+            <span class="help-inline" ng-show="fieldForm.name.$dirty && fieldForm.name.$invalid && fieldForm.name.$error.required">Must not be empty.</span>
+            <span class="help-inline" ng-show="fieldForm.name.$dirty && fieldForm.name.$invalid && fieldForm.name.$error.pattern">Must only contain lowercase characters, dash and underscore.</span>
+        </div>
+    </div>
+
+    <div class="control-group" ng-class="{error: fieldForm.name.$dirty && fieldForm.name.$invalid && fieldForm.name.$dirty}">
+        <div class="controls">
+            <label class="checkbox" for="inputDefault">
+            <input type="checkbox"
+                   id="inputDefault"
+                   name="default"
+                   ng-model="field.data.default"
+                    />
+            Default state of checkbox
+            </label>
+        </div>
+    </div>
