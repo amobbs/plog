@@ -8,7 +8,7 @@
                     <span class="icon-bar"></span>
                 </a>
 
-                <h2 ng-show="{{log.hrid}}">Log - {{ log.hrid }}</h2>
+                <h2 ng-show="{{log.hrid != undefined}}">Log - {{ log.hrid }}</h2>
                 <h2 ng-show="{{!log.hrid}}">Create Log</h2>
 
                 <div class="nav-collapse collapse navbar-responsive-collapse">

@@ -15,7 +15,8 @@ angular.module('hierarchyFields', [])
                 'hierarchySelected' : '=',
                 'dragAndDrop' : '@',
                 'hideDeleted' : '@',
-                'allowEdit': '@'
+                'allowEdit': '@',
+                startCollapsed: '@'
             },
 
             // Create link with the element
@@ -54,7 +55,8 @@ angular.module('hierarchyFields', [])
                         checkbox: true,
                         selectMode: 3,
                         cookieId: "hf",
-                        onSelect: function(selected, dtnode) {
+                        onSelect: function(selected, dtnode)
+                        {
                             // On dynaTree change, pass selection back to model
                             scope.$apply(function() {
                                 triggerSelected(dtnode.data.key, selected);
@@ -66,7 +68,8 @@ angular.module('hierarchyFields', [])
                                 }
                             });
                         },
-                        onDblClick: function(node, event) {
+                        onDblClick: function(node, event)
+                        {
                             if (allowEdit.toLowerCase() === "true") {
                                 editNode(node);
                             }
@@ -75,7 +78,8 @@ angular.module('hierarchyFields', [])
                         children: parseHierarchyToDyna(fields, hideDeleted)
                     };
 
-                    if (enableDnD) {
+                    if (enableDnD == "true")
+                    {
                         options.dnd = {
                             onDragStart: function(node) {
                                 /** This function MUST be defined to enable dragging for the tree.
@@ -266,10 +270,22 @@ angular.module('hierarchyFields', [])
                         }
 
                         if (fields[i].children && (fields[i].children.length > 0)) {
-                            dynaField.expand = true;
+                            dynaField.expand = false;
                             dynaField.isFolder = true;
                             dynaField.children = [];
                             dynaField.children = parseHierarchyToDyna(fields[i].children, hideDeleted);
+
+                            if (dynaField.expand == false)
+                            {
+                                for(var id in fields[i].children)
+                                {
+                                    if (scope.hierarchySelected.indexOf(fields[i].children[id]._id) !== -1)
+                                    {
+                                        dynaField.expand = true;
+                                    }
+                                }
+                            }
+
                         }
                         dynaFields.push(dynaField);
                     }
