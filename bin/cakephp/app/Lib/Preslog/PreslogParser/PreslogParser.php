@@ -133,6 +133,21 @@ class PreslogParser extends JqlParser {
             return $errors;
         }
 
+        if ($clause->getField() == 'client_id')
+        {
+            $allowed = array(
+                new EqualsOperator(),
+                new NotEqualsOperator()
+            );
+
+            $allowedString = '';
+            if ( ! $this->operatorAllowed($operator, $allowed, $allowedString) )
+            {
+                $errors[] = "The operator " . $operator->getHumanReadable() . ' can not be used with the field "' . $clause->getField() . '". Operators allowed are ' . $allowedString;
+            }
+            return $errors;
+        }
+
         if ($clause->getField() == 'text')
         {
             $allowed = array(
@@ -209,8 +224,6 @@ class PreslogParser extends JqlParser {
             {
                 $errors[] = "The operator " . $operator->getHumanReadable() . ' can not be used with the field ' . $clause->getField() . '. Operators allowed are ' . $allowedString;
             }
-
-            //todo: all so check field value validates against field type (inc functions).
         }
 
         if ( ! $foundOnce )
@@ -356,6 +369,13 @@ class PreslogParser extends JqlParser {
 
             return array(
                 'client_id' => new MongoId($clientId),
+            );
+        }
+
+        if ($fieldName == 'client_id')
+        {
+            return array(
+                'client_id' => new MongoId($value),
             );
         }
 
