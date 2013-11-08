@@ -14,7 +14,7 @@
 
         <div class="span2 input-prepend">
             <span class="add-on">Period</span>
-            <select ng-model="session.period" style="width: 150px;">
+            <select ng-model="session.period" ng-click="changePeriod()" style="width: 150px;">
                 <option value="Week">Week</option>
                 <option value="Month">Month</option>
                 <option value="Day">Day</option>

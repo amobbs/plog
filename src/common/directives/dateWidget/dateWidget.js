@@ -42,6 +42,29 @@ angular.module('dateWidget', [])
                     scope.session.end = end;
                 };
 
+                scope.changePeriod = function()
+                {
+                    var start = new Date(scope.session.start);
+                    var end = new Date(start);
+
+
+                    switch (scope.session.period)
+                    {
+                        case 'Week':
+                            end.setDate(start.getDate() + 7);
+                            break;
+                        case 'Day':
+                            end.setDate(start.getDate() + 1);
+                            break;
+                        case 'Month':
+                            end.setMonth(start.getMonth() + 1);
+                            break;
+                    }
+
+                    scope.session.start = start;
+                    scope.session.end = end;
+                }
+
                 scope.backward = function()
                 {
                     var start = new Date(scope.session.start);
