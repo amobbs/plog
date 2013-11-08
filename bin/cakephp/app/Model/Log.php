@@ -387,32 +387,39 @@ class Log extends AppModel
             }
 
             //extra field so we can perform the sort
-            $group['sort'] = array(
-                '$max' => array(
-                    //the sort field should just be the field we are ordering by for each client this user has access to
-                    '$cond' => array(
-                        array('$or' => $fieldIds),
-                        '$fields.data',
-                        null,
+            //only sort if the field is actually  used by the client
+            if ( sizeof($fieldIds) > 0 )
+            {
+                $group['sort'] = array(
+                    '$max' => array(
+                        //the sort field should just be the field we are ordering by for each client this user has access to
+                        '$cond' => array(
+                            array('$or' => $fieldIds),
+                            '$fields.data',
+                            null,
+                        ),
                     ),
-                ),
-            );
+                );
+            }
 
             $criteria[] = array(
                 '$group' => $group
             );
 
-            $orderDirection = -1;
-            if ($orderAsc) {
-                $orderDirection = 1;
-            }
+            if ( sizeof($fieldIds) > 0 )
+            {
+                $orderDirection = -1;
+                if ($orderAsc) {
+                    $orderDirection = 1;
+                }
 
-            //do the sort
-            $criteria[] = array(
-                '$sort' => array(
-                    'sort.' . $orderByDataFieldName => $orderDirection,
-                )
-            );
+                //do the sort
+                $criteria[] = array(
+                    '$sort' => array(
+                        'sort.' . $orderByDataFieldName => $orderDirection,
+                    )
+                );
+            }
         }
 
         //offset for pagination

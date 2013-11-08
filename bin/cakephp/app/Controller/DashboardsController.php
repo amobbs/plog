@@ -754,7 +754,8 @@ class DashboardsController extends AppController
             $widgetObject = $this->_populateOptions($options, $optionName, $widgetObject, $mongoPipeLine);
         }
 
-        if (!($widgetObject instanceof ListWidget) ||  ($widgetObject instanceof ListWidget && $populateLogSeries))
+        //dont populate data for list widget, the widget will send its own request to the search controller
+        if (!($widgetObject instanceof ListWidget) )
         {
             $this->_populateSeries($widgetObject, $mongoPipeLine);
         }
