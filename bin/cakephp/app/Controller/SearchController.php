@@ -91,9 +91,9 @@ class SearchController extends AppController
         $return = $this->executeSearch( $this->request->query, -1, 0, $orderBy, $asc);
 
         // Generate export XLS from data
-        $this->set($return);
+        $this->set('logs', $return['logs']);
         $this->viewClass = 'View';
-        $this->render('export_xls');
+        echo $this->render('export_xls');
 
         // Complete request
         exit();
