@@ -7,17 +7,18 @@ header('Content-Disposition: attachment; filename="' . date('Y-m-d') .'.xls"');
 
 <?php
 
-$fieldNames = array(
-    'hrid' => 'Log ID',
-    'created' => 'Created',
-    'modified' => 'Modified',
-);
+$fieldNames = array();
+//    'hrid' => 'Log ID',
+//    'created' => 'Created',
+//    'modified' => 'Modified',
+//);
 
 $logsArray = array();
 
 foreach ($logs as $log)
 {
     $logEl = array();
+   // $logEl['hrid'] = $log['hrid'];
     foreach($log['attributes'] as $attr)
     {
 

@@ -28,7 +28,7 @@ angular.module('logWidget', [])
 
                 scope.orderDirections = ['Asc', 'Desc'];
 
-                //download a docx version of this dashboard TODO fix this hard coded url
+                //download a docx version of this dashboard
                 scope.exportXLS = function(query, orderBy, asc) {
                     window.location = '/api/search/export' +
                         '?query=' + encodeURI(query) +

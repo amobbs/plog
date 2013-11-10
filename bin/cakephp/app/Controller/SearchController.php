@@ -90,6 +90,12 @@ class SearchController extends AppController
         // Returns Logs and Options to accompany
         $return = $this->executeSearch( $this->request->query, -1, 0, $orderBy, $asc);
 
+        if ( isset($return['errors']) )
+        {
+            $this->errorGeneric(array('data'=>$return['errors'], 'message'=>'Export failed') );
+            return;
+        }
+
         // Generate export XLS from data
         $this->set('logs', $return['logs']);
         $this->viewClass = 'View';
