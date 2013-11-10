@@ -28,7 +28,8 @@ class NotEqualsOperator extends JqlOperator {
 
         if ( is_array($value2) )
         {
-            $value2 = array_values($value2)[0];
+            $values = array_values($value2);
+            $value2 = $values[0];
         }
 
         return strtolower($value1) != strtolower($value2);
