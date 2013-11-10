@@ -206,7 +206,6 @@ angular.module( 'Preslog.auth', [
                 backdrop: 'static',
                 templateUrl: 'modules/auth/reset-password.tpl.html',
                 controller: 'AuthLoginResetPasswordCtrl',
-                backdrop: 'static',
                 resolve: {
                     token: function() { return resetPasswordToken; }
                 }
