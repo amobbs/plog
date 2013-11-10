@@ -1115,6 +1115,11 @@ class DashboardsController extends AppController
             $this->PreslogAuth->user('_id')
         );
 
+        if ( empty($user) )
+        {
+            return array();
+        }
+
         $clients = $this->User->listAvailableClientsForUser($user['User']);
 
         $clientIds = array();
