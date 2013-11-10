@@ -5,6 +5,7 @@ angular.module('Preslog.dashboard.widgetModal', [])
         $scope.clients = clients;
 
         $scope.queryValid = true;
+        $scope.refreshValid = true;
         $scope.queryErrors = [];
 
         $scope.addChart = function(type) { //create new widget
@@ -13,6 +14,13 @@ angular.module('Preslog.dashboard.widgetModal', [])
         };
 
         $scope.saveWidget = function() { //completion of edit widget
+            if ($scope.widget.details.refresh && $scope.widget.details.refresh < 1)
+            {
+                $scope.refreshValid = false;
+                $scope.queryErrors = ['Refresh interval can not be below 1 minute.'];
+                return;
+            }
+
             Restangular.one('search/validate')
                 .get({'query': $scope.widget.details.query})
                 .then(function (result) {
