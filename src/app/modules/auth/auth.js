@@ -192,6 +192,7 @@ angular.module( 'Preslog.auth', [
             var modal = $modal.open({
                 templateUrl: 'modules/auth/forgotten-password.tpl.html',
                 controller: 'AuthLoginForgottenPasswordCtrl',
+                backdrop: 'static',
                 resolve: {}
             });
         };

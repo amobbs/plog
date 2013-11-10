@@ -4,7 +4,11 @@
  */
 
 angular.module('userService', ['restangular'])
-    .factory('userService', function (Restangular, $q, $rootScope) {
+
+    /**
+     * User Service Object
+     */
+    .factory('userService', function (Restangular, $q, $rootScope, $log) {
         var user,
             permissions,
             clients,
@@ -139,7 +143,6 @@ angular.module('userService', ['restangular'])
 
                     // Clear scope vars
                     $rootScope.global.user = {};
-                    $rootScope.global.userService = this;
                     $rootScope.global.loggedIn = false;
 
                     // complete request
@@ -191,7 +194,6 @@ angular.module('userService', ['restangular'])
 
                     // Fetch this active client
                     var client = $.map(clients, function(v,k){ if (v._id == currentClient) { return v; } });
-                    console.log(client);
                     client = client[0];
 
                     deferred.resolve(client);
@@ -341,7 +343,7 @@ angular.module('userService', ['restangular'])
 
         };
 
-
         // Factory finish
         return service;
-    });
+    })
+;
