@@ -289,6 +289,7 @@ angular.module( 'Preslog.dashboard', [
             var createModal = $modal.open({
                 templateUrl: 'modules/dashboard/dashboardModal/createDashboardModal.tpl.html',
                 controller: 'DashboardModalCtrl',
+                backdrop: 'static',
                 resolve: {
                     name: function() { return ''; },
                     isCreate: function() { return true; },
@@ -319,6 +320,7 @@ angular.module( 'Preslog.dashboard', [
             var editModal = $modal.open({
                 templateUrl: 'modules/dashboard/dashboardModal/createDashboardModal.tpl.html',
                 controller: 'DashboardModalCtrl',
+                backdrop: 'static',
                 resolve: {
                     name: function() { return $scope.dashboard.name; },
                     isCreate: function() { return false; },
@@ -356,6 +358,7 @@ angular.module( 'Preslog.dashboard', [
             var editWidgetModal = $modal.open({
                 templateUrl: $scope.getEditTemplate(widget.type),
                 controller: 'WidgetCtrl',
+                backdrop: 'static',
                 resolve: {
                     widget: function() { return angular.copy(widget); },
                     clients: function() { return $scope.clients; }

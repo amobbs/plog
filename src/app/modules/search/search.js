@@ -216,6 +216,7 @@ angular.module( 'Preslog.search', [
                         var modal = $modal.open({
                             templateUrl: 'modules/search/queryModal/sqlQueryModal.tpl.html',
                             controller: 'SqlModalCtrl',
+                            backdrop: 'static',
                             resolve: {
                                 sql: function() { return $scope.sql; },
                                 args: function() { return $scope.args; },
