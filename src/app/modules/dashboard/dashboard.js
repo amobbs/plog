@@ -209,6 +209,7 @@ angular.module( 'Preslog.dashboard', [
 
         $scope.removeRefreshTimers = function()
         {
+            for(var id in $scope.refreshTimers)
             {
                 var timeout = $scope.refreshTimers[id];
                 $timeout.cancel(timeout.promise);
