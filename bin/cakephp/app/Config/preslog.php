@@ -92,8 +92,8 @@ Configure::write('Preslog', array(
 Configure::write('Preslog.export.exec', array(
 
     //location of executable and scripts to perform export
-    'phantomjs' => 'D:\ProgramFiles\phantomjs-1.9.2-windows/phantomjs.exe',
-    'highchartsExport.js' => 'D:\git\highcharts.com\exporting-server\phantomjs\highcharts-convert.js',
+    'phantomjs' => '/usr/local/phantomjs-1.9.2-linux-x86_64/bin/phantomjs',
+    'highchartsExport.js' => '/usr/local/highcharts.com/phantomjs/highcharts-convert.js',
 ));
 
 /**
