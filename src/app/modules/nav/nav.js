@@ -91,6 +91,22 @@ angular.module( 'Preslog.nav', [])
             $scope.user = data;
         }, true);
 
+
+        $scope.$watch(function()
+        {
+            return userService.readDashboard();
+
+        }, function(dashboards)
+        {
+            if ( dashboards )
+            {
+                $scope.presets = dashboards.preset;
+                $scope.favourites = dashboards.favourites;
+            }
+
+        }, true);
+
+
     })
 
 ;
