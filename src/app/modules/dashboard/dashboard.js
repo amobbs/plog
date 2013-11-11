@@ -209,6 +209,7 @@ angular.module( 'Preslog.dashboard', [
 
         $scope.removeRefreshTimers = function()
         {
+            for(var id in $scope.refreshTimers)
             {
                 var timeout = $scope.refreshTimers[id];
                 $timeout.cancel(timeout.promise);
@@ -447,6 +448,7 @@ angular.module( 'Preslog.dashboard', [
                 .post('', {dashboard_id: id})
                 .then(function(result) {
                     $scope.favourites = result.favourites;
+                    userService.getDashboards();
                 });
         };
 
@@ -456,6 +458,7 @@ angular.module( 'Preslog.dashboard', [
                 .remove()
                 .then(function(result) {
                     $scope.favourites = result.favourites;
+                    userService.getDashboards();
                 });
         };
 

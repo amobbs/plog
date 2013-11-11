@@ -220,23 +220,24 @@ angular.module('userService', ['restangular'])
             getDashboards: function () {
                 var deferred = $q.defer();
 
-                // Fetch the Dashboard list if not already set
-                if (! dashboards) {
-                    Restangular.all('dashboards').getList().then(function (ret) {
+                // Fetch the Dashboard list
+                Restangular.all('dashboards').getList().then(function (ret) {
 
-                        // Set Dashboards
-                        dashboards = ret;
+                    // Set Dashboards
+                    dashboards = ret;
 
-                        deferred.resolve(dashboards);
-                    });
-                } else {
                     deferred.resolve(dashboards);
-                }
+                });
 
                 // Promise to complete this request
                 return deferred.promise;
             },
 
+            //Observe the dashboards object for changes directly from object
+            readDashboard: function()
+            {
+                return dashboards;
+            },
 
             /**
              * Check for this permission against this users permissions

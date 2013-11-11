@@ -1,27 +1,57 @@
 <div class="form-horizontal">
     <div class="row-fluid">
     </div>
-    <div class="row-fluid">
+    <div class="row-fluid visible-phone">
+        <div class="row-fluid">
+            <button class="btn btn-primary btn-half" ng-click="backward()"><i class="icon icon-chevron-left"></i></button>
+            <button class="btn btn-primary btn-half" ng-click="forward()"><i class="icon icon-chevron-right"></i></button>
+        </div>
+
+        <div class="row-fluid date-selection">
+            <div class="input-prepend period-selection-field">
+                <span class="add-on">Period</span>
+                <select ng-model="session.period" ng-click="changePeriod()">
+                    <option value="Week">Week</option>
+                    <option value="Month">Month</option>
+                    <option value="Day">Day</option>
+                </select>
+            </div>
+        </div>
+        <div class="row-fluid date-selection">
+            <div class="date-selection-field input-prepend ">
+                <span class="add-on">Start</span>
+                <input type="text" datetime="date" placeholder="DD/MM/YYYY" value="" ng-model="session.start" style="width: 100px;" />
+            </div>
+
+            <div class="date-selection-field input-prepend">
+                <span class="add-on">End</span>
+                <input type="text" datetime="date" placeholder="DD/MM/YYYY" value="" ng-model="session.end" style="width: 100px;"/>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row-fluid hidden-phone">
 
         <div class="offset2 span1">
             <button class="btn btn-primary" ng-click="backward()"><i class="icon icon-chevron-left"></i></button>
         </div>
 
-        <div class="span2 input-prepend">
+        <div class="date-selection-field span2 input-prepend ">
             <span class="add-on">Start</span>
-            <input type="text" datetime="date" placeholder="DD/MM/YYYY" value="" ng-model="session.start" style="width: 100px;" />
+            <input type="text" datetime="date" placeholder="DD/MM/YYYY" value=""  ng-model="session.start" style="width: 100px;" />
         </div>
 
-        <div class="span2 input-prepend">
+        <div class="span2 input-prepend period-selection-field">
             <span class="add-on">Period</span>
-            <select ng-model="session.period" ng-click="changePeriod()" style="width: 150px;">
+            <select ng-model="session.period" ng-click="changePeriod()" class="input-small">
                 <option value="Week">Week</option>
                 <option value="Month">Month</option>
                 <option value="Day">Day</option>
             </select>
         </div>
 
-        <div class="span2 input-prepend">
+        <div class="date-selection-field span2 input-prepend">
             <span class="add-on">End</span>
             <input type="text" datetime="date" placeholder="DD/MM/YYYY" value="" ng-model="session.end" style="width: 100px;"/>
         </div>

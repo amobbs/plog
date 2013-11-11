@@ -86,18 +86,68 @@ class SearchController extends AppController
         $orderBy =  isset($this->request->query['order']) ? $this->request->query['order'] : '';
         $asc = isset($this->request->query['orderasc']) ? $this->request->query['orderasc'] == 'true' : true;
 
-        // Perform search
-        // Returns Logs and Options to accompany
-        $return = $this->executeSearch( $this->request->query, -1, 0, $orderBy, $asc);
+        //paginate results so that we dont hit the 16mb result limit.
+        $variables = array();
 
+        if (isset($this->request->query['variableStart']) && isset($this->request->query['variableEnd']))
+        {
+            $variables['start'] =  $this->request->query['variableStart'];
+            $variables['end'] = $this->request->query['variableEnd'];
+        }
+
+        $query = $this->request->query['query'];
+
+        $user = $this->User->findById(
+            $this->PreslogAuth->user('_id')
+        );
+
+        // add a query value which ensures they only get results from their own client_id
+        if ($this->isAuthorized('single-client'))
+        {
+            $query .= 'AND client_id = ' . $user['User']['client_id'] ;
+        }
+
+        //replace any variables that are passed in
+        foreach($variables as $variable => $value)
+        {
+            $query = str_replace('{' . $variable . '}', $value, $query);
+        }
+
+        $clients = $this->User->listAvailableClientsForUser($user['User']);
+        $fullClients = array();
+        foreach($clients as $client) {
+            $c = $this->Client->findById($client['_id']);
+            $fullClients[] = $c['Client'];
+            $options[(string)$client['_id']] = $c['Client'];
+        }
+
+        $count = $this->Log->countByQuery($query, $fullClients);
         if ( isset($return['errors']) )
         {
             $this->errorGeneric(array('data'=>$return['errors'], 'message'=>'Export failed') );
             return;
         }
 
+        $logs = array();
+        $limit = 500;
+
+        // Perform search
+        // Returns Logs and Options to accompany
+        for($start = 0; $start < $count; $start += $limit)
+        {
+            $return = $this->executeSearch( $this->request->query, $limit, $start, $orderBy, $asc, $variables);
+
+            if ( isset($return['errors']) )
+            {
+                $this->errorGeneric(array('data'=>$return['errors'], 'message'=>'Export failed') );
+                return;
+            }
+
+            $logs = array_merge($logs, $return['logs']);
+        }
+
         // Generate export XLS from data
-        $this->set('logs', $return['logs']);
+        $this->set('logs', $logs);
         $this->viewClass = 'View';
         echo $this->render('export_xls');
 
