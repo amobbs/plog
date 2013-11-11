@@ -361,6 +361,7 @@ class ImportController extends AppController
 
         // Severity lookyp table
         $severityLookup = array(
+            0=>'other',
             1=>'level-1',
             2=>'level-2',
             3=>'reported',
@@ -422,7 +423,8 @@ class ImportController extends AppController
 
         $networks = array(
             '_id' => new MongoId(),
-            'name' => 'Networks',
+            'name' => 'networks',
+            'label' => 'Networks',
             'network' => true,
             'deleted' => false,
             'children' => array(),
@@ -496,7 +498,8 @@ class ImportController extends AppController
             $useStates = array('VIC', 'SA', 'WA', 'NT', 'QLD', 'NSW', 'ACT' ,'TAS');
             $states = array(
                 '_id' => new MongoId(),
-                'name' => 'States',
+                'name' => 'states',
+                'label'=>'States',
                 'network' => false,
                 'deleted' => false,
                 'children' => array(),
@@ -516,7 +519,8 @@ class ImportController extends AppController
         if($client['name'] == 'ABC' || $client['name'] == 'MediaHub') {
             $attrs[] = array(
                 '_id' => new MongoId(),
-                'name' => 'City / State',
+                'label' => 'City / State',
+                'name'=> 'city_state',
                 'network' => false,
                 'deleted' => false,
                 'children' => array(
