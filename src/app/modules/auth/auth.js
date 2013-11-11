@@ -101,6 +101,12 @@ angular.module( 'Preslog.auth', [
         // On LoginRequired event; logout the user and go to /login
         $rootScope.$on('event:auth-loginRequired', function () {
 
+            // Don't throw the user out if they're logged in to begin with
+            if (userService.readUser() !== undefined)
+            {
+                return;
+            }
+
             // Only activate this event once per process
             if (loginRequiredInProgress)
             {

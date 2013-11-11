@@ -2,9 +2,9 @@ angular.module('Preslog.dashboard.dashboardModal', [])
     .controller('DashboardModalCtrl', function ($scope, $modalInstance, name, isCreate, clients) {
         $scope.name = name;
         if (isCreate) {
-            $scope.actionName = 'Create';
+            $scope.actionName = 'Create Dashboard';
         } else {
-            $scope.actionName = 'Update';
+            $scope.actionName = 'Save Changes';
         }
         $scope.isCreate = isCreate;
         $scope.clients = clients;

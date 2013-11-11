@@ -3,14 +3,14 @@
     <h3 id="myModalLabel">Add Widget</h3>
 </div>
 <div class="modal-body">
-    <div class="control-group">
+    <div class="control-group form-horizontal">
         <label class="control-label">Widget Name </label>
         <div class="controls">
             <input type="text" placeholder="Widget Name..." ng-model="widget.name" required/>
         </div>
     </div>
 
-    <p>Select a widget</p>
+    <h3>Select a widget</h3>
 
     <table class="table table-widget-select">
         <tr ng-click="addChart('Pie')">
@@ -19,7 +19,7 @@
             </td>
             <td>
                 <strong>Pie Chart</strong>
-                <p></p>
+                <p>Pie Charts can be used for displaying numerical portions and the distribution of data within one particular field/attribute. </p>
             </td>
         </tr>
         <tr ng-click="addChart('Line')">
@@ -28,7 +28,7 @@
             </td>
             <td>
                 <strong>Line Graph</strong>
-                <p></p>
+                <p>Line graphs are good for displaying a quantity distributed over time.</p>
             </td>
         </tr>
         <tr ng-click="addChart('List')">
@@ -37,7 +37,7 @@
             </td>
             <td>
                 <strong>Log List</strong>
-                <p></p>
+                <p>Log List will display a list of logs and their details, matching your chosen criteria.</p>
             </td>
         </tr>
         <tr ng-click="addChart('benchmark')">
@@ -46,7 +46,7 @@
             </td>
             <td>
                 <strong>Benchmark Graph</strong>
-                <p>Broadcast Hours Per Month (BHPM) vs Service Level Agreement (SLA)</p>
+                <p>Benchmark Graphs are used to display the Broadcast Hours Per Month (BHPM) vs Service Level Agreement (SLA) across one or more clients.</p>
             </td>
         </tr>
         <tr ng-click="addChart('date')">
@@ -55,7 +55,14 @@
             </td>
             <td>
                 <strong>Date selection</strong>
-                <p></p>
+                <p>
+                    The Date Selection widget is a helper which allows you to specify a date range for a dashboard. The range can be a Day, Week, Month or a specific period.
+                    <br/>The following value names can be inserted into dashboard queries (eg. "created = {start}"):
+                    <ul>
+                        <li><strong>{start}</strong> - The start of the date range</li>
+                        <li><strong>{end}</strong> - The end of the date range</li>
+                    </ul>
+                </p>
             </td>
         </tr>
     </table>

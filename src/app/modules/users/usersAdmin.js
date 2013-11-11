@@ -24,6 +24,20 @@ angular.module( 'Preslog.usersAdmin', [
                 }
             },
             resolve: {
+
+                // Resource permissions
+                permissions: ['$q', 'userService', function($q, userService) {
+                    var defer = $q.defer();
+
+                    userService.checkAccessPermission('user-manager').then(function()
+                    {
+                        defer.resolve();
+                    });
+
+                    return defer.promise;
+                }],
+
+                // Fetch user list
                 userData: ['$q', 'Restangular', function($q, Restangular) {
                     var deferred = $q.defer();
 
@@ -50,6 +64,19 @@ angular.module( 'Preslog.usersAdmin', [
                 }
             },
             resolve: {
+
+                // Resource permissions
+                permissions: ['$q', 'userService', function($q, userService) {
+                    var defer = $q.defer();
+
+                    userService.checkAccessPermission('user-manager').then(function()
+                    {
+                        defer.resolve();
+                    });
+
+                    return defer.promise;
+                }],
+
                 // Fetch user and notification details
                 userSource: ['$q', 'Restangular', '$stateParams', function($q, Restangular, $stateParams) {
                     var deferred = $q.defer();

@@ -22,7 +22,7 @@ angular.module('permission', [
                 var permission = attrs.permission;
 
                 // Check permissions
-                userService.checkPermission( permission ).then(function( result )
+                userService.resolvePermission( permission ).then(function( result )
                 {
                     // If not allowed
                     if (!result)

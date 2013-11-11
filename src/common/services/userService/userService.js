@@ -240,53 +240,82 @@ angular.module('userService', ['restangular'])
 
             /**
              * Check for this permission against this users permissions
+             * - checkPermission works off the data that's available AT THE TIME.
+             *   If you want precise user info (eg. synchronous) then run getUser() before you call checkPermission.
+             *   See resolvePermission for a resolvable version.
              * @return  boolean     True if permission is set
              */
             checkPermission: function( key ) {
+
+                // Permissions list must exist
+                if (permissions === undefined)
+                {
+                    return false;
+                }
+
+                // Perform permissions check
+                var isAllowed = (permissions.indexOf(key) !== -1);
+                return isAllowed;
+            },
+
+
+            /**
+             * Check for this permission to access this resource
+             * - Makes the request in a synchonous manner, calling getUser before checkPermission.
+             * - If the check fails, the auth-loginRequired event will be triggered.
+             * - Only check for negative permission (fail if the user DOESN'T have the key)
+             * @param   string      Permission to check
+             */
+            resolvePermission: function( key ) {
                 var deferred = $q.defer();
 
-                // Need user data for this to work
+                // Resolve user first
                 service.getUser().then(function()
                 {
-                    // Permissions list must exist
-                    if (permissions === undefined)
+                    // Check permission
+                    if (service.checkPermission( key ))
                     {
-                        deferred.resolve( false );
+                        // Ok
+                        deferred.resolve(true);
                     }
-
-                    // Perform permissions check
-                    var isAllowed = (permissions.indexOf(key) !== -1);
-                    deferred.resolve( isAllowed );
+                    else
+                    {
+                        // Failed
+                        deferred.reject(false);
+                    }
                 });
 
-                // Return the promise
+                // Defer to promise
                 return deferred.promise;
             },
 
 
             /**
              * Check for this permission to access this resource
-             * If this fails, the auth-loginRequired event will be triggered.
+             * - Makes the request in a synchonous manner, calling getUser before checkPermission.
+             * - If the check fails, the auth-loginRequired event will be triggered.
+             * - Only check for negative permission (fail if the user DOESN'T have the key)
              * @param   string      Permission to check
              */
             checkAccessPermission: function( key ) {
                 var deferred = $q.defer();
 
-                // Check the permissions as per normal
-                service.checkPermission( key ).then(function( result )
-                {
-                    if (result)
+                // Resolve user first
+                service.resolvePermission( key ).then(
+                    function()
                     {
-                        deferred.resolve();
-                    }
-                    else
+                        // Success
+                        deferred.resolve(true);
+                    },
+                    function()
                     {
-                        // Failure to have permissions results in a 403 error
+                        // Failed
                         $rootScope.$broadcast('event:error-unauthorised');
                         deferred.reject();
                     }
-                });
+                );
 
+                // Defer to promise
                 return deferred.promise;
             },
 

@@ -1,6 +1,6 @@
 <div class="modal-header">
     <button type="button" class="close" ng-click="cancel()" aria-hidden="true"><i class="icon icon-remove"></i></button>
-    <h3 id="myModalLabel">Edit {{ widget.type }} widget</h3>
+    <h3 id="myModalLabel">Edit {{ widget.type }} Widget</h3>
 </div>
 <div class="modal-body form-horizontal" id="editModalWidget">
 
@@ -20,8 +20,43 @@
         <label class="control-label">Title </label>
         <div class="controls">
             <input type="text" placeholder="Title..." value="" ng-model="widget.details.title"/>
+            <i class="icon icon-question-sign help"
+               popover="The title will be displayed on the graph image itself, and included in document-based reports."
+               popover-title="Title"
+               popover-trigger="mouseenter"
+               popover-placement="right" ></i>
         </div>
     </div>
+    <div class="control-group">
+        <label class="control-label">Column Span </label>
+        <div class="controls">
+            <select
+                    ng-model="widget.maxWidth"
+                    ng-options="value for value in spanOptions"
+                    >
+            </select>
+            <i class="icon icon-question-sign help"
+               popover-title="Column Span"
+               popover="Number of columns this widget will occupy on the dashboard."
+               popover-trigger="mouseenter"
+               popover-placement="right" ></i>
+        </div>
+    </div>
+    <div class="control-group" ng-class="{error: !refreshValid}">
+        <label class="control-label">Refresh Interval </label>
+        <div class="controls">
+            <div class="input-append">
+                <input type="text" placeholder="eg. 15" value="" ng-model="widget.details.refresh" />
+                <span class="add-on">Minutes</span>
+            </div>
+            <i class="icon icon-question-sign help"
+               popover="Frequency at which the widget is reloaded with fresh data, in minutes."
+               popover-title="Refresh Interval"
+               popover-trigger="mouseenter"
+               popover-placement="right" ></i>
+        </div>
+    </div>
+
     <div class="control-group" ng-class="{error: !queryValid}">
         <label class="control-label">Search Query</label>
         <div class="controls">
@@ -65,6 +100,11 @@
             <input
                     type="checkbox"
                     ng-model="widget.details.trendLine" />
+            <i class="icon icon-question-sign help"
+               popover-title="Trend Line"
+               popover="Toggle this option to display trend lines for all data series. Note: Trned lines will not appear if the data contains less than 3 data points."
+               popover-trigger="mouseenter"
+               popover-placement="right" ></i>
         </div>
     </div>
     <div ng-show="widget.details.trendLine" class="control-group">
@@ -72,6 +112,11 @@
         <div class="controls">
             <input type="text" placeholder="Name..." value="" ng-model="widget.details.restrictTrendLineTo"/>
         </div>
+        <i class="icon icon-question-sign help"
+           popover-title="Restrict Trend Line to"
+           popover="Specifically limit the Trend Line to only the data item specified (eg. 'Severity One')"
+           popover-trigger="mouseenter"
+           popover-placement="right" ></i>
     </div>
 
     <div class="control-group">
@@ -96,24 +141,10 @@
             </select>
         </div>
     </div>
-    <div class="control-group">
-        <label class="control-label">Column Span </label>
-        <div class="controls">
-            <select
-                ng-model="widget.maxWidth"
-                ng-options="value for value in spanOptions"
-            >
-            </select>
-        </div>
-    </div>
-    <div class="control-group" ng-class="{error: !refreshValid}">
-        <label class="control-label">Refresh Interval </label>
-        <div class="controls">
-            <input type="text" placeholder="Minutes..." value="" ng-model="widget.details.refresh" />
-        </div>
-    </div>
+
+
 </div>
 <div class="modal-footer">
     <button class="btn" data-dismiss="modal" aria-hidden="true" ng-click="cancel()">Cancel</button>
-    <button class="btn btn-primary" ng-click="saveWidget()">Save</button>
+    <button class="btn btn-success" ng-click="saveWidget()">Save Changes</button>
 </div>

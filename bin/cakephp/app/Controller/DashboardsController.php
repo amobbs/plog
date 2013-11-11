@@ -1075,8 +1075,8 @@ class DashboardsController extends AppController
                         case 'client':
                             foreach($result['result'] as $point) {
                                 if ($point['series'] instanceof MongoId) {
-                                    $client = $this->Client->findById($point['series']);
-                                    $point['series'] = $client['Client']['name'];
+                                    $client = $this->Client->getClientEntityById( (string) $point['series'] );
+                                    $point['series'] = $client->data['name'];
                                 }
                                 $parsedResult[] = $point;
                             }

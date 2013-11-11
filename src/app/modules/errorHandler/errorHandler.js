@@ -88,12 +88,20 @@ angular.module('errorHandler', [])
             $rootScope.global = {};
         }
 
+        var errorActive = false;
+
         /**
          * Event: Error-Generic
          * Fires a generic error handler.
          */
         $rootScope.$on('event:error-generic', function (e, args) {
-            $state.transitionTo('modalLayout.errorHandler', args);
+
+            // Only transition once
+            if (!errorActive)
+            {
+                $state.transitionTo('modalLayout.errorHandler', args);
+                errorActive = true;
+            }
         });
 
 
@@ -106,7 +114,7 @@ angular.module('errorHandler', [])
             // Defaults
             args            = (args !== undefined ? args          : {} );
             args.title      = ('title' in args ? args.title       : '401 - Unauthorised');
-            args.message    = ('message' in args ? args.message   : 'You do not have permission to access this resource.');
+            args.message    = ('message' in args ? args.message   : 'You have insufficient permissions to access this page.');
 
             // Fire error handler
             $rootScope.$broadcast('event:error-generic', args);

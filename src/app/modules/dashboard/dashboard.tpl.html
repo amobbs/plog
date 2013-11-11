@@ -36,18 +36,16 @@
                 <h1>{{ dashboard.name }}</h1>
                 </div>
             <div class="span3 pull-right">
-
                 <div class="btn-group dash-controls pull-right">
                     <button class="btn" ng-show="!dashboard.preset" ng-click="openAddWidgetModal()"><i class="icon icon-plus"></i> Add Widget</button>
                     <button class="btn" ng-click="openCreateModal()" ><i class="icon icon-pencil"></i> Create Dashboard </button>
                     <button class="btn dropdown-toggle"><i class="icon icon-list-alt"></i> More <b class="caret"></b> </button>
                     <ul class="dropdown-menu">
-                        <li ng-show="!dashboard.preset"><a ng-click="openEditDashboardModal()"><i class="icon icon-edit"></i> Edit Dashboard </a></li>
-                        <li><a ng-show="!isFavourite()" ng-click="addToFavourite(id)"><i class="icon icon-star-empty"></i> Add to Favourites </a></li>
-                        <li><a ng-show="isFavourite()" ng-click="removeFromFavourite()"><i class="icon icon-star"></i> Remove from Favourites </a></li>
-                        <li><a ng-click="exportReport()"><i class="icon icon-download"></i> Export as Report</a></li>
+                        <li ng-show="userSvc.checkPermission('edit-preset-dashboards') || !dashboard.preset"><a href ng-click="openEditDashboardModal()"><i class="icon icon-edit"></i> Edit Dashboard </a></li>
+                        <li ng-show="!dashboard.preset && !isFavourite()"><a href ng-click="addToFavourite(id)"><i class="icon icon-star-empty"></i> Add to Favourites </a></li>
+                        <li ng-show="!dashboard.preset && isFavourite()"><a href ng-click="removeFromFavourite()"><i class="icon icon-star"></i> Remove from Favourites </a></li>
+                        <li ng-show="userSvc.checkPermission('dashboard-export-reports')"><a href ng-click="exportReport()"><i class="icon icon-download"></i> Export as Report</a></li>
                     </ul>
-
                 </div>
             </div>
         </div>

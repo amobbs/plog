@@ -23,6 +23,7 @@ angular.module('Preslog', [
         // accessible global services
         $rootScope.$log = $log;
         $rootScope.userSvc = userService;      // Bugfix: Naming the rootScope var the same as the service seems to break things
+
     })
 
     .controller('AppCtrl', function AppCtrl($scope) {

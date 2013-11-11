@@ -29,9 +29,6 @@ angular.module( 'Preslog.home', [])
                     userService.checkAccessPermission('user').then(function()
                     {
                         defer.resolve();
-                    }, function()
-                    {
-                        defer.reject();
                     });
 
                     return defer.promise;

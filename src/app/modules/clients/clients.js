@@ -25,6 +25,18 @@ angular.module( 'Preslog.clients', [
             },
             resolve: {
 
+                // Resource permissions
+                permissions: ['$q', 'userService', function($q, userService) {
+                    var defer = $q.defer();
+
+                    userService.checkAccessPermission('client-manager').then(function()
+                    {
+                        defer.resolve();
+                    });
+
+                    return defer.promise;
+                }],
+
                 // Fetch the list of clients
                 clientList: ['$q', 'Restangular', '$stateParams', function($q, Restangular) {
                     var deferred = $q.defer();
@@ -49,6 +61,21 @@ angular.module( 'Preslog.clients', [
                 }
             },
             resolve: {
+
+                // Resource permissions
+                permissions: ['$q', 'userService', function($q, userService) {
+                    var defer = $q.defer();
+
+                    userService.checkAccessPermission('client-manager').then(function()
+                    {
+                        defer.resolve();
+                    }, function()
+                    {
+                        defer.reject();
+                    });
+
+                    return defer.promise;
+                }],
 
                 // Fetch client data
                 clientData: ['$q', 'Restangular', '$stateParams', function($q, Restangular, $stateParams) {

@@ -214,7 +214,7 @@ class SearchController extends AppController
                 $this->PreslogAuth->user('_id')
             );
 
-            $query .= 'AND client_id = ' . $user['User']['client_id'] ;
+            $query .= ' AND client_id = ' . $user['User']['client_id'] ;
         }
 
         //replace any variables that are passed in
@@ -327,23 +327,23 @@ class SearchController extends AppController
                         $allFieldNames['Created'] = true;
                         $parsed['attributes'][] = array(
                             'title' => 'Created',
-                            'value' => $field['data']['created'],
+                            'value' => date('d/m/Y H:i:s', strtotime($field['data']['created'])),
                             'showTooltip' => false
                         );
 
                         $allFieldNames['Modified'] = true;
                         $parsed['attributes'][] = array(
                             'title' => 'Modified',
-                            'value' => $field['data']['modified'],
+                            'value' => date('d/m/Y H:i:s', strtotime($field['data']['modified'])),
                             'showTooltip' => false
                         );
                         $fieldAdded = true;
                         break;
                     case 'datetime':
                         if ($field['data']['datetime'] instanceof MongoDate) {
-                            $field['data']['datetime'] = date('Y-m-d H:i:s', $field['data']['datetime']->sec);
+                            $field['data']['datetime'] = $field['data']['datetime']->sec;
                         }
-                        $formattedField['value'] = $field['data']['datetime'];
+                        $formattedField['value'] = date('d/m/Y H:i:s', strtotime($field['data']['datetime']));
                         break;
                     case 'duration':
                         $formattedField['value'] = $this->_formatDuration($field['data']['seconds']);

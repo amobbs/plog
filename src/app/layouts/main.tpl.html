@@ -41,18 +41,21 @@
                             </li>
                         </ul>
                     </li>
-                    <li><a href="/logs/" ng-click="createLog('/logs/')">Create Log</a></li>
+                    <li><a ng-show="!userSvc.checkPermission('single-client')" href="/logs/" ng-click="createLog('/logs/')">Create Log</a></li>
                     <li><a href="/search">Search</a></li>
-
                 </ul>
                 <ul class="nav pull-right">
-                    <li  tooltip="Enter a numeric ID to jump to a log. Enter text to quickly search all log text fields for that data." tooltip-placement="bottom">
-                    <form class="navbar-search" ng-submit="quickSearch()">
+                    <li
+                        popover-placement="bottom"
+                        popover="Enter a Log ID (eg. XXX_123) to jump directly to a log. Enter any other text to quickly search all log text fields for that data."
+                        popover-trigger="mouseenter"
+                        >
+                        <form class="navbar-search" ng-submit="quickSearch()">
                             <input type="text" ng-model="searchText" class="search-query span2" placeholder="Quick Search">
                         </form>
                     </li>
                     <li class="divider-vertical"></li>
-                    <li class="dropdown" permission="admin">
+                    <li class="dropdown" permission="admin" ng-show="!userSvc.checkPermission('single-client')">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Admin <b class="caret"></b></a>
                         <ul class="dropdown-menu">
                             <li permission="user-manager"><a href="/admin/users"><i class="icon icon-user icon-white"></i> Users</a></li>
