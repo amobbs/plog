@@ -11,7 +11,6 @@ bin/cakephp/app/config/database.php
 
 // Bin webroot
 // - track Api
-bin/cakephp/Vendor/*
 bin/cakephp/app/tmp/*
 !bin/webroot/api
 
