@@ -73,14 +73,14 @@
         </div>
         <div class="span3">
             <div class="btn-group pull-right">
-                <a class="btn dropdown-toggle" data-toggle="dropdown" gref="#">
-                    With selected
+                <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" gref="#">
+                    With selected...
                     <span class="caret"></span>
                 </a>
                 <ul class="dropdown-menu">
-                    <li><a ng-click="deleteAttr()"><i class="icon icon-remove"></i> Delete</a></li>
-                    <li><a ng-click="restoreAttr()"><i class="icon icon-plus"></i> Restore</a></li>
-                    <li ng-show="group.network"><a ng-click="setLiveDate()"><i class="icon icon-calendar"></i> Set Live Date</a></li>
+                    <li><a href ng-click="deleteAttr()"><i class="icon icon-remove"></i> Delete</a></li>
+                    <li><a href ng-click="restoreAttr()"><i class="icon icon-plus"></i> Restore</a></li>
+                    <li ng-show="group.network"><a href ng-click="setLiveDate()"><i class="icon icon-calendar"></i> Set Live Date</a></li>
                 </ul>
             </div>
         </div>

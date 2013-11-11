@@ -1,0 +1,49 @@
+{
+    "title": {
+        "text": "Temperature"
+    },
+    "subtitle": {
+        "text": "Source: Monthly avg temp"
+    },
+    "xAxis": {
+        "labels": {}
+    },
+    "tooltip": {},
+    "plotOptions": {
+        "area": {
+            "pointStart": 1940,
+            "marker": {
+                "enabled": false,
+                "symbol": "circle",
+                "radius": 2,
+                "states": {
+                    "hover": {
+                        "enabled": true
+                    }
+                }
+            }
+        }
+    },
+    "series": [
+        {
+            "name": "Tokyo",
+            "data": [
+                400,
+                194,
+                301,
+                130,
+                300
+            ]
+        },
+        {
+            "name": "London",
+            "data": [
+                123,
+                325,
+                120,
+                300,
+                300
+            ]
+        }
+    ]
+}
