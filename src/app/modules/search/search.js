@@ -120,6 +120,9 @@ angular.module( 'Preslog.search', [
             if ( ! $scope.updating )
             {
                 $scope.updating = true;
+
+                $scope.logWidgetParams.query = $scope.jql;
+
                 Restangular.one('search').get({
                     query: $scope.jql,
                     limit: $scope.logWidgetParams.perPage,
