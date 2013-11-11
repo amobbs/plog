@@ -315,7 +315,8 @@ class PreslogParser extends JqlParser {
             $checkValue = $value;
             if ( is_array($value) && sizeof($value) > 0)
             {
-                $checkValue = array_values($value)[0];
+                $values = array_values($value);
+                $checkValue = $values[0];
             }
 
             if ( preg_match($logRegex, $checkValue, $parts) )
