@@ -41,7 +41,7 @@ class Clause {
 
     public function getField() { return $this->_field; }
 
-    public function getFunctionEvaluated() {
+    public function getFunctionEvaluatedForMongo() {
         //convert dates to mongo date
         if (strtotime($this->_value)) {
             return new MongoDate(strtotime($this->_value));
@@ -78,11 +78,52 @@ class Clause {
         }
 
         //execute any functions found
+        return $this->_executeFunctionInValueForMongo($this->_value);
+    }
+
+    public function getFunctionEvaluated() {
+        //convert dates to mongo date
+        if (strtotime($this->_value)) {
+            return strtotime($this->_value);
+        }
+
+        //cast numbers to int
+        if (is_numeric($this->_value)) {
+            return (int)$this->_value;
+        }
+
+        //convert duration style to seconds
+        $preslogSettings = Configure::read('Preslog');
+        $durationRegex = $preslogSettings['regex']['duration'];
+        $matches = array();
+        if (preg_match($durationRegex, $this->_value, $matches)) {
+            $duration = 0;
+            for($i = 1; $i < sizeof($matches); $i++) {
+                switch ($matches[$i + 1]) {
+                    case 'H':
+                        $duration += ($matches[$i] * 60) * 60;
+                        $i++;
+                        break;
+                    case 'M':
+                        $duration += $matches[$i] * 60;
+                        $i++;
+                        break;
+                    case 'S':
+                        $duration += $matches[$i];
+                        $i++;
+                        break;
+                }
+            }
+            return $duration;
+        }
+
+        //execute any functions found
         return $this->_executeFunctionInValue($this->_value);
     }
 
+
     public function getMongoCriteria() {
-        $value = $this->getFunctionEvaluated($this->_operator->formatValueForJql($this->_value));
+        $value = $this->getFunctionEvaluatedForMongo($this->_operator->formatValueForJql($this->_value));
 
         //some mongo operators (line $in) requires a subobject, others like '=' are inline.
         if ($this->_operator instanceof JqlOperator && !$this->_operator->getMongoInline()) {
@@ -97,7 +138,7 @@ class Clause {
     public function getMongoCriteriaAsString() {
         $doc = "'$this->_field'  : ";
 
-        $value = $this->getFunctionEvaluated($this->_operator->formatValueForJql($this->_value));
+        $value = $this->getFunctionEvaluatedForMongo($this->_operator->formatValueForJql($this->_value));
         if ($this->_operator->getMongoInline()) {
             $doc .= " '$value'";
         } elseif ($this->_operator instanceof JqlOperator) {
@@ -182,6 +223,21 @@ class Clause {
      *
      * @return mixed
      */
+    private function _executeFunctionInValueForMongo($value) {
+        if (substr_count($value, '(') == 0) return $value;
+
+        $parts = explode('(', $value);
+        $functionName = trim($parts[0]);
+        $args = trim($parts[1]);
+
+        $args = str_replace(')', '', $args);
+        $function = $this->_findFunction($functionName);
+
+        if ($function === null) return $value;
+
+        return $function->executeForMongo($args);
+    }
+
     private function _executeFunctionInValue($value) {
         if (substr_count($value, '(') == 0) return $value;
 

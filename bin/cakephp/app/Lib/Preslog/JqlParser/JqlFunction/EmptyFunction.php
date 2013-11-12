@@ -15,4 +15,9 @@ class EmptyFunction extends JqlFunction {
     public function execute($args = null) {
         return '';
     }
+
+    public function executeForMongo($args = null)
+    {
+        return $this->execute($args);
+    }
 }

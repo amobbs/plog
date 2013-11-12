@@ -28,7 +28,13 @@ class StartOfDayFunction extends JqlFunction{
             $date = $this->_convertValueToTimestamp($args);
         }
 
-        return new MongoDate(mktime(0, 0, 0, date('n', $date), date('j', $date), date('y', $date)));
+        return mktime(0, 0, 0, date('n', $date), date('j', $date), date('y', $date));
+    }
+
+
+    public function executeForMongo($args = null)
+    {
+        return new MongoDate($this->execute($args));
     }
 
 }

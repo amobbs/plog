@@ -29,6 +29,12 @@ class EndOfWeekFunction extends JqlFunction {
 
         $dayOfWeek = date('w', $date);
 
-        return new MongoDate(mktime(23, 59, 59, date('n', $date), date('j', $date) + (6 - $dayOfWeek), date('y', $date)));
+        return mktime(23, 59, 59, date('n', $date), date('j', $date) + (6 - $dayOfWeek), date('y', $date));
+    }
+
+
+    public function executeForMongo($args = null)
+    {
+        return new MongoDate($this->execute($args));
     }
 }

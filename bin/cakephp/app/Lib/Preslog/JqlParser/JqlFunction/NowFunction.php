@@ -29,7 +29,12 @@ class NowFunction extends JqlFunction{
      * @return \MongoDate|void
      */
     public function execute($args = null) {
-        return new MongoDate(time());
+        return time();
+    }
+
+    public function executeForMongo($args = null)
+    {
+        return new MongoDate($this->execute($args));
     }
 
 }

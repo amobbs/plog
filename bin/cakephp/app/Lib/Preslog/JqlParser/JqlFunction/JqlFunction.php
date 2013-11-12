@@ -55,6 +55,11 @@ class JqlFunction {
         throw Exception('Not Implemented');
     }
 
+    public function executeForMongo($args = null)
+    {
+        return Exception('Not Implemented');
+    }
+
     /**
      * given a string in the format "<timestamp>" [-|+]offset return the actual unix timestamp
      *

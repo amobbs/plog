@@ -27,6 +27,12 @@ class StartOfMonthFunction extends JqlFunction {
             $date = $this->_convertValueToTimestamp($args);
         }
 
-        return new MongoDate(mktime(0, 0, 0, date('n', $date), 1, date('y', $date)));
+        return mktime(0, 0, 0, date('n', $date), 1, date('y', $date));
+    }
+
+
+    public function executeForMongo($args = null)
+    {
+        return new MongoDate($this->execute($args));
     }
 }

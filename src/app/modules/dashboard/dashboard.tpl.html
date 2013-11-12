@@ -68,7 +68,7 @@
                                     <ul class="dropdown-menu">
                                         <li><a tabindex="-1" ng-click="refreshWidget(widget._id)"><i class="icon icon-refresh"></i> Refresh</a></li>
                                         <li><a tabindex="-1" ng-show="!dashboard.preset" ng-click="openEditWidgetModal(widget)"><i class="icon icon-pencil"></i> Edit</a></li>
-                                        <li><a tabindex="-1" ng-click="deleteWidget(widget._id)" ng-show="{{widget._id !== null && !widget.deleted}}" ng-confirm-click="Are you sure you want to delete this widget?"><i class="icon icon-remove"></i> Delete widget</a></li>
+                                        <li><a tabindex="-1" ng-show="!dashboard.preset" ng-click="deleteWidget(widget._id)" ng-show="{{widget._id !== null && !widget.deleted}}" ng-confirm-click="Are you sure you want to delete this widget?"><i class="icon icon-remove"></i> Delete widget</a></li>
                                     </ul>
                                 </div>
                             </div>

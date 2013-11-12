@@ -27,6 +27,12 @@ class EndOfMonthFunction extends JqlFunction {
             $date = $this->_convertValueToTimestamp($args);
         }
 
-        return new MongoDate(mktime(23, 59, 59, date('n', $date), date('t', $date), date('y', $date)));
+        return mktime(23, 59, 59, date('n', $date), date('t', $date), date('y', $date));
+    }
+
+
+    public function executeForMongo($args = null)
+    {
+        return new MongoDate($this->execute($args));
     }
 }
