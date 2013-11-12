@@ -62,7 +62,7 @@ angular.module('logWidget', [])
                     var log = {};
                     for(var i = 0; i < logs.length; i++) {
                         log = {
-                            hrid: logs[i].hrid,
+                            id: logs[i].id,
                             rows: []
                         };
 

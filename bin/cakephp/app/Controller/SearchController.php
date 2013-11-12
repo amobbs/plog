@@ -369,7 +369,10 @@ class SearchController extends AppController
             }
 
             // Put to log list
-            $logs[] = array('attributes'=>$fieldList);
+            $logs[] = array(
+                'id' => $rawLog['Log']['hrid'],
+                'attributes'=>$fieldList
+            );
 
         }
 
