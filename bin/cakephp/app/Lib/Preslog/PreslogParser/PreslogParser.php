@@ -11,9 +11,11 @@ use Preslog\JqlParser\Clause;
 use Preslog\JqlParser\JqlKeyword\JqlKeyword;
 use Preslog\JqlParser\JqlOperator\EqualsOperator;
 use Preslog\JqlParser\JqlOperator\GreaterThanOperator;
+use Preslog\JqlParser\JqlOperator\InOperator;
 use Preslog\JqlParser\JqlOperator\LessThanOperator;
 use Preslog\JqlParser\JqlOperator\LikeOperator;
 use Preslog\JqlParser\JqlOperator\NotEqualsOperator;
+use Preslog\JqlParser\JqlOperator\NotInOperator;
 use Preslog\JqlParser\JqlParser;
 use Preslog\Logs\FieldTypes\Select;
 
@@ -123,6 +125,8 @@ class PreslogParser extends JqlParser {
                 new EqualsOperator(),
                 new NotEqualsOperator(),
                 new LikeOperator(),
+                new InOperator(),
+                new NotInOperator(),
             );
 
             $allowedString = '';
@@ -358,18 +362,21 @@ class PreslogParser extends JqlParser {
 
         if ($fieldName == 'client')
         {
-            $clientId = '';
+            $clientIds = array();
             $clients = $clientModel->find('all');
             foreach($clients as $client)
             {
-                if (strtoupper($client['Client']['name']) == $value)
+                $operator = $clause->getOperator();
+                if ($operator->matches(strtoupper($client['Client']['name']), $value))
                 {
-                    $clientId = $client['Client']['_id'];
+                    $clientIds[] = new MongoId($client['Client']['_id']);
                 }
             }
 
             return array(
-                'client_id' => new MongoId($clientId),
+                'client_id' => array(
+                    '$in' => $clientIds,
+                )
             );
         }
 

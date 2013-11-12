@@ -26,16 +26,10 @@ class InOperator extends JqlOperator {
     }
 
     public function formatValueForJql($value) {
-        $value = str_replace('(', '[', $value);
-        $value = str_replace(')', ']', $value);
-
         return $value;
     }
 
     public function formatValueForSql($value) {
-        $value = str_replace('[', '(', $value);
-        $value = str_replace(']', ')', $value);
-
         return $value;
     }
 

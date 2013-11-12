@@ -557,6 +557,11 @@ class JqlParser {
     private function _groupsOnlyInString($string) {
         $groupStartCount = substr_count($string, '(');
         $inStartCount = substr_count($string, 'IN (');
+        if ($inStartCount === 0)
+        {
+            $inStartCount = substr_count($string, 'IN(');
+        }
+
         $functionCount = $this->_countFunctionsInString($string);
 
         if ($groupStartCount > ($inStartCount + $functionCount)) {
