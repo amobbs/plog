@@ -12,7 +12,7 @@ angular.module( 'Preslog.nav', [])
 /**
  * Nav Controller
  */
-    .controller( 'NavCtrl', function NavController( $q, $scope, userService, $location, $route ) {
+    .controller( 'NavCtrl', function NavController( $q, $scope, $rootScope, userService, $location, $route, $modal ) {
 
         /**
          * Init
@@ -60,6 +60,7 @@ angular.module( 'Preslog.nav', [])
 
         };
 
+
         /**
          * Quick Search
          * redirect to search page with entered text as initial search
@@ -70,6 +71,7 @@ angular.module( 'Preslog.nav', [])
             window.location.href= '/search/' + encodeURIComponent(this.searchText);
         };
 
+
         /**
          * Create Log
          * Force a reload of the state if the uer re-clicks the link
@@ -78,6 +80,17 @@ angular.module( 'Preslog.nav', [])
         {
             // Change path
             $location.path(link+'?new');
+        };
+
+
+        /**
+         * Search Help Modal
+         */
+        $rootScope.searchHelp = function() {
+            var modal = $modal.open({
+                templateUrl: 'modules/search/help.tpl.html',
+                controller: 'HelpModalCtrl'
+            });
         };
 
         // Observe the User model
@@ -90,7 +103,6 @@ angular.module( 'Preslog.nav', [])
         {
             $scope.user = data;
         }, true);
-
 
         $scope.$watch(function()
         {

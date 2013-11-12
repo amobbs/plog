@@ -105,7 +105,7 @@ class Datetime extends FieldTypeAbstract
 
     protected function defaultConvertToFields( $label, $field )
     {
-        return array($label => date('Y-m-d H:i:s', strtotime($field['data']['datetime'])));
+        return array($label => date('d/m/Y H:i:s', strtotime($field['data']['datetime'])));
     }
 
 

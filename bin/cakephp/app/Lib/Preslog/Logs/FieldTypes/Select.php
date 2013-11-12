@@ -140,8 +140,7 @@ class Select extends FieldTypeAbstract
      */
     protected function defaultConvertToFields( $label, $field )
     {
-        $selected = (isset($this->options[ $field['data']['selected'] ]) ? $this->options[ $field['data']['selected'] ] : '');
-
+        $selected = (isset($this->options[ $field['data']['selected'] ]) ? $this->options[ $field['data']['selected'] ]['name'] : '');
         return array($label => $selected);
     }
 

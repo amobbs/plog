@@ -250,8 +250,8 @@ angular.module( 'Preslog.dashboard', [
 
             for(var id in $scope.dashboard.widgets)
             {
-                if ($scope.dashboard.widgets[id]._id == widgetId
-                    && $scope.dashboard.widgets[id].type !== 'date')
+                if ($scope.dashboard.widgets[id]._id == widgetId &&
+                    $scope.dashboard.widgets[id].type !== 'date')
                 {
                     $scope.dashboard.widgets[id].loading = true;
                     break;

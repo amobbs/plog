@@ -110,17 +110,6 @@ angular.module( 'Preslog.search', [
 
 
         /**
-         * Search Help Modal
-         */
-        $scope.searchHelp = function() {
-            var modal = $modal.open({
-                templateUrl: 'modules/search/help.tpl.html',
-                controller: 'HelpModalCtrl'
-            });
-        };
-
-
-        /**
          * general search to get logs
          */
         $scope.search = function() {
@@ -269,6 +258,7 @@ angular.module( 'Preslog.search', [
             $scope.search();
         }
     })
+
 
     /**
      * Help modal

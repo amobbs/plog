@@ -156,14 +156,63 @@ class LogEntity
             $outFields = array_merge($outFields, $field->convertToFields( $closure ));
         }
 
+        // Get flattened attributes, only showing 1 level of
+        $attrFields = $this->getFlattenedAttributes( $this->data['attributes'], $this->client->data['attributes'] );
+
         // Run through attributes, to fetch collapsed list
-        foreach ($this->data['attributes'] as $attribute)
+        foreach ($attrFields as $key=>$attribute)
         {
-            $outFields[] = $attribute; // TODO - needs to actually list the selected attributes as separated fields
+            // Collapse each to a list
+            $outFields[$key] = implode(', ',$attribute);
         }
 
         return $outFields;
     }
+
+
+    /**
+     * Get the flattened attribute list as text, flattened to the specified depth.
+     * @param   array   $attrSelected           Selected Attributes
+     * @param   array   $attrSource             Source array containing hierarchy
+     * @param   int     $level                  Current depth
+     * @return  array
+     */
+    public function getFlattenedAttributes( $attrSelected, $attrSource, $level=0)
+    {
+        $out = array();
+
+        // go through all attrs at this level
+        foreach ($attrSource as $attribute)
+        {
+            $children = array();
+
+            // Process children elements
+            if (isset($attribute['children']) && sizeof($attribute['children']))
+            {
+                $children = array_merge($children, $this->getFlattenedAttributes( $attrSelected, $attribute['children'], ($level+1) ));
+            }
+
+            // If selected, we keep this one
+            // If childen selected, we keep it too.
+            if ( in_array($attribute['_id'], $attrSelected) || sizeof($children) > 0 )
+            {
+                // Deeper than the flatten cutoff?
+                if ($level > 0)
+                {
+                    // Collate to array
+                    $children[ $attribute['_id'] ] = $attribute['name'];
+                    $out = array_merge($out, $children);
+                }
+                else
+                {
+                    $out[ $attribute['label'] ] = $children;
+                }
+            }
+        }
+
+        return $out;
+    }
+
 
 
     /**

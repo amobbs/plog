@@ -6,9 +6,11 @@ use Preslog\JqlParser\JqlOperator\JqlOperator;
 use Preslog\JqlParser\JqlParser;
 use Preslog\PreslogParser\PreslogParser;
 use Swagger\Annotations as SWG;
+use Preslog\Logs\Entities\LogEntity;
 
 /**
  * Class SearchController
+ * @property    Log     Log
  */
 class SearchController extends AppController
 {
@@ -255,6 +257,7 @@ class SearchController extends AppController
             $this->errorBadRequest(array('message'=>"Search parameters must not be empty. Please supply a valid JQL query to the 'query' variable."));
         }
 
+        // Load query
         $query = $params['query'];
 
         // add a query value which ensures they only get results from their own client_id
@@ -267,16 +270,17 @@ class SearchController extends AppController
             $query .= ' AND client_id = ' . $user['User']['client_id'] ;
         }
 
-        //replace any variables that are passed in
+        // replace any variables that are passed into the query
         foreach($variables as $variable => $value)
         {
             $query = str_replace('{' . $variable . '}', $value, $query);
         }
 
+        // Fetch current user
+        // TODO: This can be more efficient?
         $user = $this->User->findById(
             $this->PreslogAuth->user('_id')
         );
-
 
         $clients = $this->User->listAvailableClientsForUser($user['User']);
         $fullClients = array();
@@ -289,6 +293,7 @@ class SearchController extends AppController
         // Do query
         $results = $this->Log->findByQuery($query, $fullClients, $orderBy, $start, $limit, $orderAsc);
 
+        // Error on query failure
         if ( isset($results['ok']) && !$results['ok'] )
         {
             return array(
@@ -297,6 +302,7 @@ class SearchController extends AppController
             );
         }
 
+        // Get size of query results
         $total = $this->Log->countByQuery($query, $fullClients);
 
         $clients = array();
@@ -306,13 +312,6 @@ class SearchController extends AppController
         {
             // Collate the list of clients for fetching the field format
             $clients[] = $result['Log']['client_id'];
-
-            // Drop the Accountability and Status fields if we don't have permission
-            if (false)
-            {
-                unset($results[$k]['accountability']);
-                unset($results[$k]['status']);
-            }
         }
 
         //TODO Fetch the users involved
@@ -326,97 +325,52 @@ class SearchController extends AppController
 
         //loop through the logs again and reformat them for display
         $logs = array();
-        foreach ($results as $k=>$log) {
-            $logClient = null;
-            foreach($fullClients as $client)
+        foreach ($results as $k=>$rawLog) {
+
+            // Fetch client entity
+            $clientModel = ClassRegistry::init('Client');
+            $clientEntity = $clientModel->getClientEntityById( $rawLog['Log']['client_id'] );
+
+            // Skip clients that don't load
+            if ( !$clientEntity )
             {
-                if ($client['_id'] == $log['Log']['client_id'])
-                {
-                    $logClient = $client;
-                }
+                continue;
             }
 
-            $allFieldNames['hrid'] = true; // so we can search on log id
+            // Load the log schema by the client
+            $log = new LogEntity();
+            $log->setDataSource( $this->Log->getDataSource() );
+            $log->setClientEntity($clientEntity);
 
-            $log = $log['Log'];
+            // Interpret the log data to be saved
+            $log->fromArray( $rawLog['Log'] );
 
-            //create the format and add in some fields that will always be there
-            $parsed = array(
-                'id' => $log['_id'],
-                'deleted' => $log['deleted'],
-                'hrid' => $log['hrid'],
-                'slug' => $log['slug'],
-                'attributes' => array(
-                    array(
-                        'title' => 'LogID',
-                        'value' => $log['hrid'],
-                        'showTooltip' => false,
-                    ),
-                ),
-            );
+            // Generate fields list
+            $fields = $log->toDisplay();
 
-            //add all the custom attributes into display
-            foreach($log['fields'] as $field) {
-                $clientEntity = $this->Client->getClientEntityById((string)$log['client_id']);
+            // New field list per log
+            $fieldList = array();
 
-                //get field info from the client
-                $fieldInfo = $this->_getFieldFromClientById($field['field_id'], $options[(string)$log['client_id']]);
+            // Track all field names
+            foreach ($fields as $key=>$value)
+            {
+                // Track field names
+                $allFieldNames[$key] = true;
 
-                $formattedField = array(
-                    'title' => $fieldInfo['name'],
-                    'value' => '',
-                    'showTooltip' => false
+                // Convert to arrangement the client is expecting
+                $logData = array(
+                    'title'=>$key,
+                    'value'=>$value,
                 );
-                $fieldAdded = false;
 
-                $fieldName = $fieldInfo['name'];
-                //different fields get displayed in different ways
-                switch ($fieldInfo['type']) {
-                    case 'loginfo':
-                        //created/modified are always there so just add them in
-                        $allFieldNames['Created'] = true;
-                        $parsed['attributes'][] = array(
-                            'title' => 'Created',
-                            'value' => date('d/m/Y H:i:s', strtotime($field['data']['created'])),
-                            'showTooltip' => false
-                        );
+                // Put to field list
+                $fieldList[] = $logData;
 
-                        $allFieldNames['Modified'] = true;
-                        $parsed['attributes'][] = array(
-                            'title' => 'Modified',
-                            'value' => date('d/m/Y H:i:s', strtotime($field['data']['modified'])),
-                            'showTooltip' => false
-                        );
-                        $fieldAdded = true;
-                        break;
-                    case 'datetime':
-                        if ($field['data']['datetime'] instanceof MongoDate) {
-                            $field['data']['datetime'] = $field['data']['datetime']->sec;
-                        }
-                        $formattedField['value'] = date('d/m/Y H:i:s', strtotime($field['data']['datetime']));
-                        break;
-                    case 'duration':
-                        $formattedField['value'] = $this->_formatDuration($field['data']['seconds']);
-                        break;
-                    case 'select':
-                    case 'select-impact':
-                    case 'select-severity':
-                    case 'select-accountability':
-                        $formattedField['value'] = $this->_getSelectValueFromClient($field['data']['selected'], $fieldInfo['data']['options']);
-                        break;
-                    case 'textarea': //missing break on purpose, same format as default.
-                        $formattedField['showTooltip'] = true;
-                    default: //text, textarea etc..
-                        $formattedField['value'] = $field['data']['text'];
-                }
-
-                if (!$fieldAdded) {
-                    $parsed['attributes'][] = $formattedField;
-                    $allFieldNames[$fieldName] = true;
-                }
             }
 
-            $logs[] = $parsed;
+            // Put to log list
+            $logs[] = array('attributes'=>$fieldList);
+
         }
 
         // Return the Results and the corresponding Client opts

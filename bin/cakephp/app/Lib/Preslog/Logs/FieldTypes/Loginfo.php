@@ -161,9 +161,9 @@ class Loginfo extends FieldTypeAbstract
         );
 
         return array(
-            'Created' => date('Y-m-d H:i:s', strtotime($this->data['data']['created'])),
+            'Created' => date('d/m/Y H:i:s', strtotime($this->data['data']['created'])),
             'Created By' => $cUser,
-            'Modified' => date('Y-m-d H:i:s', strtotime($this->data['data']['modified'])),
+            'Modified' => date('d/m/Y H:i:s', strtotime($this->data['data']['modified'])),
             'Modified By' => $mUser,
         );
     }
