@@ -289,13 +289,6 @@ class Log extends AppModel
      * @return mixed
      */
     public function findByQuery($query, $clients = array(), $orderBy = '', $start = 0, $limit = 10, $orderAsc = true) {
-        if (empty($query)) {
-            return array(
-                'ok' => 1,
-                'data' => array(),
-            );
-        }
-
         //double check that the called of this function actually wants to check against all clients. (cron jobs are not logged in but want to check all clients
         if ($clients === true)
         {
@@ -329,9 +322,12 @@ class Log extends AppModel
         $match = $parser->parse($clients);
 
         //initial match to find records we want
-        $criteria[] = array(
-            '$match' => $match,
-        );
+       if ( ! empty($match))
+       {
+            $criteria[] = array(
+                '$match' => $match,
+            );
+       }
 
         //are we sorting the results?
         if (!empty($orderBy)) {

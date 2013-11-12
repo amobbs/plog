@@ -250,7 +250,7 @@ class SearchController extends AppController
         $options = array();
 
         // Validate: Search criteria must not be empty
-        if ( !isset($params['query']) || empty($params['query']) )
+        if ( !isset($params['query']) )
         {
             $this->errorBadRequest(array('message'=>"Search parameters must not be empty. Please supply a valid JQL query to the 'query' variable."));
         }
@@ -653,7 +653,7 @@ class SearchController extends AppController
                 }
 
                 $columns[strtoupper($title)] = array(
-                    'name' => strtoupper($title),
+                    'name' => strtoupper($fieldSettings['name']),
                     'label' => $title,
                     'type' => strtoupper($fieldTypeName),
                     'size' => 100,
