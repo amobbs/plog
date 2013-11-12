@@ -609,7 +609,7 @@ class ImportController extends AppController
             );
 
             // Set deleted/active
-            $user['deleted'] = ($parts[5] == 'TRUE');
+            $user['deleted'] = ($parts[5] == 'FALSE');
 
             // Attach client_id if we can find it from the given company name
             if (isset($parts[7])) {
@@ -880,7 +880,7 @@ class ImportController extends AppController
                 '_id'=>$client['_id'],
                 'logIncrement'=>$maxLog,
             )
-        ));
+        ), false, array('logIncrement'));
     }
 
     /**

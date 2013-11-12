@@ -1,0 +1,221 @@
+<div modal="queryWizardModal" options="{backdropFade: true}" close="cancel()" tabindex="-1" role="dialog">
+    <div class="modal-header">
+        <button type="button" class="close" ng-click="cancel()" aria-hidden="true"><i class="icon icon-remove"></i></button>
+        <h3 id="myModalLabel">Search Reference</h3>
+    </div>
+    <div class="modal-body">
+
+        <h3>Introduction</h3>
+
+        <p>
+            All Jql expressions are written in the form <code>$field $operator $value</code> with optional logical keywords (<code>and</code>, <code>or</code>, etc) to join expressions together.
+            <br/>For example:
+            <ul>
+                <li><code>id = MH_#123</code> - this example uses the <code>=</code> operator to exactly match a particular Log ID</li>
+                <li><code>created <= "2012-01-02 13:00:00" AND status = Open</code> - In this example <code>AND</code> is used to group two expressions.</li>
+                <li><code>(myField < 1 AND anotherfield >= 5) OR status = Closed</code> - Parentheses can be used to group expressions. </li>
+            </ul>
+        </p>
+
+        <hr/>
+
+        <h3>Fields</h3>
+
+        <p>
+            Field names are specified by administrators. Field names can be discovered by using the Query Wizard,
+            which will allow you to select fields by their friendly name, which will then be converted to their field names.
+            <br/>Field names may be changedby an administrator at any time, however changing fields names may result in existing queries becoming invalid.
+        </p>
+
+        <hr/>
+
+        <h3>Operators</h3>
+        <p>
+            Operators are used for comparison between a field and a value.
+        </p>
+        <ul>
+            <li>
+                <h4>Equals <code>$field = $value</code></h4>
+                <p>Perform an exact match between the field and the value. All matches are case insensitive.</p>
+            </li>
+            <li>
+                <h4>Not Equals <code>$field != $value </code></h4>
+                <p>
+                    Performs an exact match between the field and the value, returning all entries which do <strong>not</strong> match the given value. All matches are case insensitive.
+                </p>
+            </li>
+            <li>
+                <h4>Grater Than <code>$field &gt; $value</code></h4>
+                <p>
+                    Fetch all entries where the entries value is greater than the value given. This can be used for comparison with numeric, datetime and string values.
+                    <br/>This operator can also be used in conjunction with the equals operator, to match entries which are greater than or equal to the value given (eg. <code>field &gt;= value</code>)
+                </p>
+            </li>
+            <li>
+                <h4>Less Than <code>$field &lt; $value</code></h4>
+                <p>Fetch all entries where the entries value is less than the value given. This can be used for comparison with numeric, datetime and string values.
+                <br/>This operator can also be used in conjunction with the equals operator, to match entries which are less than or equal to the value given (eg. <code>field &lt;= value</code>)
+                </p>
+            </li>
+            <li>
+                <h4>In <code>$field in($value,$value,..)</code></h4>
+                <p>
+                    Match any entry where the $field contains any of the listed $values.
+                    <br/>Exmples
+                    <ul>
+                        <li><code>program in (news, cricket, sport)</code> - equivalent to <code>(program = news OR program = cricket OR program = sport)</code></li>
+                    </ul>
+                </p>
+            </li>
+            <li>
+                <h4>Not In <code>$field not in($value,$value,..)</code></h4>
+                <p>
+                    Match any entry where the $field does not contains any of the listed $values.
+                    <br/>Exmples
+                    <ul>
+                        <li><code>program not in (news, cricket, sport)</code> - equivalent to <code>(program != news AND program != cricket AND program = sport)</code></li>
+                    </ul>
+                </p>
+            </li>
+            <li>
+                <h4>Like <code>$field ~ $value</code></h4>
+                <p>
+                    Attempt to partially match the $value inside the text of $field. Only allowed on text-based fields.
+                    <br/>Exmples
+                    <ul>
+                        <li><code>description ~ "fail on"</code> - would match "might <strong>fail on</strong> all", "no<strong>fail on</strong>wards"</li>
+                        <li><code>program ~ "news"</code></li>
+                    </ul>
+                </p>
+            </li>
+        </ul>
+
+        <hr/>
+
+        <h3>Values and Functions</h3>
+        <p>
+            Usually when searching you will be looking to compare against a particular value, such as a specific duration or date.
+            <br/>Occasionally you may need to use special functions instead of specific values in order to query in the exact manner you need.
+            <br/>For example:
+            <ul>
+                <li><code>status = empty()</code> - This will match all entries where the status field does not contain anything.</li>
+                <li><code>created &gt; startOfDay(now())</code> - this will match all entries where the created date is greater than the start of today.</li>
+            </ul>
+        </p>
+
+        <ul>
+            <li>
+                <h4>Empty <code>empty()</code></h4>
+                <p>
+                    Use <code>empty()</code> to check if the field has not had a value set. Useful for checking if select fields have had an option chosen.
+                    <br/>Examples
+                    <ul>
+                        <li><code>status = empty()</code></li>
+                    </ul>
+                </p>
+            </li>
+            <li>
+                <h4>Now <code>now()</code></h4>
+                <p>
+                    Used with datetime fields, now() will return the current date and time. <code>now()</code> is often used in conjunction with other date functions.
+                </p>
+            </li>
+            <li>
+                <h4>Start of Day <code>startOfDay($value)</code></h4>
+                <p>
+                    <code>startOfDay()</code> is used in conjunction with a datetime value, and will return a datetime for the start of that day.
+                    <br/>Examples
+                    <ul>
+                        <li><code>created &gt; startOfDay('2012-02-02 13:00:00')</code> - evalues to <code>created > '2012-02-02 00:00:00'</code></li>
+                    </ul>
+                </p>
+            </li>
+            <li>
+                <h4>Start of Week<code>startOfWeek($value)</code></h4>
+                <p>
+                    <code>startOfWeek()</code> is used in conjunction with a datetime value, and will return a datetime for the start of that week.
+                    <br/>Examples
+                    <ul>
+                        <li><code>created &gt; startOfDay('2012-02-02 13:00:00')</code> - evalues to <code>created > '2012-01-30 00:00:00'</code> - Monday was the 30th of January.</li>
+                    </ul>
+                </p>
+            </li>
+            <li>
+                <h4>Start of Month<code>startOfMonth($value)</code></h4>
+                <p>
+                    <code>startOfMonth()</code> is used in conjunction with a datetime value, and will return a datetime for the start of that month.
+                    <br/>Examples
+                    <ul>
+                        <li><code>created &gt; startOfDay('2012-02-02 13:00:00')</code> - evalues to <code>created > '2012-02-01 00:00:00'</code></li>
+                    </ul>
+                </p>
+            </li>
+            <li>
+                <h4>End of Day <code>startOfDay($value)</code></h4>
+                <p>
+                    <code>endOfDay()</code> is used in conjunction with a datetime value, and will return a datetime for the end of that day.
+                    <br/>Examples
+                    <ul>
+                        <li><code>created &gt; endOfDay('2012-02-02 13:00:00')</code> - evalues to <code>created > '2012-02-03 00:00:00'</code></li>
+                    </ul>
+                </p>
+            </li>
+            <li>
+                <h4>End of Week<code>startOfWeek($value)</code></h4>
+                <p>
+                    <code>endOfWeek()</code> is used in conjunction with a datetime value, and will return a datetime for the end of that week.
+                    <br/>Examples
+                    <ul>
+                        <li><code>created &gt; endOfDay('2012-02-02 13:00:00')</code> - evalues to <code>created > '2012-02-06 00:00:00'</code> - Sundway was the 5th, but midnight occurs at the start of the 6th.</li>
+                    </ul>
+                </p>
+            </li>
+            <li>
+                <h4>End of Month<code>startOfMonth($value)</code></h4>
+                <p>
+                    <code>endOfMonth()</code> is used in conjunction with a datetime value, and will return a datetime for the end of that month.
+                    <br/>Examples
+                    <ul>
+                        <li><code>created &gt; endOfDay('2012-02-02 13:00:00')</code> - evalues to <code>created > '2012-03-01 00:00:00'</code></li>
+                    </ul>
+                </p>
+            </li>
+        </ul>
+
+        <hr/>
+
+        <h3>Keywords and Parenteses</h3>
+        <p>
+            Keywords can be used to group expressions together to create logical conditions (eg. <i>I want X and Y but not Z</i>)
+            Prentheses <code>(</code> and <code>)</code> can be used to group expression together, to created deeper conditional grouping. (eg. <i>I want (A and B) OR (C and D)</i>)
+            Beware of creating ambiguous queries with no parentheses, such as <code>A and B and C or D or E and F or G</code>, which may not evaluate the way you expect.
+            <br/>Example: <code>field = value AND (field2 = value2 OR field3 = value3)</code>
+        </p>
+        <ul>
+            <li>
+                <h4>And <code>AND</code></h4>
+                <p>
+                    The clause on both the left and the right of the AND keyword must both be matched.
+                    <br/>Examples
+                    <ul>
+                        <li><code>program ~ "news" AND program ~ "24"</code> - entry must contain both "news" and "24" in the "program" field.</li>
+                    </ul>
+                </p>
+            </li>
+            <li>
+                <h4>Or <code>OR</code></h4>
+                <p>
+                    Either the clause on the left or the right of the OR keyword can be matched.
+                    <br/>Examples
+                    <ul>
+                        <li><code>program ~ "news" OR program ~ "bulletin"</code> - entry must contain either "news" or "bulletin" in the program field.</li>
+                    </ul>
+                </p>
+            </li>
+        </ul>
+
+    </div>
+    <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true" ng-click="cancel()">Dismiss</button>
+    </div>
+</div>

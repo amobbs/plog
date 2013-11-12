@@ -104,7 +104,21 @@ angular.module( 'Preslog.search', [
             $scope.search();
         };
 
-        //general search to get logs
+
+        /**
+         * Search Help Modal
+         */
+        $scope.searchHelp = function() {
+            var modal = $modal.open({
+                templateUrl: 'modules/search/help.tpl.html',
+                controller: 'HelpModalCtrl'
+            });
+        };
+
+
+        /**
+         * general search to get logs
+         */
         $scope.search = function() {
             if ($scope.jql.length  === 0) {
                 return;
@@ -162,6 +176,7 @@ angular.module( 'Preslog.search', [
             }
         };
 
+
         /**
          * Red Query Builder
          */
@@ -174,7 +189,11 @@ angular.module( 'Preslog.search', [
         //values for each clause populated by the query builder.
         $scope.args = [];
 
-        //given sql (from query builder) convert to jql to populate display
+
+        /**
+         * Sql to Jql
+         * given sql (from query builder) convert to jql to populate display
+         */
         $scope.sqlToJql = function(doSearch) {
             if ($scope.sql === "") {
                 return;
@@ -192,7 +211,11 @@ angular.module( 'Preslog.search', [
             });
         };
 
-        //given jql, get sql query and options needed to use red query builder
+
+        /**
+         * Jql to Sql
+         * given jql, get sql query and options needed to use red query builder
+         */
         $scope.jqlToSql = function() {
             //convert jql to sql
             Restangular.one('search/wizard/params')
@@ -239,4 +262,19 @@ angular.module( 'Preslog.search', [
                 });
 
         };
-    });
+    })
+
+    /**
+     * Help modal
+     */
+    .controller('HelpModalCtrl', function ($scope, $modalInstance) {
+
+        $scope.ok = function() {
+            $modalInstance.dismiss();
+        };
+
+        $scope.cancel = function() {
+            $modalInstance.dismiss();
+        };
+    })
+;

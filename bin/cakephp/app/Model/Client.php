@@ -115,6 +115,9 @@ class Client extends AppModel
             'type' => 'datetime',
             'mongoType' => 'mongoDate'
         ),
+        'logIncrement'=> array(
+            'type'=>'integer'
+        )
     );
 
 
