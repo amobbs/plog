@@ -504,7 +504,19 @@ class PreslogParser extends JqlParser {
         //make case insensitive
         if ($isText)
         {
-            $value = new MongoRegex("/^$value$/i");
+            if ( is_array($value) )
+            {
+                $newValue = array();
+                foreach($value as $key => $val)
+                {
+                    $newValue[$key] = new MongoRegex("/^$val$/i");
+                }
+                $value = $newValue;
+            }
+            else
+            {
+                $value = new MongoRegex("/^$value$/i");
+            }
         }
 
         if ( $isSelect )

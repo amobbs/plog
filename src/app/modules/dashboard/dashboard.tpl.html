@@ -74,7 +74,17 @@
                             </div>
                         </div>
                         <div class="widget-content">
-                            <div ng-switch="widget.type">
+                            <div ng-show="widget.loading" ng-animate="'fade'">
+                                <div class="loading-widget">
+                                    <div class="loading-block">
+                                        <img src="/assets/img/layout/ajax-loader.gif" width="64" height="64" alt="Loading..." />
+                                        <br/>
+                                        <span>Loading...</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div ng-hide="widget.loading" ng-switch="widget.type">
                                 <date-widget ng-switch-when="date" session="dashboard.session"></date-widget>
                                 <log-widget ng-switch-when="list" params="widget.params"></log-widget>
                                 <chart ng-switch-default value="widget.display" type="widget.chartType" height="400"></chart>

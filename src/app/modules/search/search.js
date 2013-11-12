@@ -93,9 +93,13 @@ angular.module( 'Preslog.search', [
         };
 
         $scope.updating = false;
+        $scope.firstChange = true;
         //if params change then we need to get new logs
         $scope.$watch('logWidgetParams', function(params) {
-            $scope.search();
+            if ( ! $scope.firstChange)
+            {
+                $scope.search();
+            }
         }, true);
 
         //new search query, start on page one and get logs
@@ -120,10 +124,6 @@ angular.module( 'Preslog.search', [
          * general search to get logs
          */
         $scope.search = function() {
-            if ($scope.jql.length  === 0) {
-                return;
-            }
-
             //find start of page
             var offset = (($scope.logWidgetParams.page - 1) * $scope.logWidgetParams.perPage);
             if ($scope.logWidgetParams.page === 1) {
@@ -262,6 +262,12 @@ angular.module( 'Preslog.search', [
                 });
 
         };
+
+        //if a query is passed in then do a search otherwise wait for user to click button
+        if ($scope.jql !== '')
+        {
+            $scope.search();
+        }
     })
 
     /**
