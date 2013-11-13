@@ -150,4 +150,22 @@ class Duration extends FieldTypeAbstract
 
         return $errors;
     }
+
+    /**
+     * Durations fields that contain a duration are not deleted
+     * @return bool
+     */
+    public function isDeleted()
+    {
+        $deleted = parent::isDeleted();
+
+        // always show fields with content
+        if ( isset($this->data['data']['seconds']) && !empty($this->data['data']['seconds']))
+        {
+            return false;
+        }
+
+        return $deleted;
+    }
+
 }

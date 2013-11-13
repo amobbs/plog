@@ -164,6 +164,8 @@ class LogsController extends AppController
      */
     public function options( $id=null )
     {
+        $passLog = array();
+
         // IF ID given, try to load that given log
         if (!empty($id))
         {
@@ -178,6 +180,7 @@ class LogsController extends AppController
 
             // Client ID is..
             $clientId = (string) $log['Log']['client_id'];
+            $passLog = $log['Log'];
         }
         else
         {
@@ -205,7 +208,7 @@ class LogsController extends AppController
         }
 
         // Load: Log format from specific Client
-        $options = $this->Log->getOptionsByClientId( $clientId );
+        $options = $this->Log->getOptionsByClientId( $clientId, $passLog );
 
         // Return options
         $this->set($options);

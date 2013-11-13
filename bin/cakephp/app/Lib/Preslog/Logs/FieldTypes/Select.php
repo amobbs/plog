@@ -170,4 +170,22 @@ class Select extends FieldTypeAbstract
             }
         }
     }
+
+
+    /**
+     * Select fields that have a selection are not deleted
+     * @return bool
+     */
+    public function isDeleted()
+    {
+        $deleted = parent::isDeleted();
+
+        // always show fields with content
+        if ( isset($this->data['data']['selected']) && !empty($this->data['data']['selected']))
+        {
+            return false;
+        }
+
+        return $deleted;
+    }
 }

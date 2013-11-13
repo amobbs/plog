@@ -177,4 +177,14 @@ class Loginfo extends FieldTypeAbstract
     {
         return array();
     }
+
+
+    /**
+     * Log info is never deleted
+     * @return bool
+     */
+    public function isDeleted()
+    {
+        return false;
+    }
 }

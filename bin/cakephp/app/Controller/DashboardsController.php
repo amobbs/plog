@@ -151,6 +151,8 @@ class DashboardsController extends AppController
      */
     public function editDashboard()
     {
+        set_time_limit(60*10);  // 10 mins
+
         //id of the dashboard we are working on
         $id = isset($this->request->params['pass'][0]) ? $this->request->params['pass'][0] : "";
 

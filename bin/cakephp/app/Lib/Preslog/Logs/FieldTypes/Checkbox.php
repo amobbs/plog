@@ -80,4 +80,22 @@ class Checkbox extends FieldTypeAbstract
         // Parent actions
         parent::clientBeforeSave();
     }
+
+
+    /**
+     * Checkboxes that are checked are not deleted
+     * @return bool
+     */
+    public function isDeleted()
+    {
+        $deleted = parent::isDeleted();
+
+        // always show fields with content
+        if ( isset($this->data['data']['checked']) && !empty($this->data['data']['checked']))
+        {
+            return false;
+        }
+
+        return $deleted;
+    }
 }

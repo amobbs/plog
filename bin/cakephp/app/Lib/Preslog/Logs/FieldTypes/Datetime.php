@@ -134,4 +134,22 @@ class Datetime extends FieldTypeAbstract
 
         return $errors;
     }
+
+    /**
+     * DateTime fields that contain a date are not deleted
+     * @return bool
+     */
+    public function isDeleted()
+    {
+        $deleted = parent::isDeleted();
+
+        // always show fields with content
+        if ( isset($this->data['data']['datetime']) && !empty($this->data['data']['datetime']))
+        {
+            return false;
+        }
+
+        return $deleted;
+    }
+
 }

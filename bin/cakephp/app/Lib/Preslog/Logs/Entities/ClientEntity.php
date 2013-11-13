@@ -249,20 +249,44 @@ class ClientEntity
      * Return Client Schema as options, for use in conjunction with Log
      * - Remove field options that are not visible
      */
-    public function getOptions()
+    public function getOptions( $log=array() )
     {
         // Take a copy of the client
         $data = $this->data;
 
-        // Remove fields
+        // Remove fields that shouldn't be visible
         foreach ($data['fields'] as $k=>$field)
         {
             // If hidden
-            if ( $this->fields[ $field['_id'] ]->isHiddenFromOptions() )
+            if ( $this->fields[ $field['_id'] ]->isHiddenFromOptions())
             {
                 unset( $data['fields'][ $k ] );
             }
+
+            // field exists?
+            $exists = false;
+
+            // Does this field exist in the log?
+            foreach ($log['fields'] as $logField)
+            {
+                if ($logField['field_id'] == $field['_id'])
+                {
+                    $exists = true;
+                    break;
+                }
+            }
+
+            // If deleted
+            if ($this->fields[ $field['_id'] ]->isDeleted() && !$exists)
+            {
+                unset( $data['fields'][ $k ] );
+            }
+
         }
+
+        // Remove deleted attribute options
+        $attr = (isset($log['attributes']) ? $log['attributes'] : array());
+        $this->removeDeletedAttributes( $data['attributes'], $attr);
 
         // Remove attrs if hidden
         if ( $this->attributePermissions & FieldTypeAbstract::FLAG_HIDDEN )
@@ -471,6 +495,37 @@ class ClientEntity
         {
             $field->clientAfterFind();
         }
+    }
+
+
+    /**
+     * Remove deleted attributes
+     * @param   array   $attributes     Attributes to delete
+     * @param   array   $selectedAttr   Selected attributes
+     * @param   int     $depth          Depth of array recursion
+     */
+    public function removeDeletedAttributes( &$attributes, $selectedAttr, $depth=0 )
+    {
+        foreach ( $attributes as $key=>&$attr)
+        {
+            // Delete children first to collapse bottom-up
+            if ($attr['children'])
+            {
+                $this->removeDeletedAttributes( $attr['children'], $selectedAttr, ($depth+1) );
+            }
+
+            // if no children, or we're at zero depth, we can delete this whole thing where required.
+            if ( !sizeof($attr['children']) || 0 == $depth )
+            {
+                if (isset($attr['deleted']) && $attr['deleted'] == true && !in_array( $attr['_id'], $selectedAttr ))
+                {
+                    unset($attributes[ $key ]);
+                }
+            }
+        }
+
+        // Fix the keys to be sequential
+        $attributes = array_values($attributes);
     }
 
 

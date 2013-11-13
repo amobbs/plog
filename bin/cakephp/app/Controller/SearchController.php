@@ -158,7 +158,7 @@ class SearchController extends AppController
         // Perform search
         // Returns Logs and Options to accompany
         $logs = array();
-        $limit = 500;
+        $limit = 200;
         $start = 0;
 
         do

@@ -449,6 +449,16 @@ abstract class FieldTypeAbstract
         // This space intentionally left blank
     }
 
+
+    /**
+     * is this field deleted?
+     * @return bool
+     */
+    public function isDeleted()
+    {
+        return (isset($this->fieldSettings['deleted']) && $this->fieldSettings['deleted'] == true );
+    }
+
 }
 
 

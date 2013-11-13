@@ -62,4 +62,22 @@ class Textarea extends FieldTypeAbstract
     {
         return array($label => $field['data']['text']);
     }
+
+    /**
+     * Text fields that contain data are not deleted
+     * @return bool
+     */
+    public function isDeleted()
+    {
+        $deleted = parent::isDeleted();
+
+        // always show fields with content
+        if ( isset($this->data['data']['text']) && !empty($this->data['data']['text']))
+        {
+            return false;
+        }
+
+        return $deleted;
+    }
+
 }

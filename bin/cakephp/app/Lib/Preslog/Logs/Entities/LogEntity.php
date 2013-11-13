@@ -47,6 +47,13 @@ class LogEntity
         // toArray dynamic fields
         foreach ($this->fields as $field)
         {
+            // Skip if deleted
+            if ($field->isDeleted())
+            {
+                continue;
+            }
+
+            // to Array
             $fieldData = $field->toArray();
 
             // If there's data to put to Array
@@ -148,6 +155,12 @@ class LogEntity
         foreach ($this->fields as &$field)
         {
             $settings = $field->getFieldSettings();
+
+            // Skip deleted fields that do not contain data
+            if ($field->isDeleted())
+            {
+                continue;
+            }
 
             // Get closure
             $closure = (isset($fieldTypeCallbacks[ $settings['type'] ]) ? $fieldTypeCallbacks[ $settings['type'] ] : null);
