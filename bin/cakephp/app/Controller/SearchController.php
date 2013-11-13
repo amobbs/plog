@@ -568,6 +568,11 @@ class SearchController extends AppController
                 'type' => 'TEXT',
                 'size' => 150,
             ),
+            'Client' => array(
+                'name' => 'CLIENT',
+                'label' => 'Client',
+                'type' => 'CLIENT',
+            )
         );
 
         $types = array(); //defines how a value is displayed in the interface, textbox or drop down etc..
@@ -591,13 +596,22 @@ class SearchController extends AppController
             'name' => 'TEXT',
             'operators' => $this->listOperators('TEXT'),
         );
+        $types['CLIENT'] = array(
+            'editor' => 'SELECT',
+            'name' => 'CLIENT',
+            'operators' => $this->listOperators('SELECT'),
+        );
 
+        $clientOptions = array();
 
         $selectOptions = array(); //list of options that are available for SELECt types
         foreach($clientIds as $id)
         {
             $fieldTypeName= '';
-            $clientEntity = $this ->Client->getClientEntityById($id);
+            $clientEntity = $this->Client->getClientEntityById($id);
+
+            $clientOptions[] = $clientEntity->data['name'];
+
             foreach($clientEntity->fields as $fieldId => $clientField)
             {
                 $fieldSettings = $clientField->getFieldSettings();
@@ -696,6 +710,7 @@ class SearchController extends AppController
                 }
             }
         }
+        $selectOptions['CLIENT'] = $clientOptions;
 
         $fieldList = array(
             'tables' => array(
