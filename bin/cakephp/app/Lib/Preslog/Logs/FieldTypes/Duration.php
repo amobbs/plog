@@ -137,7 +137,7 @@ class Duration extends FieldTypeAbstract
         $errors = array();
 
         // Must not be empty
-        if (!isset($this->data['data']['seconds']) || empty($this->data['data']['seconds']))
+        if (!isset($this->data['data']['seconds']) || (empty($this->data['data']['seconds']) && $this->data['data']['seconds'] !== 0))
         {
             return array("Duration must not be empty.");
         }
