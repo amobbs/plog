@@ -266,13 +266,17 @@ class ClientEntity
             // field exists?
             $exists = false;
 
-            // Does this field exist in the log?
-            foreach ($log['fields'] as $logField)
+            // Only perform check for logs that exist
+            if (isset($log['fields']))
             {
-                if ($logField['field_id'] == $field['_id'])
+                // Does this field exist in the log?
+                foreach ($log['fields'] as $logField)
                 {
-                    $exists = true;
-                    break;
+                    if ($logField['field_id'] == $field['_id'])
+                    {
+                        $exists = true;
+                        break;
+                    }
                 }
             }
 
