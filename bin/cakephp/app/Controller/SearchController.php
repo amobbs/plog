@@ -670,7 +670,7 @@ class SearchController extends AppController
                     if ( ! $child['deleted'])
                     {
                         $options[] = array(
-                            'value' => $child['name'],
+                            'value' => strtoupper($child['name']),
                             'label' => $child['name']
                         );
 
@@ -679,7 +679,7 @@ class SearchController extends AppController
                             if ( ! $subChild['deleted'])
                             {
                                 $options[] = array(
-                                    'value' => $subChild['name'],
+                                    'value' => strtoupper($subChild['name']),
                                     'label' => $subChild['name']
                                 );
                             }

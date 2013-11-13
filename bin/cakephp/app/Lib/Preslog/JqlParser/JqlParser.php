@@ -285,14 +285,26 @@ class JqlParser {
 
         //find any groups
         $openPos = FALSE;
+        $quoteCount = 0;
+
         $lastChar = ' ';
         $thisChar = '';
         $i = 0;
+
         //a group starts with a ( which is preceded with a space or another ( anything else and it is a function
         while ( ! $openPos && $thisChar !== false) {
             $thisChar = substr($string, $i, 1);
-            if($thisChar == '(' && ($lastChar == '(' || $lastChar == ' ')) {
+            if($thisChar == '(' &&
+                ($lastChar == '(' || $lastChar == ' ') &&   //if it dosn't have a space or  ( in front it is a function
+                ($quoteCount % 2 == 0) //if there are an odd number of quotes before this character we are inside quotes and it is a literal string
+            )
+            {
                 $openPos = $i + 1;
+            }
+
+            if ($thisChar == '"')
+            {
+                $quoteCount++;
             }
             $lastChar = $thisChar;
             $i++;
@@ -305,12 +317,30 @@ class JqlParser {
         {
             for($i = $openPos; $i < strlen($string); $i++) {
                 $char = substr($string, $i, 1);
-                if($char == '(') {
+
+                if ($char == '"')
+                {
+                    $quoteCount++;
+                }
+
+                //if there are an odd number of quotes then we are inside a string literal and we will ignore open/closes
+                if ($quoteCount % 2 != 0)
+                {
+                    continue;
+                }
+
+                if($char == '(')
+                {
                     $groupCount++;
-                } else if ($char == ')') {
-                    if ($groupCount > 0) {
+                }
+                else if ($char == ')')
+                {
+                    if ($groupCount > 0)
+                    {
                         $groupCount--;
-                    } else {
+                    }
+                    else
+                    {
                         $close = $i - $openPos;
                         break;
                     }
@@ -550,21 +580,36 @@ class JqlParser {
      * given an sql/jql string return if there are any groups that need to be broken up or if there are just 'IN'
      * keywords and functions in the string. this is needed because In keywords, groups and functiosn all use ( and )
      *
+     * this will ignore any ( or ) inside quotes (string literals)
      * @param $string
      *
      * @return bool
      */
     private function _groupsOnlyInString($string) {
-        $groupStartCount = substr_count($string, '(');
-        $inStartCount = substr_count($string, 'IN (');
-        if ($inStartCount === 0)
+        $groupStartCount = 0;
+        $quoteCount = 0;
+        for($i = 0; $i < sizeof($string); $i++)
         {
-            $inStartCount = substr_count($string, 'IN(');
+            $char = substr($string, $i, 1);
+            if ($char == '"')
+            {
+                $quoteCount++;
+            }
+
+            if (
+                $char == '(' && //new group!!
+                (substr($string, $i, $i - 3) !== 'IN(' ||  //nope not a new group just an IN
+                substr($string, $i, $i - 4) !== 'IN (') &&
+                ($quoteCount % 2 == 0) //nope not a new group it is in a string literal
+            )
+            {
+                $groupStartCount++;
+            }
         }
 
         $functionCount = $this->_countFunctionsInString($string);
 
-        if ($groupStartCount > ($inStartCount + $functionCount)) {
+        if ($groupStartCount > $functionCount) {
             return true;
         }
 
