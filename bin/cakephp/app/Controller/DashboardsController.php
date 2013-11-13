@@ -484,6 +484,7 @@ class DashboardsController extends AppController
             $widgetArrayId = $this->Dashboard->findWidgetArrayId($dashboard, $this->request->params['widget_id']);
             $widget = $this->_createWidgetObject($dashboard['widgets'][$widgetArrayId], $variables);
             $this->set('widget', $widget->toArray(false));
+            $success= true;
             $serialize[] = 'widget';
         }
 

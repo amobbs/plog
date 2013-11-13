@@ -494,12 +494,18 @@ angular.module( 'Preslog.dashboard', [
 
 
         //setup the properties needed to get the log list widget working.
-        $scope.setUpLogList = function() {
+        $scope.setUpLogList = function(widgetId) {
 
             for(var w in $scope.dashboard.widgets) {
+                if (widgetId && $scope.dashboard.widgets[widgetId] !== widgetId)
+                {
+                    continue;
+                }
+
                 var widget = $scope.dashboard.widgets[w];
 
-                if (widget.type != 'list') {
+                if (widget.type != 'list')
+                {
                     continue;
                 }
 
@@ -571,6 +577,7 @@ angular.module( 'Preslog.dashboard', [
         $scope.updateLogList = function(widget) {
             params = widget.params;
             if (!params) {
+                $scope.setUpLogList(widget.id);
                 return;
             }
 

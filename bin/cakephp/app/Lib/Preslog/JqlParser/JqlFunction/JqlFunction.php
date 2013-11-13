@@ -70,6 +70,8 @@ class JqlFunction {
      */
     protected function _convertValueToTimestamp($value) {
         $date = 0;
+        //replace ' with " so they can use both types
+        $value = str_replace("'", '"', $value);
         if (substr_count($value, '"') > 0)
         {
             $value = str_replace('"', '', $value);
