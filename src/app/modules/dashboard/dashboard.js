@@ -257,7 +257,11 @@ angular.module( 'Preslog.dashboard', [
                     break;
                 }
             }
-            $scope.$apply();
+
+            if (!$scope.$$phase)
+            {
+                $scope.$apply();
+            }
 
             source.one('widgets', widgetId)
                 .get(variables)
