@@ -59,7 +59,7 @@
                 <th><button class="btn" ng-click="showDeleted = !showDeleted"><i class="icon icon-eye-open"></i> {{ showDeleted && 'Hide' || 'Show' }} Deleted Options</button></th>
             </tr>
         </thead>
-        <tbody ui-sortable="fieldEditSortableOptions">
+        <tbody ui-sortable="fieldEditSortableOptions" ng-model="field.data.options">
             <tr ng-repeat="option in field.data.options" ng-show="option.deleted == false || showDeleted == true">
                 <td class="order">
                     <i class="icon icon-resize-vertical"></i>

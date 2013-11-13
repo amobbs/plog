@@ -259,7 +259,7 @@
                                 <th class="actions">&nbsp;</th>
                             </tr>
                         </thead>
-                        <tbody ui-sortable="fieldSortableOptions">
+                        <tbody ui-sortable="fieldSortableOptions" ng-model="client.fields">
                             <tr ng-repeat="field in client.fields" ng-show="!field.deleted || showDeleted == true">
                                 <td class="order"><i class="icon icon-resize-vertical"></i></td>
                                 <td>{{ field.label }}</td>
@@ -351,7 +351,7 @@
                                 <th class="actions">&nbsp;</th>
                             </tr>
                         </thead>
-                        <tbody ui-sortable="attributeSortableOptions">
+                        <tbody ui-sortable="attributeSortableOptions" ng-model="client.attributes">
                             <tr ng-repeat="group in client.attributes" ng-show="!group.deleted || showDeletedGroups">
                                 <td class="order"><i class="icon icon-resize-vertical"></i></td>
                                 <td>{{ group.label }}</td>

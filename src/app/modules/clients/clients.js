@@ -206,22 +206,30 @@ angular.module( 'Preslog.clients', [
         $scope.fieldSortableOptions = {
             update: function(e, ui) {
                 // Resolve order of items to data
-                for (var i in $scope.client.fields)
+                // 10ms delay required as update happens before order change
+                _.delay(function(scope)
                 {
-                    $scope.client.fields[i].order = i;
-                }
+                    for (var i in scope.field.data.options)
+                    {
+                        scope.field.data.options[i].order = i;
+                    }
+                }, 100, $scope);
             },
             handle: '.order'
         };
 
         // Sortable options on Attributes
         $scope.attributeSortableOptions = {
-            change: function(e, ui) {
+            update: function(e, ui) {
                 // Resolve order of items to data
-                for (var i in $scope.client.attributes)
+                // 10ms delay required as update happens before order change
+                _.delay(function(scope)
                 {
-                    $scope.client.attributes[i].order = i;
-                }
+                    for (var i in scope.client.attributes)
+                    {
+                        scope.client.attributes[i].order = i;
+                    }
+                }, 100, $scope);
             },
             handle: '.order'
         };
@@ -358,18 +366,6 @@ angular.module( 'Preslog.clients', [
             // Fetch the type of field
             var options = $.map($scope.options.fieldTypes, function(v,k){ if (v.alias == field.type) { return v; } });
             options = options[0];
-
-            // Sortable options on Fields
-            $scope.fieldEditSortableOptions = {
-                update: function(e, ui) {
-                    // Resolve order of items to data
-                    for (var i in $scope.field.data.options)
-                    {
-                        $scope.fields.data.options[i].order = i;
-                    }
-                },
-                handle: '.order'
-            };
 
             // Open the Modal
             var modal = $modal.open({
@@ -508,6 +504,22 @@ angular.module( 'Preslog.clients', [
         $scope.showDeleted = false;
         $scope.newOption = {};
 
+
+        // Sortable options on Fields
+        $scope.fieldEditSortableOptions = {
+            update: function(e, ui) {
+                // Resolve order of items to data
+                // 10ms delay required as update happens before order change
+                _.delay(function(scope)
+                {
+                    for (var i in scope.field.data.options)
+                    {
+                        scope.field.data.options[i].order = i;
+                    }
+                }, 100, $scope);
+            },
+            handle: '.order'
+        };
 
         /**
          * Add an option to Select items
