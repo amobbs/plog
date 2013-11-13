@@ -218,6 +218,14 @@ class PreslogParser extends JqlParser {
             $clientField = $clientEntity->getFieldTypeByName( $clause->getField() );
             if ($clientField == null)
             {
+                //check attribute groups
+                foreach($clientEntity->data['attributes'] as $attr)
+                {
+                    if (strtolower($attr['name']) == strtolower($clause->getField()))
+                    {
+                        $foundOnce = true;
+                    }
+                }
                 continue;
             }
 

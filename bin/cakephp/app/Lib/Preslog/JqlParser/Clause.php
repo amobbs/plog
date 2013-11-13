@@ -24,7 +24,7 @@ class Clause {
     }
 
     public function getJql() {
-        return $this->_field . ' ' . $this->_operator->getJqlSymbol() . ' ' . $this->_value;
+        return $this->_field . ' ' . $this->_operator->getJqlSymbol() . ' "' . $this->_value . '"';
     }
 
     public function getSql() {
