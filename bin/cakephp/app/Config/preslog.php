@@ -89,12 +89,26 @@ Configure::write('Preslog', array(
 /**
  * Configuration options for dashboard exports
  */
+
 Configure::write('Preslog.export.exec', array(
 
     //location of executable and scripts to perform export
     'phantomjs' => '/usr/local/phantomjs-1.9.2-linux-x86_64/bin/phantomjs',
     'highchartsExport.js' => '/usr/local/highcharts.com/phantomjs/highcharts-convert.js',
 ));
+
+// Development override
+if ('development' == APPLICATION_ENV)
+{
+    Configure::write('Preslog.export.exec', array(
+
+        //location of executable and scripts to perform export
+        'phantomjs' => 'C:\Users\Dave\Downloads\phantomjs-1.9.2-windows\phantomjs-1.9.2-windows\phantomjs.exe',
+        'highchartsExport.js' => 'C:\Users\Dave\Downloads\phantomjs-1.9.2-windows\phantomjs\highcharts-convert.js',
+    ));
+}
+
+
 
 /**
  * config for printed layout of dashboard export
