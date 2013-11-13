@@ -200,14 +200,16 @@ class ClientsController extends AppController
             $this->errorNotFound('Client could not be found');
         }
 
-        // Simple delete save
-        $client = array(
-            '_id'=>$id,
-            'deleted'=>true,
-        );
-
         // Delete
-        $this->Client->save( $client );
+        $this->Client->save(
+            array(
+                '_id'=>$id,
+                'deleted'=>true,
+            ),
+            array(
+                'deleted',
+            )
+        );
 
         // OK Response
         $this->set('success', true);
