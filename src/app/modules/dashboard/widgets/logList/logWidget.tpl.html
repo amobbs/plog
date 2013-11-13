@@ -40,7 +40,7 @@
                         ng-model="params.orderDirection"
                         ng-options="value for value in orderDirections"
                     ></select>
-                    <button class="btn" ng-click="exportXLS(params.query, params.order, params.orderDirection)"><i class="icon icon-download-alt"></i> Export to XLS</button>
+                    <button class="btn" ng-click="exportXLS(params.query, params.order, params.orderDirection, $parent.dashboard)"><i class="icon icon-download-alt"></i> Export to XLS</button>
                 </div>
             </div>
         </div>

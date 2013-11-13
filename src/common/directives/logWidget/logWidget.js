@@ -28,18 +28,31 @@ angular.module('logWidget', [])
 
                 scope.orderDirections = ['Asc', 'Desc'];
 
-                //download a docx version of this dashboard
-                scope.exportXLS = function(query, orderBy, asc) {
-                    window.location = '/api/search/export' +
-                        '?query=' + encodeURI(query) +
-                        '&order=' + encodeURI(orderBy) +
-                        '&orderasc=' + encodeURI(asc);
+                //download a xls version of this dashboard
+                scope.exportXLS = function(query, orderBy, asc, dashboard) {
+                    var loc = '/api/search/export' +
+                        '?query=' + encodeURIComponent(query) +
+                        '&order=' + encodeURIComponent(orderBy) +
+                        '&orderasc=' + encodeURIComponent(asc);
+
+                    //sorry so very sorry, i have no other *quick* way of getting the session variables into here that covers dashboards and search page
+                    if (dashboard && dashboard.session)
+                    {
+                        var startDate = dashboard.session.start;
+                        var endDate = dashboard.session.end;
+
+                        loc += '&variableStart=' + encodeURIComponent(startDate.getFullYear() + '/' +  (startDate.getMonth() + 1) + '/' +  startDate.getDate());
+                        loc += '&variableEnd=' + encodeURIComponent(endDate.getFullYear() + '/' + (endDate.getMonth() + 1) + '/' + endDate.getDate());
+
+                    }
+
+                    window.location.href = loc;
                 };
 
                 scope.redirectToLog = function(logId)
                 {
                     logId = logId.replace('#', '');
-                    window.location = '/logs/' + logId;
+                    window.location.href = '/logs/' + logId;
                 };
 
                 //if any params change get new logs
