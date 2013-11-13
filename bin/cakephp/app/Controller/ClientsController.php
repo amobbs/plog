@@ -206,6 +206,7 @@ class ClientsController extends AppController
                 '_id'=>$id,
                 'deleted'=>true,
             ),
+            false,
             array(
                 'deleted',
             )
