@@ -1,11 +1,10 @@
 <?php
 
-
+use Swagger\Annotations as SWG;
 use Preslog\Logs\FieldTypes\FieldTypeAbstract;
 use Preslog\Widgets\Types\BenchmarkWidget;
 use Preslog\Widgets\Types\DateWidget;
 use Preslog\Widgets\Types\ListWidget;
-use Swagger\Annotations as SWG;
 use Preslog\Widgets\WidgetFactory;
 use Preslog\Widgets\Widget;
 
@@ -127,7 +126,7 @@ class DashboardsController extends AppController
      *          @SWG\Parameter(
      *              name="dashboard_id",
      *              paramType="path",
-     *              dataType="int",
+     *              type="integer",
      *              required="true",
      *              description="Dashboard ID"
      *          )
@@ -142,7 +141,7 @@ class DashboardsController extends AppController
      *          @SWG\Parameter(
      *              name="dashboard_id",
      *              paramType="path",
-     *              dataType="int",
+     *              type="integer",
      *              required="true",
      *              description="Dashboard ID"
      *          )
@@ -345,7 +344,7 @@ class DashboardsController extends AppController
      *          @SWG\Parameter(
      *              name="dashboard_id",
      *              paramType="path",
-     *              dataType="int",
+     *              type="integer",
      *              required="true",
      *              description="Dashboard ID"
      *          )
@@ -372,7 +371,7 @@ class DashboardsController extends AppController
      *          @SWG\Parameter(
      *              name="dashboard_id",
      *              paramType="path",
-     *              dataType="int",
+     *              type="integer",
      *              required="true",
      *              description="Dashboard ID"
      *          )
@@ -387,14 +386,14 @@ class DashboardsController extends AppController
      *          @SWG\Parameter(
      *              name="dashboard_id",
      *              paramType="path",
-     *              dataType="int",
+     *              type="integer",
      *              required="true",
      *              description="Dashboard ID"
      *          ),
      *          @SWG\Parameter(
      *              name="widget_id",
      *              paramType="path",
-     *              dataType="int",
+     *              type="integer",
      *              required="true",
      *              description="Widget ID"
      *          )
@@ -409,14 +408,14 @@ class DashboardsController extends AppController
      *          @SWG\Parameter(
      *              name="dashboard_id",
      *              paramType="path",
-     *              dataType="int",
+     *              type="integer",
      *              required="true",
      *              description="Dashboard ID"
      *          ),
      *          @SWG\Parameter(
      *              name="widget_id",
      *              paramType="path",
-     *              dataType="int",
+     *              type="integer",
      *              required="true",
      *              description="Widget ID"
      *          )
@@ -505,14 +504,14 @@ class DashboardsController extends AppController
      *          @SWG\Parameter(
      *              name="dashboard_id",
      *              paramType="path",
-     *              dataType="int",
+     *              type="integer",
      *              required="true",
      *              description="Dashboard ID"
      *          ),
      *          @SWG\Parameter(
      *              name="widget_id",
      *              paramType="path",
-     *              dataType="int",
+     *              type="integer",
      *              required="true",
      *              description="Widget ID"
      *          )
@@ -549,7 +548,7 @@ class DashboardsController extends AppController
      *          @SWG\Parameter(
      *              name="dashboard_id",
      *              paramType="path",
-     *              dataType="int",
+     *              type="integer",
      *              required="true",
      *              description="Dashboard ID"
      *          )
@@ -688,7 +687,7 @@ class DashboardsController extends AppController
      *          @SWG\Parameter(
      *              name="widget_type",
      *              paramType="path",
-     *              dataType="string",
+     *              type="string",
      *              required="true",
      *              description="Widget Type"
      *          )

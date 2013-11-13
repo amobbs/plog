@@ -16,7 +16,7 @@ use Swagger\Annotations as SWG;
  *          @SWG\Operation(
  *              @SWG\Partial("admin.clients.read"),
  *              nickname="admin.clients.read",
- *              httpMethod="GET"
+ *              method="GET"
  *          )
  *      )
  * )
@@ -36,7 +36,7 @@ Router::connect(
  *          @SWG\Operation(
  *              @SWG\Partial("admin.clients.options"),
  *              nickname="admin.clients.options",
- *              httpMethod="OPTIONS"
+ *              method="OPTIONS"
  *          )
  *      )
  * )
@@ -56,7 +56,7 @@ Router::connect(
  *          @SWG\Operation(
  *              @SWG\Partial("admin.clients.create"),
  *              nickname="admin.clients.create",
- *              httpMethod="POST"
+ *              method="POST"
  *          )
  *      )
  * )
@@ -76,7 +76,7 @@ Router::connect(
  *          @SWG\Operation(
  *              @SWG\Partial("admin.clients.specific.read"),
  *              nickname="admin.clients.specific.read",
- *              httpMethod="GET"
+ *              method="GET"
  *          )
  *      )
  * )
@@ -97,7 +97,7 @@ Router::connect(
  *          @SWG\Operation(
  *              @SWG\Partial("admin.clients.specific.update"),
  *              nickname="admin.clients.specific.update",
- *              httpMethod="POST"
+ *              method="POST"
  *          )
  *      )
  * )
@@ -118,7 +118,7 @@ Router::connect(
  *          @SWG\Operation(
  *              @SWG\Partial("admin.clients.specific.delete"),
  *              nickname="admin.clients.specific.delete",
- *              httpMethod="DELETE"
+ *              method="DELETE"
  *          )
  *      )
  * )
@@ -139,7 +139,7 @@ Router::connect(
  *          @SWG\Operation(
  *              @SWG\Partial("admin.clients.specific.duplicate"),
  *              nickname="admin.clients.specific.duplicate",
- *              httpMethod="POST"
+ *              method="POST"
  *          )
  *      )
  * )

@@ -4,7 +4,7 @@
  * Class ClientsController
  */
 
-use Swagger\Annotations  as SWG;
+use Swagger\Annotations as SWG;
 
 /**
  * Class ClientsController
@@ -94,7 +94,7 @@ class ClientsController extends AppController
      *          @SWG\Parameter(
      *              name="client_id",
      *              paramType="path",
-     *              dataType="int",
+     *              type="integer",
      *              required="true",
      *              description="Client ID"
      *          )
@@ -139,7 +139,7 @@ class ClientsController extends AppController
      *          @SWG\Parameter(
      *              name="client_id",
      *              paramType="path",
-     *              dataType="int",
+     *              type="integer",
      *              required="true",
      *              description="Client ID"
      *          )
@@ -186,7 +186,7 @@ class ClientsController extends AppController
      *          @SWG\Parameter(
      *              name="client_id",
      *              paramType="path",
-     *              dataType="int",
+     *              type="integer",
      *              required="true",
      *              description="Client ID"
      *          )
@@ -230,7 +230,7 @@ class ClientsController extends AppController
      *          @SWG\Parameter(
      *              name="client_id",
      *              paramType="path",
-     *              dataType="int",
+     *              type="integer",
      *              required="true",
      *              description="Client ID"
      *          )

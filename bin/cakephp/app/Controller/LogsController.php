@@ -32,7 +32,7 @@ class LogsController extends AppController
      *          @SWG\Parameter(
      *              name="log_id",
      *              paramType="path",
-     *              dataType="int",
+     *              type="integer",
      *              required="true",
      *              description="Log ID"
      *          )
@@ -109,7 +109,7 @@ class LogsController extends AppController
      *          @SWG\Parameter(
      *              name="log_id",
      *              paramType="path",
-     *              dataType="int",
+     *              type="integer",
      *              required="true",
      *              description="Log ID"
      *          )
@@ -155,7 +155,7 @@ class LogsController extends AppController
      *          @SWG\Parameter(
      *              name="log_id",
      *              paramType="path",
-     *              dataType="int",
+     *              type="integer",
      *              required="true",
      *              description="Log ID"
      *          )
@@ -228,7 +228,7 @@ class LogsController extends AppController
      *          @SWG\Parameter(
      *              name="log_id",
      *              paramType="path",
-     *              dataType="int",
+     *              type="integer",
      *              required="true",
      *              description="Log ID"
      *          )

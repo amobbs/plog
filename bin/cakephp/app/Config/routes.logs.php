@@ -16,7 +16,7 @@ use Swagger\Annotations as SWG;
  *          @SWG\Operation(
  *              @SWG\Partial("logs.read"),
  *              nickname="logs.read",
- *              httpMethod="GET"
+ *              method="GET"
  *          )
  *      )
  * )
@@ -37,7 +37,7 @@ Router::connect(
  *          @SWG\Operation(
  *              @SWG\Partial("logs.update"),
  *              nickname="logs.update",
- *              httpMethod="POST"
+ *              method="POST"
  *          )
  *      )
  * )
@@ -57,7 +57,7 @@ Router::connect(
  *          @SWG\Operation(
  *              @SWG\Partial("logs.create"),
  *              nickname="logs.create",
- *              httpMethod="post"
+ *              method="post"
  *          )
  *      )
  * )
@@ -77,7 +77,7 @@ Router::connect(
  *          @SWG\Operation(
  *              @SWG\Partial("logs.delete"),
  *              nickname="logs.delete",
- *              httpMethod="DELETE"
+ *              method="DELETE"
  *          )
  *      )
  * )
@@ -98,7 +98,7 @@ Router::connect(
  *          @SWG\Operation(
  *              @SWG\Partial("logs.options"),
  *              nickname="logs.options",
- *              httpMethod="OPTIONS"
+ *              method="OPTIONS"
  *          )
  *      )
  * )

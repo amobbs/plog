@@ -25,7 +25,7 @@ Router::connect(
  *          @SWG\Operation(
  *              @SWG\Partial("users.login"),
  *              nickname="users.login",
- *              httpMethod="POST"
+ *              method="POST"
  *          )
  *      )
  * )
@@ -44,7 +44,7 @@ Router::connect(
  *          @SWG\Operation(
  *              @SWG\Partial("users.logout"),
  *              nickname="users.logout",
- *              httpMethod="POST"
+ *              method="POST"
  *          )
  *      )
  * )
@@ -64,7 +64,7 @@ Router::connect(
  *          @SWG\Operation(
  *              @SWG\Partial("users.my-profile.options"),
  *              nickname="users.my-profile.options",
- *              httpMethod="OPTIONS"
+ *              method="OPTIONS"
  *          )
  *      )
  * )
@@ -83,7 +83,7 @@ Router::connect(
  *          @SWG\Operation(
  *              @SWG\Partial("users.my-profile.read"),
  *              nickname="users.my-profile.read",
- *              httpMethod="GET"
+ *              method="GET"
  *          )
  *      )
  * )
@@ -103,7 +103,7 @@ Router::connect(
  *          @SWG\Operation(
  *              @SWG\Partial("users.my-profile.update"),
  *              nickname="users.my-profile.update",
- *              httpMethod="POST"
+ *              method="POST"
  *          )
  *      )
  * )
@@ -123,7 +123,7 @@ Router::connect(
  *          @SWG\Operation(
  *              @SWG\Partial("users.my-notifications.options"),
  *              nickname="users.my-notifications.options",
- *              httpMethod="OPTIONS"
+ *              method="OPTIONS"
  *          )
  *      )
  * )
@@ -141,7 +141,7 @@ Router::connect('/users/my-notifications',
  *          @SWG\Operation(
  *              @SWG\Partial("users.my-notifications.read"),
  *              nickname="users.my-notifications.read",
- *              httpMethod="GET"
+ *              method="GET"
  *          )
  *      )
  * )
@@ -160,7 +160,7 @@ Router::connect('/users/my-notifications',
  *          @SWG\Operation(
  *              @SWG\Partial("users.my-notifications.update"),
  *              nickname="users.my-notifications.update",
- *              httpMethod="POST"
+ *              method="POST"
  *          )
  *      )
  * )
@@ -180,7 +180,7 @@ Router::connect(
  *          @SWG\Operation(
  *              @SWG\Partial("admin.users.read"),
  *              nickname="admin.users.read",
- *              httpMethod="GET"
+ *              method="GET"
  *          )
  *      )
  * )
@@ -200,7 +200,7 @@ Router::connect(
  *          @SWG\Operation(
  *              @SWG\Partial("admin.users.options"),
  *              nickname="admin.users.options",
- *              httpMethod="OPTIONS"
+ *              method="OPTIONS"
  *          )
  *      )
  * )
@@ -224,7 +224,7 @@ Router::connect(
  *          @SWG\Operation(
  *              @SWG\Partial("admin.users.create"),
  *              nickname="admin.users.create",
- *              httpMethod="POST"
+ *              method="POST"
  *          )
  *      )
  * )
@@ -244,7 +244,7 @@ Router::connect(
  *          @SWG\Operation(
  *              @SWG\Partial("admin.users.specific.read"),
  *              nickname="admin.users.specific.read",
- *              httpMethod="GET"
+ *              method="GET"
  *          )
  *      )
  * )
@@ -265,7 +265,7 @@ Router::connect(
  *          @SWG\Operation(
  *              @SWG\Partial("admin.users.specific.update"),
  *              nickname="admin.users.specific.update",
- *              httpMethod="POST"
+ *              method="POST"
  *          )
  *      )
  * )
@@ -286,7 +286,7 @@ Router::connect(
  *          @SWG\Operation(
  *              @SWG\Partial("admin.users.specific.delete"),
  *              nickname="admin.users.specific.delete",
- *              httpMethod="DELETE"
+ *              method="DELETE"
  *          )
  *      )
  * )
@@ -307,7 +307,7 @@ Router::connect(
  *          @SWG\Operation(
  *              @SWG\Partial("users.reset-password.email"),
  *              nickname="users.reset-password.email",
- *              httpMethod="POST"
+ *              method="POST"
  *          )
  *      )
  * )
@@ -327,7 +327,7 @@ Router::connect(
  *          @SWG\Operation(
  *              @SWG\Partial("users.reset-password"),
  *              nickname="users.reset-password",
- *              httpMethod="POST"
+ *              method="POST"
  *          )
  *      )
  * )
