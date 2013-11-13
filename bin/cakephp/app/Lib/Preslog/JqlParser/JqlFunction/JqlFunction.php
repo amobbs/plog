@@ -70,10 +70,10 @@ class JqlFunction {
      */
     protected function _convertValueToTimestamp($value) {
         $date = 0;
-        if (substr_count($value, '"') == 2) {
-            $firstQuote = strpos($value, '"') + 1;
-            $timestamp = substr($value, $firstQuote, strpos($value, '"', $firstQuote) - 1);
-            $date = strtotime($timestamp);
+        if (substr_count($value, '"') > 0)
+        {
+            $value = str_replace('"', '', $value);
+            $date = strtotime($value);
         }
 
         if ($date == 0) $date = mktime(date('H'), date('i'), date('s'), date('n'), date('j'), date('y'));
