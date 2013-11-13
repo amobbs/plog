@@ -221,7 +221,7 @@ class MongodbSource extends DboSource {
                     }
 
                     // Test for primary if slave not OK
-                    if (!isset($this->config['slaveok']) || false == $this->config['slaveok'])
+                    if ((!isset($this->config['slaveok']) || false == $this->config['slaveok']) && isset($this->config['replicaset']['options']['replicaSet']))
                     {
                         $hasPrimary = false;
                         $conns = $this->connection->getConnections();

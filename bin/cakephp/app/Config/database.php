@@ -25,12 +25,11 @@ class DATABASE_CONFIG {
         'persistent'    => 'true',
         'prefix'        => '',
         'database'      => 'preslog',
-        'slaveok'       => true,
         'replicaset'    => array(
             'host'          => 'mongodb://root:root@192.168.4.125:27017',
             'options'       => array(
                 'connect'           => true,
-                'readPreference'    => 'primary'
+                'readPreference'    => \MongoClient::RP_PRIMARY_PREFERRED,
             ),
         ),
     );
@@ -63,11 +62,6 @@ class DATABASE_CONFIG {
             $this->default = $this->development;
         }
 
-        // Failover testing
-        if (false !== stripos($_SERVER['SERVER_NAME'], 'local.preslog'))
-        {
-            $this->default = $this->failoverTest;
-        }
     }
 
 
