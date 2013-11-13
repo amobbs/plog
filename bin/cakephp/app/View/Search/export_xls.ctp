@@ -1,73 +1,54 @@
 <?php
-header('Content-Type: application/vnd.ms-excel');
-header('Content-Disposition: attachment; filename="' . date('Y-m-d') .'.xls"');
-
-?>
-<table>
-
-    <?php
 
     $fieldNames = array();
 
     $logsArray = array();
 
-    if (empty($logs))
-    {
-        ?>
-        <tr><td>No Logs Found</td></tr>
-        </table>
-        <?php
-        exit();
-    }
+echo "<table>\n";
 
-    foreach ($logs as $log)
+if (empty($logs))
+{
+    ?>
+    <tr><td>No Logs Found</td></tr>
+    </table>
+    <?php
+    exit();
+}
+
+foreach ($logs as $log)
+{
+    $logEl = array();
+    foreach($log['attributes'] as $attr)
     {
-        $logEl = array();
-        foreach($log['attributes'] as $attr)
+
+        if ( ! isset($fieldNames[$attr['title']]) )
         {
-
-            if ( ! isset($fieldNames[$attr['title']]) )
-            {
-                $fieldNames[$attr['title']] = $attr['title'];
-            }
-
-            $logEl[$attr['title']] = $attr['value'];
+            $fieldNames[$attr['title']] = $attr['title'];
         }
 
-        $logArray[] = $logEl;
+        $logEl[$attr['title']] = $attr['value'];
     }
-    ?>
 
-    <tr>
+    $logArray[] = $logEl;
+}
 
-        <?php
-        foreach($fieldNames as $name)
-        {
-            ?>
-            <td><?php echo $name; ?></td>
-        <?php
-        }
-        ?>
+// Headers
+echo "<tr>\n";
+foreach($fieldNames as $name)
+{
+    echo "\t<th>".htmlspecialchars($name)."</th>\n";
+}
+echo "</tr>\n";
 
-    </tr>
-
-    <?php
-
-    foreach($logArray as $log)
+// Logs
+foreach($logArray as $log)
+{
+    echo "<tr>\n";
+    foreach($log as $value)
     {
-        ?>
-        <tr>
-            <?php
-            foreach($log as $value)
-            {
-                ?>
-                <td><?php echo $value; ?></td>
-            <?php
-            }
-            ?>
-        </tr>
-    <?php
+        echo "\t<td>".htmlspecialchars($value)."</td>\n";
     }
-    ?>
+    echo "</tr>\n";
+}
 
-</table>
+echo "</table>\n";

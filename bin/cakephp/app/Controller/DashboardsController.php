@@ -555,6 +555,8 @@ class DashboardsController extends AppController
      */
     public function exportDashboard($dashboardId)
     {
+        set_time_limit(60*10);  // 10 mins
+
         $dashboard = $this->Dashboard->findById($dashboardId);
         $reportName = $dashboard['Dashboard']['name'] . '_' . date('Ymd_Hi') . '.docx';
         $dashboard =  $this->_getParsedDashboard($dashboard['Dashboard']);
@@ -571,39 +573,6 @@ class DashboardsController extends AppController
             'name' => $reportName
         ));
         return $this->response;
-    }
-
-
-    /**
-     * Export the given dashboard widgets source data as an XLS file
-     *
-     * @SWG\Operation(
-     *      partial="dashboards.specific.widgets.specific.export",
-     *      summary="Download the given Widget as an XLS",
-     *      notes="Instigates the download of an XLS containg logs used to compile this widget.",
-     *      @SWG\Parameters(
-     *          @SWG\Parameter(
-     *              name="dashboard_id",
-     *              paramType="path",
-     *              dataType="int",
-     *              required="true",
-     *              description="Dashboard ID"
-     *          ),
-     *          @SWG\Parameter(
-     *              name="widget_id",
-     *              paramType="path",
-     *              dataType="int",
-     *              required="true",
-     *              description="Widget ID"
-     *          )
-     *      )
-     * )
-     */
-    public function exportWidget()
-    {
-        // TODO
-        $this->set('todo', 'Export Widget');
-        $this->set('_serialize', array('todo'));
     }
 
 

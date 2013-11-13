@@ -85,6 +85,8 @@ class SearchController extends AppController
      */
     public function export()
     {
+        set_time_limit(60*10);  // 10 mins
+
         $orderBy =  isset($this->request->query['order']) ? $this->request->query['order'] : '';
         $asc = isset($this->request->query['orderasc']) ? $this->request->query['orderasc'] == 'true' : true;
 
@@ -130,13 +132,38 @@ class SearchController extends AppController
             return;
         }
 
-        $logs = array();
-        $limit = 500;
+        // Output is using view class
+        $this->viewClass = 'View';
+        $this->layout = 'ajax';
+
+
+        // Instigate headers
+        header("Content-Type: application/force-download");
+        header("Content-Type: application/octet-stream");
+        header("Content-Type: application/download");
+        header("Content-Description: File Transfer");
+        header('Content-Disposition: attachment; filename="' . date('Y-m-d') .'.xls"');
+        header('Content-Transfer-Encoding: binary');
+        header('Expires: 0');
+        header('Cache-Control: no-cache, no-store, must-revalidate, post-check=0, pre-check=0');
+        header('Pragma: public');
+
+        // Ensures output is immediate
+        ob_implicit_flush(true);
+        ob_end_clean();
+
+        // Start the file off
+        echo " ";
 
         // Perform search
         // Returns Logs and Options to accompany
-        for($start = 0; $start < $count; $start += $limit)
+        $logs = array();
+        $limit = 500;
+        $start = 0;
+
+        do
         {
+            // Search for logs
             $return = $this->executeSearch( $this->request->query, $limit, $start, $orderBy, $asc, $variables);
 
             if ( isset($return['errors']) )
@@ -146,7 +173,11 @@ class SearchController extends AppController
             }
 
             $logs = array_merge($logs, $return['logs']);
-        }
+
+            // Increment
+            $start += $limit;
+
+        } while ($start < $count);
 
         // Generate export XLS from data
         $this->set('logs', $logs);
@@ -306,18 +337,11 @@ class SearchController extends AppController
         $total = $this->Log->countByQuery($query, $fullClients);
 
         $clients = array();
-        $users = array();
         //loop results for client, created by users and any other info we will need to grab for display
         foreach ($results as $k=>$result)
         {
             // Collate the list of clients for fetching the field format
             $clients[] = $result['Log']['client_id'];
-        }
-
-        //TODO Fetch the users involved
-        $userObjects = array();
-        if (!empty($users)) {
-            $userObjects = $this->Log->listUsersByIds($users);
         }
 
         //list all fields that we can use to sort these logs
