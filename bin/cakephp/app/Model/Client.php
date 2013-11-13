@@ -57,6 +57,7 @@ class Client extends AppModel
                     'mongoType' => 'mongoId'
                 ),
                 'order' => array('type' => 'int'),
+                'deleted' => array('type' => 'boolean'),
                 'type' => array('type' => 'string', 'length'=>32),
                 'name' => array('type' => 'string', 'length' => 64),
                 'label' => array('type' => 'string', 'length'=>64),

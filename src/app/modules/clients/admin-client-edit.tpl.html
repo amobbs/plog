@@ -232,6 +232,21 @@
                 </div>
             </div>
             <div class="widget-content">
+
+                <div class="alert alert-info">
+                    <p>
+                        Custom fields control the types of fields that make up a Log.
+                    </p>
+                    <p>
+                        <strong>Friendly Label</strong> is a human-readable name for the field - it can be anything you
+                        want it to be in order to make the purpose of the field understandable.
+                        <br/><strong>Field Name</strong> is used for searches and aggregation.  If you have a single field across
+                        more than one client (eg. "On-Air Impact") you should make sure the Field Name is identical between clients using this field (eg. "impact").
+                        <br/><strong>Deleting</strong> a field from the Client will simply remove it from being visible. Old logs will still contain that field,
+                        and fields can easily be restored.
+                    </p>
+                </div>
+
                 <form name="newFieldForm">
                     <table class="table table-admin-fields">
                         <thead>

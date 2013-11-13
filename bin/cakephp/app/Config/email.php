@@ -30,19 +30,33 @@
  */
 class EmailConfig {
 
-
-	public $default = array(
-		'transport' => 'Smtp',
-		'from' => array('preslog@mediahub.tv' => 'Mediahub Preslog'),
-		'host' => 'ssl://smtp.gmail.com',
-		'port' => 465,
-		'timeout' => 30,
-		'username' => 'dave@4mation.com.au',
-		'password' => 'poiu1qaz',
-		'log' => false,
-		'charset' => 'utf-8',
-		'headerCharset' => 'utf-8',
+    // Development Config
+    public $development = array(
+        'transport' => 'Smtp',
+        'from' => array('preslog@mediahub.tv' => 'Mediahub Preslog'),
+        'host' => 'ssl://smtp.gmail.com',
+        'port' => 465,
+        'timeout' => 30,
+        'username' => 'dave@4mation.com.au',
+        'password' => 'poiu1qaz',
+        'log' => false,
+        'charset' => 'utf-8',
+        'headerCharset' => 'utf-8',
         'emailFormat'=>'both',
-	);
+    );
 
+    // Production Config
+    public $default = array();
+
+
+    /**
+     * Assign production or development
+     */
+    public function __construct()
+    {
+        if ('development' == APPLICATION_ENV)
+        {
+            $this->default = $this->development;
+        }
+    }
 }

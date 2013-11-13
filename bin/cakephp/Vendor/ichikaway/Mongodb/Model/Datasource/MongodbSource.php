@@ -179,10 +179,13 @@ class MongodbSource extends DboSource {
 /**
  * Connect to the database
  *
- * If using 1.0.2 or above use the mongodb:// format to connect
- * The connect syntax changed in version 1.0.2 - so check for that too
+ * - If using 1.0.2 or above use the mongodb:// DSN format to connect
+ * - The connect syntax changed in version 1.0.2 - so check for that too
+ * - If authentication information in present then authenticate the connection
  *
- * If authentication information in present then authenticate the connection
+ * - ReplicaSet failover may cause the connection to fail. Capture that and retry under those conditions
+ * - ReplicaSet failover may cause a connection to a secondary. Prioritise to enforce connections to Primary.
+ *   Thanks to https://gist.github.com/norganna/6491184
  *
  * @return boolean Connected
  * @access public
@@ -190,38 +193,112 @@ class MongodbSource extends DboSource {
 	public function connect() {
 		$this->connected = false;
 
+        // Prep
+        $this->connection = false;
+        $tries = 0;
+        $maxRetries = 7;
+
 		try{
 
+            // Configure host string
 			$host = $this->createConnectionName($this->config, $this->_driverVersion);
 
-			if (isset($this->config['replicaset']) && count($this->config['replicaset']) === 2) {
-				$this->connection = new Mongo($this->config['replicaset']['host'], $this->config['replicaset']['options']);
-			} else if ($this->_driverVersion >= '1.2.0') {
-				$this->connection = new Mongo($host, array("persist" => $this->config['persistent']));
-			} else {
-				$this->connection = new Mongo($host, true, $this->config['persistent']);
-			}
+            while (!$this->connection && $tries < $maxRetries)
+            {
+                try
+                {
+                    // Using most recent DSN method
+                    if (isset($this->config['replicaset']) && count($this->config['replicaset']) === 2) {
+                        $this->connection = new Mongo($this->config['replicaset']['host'], $this->config['replicaset']['options']);
 
+                    // Legacy: Connect for =1.2.0
+                    } else if ($this->_driverVersion >= '1.2.0') {
+                        $this->connection = new Mongo($host, array("persist" => $this->config['persistent']));
+
+                    // Legacy: Connect for <1.2.0
+                    } else {
+                        $this->connection = new Mongo($host, true, $this->config['persistent']);
+                    }
+
+                    // Test for primary if slave not OK
+                    if (!isset($this->config['slaveok']) || false == $this->config['slaveok'])
+                    {
+                        $hasPrimary = false;
+                        $conns = $this->connection->getConnections();
+                        foreach ($conns as $con)
+                        {
+                            if ($con['connection']['connection_type_desc'] == 'PRIMARY') {
+                                $hasPrimary = true;
+                            }
+                        }
+
+                        // No primary? Fail the connection.
+                        if (!$hasPrimary)
+                        {
+                            /*
+                            // Close all connections, and try again
+                            foreach ($conns as $con) {
+                                $this->connection->close($con['hash']);
+                            }
+                            */
+
+                            // Kill the client object
+                            $this->connection = false;
+                        }
+                    }
+                }
+                catch(MongoConnectionException $e)
+                {
+                    // Catch "No candidate server"
+                }
+
+                // Retry required?
+                if ( !$this->connection && $tries > 0 )
+                {
+                    // Sleep for 1s * retries (0s, 1s, 2s...)
+                    usleep( 2000 * $tries );
+                }
+
+                // Increment try check
+                $tries++;
+            }
+
+            // Connection could not be established?
+            if (!$this->connection)
+            {
+                trigger_error("Could not connect to the database after {$tries} tries. Please try again.", E_USER_ERROR);
+            }
+
+            // Set slave OK
 			if (isset($this->config['slaveok'])) {
 				$this->connection->setSlaveOkay($this->config['slaveok']);
 			}
 
+            // Select database
 			if ($this->_db = $this->connection->selectDB($this->config['database'])) {
-				if (!empty($this->config['login']) && $this->_driverVersion < '1.2.0') {
+
+                // Legacy: Auth in version 1.2.0
+                if (!empty($this->config['login']) && $this->_driverVersion < '1.2.0') {
 					$return = $this->_db->authenticate($this->config['login'], $this->config['password']);
-					if (!$return || !$return['ok']) {
+
+                    // Auth Error?
+                    if (!$return || !$return['ok']) {
 						trigger_error('MongodbSource::connect ' . $return['errmsg']);
 						return false;
 					}
 				}
 
+                // Connected
 				$this->connected = true;
 			}
 
+        // Catch errors
 		} catch(MongoException $e) {
 			$this->error = $e->getMessage();
 			trigger_error($this->error);
 		}
+
+        // Return success status
 		return $this->connected;
 	}
 
