@@ -38,11 +38,13 @@ angular.module('logWidget', [])
                     //sorry so very sorry, i have no other *quick* way of getting the session variables into here that covers dashboards and search page
                     if (dashboard && dashboard.session)
                     {
-                        var startDate = dashboard.session.start;
-                        var endDate = dashboard.session.end;
+                        var startDate = new Date(dashboard.session.start).getTime();
+                        startDate = parseInt( startDate / 1000, 10);
+                        var endDate = new Date(dashboard.session.end);
+                        endDate = parseInt( endDate / 1000, 10);
 
-                        loc += '&variableStart=' + encodeURIComponent(startDate.getFullYear() + '/' +  (startDate.getMonth() + 1) + '/' +  startDate.getDate());
-                        loc += '&variableEnd=' + encodeURIComponent(endDate.getFullYear() + '/' + (endDate.getMonth() + 1) + '/' + endDate.getDate());
+                        loc += '&variableStart=' + encodeURIComponent(startDate);
+                        loc += '&variableEnd=' + encodeURIComponent(endDate);
 
                     }
 

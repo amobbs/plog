@@ -597,8 +597,14 @@ angular.module( 'Preslog.dashboard', [
 
                 if ($scope.dashboard.session && $scope.dashboard.session.start && $scope.dashboard.session.end)
                 {
-                    getRequest.variableStart = $scope.dashboard.session.start;
-                    getRequest.variableEnd = $scope.dashboard.session.end;
+                    var startDate = new Date($scope.dashboard.session.start).getTime();
+                    startDate = parseInt( startDate / 1000, 10);
+                    var endDate = new Date($scope.dashboard.session.end);
+                    endDate = parseInt( endDate / 1000, 10);
+
+
+                    getRequest.variableStart = startDate;
+                    getRequest.variableEnd = endDate;
 
                 }
 
