@@ -2,6 +2,8 @@
 
 //App::uses('CakeLogInterface', 'Log');
 
+use Swagger\Annotations as SWG;
+
 /**
  * Import Controller
  * - Wipes data from Preslog Log, Client, User tables

@@ -15,7 +15,7 @@ use Swagger\Annotations as SWG;
  *          @SWG\Operation(
  *              @SWG\Partial("dashboards.favourites.read"),
  *              nickname="dashboards.favourites.read",
- *              httpMethod="GET"
+ *              method="GET"
  *          )
  *      )
  * )
@@ -35,7 +35,7 @@ Router::connect(
  *          @SWG\Operation(
  *              @SWG\Partial("dashboards.favourites.update"),
  *              nickname="dashboards.favourites.update",
- *              httpMethod="POST"
+ *              method="POST"
  *          )
  *      )
  * )
@@ -55,7 +55,7 @@ Router::connect(
  *          @SWG\Operation(
  *              @SWG\Partial("dashboards.favourites.delete"),
  *              nickname="dashboards.favourites.delete",
- *              httpMethod="DELETE"
+ *              method="DELETE"
  *          )
  *      )
  * )
@@ -74,7 +74,7 @@ Router::connect(
  *          @SWG\Operation(
  *              @SWG\Partial("dashboards.list"),
  *              nickname="dashboards.list",
- *              httpMethod="GET"
+ *              method="GET"
  *          )
  *      )
  * )
@@ -94,7 +94,7 @@ Router::connect(
  *          @SWG\Operation(
  *              @SWG\Partial("dashboards.specific.read"),
  *              nickname="dashboards.specific.read",
- *              httpMethod="GET"
+ *              method="GET"
  *          )
  *      )
  * )
@@ -115,7 +115,7 @@ Router::connect(
  *          @SWG\Operation(
  *              @SWG\Partial("dashboards.specific.update"),
  *              nickname="dashboards.specific.update",
- *              httpMethod="POST"
+ *              method="POST"
  *          )
  *      )
  * )
@@ -136,7 +136,7 @@ Router::connect(
  *          @SWG\Operation(
  *              @SWG\Partial("dashboards.specific.delete"),
  *              nickname="dashboards.specific.delete",
- *              httpMethod="DELETE"
+ *              method="DELETE"
  *          )
  *      )
  * )
@@ -157,7 +157,7 @@ Router::connect(
  *          @SWG\Operation(
  *              @SWG\Partial("dashboards.specific.widgets.create"),
  *              nickname="dashboards.specific.widgets.create",
- *              httpMethod="POST"
+ *              method="POST"
  *          )
  *      )
  * )
@@ -177,7 +177,7 @@ Router::connect(
  *          @SWG\Operation(
  *              @SWG\Partial("dashboards.specific.widgets.specific.read"),
  *              nickname="dashboards.specific.widgets.specific.read",
- *              httpMethod="GET"
+ *              method="GET"
  *          )
  *      )
  * )
@@ -198,7 +198,7 @@ Router::connect(
  *          @SWG\Operation(
  *              @SWG\Partial("dashboards.specific.widgets.specific.update"),
  *              nickname="dashboards.specific.widgets.specific.update",
- *              httpMethod="POST"
+ *              method="POST"
  *          )
  *      )
  * )
@@ -219,7 +219,7 @@ Router::connect(
  *          @SWG\Operation(
  *              @SWG\Partial("dashboards.specific.widgets.specific.delete"),
  *              nickname="dashboards.specific.widgets.specific.delete",
- *              httpMethod="DELETE"
+ *              method="DELETE"
  *          )
  *      )
  * )
@@ -227,27 +227,6 @@ Router::connect(
 Router::connect(
     '/dashboards/:dashboard_id/widgets/:widget_id',
     array('controller' => 'Dashboards', 'action' => 'deleteWidget', '[method]' => 'DELETE'),
-    array('pass'=>array('dashboard_id', 'widget_id'), 'dashboard_id'=>'[0-9a-z]+', 'widget_id'=>'[0-9a-z]+')
-);
-
-
-/**
- * Dashboards.Specific.Widgets.Specific.Export: GET (export widget logdata to xls)
- * @SWG\Resource(
- *      resourcePath="/dashboards",
- *      @SWG\Api(
- *          path="/dashboards/{dashboard_id}/widgets/{widget_id}/export",
- *          @SWG\Operation(
- *              @SWG\Partial("dashboards.specific.widgets.specific.export"),
- *              nickname="dashboards.specific.widgets.specific.export",
- *              httpMethod="GET"
- *          )
- *      )
- * )
- */
-Router::connect(
-    '/dashboards/:dashboard_id/widgets/:widget_id/export',
-    array('controller' => 'Dashboards', 'action' => 'exportWidget', '[method]' => 'GET'),
     array('pass'=>array('dashboard_id', 'widget_id'), 'dashboard_id'=>'[0-9a-z]+', 'widget_id'=>'[0-9a-z]+')
 );
 
@@ -261,7 +240,7 @@ Router::connect(
  *          @SWG\Operation(
  *              @SWG\Partial("dashboards.specific.export"),
  *              nickname="dashboards.specific.export",
- *              httpMethod="GET"
+ *              method="GET"
  *          )
  *      )
  * )
@@ -282,7 +261,7 @@ Router::connect(
  *          @SWG\Operation(
  *              @SWG\Partial("dashboards.create"),
  *              nickname="dashboards.create",
- *              httpMethod="POST"
+ *              method="POST"
  *          )
  *      )
  * )
@@ -301,7 +280,7 @@ Router::connect(
  *          @SWG\Operation(
  *              @SWG\Partial("widgets.list"),
  *              nickname="widgets.list",
- *              httpMethod="GET"
+ *              method="GET"
  *          )
  *      )
  * )
@@ -321,7 +300,7 @@ Router::connect(
  *          @SWG\Operation(
  *              @SWG\Partial("widgets.options"),
  *              nickname="widgets.options",
- *              httpMethod="GET"
+ *              method="GET"
  *          )
  *      )
  * )

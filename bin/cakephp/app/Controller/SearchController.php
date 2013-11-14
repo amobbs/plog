@@ -2,10 +2,10 @@
 
 App::uses('AppController', 'Controller');
 
+use Swagger\Annotations as SWG;
 use Preslog\JqlParser\JqlOperator\JqlOperator;
 use Preslog\JqlParser\JqlParser;
 use Preslog\PreslogParser\PreslogParser;
-use Swagger\Annotations as SWG;
 use Preslog\Logs\Entities\LogEntity;
 
 /**
@@ -27,7 +27,7 @@ class SearchController extends AppController
      *          @SWG\Parameter(
      *              name="query",
      *              paramType="query",
-     *              dataType="string",
+     *              type="string",
      *              required="true",
      *              description="jql to search on"
      *          )
@@ -76,7 +76,7 @@ class SearchController extends AppController
      *          @SWG\Parameter(
      *              name="query",
      *              paramType="query",
-     *              dataType="string",
+     *              type="string",
      *              required="true",
      *              description="jql to search on"
      *          )
@@ -199,7 +199,7 @@ class SearchController extends AppController
      *          @SWG\Parameter(
      *              name="query",
      *              paramType="query",
-     *              dataType="string",
+     *              type="string",
      *              required="true",
      *              description="jql to validate"
      *          )
@@ -476,14 +476,14 @@ class SearchController extends AppController
      *          @SWG\Parameter(
      *              name="jql",
      *              paramType="query",
-     *              dataType="string",
+     *              type="string",
      *              required="true",
      *              description="jql that will be returned as sql to be displayed by red query builder"
      *          ),
      *          @SWG\Parameter(
      *              name="args",
      *              paramType="query",
-     *              dataType="string",
+     *              type="string",
      *              required="true",
      *              description="arguments to be populated into resulting sql"
      *          )
@@ -737,7 +737,7 @@ class SearchController extends AppController
      *          @SWG\Parameter(
      *              name="search_text",
      *              paramType="query",
-     *              dataType="string",
+     *              type="string",
      *              required="true",
      *              description="search text that will be converted to jql"
      *          )
@@ -795,14 +795,14 @@ class SearchController extends AppController
      *          @SWG\Parameter(
      *              name="sql",
      *              paramType="query",
-     *              dataType="string",
+     *              type="string",
      *              required="true",
      *              description="sql from redquery builder will be out put as jql"
      *          ),
      *          @SWG\Parameter(
      *              name="args",
      *              paramType="query",
-     *              dataType="string",
+     *              type="string",
      *              required="true",
      *              description="arguments to be populated into resulting jql"
      *          )

@@ -43,14 +43,14 @@ class UsersController extends AppController
      *          @SWG\Parameter(
      *              name="User[email]",
      *              paramType="form",
-     *              dataType="string",
+     *              type="string",
      *              required="false",
      *              description="Users username"
      *          ),
      *          @SWG\Parameter(
      *              name="User[password]",
      *              paramType="form",
-     *              dataType="string",
+     *              type="string",
      *              required="false",
      *              description="Users password"
      *          )
@@ -535,7 +535,7 @@ class UsersController extends AppController
      *          @SWG\Parameter(
      *              name="user_id",
      *              paramType="path",
-     *              dataType="int",
+     *              type="integer",
      *              required="true",
      *              description="User ID"
      *          )
@@ -580,7 +580,7 @@ class UsersController extends AppController
      *          @SWG\Parameter(
      *              name="user_id",
      *              paramType="path",
-     *              dataType="int",
+     *              type="integer",
      *              required="true",
      *              description="User ID"
      *          )
@@ -627,7 +627,7 @@ class UsersController extends AppController
      *          @SWG\Parameter(
      *              name="user_id",
      *              paramType="path",
-     *              dataType="int",
+     *              type="integer",
      *              required="true",
      *              description="User ID"
      *          )
@@ -668,7 +668,7 @@ class UsersController extends AppController
      *          @SWG\Parameter(
      *              name="email",
      *              paramType="form",
-     *              dataType="string",
+     *              type="string",
      *              required="true",
      *              description="Email address"
      *          )
@@ -740,7 +740,7 @@ class UsersController extends AppController
      *          @SWG\Parameter(
      *              name="token",
      *              paramType="form",
-     *              dataType="string",
+     *              type="string",
      *              required="true",
      *              description="Password reset token"
      *          )

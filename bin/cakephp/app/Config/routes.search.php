@@ -16,7 +16,7 @@ use Swagger\Annotations as SWG;
  *          @SWG\Operation(
  *              @SWG\Partial("search"),
  *              nickname="search",
- *              httpMethod="GET"
+ *              method="GET"
  *          )
  *      )
  * )
@@ -35,7 +35,7 @@ Router::connect(
  *          @SWG\Operation(
  *              @SWG\Partial("search.validate"),
  *              nickname="search.validate",
- *              httpMethod="GET"
+ *              method="GET"
  *          )
  *      )
  * )
@@ -55,7 +55,7 @@ Router::connect(
  *          @SWG\Operation(
  *              @SWG\Partial("search.export"),
  *              nickname="search.export",
- *              httpMethod="GET"
+ *              method="GET"
  *          )
  *      )
  * )
@@ -75,7 +75,7 @@ Router::connect(
  *          @SWG\Operation(
  *              @SWG\Partial("search.wizard.params"),
  *              nickname="search.wizard.params",
- *              httpMethod="GET"
+ *              method="GET"
  *          )
  *      )
  * )
@@ -95,7 +95,7 @@ Router::connect(
  *          @SWG\Operation(
  *              @SWG\Partial("search.wizard.translate"),
  *              nickname="search.wizard.translate",
- *              httpMethod="GET"
+ *              method="GET"
  *          )
  *      )
  * )
@@ -114,7 +114,7 @@ Router::connect(
  *          @SWG\Operation(
  *              @SWG\Partial("search.wizard.quick"),
  *              nickname="search.specific.read",
- *              httpMethod="GET"
+ *              method="GET"
  *          )
  *      )
  * )
