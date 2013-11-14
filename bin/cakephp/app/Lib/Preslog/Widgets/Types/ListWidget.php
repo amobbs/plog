@@ -21,8 +21,8 @@ class ListWidget extends Widget {
         }
 
         $this->details['perPage'] = isset($data['details']['perPage']) ? $data['details']['perPage'] : 3;
-        $this->details['orderBy'] = isset($data['details']['orderBy']) ? $data['details']['orderBy'] : '';
-        $this->details['orderDirection'] = isset($data['details']['orderDirection']) ? $data['details']['orderDirection'] : 'Asc';
+        $this->details['orderBy'] = isset($data['details']['orderBy']) ? $data['details']['orderBy'] : 'Created';
+        $this->details['orderDirection'] = isset($data['details']['orderDirection']) ? $data['details']['orderDirection'] : 'Desc';
         $this->details['summary'] = isset($data['details']['summary']) ? $data['details']['summary'] : false;
 
         parent::__construct($data, $variables);

@@ -38,8 +38,8 @@ class SearchController extends AppController
     {
         $limit = isset($this->request->query['limit']) ? $this->request->query['limit'] : 3;
         $start =  isset($this->request->query['start']) ? $this->request->query['start'] : 1;
-        $orderBy =  isset($this->request->query['order']) ? $this->request->query['order'] : '';
-        $asc = isset($this->request->query['orderasc']) ? $this->request->query['orderasc'] == 'true' : true;
+        $orderBy =  isset($this->request->query['order']) ? $this->request->query['order'] : 'Created'; //default to created if nothing else is selected
+        $asc = isset($this->request->query['orderasc']) ? $this->request->query['orderasc'] == 'true' : false; //default to descending if nothing else is selected
 
         $variables = array();
 

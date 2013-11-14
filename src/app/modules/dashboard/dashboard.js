@@ -509,11 +509,6 @@ angular.module( 'Preslog.dashboard', [
                     continue;
                 }
 
-                var orderDirection = 'Desc';
-                if (widget.details.orderDirection) {
-                    orderDirection = 'Asc';
-                }
-
                 //log list widget
                 widget.params = {
                     page: 1,
@@ -521,8 +516,8 @@ angular.module( 'Preslog.dashboard', [
                     perPageOptions: [3, 5, 10, 25],
                     perPage: widget.details.perPage,
                     sorting: [],
-                    order: widget.details.orderBy,
-                    orderDirection: orderDirection,
+                    order: 'Created',
+                    orderDirection: 'Desc',
                     query: widget.details.query,
                     logs: widget.display,
                     lastUpdated: new Date()
