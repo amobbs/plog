@@ -26,32 +26,6 @@ angular.module('Preslog.dashboard.widgetModal', [])
                 .then(function (result) {
                     if (result.ok)
                     {
-//                        if ($scope.widget.details.start)
-//                        {
-//                            if ($scope.widget.details.start == '{dynamic}')
-//                            {
-//                                startDate = new Date();
-//                            }
-//                            else
-//                            {
-//                                startDate = new Date($scope.widget.details.start);
-//                                $scope.widget.details.start = $filter('date')(startDate, 'dd/MM/yyyy');
-//                            }
-//                        }
-//
-//                        if ($scope.widget.details.end)
-//                        {
-//                            if ($scope.widget.details.end == '{dynamic}')
-//                            {
-//                                endDate = new Date();
-//                            }
-//                            else
-//                            {
-//                                endDate = new Date($scope.widget.details.end);
-//                                $scope.widget.details.end = $filter('date')(endDate, 'dd/MM/yyyy');
-//                            }
-//                        }
-
                         $modalInstance.close($scope.widget);
                     }
                     else

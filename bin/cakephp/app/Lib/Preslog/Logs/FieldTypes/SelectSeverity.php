@@ -147,7 +147,7 @@ class SelectSeverity extends Select
                 // Validate: Duration must be < 10s
                 if ($option['severity'] == 'level-2')
                 {
-                    if ($durationField->data['data']['seconds'] <= 10)
+                    if ($durationField->data['data']['seconds'] > 10)
                     {
                         $errors[] = 'Severity 2 can only be selected for faults with duration 10 seconds or less.';
                     }

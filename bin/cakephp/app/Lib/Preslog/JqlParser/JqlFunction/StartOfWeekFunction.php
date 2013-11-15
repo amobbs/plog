@@ -29,7 +29,7 @@ class StartOfWeekFunction extends JqlFunction {
 
         $dayOfWeek = date('w', $date);
 
-        return mktime(0, 0, 0, date('n', $date), date('j', $date) - (6 - $dayOfWeek), date('y', $date));
+        return mktime(0, 0, 0, date('n', $date), date('j', $date) - $dayOfWeek, date('y', $date));
     }
 
 

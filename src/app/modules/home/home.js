@@ -35,7 +35,7 @@ angular.module( 'Preslog.home', [])
                 }],
 
                 // Force a redirect. This isn't an actual page, just a redirect.
-                redirect: ['$q', 'userService', '$location', 'dashboard_live_logs', 'dashboard_unqualified', function($q, userService, dashboard_live_logs, dashboard_unqualified) {
+                redirect: ['$q', 'userService', 'dashboard_live_logs', 'dashboard_unqualified', function($q, userService, dashboard_live_logs, dashboard_unqualified) {
                     var defer = $q.defer();
 
                     // If no user, auth will be executed. Otherwise we get the role.

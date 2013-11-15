@@ -509,11 +509,6 @@ angular.module( 'Preslog.dashboard', [
                     continue;
                 }
 
-                var orderDirection = 'Desc';
-                if (widget.details.orderDirection) {
-                    orderDirection = 'Asc';
-                }
-
                 //log list widget
                 widget.params = {
                     page: 1,
@@ -521,8 +516,8 @@ angular.module( 'Preslog.dashboard', [
                     perPageOptions: [3, 5, 10, 25],
                     perPage: widget.details.perPage,
                     sorting: [],
-                    order: widget.details.orderBy,
-                    orderDirection: orderDirection,
+                    order: 'Created',
+                    orderDirection: 'Desc',
                     query: widget.details.query,
                     logs: widget.display,
                     lastUpdated: new Date()
@@ -602,8 +597,14 @@ angular.module( 'Preslog.dashboard', [
 
                 if ($scope.dashboard.session && $scope.dashboard.session.start && $scope.dashboard.session.end)
                 {
-                    getRequest.variableStart = $scope.dashboard.session.start;
-                    getRequest.variableEnd = $scope.dashboard.session.end;
+                    var startDate = new Date($scope.dashboard.session.start).getTime();
+                    startDate = parseInt( startDate / 1000, 10);
+                    var endDate = new Date($scope.dashboard.session.end);
+                    endDate = parseInt( endDate / 1000, 10);
+
+
+                    getRequest.variableStart = startDate;
+                    getRequest.variableEnd = endDate;
 
                 }
 

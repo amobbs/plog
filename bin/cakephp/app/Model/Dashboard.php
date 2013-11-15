@@ -189,7 +189,14 @@ class Dashboard extends AppModel
 
         //loop through the weidgets, generate charts and add one per page
         foreach($dashboard['widgets'] as $widget) {
+            $widgetDetails = $widget->toArray();
+            if ($widgetDetails['type'] == 'date')
+            {
+                continue;
+            }
+
             $section->addTitle($widget->getName());
+
 
             //only aggregate widgets can make charts
             if ($widget->isAggregate()) {

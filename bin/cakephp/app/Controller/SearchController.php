@@ -38,15 +38,15 @@ class SearchController extends AppController
     {
         $limit = isset($this->request->query['limit']) ? $this->request->query['limit'] : 3;
         $start =  isset($this->request->query['start']) ? $this->request->query['start'] : 1;
-        $orderBy =  isset($this->request->query['order']) ? $this->request->query['order'] : '';
-        $asc = isset($this->request->query['orderasc']) ? $this->request->query['orderasc'] == 'true' : true;
+        $orderBy =  isset($this->request->query['order']) ? $this->request->query['order'] : 'Created'; //default to created if nothing else is selected
+        $asc = isset($this->request->query['orderasc']) ? $this->request->query['orderasc'] == 'true' : false; //default to descending if nothing else is selected
 
         $variables = array();
 
         if (isset($this->request->query['variableStart']) && isset($this->request->query['variableEnd']))
         {
-            $variables['start'] =  $this->request->query['variableStart'];
-            $variables['end'] = $this->request->query['variableEnd'];
+            $variables['start'] =  date('c', $this->request->query['variableStart']);
+            $variables['end'] = date('c', $this->request->query['variableEnd']);
         }
 
         // Perform search
@@ -95,8 +95,8 @@ class SearchController extends AppController
 
         if (isset($this->request->query['variableStart']) && isset($this->request->query['variableEnd']))
         {
-            $variables['start'] =  $this->request->query['variableStart'];
-            $variables['end'] = $this->request->query['variableEnd'];
+            $variables['start'] =  date('c',$this->request->query['variableStart']);
+            $variables['end'] = date('c',$this->request->query['variableEnd']);
         }
 
         $query = $this->request->query['query'];
