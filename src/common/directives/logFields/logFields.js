@@ -42,7 +42,7 @@ angular.module('logFields', [])
 
             // Sort the FIELDS data into the correct order.
             scope.fields = scope.fields.sort(function(a,b) {
-                return (parseInt(a.order) < parseInt(b.order)) ? -1 : (parseInt(a.order) > parseInt(b.order)) ? 1 : 0;
+                return (parseInt(a.order, 10) < parseInt(b.order, 10)) ? -1 : (parseInt(a.order, 10) > parseInt(b.order, 10)) ? 1 : 0;
             });
 
             // Placeholder
