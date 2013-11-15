@@ -17,8 +17,7 @@ class ImpactAffected extends TypeAbstract
 
     public $settings = array(
         'email'=>array(
-            'subject'=>'Impact Aff',
-            'template'=>'impact-affected',
+            'template'=>'impact',
         ),
     );
 
@@ -27,10 +26,9 @@ class ImpactAffected extends TypeAbstract
      * Check this log is:
      * - On Air Impact affected transmission
      * - New
-     * @param   array   $log
      * @return  bool
      */
-    public function checkCriteria( $log )
+    public function checkCriteria()
     {
         // TODO
 
@@ -48,5 +46,36 @@ class ImpactAffected extends TypeAbstract
 
         // Pass
         return true;
+    }
+
+
+    /**
+     * Construct Data
+     * @return  array       Fields for view
+     */
+    public function getTemplateData()
+    {
+        // Get standard
+        $out = parent::getTemplateData();
+
+        // Locate Severity field selected option
+        $field = $this->log->getFieldByName('impact');
+        $impact = ($field ? current($field->convertToFields()) : 'ERROR_NO_IMPACT_FIELD');
+
+        // Locate description
+        $field = $this->log->getFieldByName('what');
+        $description = ($field ? current($field->convertToFields()) : 'ERROR_NO_DESCRIPTION_FIELD');
+
+        // Locate the HRID
+        $hrid = (isset($this->log->data['hrid']) ? $this->log->data['hrid'] : 'ERROR_NO_LOG_ID');
+        $slug = (isset($this->log->data['slug']) ? $this->log->data['slug'] : 'ERROR_NO_LOG_SLUG');
+
+        // Output
+        $out['impact'] = $impact;   // Severity name
+        $out['subject'] = $hrid.' ['.$impact.'] '.$description;   // "WIN_#123 [Sev Level] Description"
+        $out['slug'] = $slug;   // Log Slug
+        $out['hrid'] = $hrid;   // Log HRID
+
+        return $out;
     }
 }

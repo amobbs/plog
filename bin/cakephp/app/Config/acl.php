@@ -56,12 +56,12 @@ Configure::write('auth-acl', array(
 
     /**
      * Controller-based access permissions
-     * TODO: Finish populating this list
      */
     'routes'=>array(
 
-        // Super Routes
+        // Super Routes (TODO: DELETEME)
         array('controller'=>'Users',    'action'=>'debugTask',          'permissions'=>array('super-admin')),
+        array('controller'=>'Logs',     'action'=>'notificationtest',   'permissions'=>array('admin')),
         array('controller'=>'Import',   'action'=>'runImport',          'permissions'=>array('super-admin')),
 
         // Public Routes

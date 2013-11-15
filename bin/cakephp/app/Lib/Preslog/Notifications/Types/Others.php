@@ -18,7 +18,6 @@ class Others extends TypeAbstract
 
     public $settings = array(
         'email'=>array(
-            'subject'=>'Others',
             'template'=>'other',
         ),
     );
@@ -27,10 +26,9 @@ class Others extends TypeAbstract
      * Check this log is:
      * - Not Severity One OR Severity Two
      * - New
-     * @param   array   $log
      * @return  bool
      */
-    public function checkCriteria( $log )
+    public function checkCriteria()
     {
         // TODO
 
@@ -48,5 +46,31 @@ class Others extends TypeAbstract
 
         // Pass
         return true;
+    }
+
+
+    /**
+     * Construct Data
+     * @return  array       Fields for view
+     */
+    public function getTemplateData()
+    {
+        // Get standard
+        $out = parent::getTemplateData();
+
+        // Locate description
+        $field = $this->log->getFieldByName('what');
+        $description = ($field ? current($field->convertToFields()) : 'ERROR_NO_DESCRIPTION_FIELD');
+
+        // Locate the HRID
+        $hrid = (isset($this->log->data['hrid']) ? $this->log->data['hrid'] : 'ERROR_NO_LOG_ID');
+        $slug = (isset($this->log->data['slug']) ? $this->log->data['slug'] : 'ERROR_NO_LOG_SLUG');
+
+        // Output
+        $out['subject'] = $hrid.' [Other] '.$description;   // "WIN_#123 [Sev Level] Description"
+        $out['slug'] = $slug;   // Log Slug
+        $out['hrid'] = $hrid;   // Log HRID
+
+        return $out;
     }
 }

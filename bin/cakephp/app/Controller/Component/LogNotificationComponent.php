@@ -2,9 +2,17 @@
 
 App::import('Component', 'Component');
 
+use Preslog\Logs\Entities\LogEntity;
+use Preslog\Notifications\Types\TypeAbstract;
+
+
 /**
  * Preslog Log Notificiation component
  * - Handles notification for logs
+ *
+ * @property    Client  $Client
+ * @property    User    $User
+ * @property    Controller $controller
  */
 
 class LogNotificationComponent extends Component
@@ -21,6 +29,9 @@ class LogNotificationComponent extends Component
     {
         // Get Models
         $this->User = ClassRegistry::init('User');
+        $this->Client = ClassRegistry::init('Client');
+
+        $this->controller = &$controller;
 
         // Parent Init
         parent::initialize($controller);
@@ -28,109 +39,226 @@ class LogNotificationComponent extends Component
 
 
     /**
-     * Issues notifications
-     * @param $log
-     * @return bool
+     * Issue notifications to users about $log
+     * - Fetch list of users who might be interested in this log
+     * - Process each notification type, and prep issuing of notifications by type.
+     * - Send notifications
+     * @param   array   $log    Log to notify about
      */
     public function issueNotifications( $log )
     {
-        // Fetch notification configuration
-        $notificationTypeList = Configure::read('Preslog.Notifications');
+        // Reformat for simplicity
+        $log = $log['Log'];
 
-        // Skim all types that might apply, and discard those that don't
-        $keys = array();
-        foreach ($notificationTypeList as $k=>$type)
+        // Logs are issued by Attributes - bail if no attributes are supplied
+        if (empty($log['attributes'])) {
+            return;
+        }
+
+        // Ensure format of attributes
+        $attributes = array();
+        foreach ($log['attributes'] as &$attr) {
+            $attributes[] = (string) $attr;
+        }
+
+        // Aggregate criteria to find users
+        // Returns just ONE client notification structure (notifications.clients.client_id)
+        $criteria = array(
+            array('$unwind'=>'$notifications.clients'),
+            array('$match'=>array(
+                'notifications.clients.attributes'=>array('$in'=>$attributes),
+                'notifications.clients.client_id'=>new MongoId( $log['client_id'] )),
+            )
+        );
+        $users = $this->User->getMongoDb()->selectCollection('users')->aggregate($criteria);
+        $users = $users['result'];
+
+        // Build log data into Log Entity to make our lives easier
+        $logEntity = new LogEntity;
+        $logEntity->setDataSource($this->Client->getDataSource());
+        $logEntity->setClientEntity($this->Client->getClientEntityById($log['client_id']));
+        $logEntity->fromArray($log);
+
+        // Find all notification types
+        $notificationTypes = Configure::read('Preslog.Notifications');
+
+        // Skim all notification types
+        // - Ensure this notification type even applies to the log
+        // - Skim the users and find who's interested in this kind of notification
+        foreach ($notificationTypes as $notifyTypeKey=>&$notifyType)
         {
-            // Discard this type if it fails to apply
-            if ( !$type->checkCriteria( $log ) )
+            /**
+             * @var TypeAbstract $notifyType
+             */
+
+            // Apply log
+            $notifyType->setLog( $logEntity );
+
+            // Skip if this Notification Type doesn't fit the log
+            if ( !$notifyType->checkCriteria() )
             {
-                unset($notificationTypeList[$k]);
+                continue;
             }
 
-            // Fetch the key that would be used on the user
-            $keys[] = $type->getKey();
+            // Skim users and check if they're interested
+            foreach ($users as $userKey=>$user)
+            {
+                // Include with notification if they're interested
+                if ($this->isUserInterested( $user, $notifyTypeKey ))
+                {
+                    $notifyType->addRecipient( $user );
+                }
+            }
         }
 
-        // Nothing to send?
-        if (!sizeof($notificationTypeList))
+        // Attach log and issue notifications where possible
+        foreach ($notificationTypes as $notifyTypeKey=>&$notifyType)
         {
-            return 0;
+            // Notify
+            $this->sendSms( $notifyType );
+            $this->sendEmail( $notifyType );
+        }
+    }
+
+
+    /**
+     * If this $user interested in $notifyTypeKey?
+     * - Check the notifyTypeKey against the user's chosen types
+     * @param   array   $user               User
+     * @param   array   $notifyTypeKey      Notify Type Key
+     * @return  bool                        True if they're interested
+     */
+    public function isUserInterested( $user, $notifyTypeKey )
+    {
+        // Does it pass?
+        if (isset($user['notifications']['clients']['types']) &&
+            isset($user['notifications']['clients']['types'][ $notifyTypeKey ]) &&
+            $user['notifications']['clients']['types'][ $notifyTypeKey ] == true )
+        {
+            return true;
         }
 
-        // Skim all types and the selected attributes for this Log, and get all the users who care.
-        // TODO
-        $users = $this->User->findUsersByNotifications($keys, $log['attributes']);
+        // Not interested
+        return false;
+    }
 
-        // Nobody interested?
+
+    /**
+     * Issue SMS Notification from $notifyType
+     * @param TypeAbstract  $notifyType
+     */
+    protected function sendSms( $notifyType )
+    {
+        // Must have method
+        if (!$notifyType->hasMethod('sms'))
+        {
+            return;
+        }
+
+        // Must have users
+        $users = $notifyType->getRecipients('sms');
         if (!sizeof($users))
         {
-            return 0;
+            return;
         }
 
-        // Collate user details into notification addresses
+        // notify settings
+        $settings = $notifyType->getSettings('sms');
+
+        // Construct SMS list
+        $list = array();
         foreach ($users as $user)
         {
-            // Does the user want email notifications?
-            if (false)
-            {
-                $list['email'][]    = "{$user['firstName']} {$user['lastName']} <{$user['email']}>";
-            }
-
-            // Does the user want SMS notifications?
-            if (false)
-            {
-                $list['sms'][]      = urlencode( (int) $user['phoneNumber'] );
-            }
+            // Strip <space>,(,)
+            $number = str_replace(array( '(', ')', ' ' ), '', $user['phoneNumber']);
+            $list[] = urlencode( (int) $number );
         }
 
-        // Attempt to send notifications
-        foreach ($notificationTypeList as $type)
+        // Use debug email if in debug mode
+        if (Configure::read('debug') > 0)
         {
-            // Send batch SMS
-            if ($type->hasMethod('sms'))
-            {
-                // Fetch SMS settings
-                $settings = $type->getSettings();
-
-                // Construct message
-                // TODO
-                $message = 'i am a teapot : '.$settings['template'];
-
-                // Construct API
-                $smsService = Configure::read('Preslog.SmsService');
-                $url = sprintf($smsService['address'],
-                    urlencode($smsService['username']),
-                    urlencode($smsService['password']),
-                    urlencode($smsService['from']));
-
-                // Append number and message
-                $url .= "&mobilenumber=%s&message=%s";
-                $url = sprintf($url,
-                    implode(',', $list['sms']),
-                    urlencode($message));
-
-                // Send
-                file_get_contents($url);
-            }
-
-            // Send batch Email
-            if ($type->hasMethod('email'))
-            {
-                // Fetch email settings
-                $settings = $type->getSettings();
-
-                // Construct email details
-                // TODO
-                $headers = 'bcc: someones@somewhere.com';
-                $message = 'i am a teapot : '.$settings['template'];
-                $subject = sprintf($settings['subject'], 'subj');
-
-                // Send Email
-                mail('', $subject, $message, $headers);
-            }
+            $list = array(Configure::read('Preslog.Debug.sms'));
         }
 
-        return true;
+        // SMS Content
+        $data = $notifyType->getTemplateData();
+        $message = $this->controller->render('/Sms/Notifications/'.$settings['template'], 'ajax');
+
+        // Construct API
+        $smsService = Configure::read('Preslog.SmsService');
+        $url = sprintf($smsService['address'],
+            urlencode($smsService['username']),
+            urlencode($smsService['password']),
+            urlencode($smsService['from']));
+
+        // Append number and message
+        $url .= "&mobilenumber=%s&message=%s";
+        $url = sprintf($url,
+            implode(',', $list),
+            urlencode($message->body())
+        );
+
+        // Send SMS
+        //file_get_contents($url);  // TODO : ENABLE ME
+    }
+
+
+    /**
+     * Issue Email Notification from $notifyType
+     * @param TypeAbstract  $notifyType
+     */
+    protected function sendEmail( $notifyType )
+    {
+        // Must have method
+        if (!$notifyType->hasMethod('sms'))
+        {
+            return;
+        }
+
+        // Must have users
+        $users = $notifyType->getRecipients('email');
+        if (!sizeof($users))
+        {
+            return;
+        }
+
+        // notify settings
+        $settings = $notifyType->getSettings('email');
+
+        // Construct "to" list
+        $list = array();
+        foreach ($users as $user)
+        {
+            $list[] = "{$user['firstName']} {$user['lastName']} <{$user['email']}>";
+        }
+
+        // Use debug email if in debug mode
+        if (Configure::read('debug') > 0)
+        {
+            $list = array(Configure::read('Preslog.Debug.email'));
+        }
+
+        // Email object
+        $email = new CakeEmail('instant_notification');
+        $email->helpers( array('Html') );
+        $email->template( 'Notifications/'.$settings['template'] );
+
+        // Subject
+        $data = $notifyType->getTemplateData();
+
+        // From (IncRpt_CLIENT)
+        $from = $email->from();
+        $fromEmail = current(array_keys($from));
+        $fromName = current($from).$data['clientShortName'];
+
+        // Author email to the user for their reset
+        $email->from( $fromEmail, $fromName );
+        $email->bcc( $list );
+        $email->subject( $data['subject'] );
+        $email->viewVars( $data );
+
+        // Send the email
+        $email->send();
     }
 
 }

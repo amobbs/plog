@@ -179,6 +179,9 @@ class LogEntity
             $outFields[$key] = implode(', ',$attribute);
         }
 
+        // Put ID to the START of the outFields array
+        $outFields = array('ID' => $this->data['hrid']) + $outFields;
+
         return $outFields;
     }
 
@@ -389,6 +392,16 @@ class LogEntity
         }
 
         return false;
+    }
+
+
+    /**
+     * Access client entity
+     * @return  ClientEntity
+     */
+    public function getClient()
+    {
+        return $this->client;
     }
 
 }

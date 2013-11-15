@@ -14,6 +14,14 @@ class LogsController extends AppController
 
     public $components = array('LogNotification');
 
+    // TODO: DELETE ME
+    public function notificationtest( $id )
+    {
+        $log = $this->Log->findByHrid( $id );
+
+        $this->LogNotification->issueNotifications( $log );
+    }
+
 
     /**
      * Create or Update the given log
@@ -89,8 +97,7 @@ class LogsController extends AppController
         $ret = $this->Log->save( $log );
 
         // Notifications: Issue Email and SMS notifications relevant to this logs update.
-        // TODO: Enable this when notifications are better
-        //$this->LogNotification->issueNotifications( $log );
+        //$this->LogNotification->issueNotifications( $log );   // TODO: ENABLE ME
 
         // Return success
         $return = array('Success'=>$ret);

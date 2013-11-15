@@ -209,9 +209,9 @@ angular.module( 'Preslog.clients', [
                 // 10ms delay required as update happens before order change
                 _.delay(function(scope)
                 {
-                    for (var i in scope.field.data.options)
+                    for (var i in scope.client.fields)
                     {
-                        scope.field.data.options[i].order = i;
+                        scope.client.fields[i].order = i;
                     }
                 }, 100, $scope);
             },

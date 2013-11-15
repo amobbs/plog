@@ -67,6 +67,7 @@ Configure::write('Preslog', array(
      */
     'Debug' => array(
         'email' => 'dave@4mation.com.au',
+        'sms' => '0468904530',  // Don't call me.
     ),
 
     /**

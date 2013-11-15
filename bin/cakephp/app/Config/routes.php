@@ -56,6 +56,12 @@ Router::connect(
     array('controller' => 'Import', 'action' => 'runImport')
 );
 
+Router::connect(
+    '/logs/test/:log_id',
+    array('controller' => 'Logs', 'action' => 'notificationtest', '[method]' => 'GET'),
+    array('pass'=>array('log_id'), 'log_id'=>'([a-zA-Z]+_[0-9]+)?')
+);
+
 /**
  * Load all plugin routes. See the CakePlugin documentation on
  * how to customize the loading of plugin routes.

@@ -347,7 +347,7 @@ class UsersController extends AppController
         }
 
         // Get notifications this user can see
-        $options['notifications'] = $this->Client->getNotificationsList( $userId );
+        $options['notifications'] = $this->Client->getNotificationsList( $userId, $this );
 
         // Output
         $this->set($options);

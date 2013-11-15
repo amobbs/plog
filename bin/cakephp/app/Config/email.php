@@ -30,7 +30,7 @@
  */
 class EmailConfig {
 
-    // Development Config
+    // Development Config: Standard emails
     public $development = array(
         'transport' => 'Smtp',
         'from' => array('preslog@mediahub.tv' => 'Mediahub Preslog'),
@@ -45,9 +45,26 @@ class EmailConfig {
         'emailFormat'=>'both',
     );
 
-    // Production Config
+    // Development Config: Instant Notifications
+    public $development_in = array(
+        'transport' => 'Smtp',
+        'from' => array('preslog@mediahub.tv' => 'IncRpt_'),
+        'host' => 'ssl://smtp.gmail.com',
+        'port' => 465,
+        'timeout' => 30,
+        'username' => 'dave@4mation.com.au',
+        'password' => 'poiu1qaz',
+        'log' => false,
+        'charset' => 'utf-8',
+        'headerCharset' => 'utf-8',
+        'emailFormat'=>'both',
+    );
+
+    // Production Config: Standard emails
     public $default = array();
 
+    // Production Config: Instant Notifications
+    public $instant_notification = array();
 
     /**
      * Assign production or development
@@ -57,6 +74,7 @@ class EmailConfig {
         if ('development' == APPLICATION_ENV)
         {
             $this->default = $this->development;
+            $this->instant_notification = $this->development_in;
         }
     }
 }

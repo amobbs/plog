@@ -320,9 +320,10 @@ class Client extends AppModel
      * Fetch the notifications for clients
      * If UserID is specified
      * @param       string      UserId
+     * @param       object      Authable object
      * @return      array       Notification structure
      */
-    public function getNotificationsList( $userId=null )
+    public function getNotificationsList( $userId=null, $authObject=null )
     {
         $this->User = ClassRegistry::init('User');
 
@@ -350,10 +351,9 @@ class Client extends AppModel
             }
 
             // Check the permission for single-client. If we get that, we limit on the client_id.
-            // TODO: This need to auth!
-            if (false)
+            if ($authObject->isAuthorized('single-client'))
             {
-                $conditions['_id'] = $user['client_id'];
+                $conditions['_id'] = $user['User']['client_id'];
             }
         }
 

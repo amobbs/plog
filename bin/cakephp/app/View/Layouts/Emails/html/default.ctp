@@ -16,6 +16,6 @@
 <body>
 	<?php echo $this->fetch('content'); ?>
 
-	<p>This is an automated email. Please do not reply.</p>
+	<p><sub>This is an automated email. Please do not reply.</sub></p>
 </body>
 </html>

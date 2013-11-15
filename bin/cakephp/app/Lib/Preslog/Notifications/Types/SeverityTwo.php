@@ -2,7 +2,6 @@
 
 namespace Preslog\Notifications\Types;
 
-use Preslog\Notifications\Types\TypeAbstract;
 
 /**
  * Preslog Notification: Severity 2
@@ -11,15 +10,14 @@ use Preslog\Notifications\Types\TypeAbstract;
  * - Severity 2 logs
  * - Email only
  */
-class SeverityTwo extends TypeAbstract
+class SeverityTwo extends SeverityOne
 {
     protected $key  = 'severity-two';
     protected $name = 'Severity 2';
 
     public $settings = array(
         'email'=>array(
-            'subject'=>'Sev 2',
-            'template'=>'severity-two',
+            'template'=>'severity',
         )
     );
 
@@ -28,10 +26,9 @@ class SeverityTwo extends TypeAbstract
      * Check this log is:
      * - Severity Two
      * - New
-     * @param   array   $log
      * @return  bool
      */
-    public function checkCriteria( $log )
+    public function checkCriteria()
     {
         // TODO
 
@@ -50,4 +47,5 @@ class SeverityTwo extends TypeAbstract
         // Pass
         return true;
     }
+
 }
