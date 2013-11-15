@@ -45,8 +45,9 @@ class SearchController extends AppController
 
         if (isset($this->request->query['variableStart']) && isset($this->request->query['variableEnd']))
         {
-            $variables['start'] =  date('c', $this->request->query['variableStart']);
-            $variables['end'] = date('c', $this->request->query['variableEnd']);
+            //somewhere we are passing a string (2013-01-01) i dont know where, so strtotime it is
+            $variables['start'] =  date('c', strtotime($this->request->query['variableStart']));
+            $variables['end'] = date('c', strtotime($this->request->query['variableEnd']));
         }
 
         // Perform search
