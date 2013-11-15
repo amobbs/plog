@@ -599,7 +599,7 @@ angular.module( 'Preslog.dashboard', [
                 {
                     var startDate = new Date($scope.dashboard.session.start).getTime();
                     startDate = parseInt( startDate / 1000, 10);
-                    var endDate = new Date($scope.dashboard.session.end);
+                    var endDate = new Date($scope.dashboard.session.end).getTime();
                     endDate = parseInt( endDate / 1000, 10);
 
 
