@@ -205,7 +205,14 @@ angular.module( 'Preslog.search', [
          * Jql to Sql
          * given jql, get sql query and options needed to use red query builder
          */
+        $scope.queryBuilderModalOpen = false;
         $scope.jqlToSql = function() {
+            if ($scope.queryBuilderModalOpen) {
+                return;
+            }
+
+            //make sure the user can only open this modal once at a time
+            $scope.queryBuilderModalOpen = true;
             //convert jql to sql
             Restangular.one('search/wizard/params')
                 .get({jql : $scope.jql})
@@ -239,6 +246,9 @@ angular.module( 'Preslog.search', [
                                 selectOptions: function() { return $scope.selectOptions; }
                             }
                         });
+
+                        //clear it now because the modal is open and they can't click the link again
+                        $scope.queryBuilderModalOpen = false;
 
                         //apply sql changes as jql on screen
                         modal.result.then(function(result) {
