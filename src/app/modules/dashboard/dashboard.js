@@ -598,7 +598,7 @@ angular.module( 'Preslog.dashboard', [
                 if ($scope.dashboard.session && $scope.dashboard.session.start && $scope.dashboard.session.end)
                 {
                     var startDate = new Date($scope.dashboard.session.start).getTime();
-                    startDate = parseInt( startDate / 1000, 10);
+                    startDate = parseInt( startDate / 1000, 10); //remove milliseconds for php
                     var endDate = new Date($scope.dashboard.session.end).getTime();
                     endDate = parseInt( endDate / 1000, 10);
 
