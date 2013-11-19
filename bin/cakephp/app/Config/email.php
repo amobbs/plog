@@ -61,10 +61,34 @@ class EmailConfig {
     );
 
     // Production Config: Standard emails
-    public $default = array();
+    public $default = array(
+        'transport' => 'Smtp',
+        'from' => array('preslog@mediahub.tv' => 'Mediahub Preslog'),
+        'host' => '192.168.0.2',
+        'port' => 465,
+        'timeout' => 30,
+        'username' => '4mation',
+        'password' => '4mation',
+        'log' => false,
+        'charset' => 'utf-8',
+        'headerCharset' => 'utf-8',
+        'emailFormat'=>'both',
+    );
 
     // Production Config: Instant Notifications
-    public $instant_notification = array();
+    public $instant_notification = array(
+        'transport' => 'Smtp',
+        'from' => array('preslog@mediahub.tv' => 'IncRpt_'),
+        'host' => '192.168.0.2',
+        'port' => 465,
+        'timeout' => 30,
+        'username' => '4mation',
+        'password' => '4mation',
+        'log' => false,
+        'charset' => 'utf-8',
+        'headerCharset' => 'utf-8',
+        'emailFormat'=>'both',
+    );
 
     /**
      * Assign production or development

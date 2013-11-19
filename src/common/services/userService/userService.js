@@ -255,7 +255,7 @@ angular.module('userService', ['restangular'])
                 }
 
                 // Perform permissions check
-                var isAllowed = (permissions.indexOf(key) !== -1);
+                var isAllowed = (_.indexOf(permissions, key) !== -1);
                 return isAllowed;
             },
 

@@ -259,7 +259,7 @@ angular.module('hierarchyFields', [])
 
                         var dynaField = {};
 
-                        dynaField.select = (scope.hierarchySelected.indexOf(fields[i]._id) !== -1);
+                        dynaField.select = (_.indexOf(scope.hierarchySelected, fields[i]._id) !== -1);
                         dynaField.title = fields[i].name;
                         dynaField.expand = false;
                         dynaField.key = fields[i]._id;

@@ -36,14 +36,14 @@ class DateWidget extends Widget {
         {
             $this->details['defaultStart'] = $data['details']['defaultStart'];
             $clause = new Clause("created = " . $data['details']['defaultStart'], true);
-            $this->details['start'] = date('c', $clause->getFunctionEvaluated());
+            $this->details['start'] = date('r', $clause->getFunctionEvaluated());
         }
 
         if (isset($data['details']['defaultEnd']))
         {
             $this->details['defaultEnd'] = $data['details']['defaultEnd'];
             $clause = new Clause("created = " . $data['details']['defaultEnd'], true);
-            $this->details['end'] = date('c',$clause->getFunctionEvaluated());
+            $this->details['end'] = date('r',$clause->getFunctionEvaluated());
         }
 
 

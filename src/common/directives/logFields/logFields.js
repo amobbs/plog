@@ -180,7 +180,7 @@ angular.module('logFields', [])
          * Establish Directive
          */
         return {
-            restrict: "E",
+            restrict: "EA",
             priority: -1,
             replace: true,
             transclude: true,

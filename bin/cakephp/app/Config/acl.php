@@ -61,8 +61,8 @@ Configure::write('auth-acl', array(
 
         // Super Routes (TODO: DELETEME)
         array('controller'=>'Users',    'action'=>'debugTask',          'permissions'=>array('super-admin')),
-        array('controller'=>'Logs',     'action'=>'notificationtest',   'permissions'=>array('admin')),
-        array('controller'=>'Import',   'action'=>'runImport',          'permissions'=>array('super-admin')),
+        array('controller'=>'Logs',     'action'=>'notificationtest',   'permissions'=>array('guest')),
+        array('controller'=>'Import',   'action'=>'runImport',          'permissions'=>array('admin')),
 
         // Public Routes
         array('controller'=>'Users',    'action'=>'login',              'permissions'=>array('guest')),

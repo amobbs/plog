@@ -58,6 +58,12 @@ angular.module( 'Preslog.nav', [])
                 $scope.client = client;
             });
 
+            // If changing client and on createLog, enforce new log switch
+            if ($location.path() == '/logs/')
+            {
+                $location.path('/logs/#new');
+            }
+
         };
 
 

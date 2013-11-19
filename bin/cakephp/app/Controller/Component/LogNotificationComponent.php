@@ -101,7 +101,7 @@ class LogNotificationComponent extends Component
             }
 
             // Skim users and check if they're interested
-            foreach ($users as $userKey=>$user)
+            foreach ($users as $user)
             {
                 // Include with notification if they're interested
                 if ($this->isUserInterested( $user, $notifyTypeKey ))
@@ -114,7 +114,7 @@ class LogNotificationComponent extends Component
         // Attach log and issue notifications where possible
         foreach ($notificationTypes as $notifyTypeKey=>&$notifyType)
         {
-            // Notify
+            // Notify types
             $this->sendSms( $notifyType );
             $this->sendEmail( $notifyType );
         }
@@ -169,9 +169,15 @@ class LogNotificationComponent extends Component
         $list = array();
         foreach ($users as $user)
         {
-            // Strip <space>,(,)
-            $number = str_replace(array( '(', ')', ' ' ), '', $user['phoneNumber']);
-            $list[] = urlencode( (int) $number );
+            // Skip users with no number, or invalid number
+            if (!isset($user['phoneNumber']) || empty($user['phoneNumber']) || strlen($user['phoneNumber']) < 6)
+            {
+                continue;
+            }
+
+            // Strip all chars except numbers
+            $number = preg_replace("/[^0-9.]*/", "", (string) $user['phoneNumber']);
+            $list[] = urlencode( $number );
         }
 
         // Use debug email if in debug mode
@@ -180,9 +186,10 @@ class LogNotificationComponent extends Component
             $list = array(Configure::read('Preslog.Debug.sms'));
         }
 
-        // SMS Content
-        $data = $notifyType->getTemplateData();
-        $message = $this->controller->render('/Sms/Notifications/'.$settings['template'], 'ajax');
+        // Get view
+        $view = new View;
+        $view->set( $notifyType->getSmsTemplateData() );
+        $message = $view->render('/Sms/Notifications/'.$settings['template'], 'ajax');
 
         // Construct API
         $smsService = Configure::read('Preslog.SmsService');
@@ -195,11 +202,11 @@ class LogNotificationComponent extends Component
         $url .= "&mobilenumber=%s&message=%s";
         $url = sprintf($url,
             implode(',', $list),
-            urlencode($message->body())
+            urlencode($message)
         );
 
         // Send SMS
-        //file_get_contents($url);  // TODO : ENABLE ME
+        file_get_contents($url);
     }
 
 
@@ -210,7 +217,7 @@ class LogNotificationComponent extends Component
     protected function sendEmail( $notifyType )
     {
         // Must have method
-        if (!$notifyType->hasMethod('sms'))
+        if (!$notifyType->hasMethod('email'))
         {
             return;
         }
@@ -244,7 +251,7 @@ class LogNotificationComponent extends Component
         $email->template( 'Notifications/'.$settings['template'] );
 
         // Subject
-        $data = $notifyType->getTemplateData();
+        $data = $notifyType->getEmailTemplateData();
 
         // From (IncRpt_CLIENT)
         $from = $email->from();
