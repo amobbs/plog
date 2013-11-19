@@ -644,7 +644,7 @@ class SearchController extends AppController
                 //each select field needs their own type because they have different options
                 if ($clientField instanceof \Preslog\Logs\FieldTypes\Select)
                 {
-                    $fieldTypeName = $title;
+                    $fieldTypeName = strtoupper($title);
                     $upperTitle = strtoupper($title);
                     $types[$upperTitle] = array(
                         'editor' => 'SELECT',
@@ -660,7 +660,7 @@ class SearchController extends AppController
                             'label' => $option['name']
                         );
                     }
-                    $selectOptions[$upperTitle] = $options;
+                    $selectOptions[strtoupper($fieldSettings['name'])] = $options;
                 }
 
                 $columns[strtoupper($title)] = array(
