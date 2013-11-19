@@ -31,7 +31,7 @@ class ImportController extends AppController
         CakeLog::write('activity', $msg);
         $this->arrayLog[] = $msg;
 
-        echo $msg;
+        echo '<br/>'.$msg;
     }
 
     /**
@@ -88,10 +88,9 @@ class ImportController extends AppController
 
         $endTime = microtime(true);
         $totalTime = $endTime - $startTime;
-        $this->set('import', 'success. run time = ' . $totalTime . 's');
-        $this->set('log', $this->arrayLog);
-        $this->set('_serialize', array('import', 'log'));
 
+        echo 'Success! Run time = ' . $totalTime . 's';
+        exit();
     }
 
     /**
@@ -123,7 +122,7 @@ class ImportController extends AppController
                 'activationDate' => new MongoDate(strtotime('now')),
                 'fields' => $baseFormats,
                 'attributes' => array(),
-                'benchmark' => 0.01
+                'benchmark' => 0.30
             ),
             array(
                 'database' => 'mediahub',
@@ -147,7 +146,7 @@ class ImportController extends AppController
                 'activationDate' => new  MongoDate(strtotime('now')),
                 'fields' => $baseFormats,
                 'attributes' => array(),
-                'benchmark' => 0.01
+                'benchmark' => 0.30
             ),
             array(
                 'database' => 'mediahub',
@@ -171,7 +170,7 @@ class ImportController extends AppController
                 'activationDate' => new  MongoDate(strtotime('now')),
                 'fields' => $baseFormats,
                 'attributes' => array(),
-                'benchmark' => 0.01
+                'benchmark' => 0.4795
             ),
             array(
                 'database' => 'preslog',
@@ -183,7 +182,7 @@ class ImportController extends AppController
                 'activationDate' => new  MongoDate(strtotime('now')),
                 'fields' => $baseFormats,
                 'attributes' => array(),
-                'benchmark' => 0.01
+                'benchmark' => 0.147
             ),
         );
 
@@ -266,7 +265,7 @@ class ImportController extends AppController
                 'label' => 'WHAT HAS HAPPENED:',
                 'data' => array(
                     'placeholder' => 'Choose from below',
-                    'option' => array('?'),
+                    'options' => array('?'),
                 ),
             ),
             array(
@@ -277,7 +276,7 @@ class ImportController extends AppController
                 'label' => 'WHY IT HAPPENED:',
                 'data' => array(
                     'placeholder' => 'Choose from below',
-                    'option' => array('?'),
+                    'options' => array('?'),
                 ),
             ),
             array(
@@ -300,7 +299,7 @@ class ImportController extends AppController
                 '_id' => null,
                 'order' => $order++,
                 'type' => 'textarea',
-                'name' => 'follow_up',  // RESOLUTION
+                'name' => 'follow_up',      // RESOLUTION
                 'label' => 'FOLLOW UP or RESOLUTION:',
                 'data' => array('placeholder' => 'Senior or Engineering follow up'),
             ),
@@ -454,7 +453,7 @@ class ImportController extends AppController
         }
 
         // Impact / What happened
-        $sql = "SELECT id, IMPACT, deleted FROM " . $client['database_prefix'] . '_impacts ORDER BY order';
+        $sql = "SELECT id, IMPACT, deleted FROM " . $client['database_prefix'] . '_impacts GROUP BY LOWER(IMPACT) ORDER BY `order`';
         if ($result = $this->mysqli->query($sql)) {
             $options = array();
             $order = 0;
@@ -471,7 +470,7 @@ class ImportController extends AppController
         }
 
         // Cause / Why it happened
-        $sql = "SELECT id, CAUSE, deleted FROM " . $client['database_prefix'] . '_causes ORDER BY order';
+        $sql = "SELECT id, CAUSE, deleted FROM " . $client['database_prefix'] . '_causes GROUP BY LOWER(CAUSE) ORDER BY `order`';
         if ($result = $this->mysqli->query($sql)) {
             $options = array();
             $order = 0;
@@ -630,6 +629,48 @@ class ImportController extends AppController
         $this->_log('adding client ' . $client['name'] . " with $networkCount networks containing $channelCount channels");
 //        $this->Client->create($client);
         $this->Client->save(array('Client'=>$client), array('callbacks'=>false, 'validate'=>false));
+
+
+        /**
+         * Field Aliases
+         */
+
+        $aliasGroup = array(
+            $causeId=>array(
+                'Technical Issue'=>array('Technical'),
+                'Scheduling'=>array('Timing / Scheduling Issue', 'Timing / Scheduling'),
+                'Human Error'=>array('Human', 'Human error - Presentation Coordinator'),
+                'Incoming Feed Issue'=>array('Incoming Feed Issue - TVN test 3'),
+            ),
+            $impactId=>array(
+                'Marred program'=>array('Marred Programme'),
+                'Crawl Request'=>array('Crawl to air'),
+                'Captions Issue'=>array('Loss of captioning','Loss of captions'),
+                'Commercial Hostlist (CHL)'=>array('Commercial Hotlist CHL'),
+            ),
+
+        );
+
+        // Add aliases for opts
+        foreach ($aliasGroup as $fieldId=>$aliasList)
+        {
+            foreach ($returnClient['fields'][$fieldId]['data']['options'] as $option)
+            {
+                foreach ($aliasList as $aKey=>$aliases)
+                {
+                    if ($aKey == $option['name'])
+                    {
+                        foreach ($aliases as $alias)
+                        {
+                            $optionAlias = $option;
+                            $optionAlias['name'] = $alias;
+                            $returnClient['fields'][$fieldId]['data']['options'][] = $optionAlias;
+                        }
+                    }
+                }
+            }
+        }
+
 
         return $returnClient;
     }
@@ -1039,21 +1080,40 @@ class ImportController extends AppController
      */
     private function _getMongoIdForOptionInSelectText($formats, $name, $text) {
 
-        if (empty($id))
+        if (empty($text))
         {
             return '';
         }
 
+        // Find by exact name
         foreach($formats as $format) {
             if ($format['name'] == $name) {
                 if (isset($format['data']['options'])) {
                     foreach($format['data']['options'] as $option) {
-                        if (isset($option['name']) && strtolower($option['name']) == strtolower(mb_convert_encoding($text, 'utf8')))
+
+                        if (isset($option['name']) && strtolower(trim($option['name'])) == strtolower(trim(mb_convert_encoding($text, 'utf8'))))
                             return $option['_id'];
+
+                        // Catch certain fields for later
+                        if ($option['name'] == 'Equipment failure') $equipmentFailure = $option['_id'];
+                        if ($option['name'] == 'Human error') $humanError = $option['_id'];
+                        if ($option['name'] == 'Supplier') $supplier = $option['_id'];
+                        if ($option['name'] == 'Scheduling Issue') $scheduling = $option['_id'];
+                        if ($option['name'] == 'CHL Ammendment') $chl = $option['_id'];
+                        if ($option['name'] == 'Technical Issue') $technical = $option['_id'];
                     }
                 }
             }
         }
+
+        //
+        if (stripos($text, 'equipment') === 0) return $equipmentFailure;
+        if (stripos($text, 'human') === 0) return $humanError;
+        if (stripos($text, 'supplier') === 0) return $supplier;
+        if (stripos($text, 'scheduling') === 0) return $scheduling;
+        if (stripos($text, 'CHL') === 0) return $chl;
+        if (stripos($text, 'technical') === 0) return $technical;
+
 
         throw new Exception("unable to find option in [$name] for text [$text]");
     }
