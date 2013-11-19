@@ -612,6 +612,11 @@ class SearchController extends AppController
             'name' => 'CLIENT',
             'operators' => $this->listOperators('SELECT'),
         );
+        $types['CHECKBOX'] = array(
+            'editor' => 'SELECT',
+            'name' => 'CHECKBOX',
+            'operators' => $this->listOperators('SELECT'),
+        );
 
         $clientOptions = array();
 
@@ -651,7 +656,7 @@ class SearchController extends AppController
                     foreach($fieldSettings['data']['options'] as $option)
                     {
                         $options[] = array(
-                            'value' => $option['_id'],
+                            'value' => $option['name'],
                             'label' => $option['name']
                         );
                     }
@@ -664,8 +669,6 @@ class SearchController extends AppController
                     'type' => strtoupper($fieldTypeName),
                     'size' => 100,
                 );
-
-
             }
 
             //add attributes to the list
@@ -722,6 +725,20 @@ class SearchController extends AppController
             }
         }
         $selectOptions['CLIENT'] = $clientOptions;
+
+
+        $selectOptions['CHECKBOX'] = array(
+            array(
+                'value' => 'Yes',
+                'label' => 'Yes'
+            ),
+            array(
+                'value' => 'No',
+                'label' => 'No'
+            ),
+
+        );
+
 
         $fieldList = array(
             'tables' => array(
