@@ -254,38 +254,41 @@ class ClientEntity
         // Take a copy of the client
         $data = $this->data;
 
-        // Remove fields that shouldn't be visible
-        foreach ($data['fields'] as $k=>$field)
+        // Store for the log fields
+        $logFields = array();
+
+        // Are we checking an existing log?
+        if (isset($log['fields']) && is_array($log['fields']))
         {
-            // If hidden
+            // Create a reverse lookup for log fields
+            foreach ($log['fields'] as $field)
+            {
+                $logFields[ $field['field_id'] ] = $field;
+            }
+        }
+
+        // Remove fields that should be hidden from this user anyway
+        foreach ($data['fields'] as $k=>&$field)
+        {
+            // If hidden - remove
             if ( $this->fields[ $field['_id'] ]->isHiddenFromOptions())
             {
                 unset( $data['fields'][ $k ] );
             }
 
-            // field exists?
-            $exists = false;
-
-            // Only perform check for logs that exist
-            if (isset($log['fields']))
-            {
-                // Does this field exist in the log?
-                foreach ($log['fields'] as $logField)
-                {
-                    if ($logField['field_id'] == $field['_id'])
-                    {
-                        $exists = true;
-                        break;
-                    }
-                }
-            }
-
-            // If deleted
-            if ($this->fields[ $field['_id'] ]->isDeleted() && !$exists)
+            // If should be deleted and doesn't contain data in this log:
+            elseif ($this->fields[ $field['_id'] ]->isDeleted() && !isset( $logFields[ $field['_id'] ] ))
             {
                 unset( $data['fields'][ $k ] );
             }
 
+
+            // Remove field elements that should be deleted.
+            else
+            {
+                $fieldData = ( isset($logFields[ $field['_id'] ]) ? $logFields[ $field['_id'] ] : array());
+                $data['fields'][ $k ] = $this->fields[ $field['_id'] ]->removeDeleted( $data['fields'][ $k ], $fieldData );
+            }
         }
 
         // Remove deleted attribute options

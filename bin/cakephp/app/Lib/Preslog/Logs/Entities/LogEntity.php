@@ -169,15 +169,8 @@ class LogEntity
             $outFields = array_merge($outFields, $field->convertToFields( $closure ));
         }
 
-        // Get flattened attributes, only showing 1 level of
-        $attrFields = $this->getFlattenedAttributes( $this->data['attributes'], $this->client->data['attributes'] );
-
-        // Run through attributes, to fetch collapsed list
-        foreach ($attrFields as $key=>$attribute)
-        {
-            // Collapse each to a list
-            $outFields[$key] = implode(', ',$attribute);
-        }
+        // Get attributes
+        $outFields = $outFields + $this->getFlattenedAttributes();
 
         // Put ID to the START of the outFields array
         $outFields = array('ID' => $this->data['hrid']) + $outFields;
@@ -187,13 +180,34 @@ class LogEntity
 
 
     /**
-     * Get the flattened attribute list as text, flattened to the specified depth.
+     * Get flattened attributes for this log
+     * @return array
+     */
+    public function getFlattenedAttributes()
+    {
+        $outAttr = array();
+
+        // Get flattened attributes, only showing 1 level of
+        $attrFields = $this->flattenAttributes( $this->data['attributes'], $this->client->data['attributes'] );
+
+        // Run through attributes, to fetch collapsed list
+        foreach ($attrFields as $key=>$attribute)
+        {
+            // Collapse each to a list
+            $outAttr[$key] = implode(', ',$attribute);
+        }
+
+        return $outAttr;
+    }
+
+    /**
+     * Flatten attribute list as text, flattened to the specified depth.
      * @param   array   $attrSelected           Selected Attributes
      * @param   array   $attrSource             Source array containing hierarchy
      * @param   int     $level                  Current depth
      * @return  array
      */
-    public function getFlattenedAttributes( $attrSelected, $attrSource, $level=0)
+    public function flattenAttributes( $attrSelected, $attrSource, $level=0)
     {
         $out = array();
 
@@ -205,7 +219,7 @@ class LogEntity
             // Process children elements
             if (isset($attribute['children']) && sizeof($attribute['children']))
             {
-                $children = array_merge($children, $this->getFlattenedAttributes( $attrSelected, $attribute['children'], ($level+1) ));
+                $children = array_merge($children, $this->flattenAttributes( $attrSelected, $attribute['children'], ($level+1) ));
             }
 
             // If selected, we keep this one

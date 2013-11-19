@@ -1,6 +1,8 @@
 <?php
 
 namespace Preslog\Notifications\Types;
+use Preslog\Logs\FieldTypes\SelectSeverity;
+
 
 /**
  * Preslog Notification: Severity 3
@@ -29,16 +31,28 @@ class SeverityThree extends SeverityOne
      */
     public function checkCriteria()
     {
-        // TODO
-
-        // Validate: New log?
-        if (false)
+        // Validate: Must be a new log
+        $field = $this->log->getFieldByName('version');
+        if ( !$field instanceof LogInfo)
         {
             return false;
         }
 
-        // Validate: Severity Two?
-        if (false)
+        $version = ($field ? $field->convertToFields()['Version']: 'ERROR');
+        if ($version != 1)
+        {
+            return false;
+        }
+
+        // Validate: Must be a Severity three log
+        $field = $this->log->getFieldByName('severity');
+        if ( !$field instanceof SelectSeverity)
+        {
+            return false;
+        }
+
+        $level = ($field ? $field->getSelectedSeverityLevel() : 'ERROR');
+        if ( 'level-3' != $level  )
         {
             return false;
         }

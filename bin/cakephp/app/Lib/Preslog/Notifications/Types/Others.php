@@ -1,8 +1,8 @@
 <?php
 
 namespace Preslog\Notifications\Types;
+use Preslog\Logs\FieldTypes\SelectSeverity;
 
-use Preslog\Notifications\Types\TypeAbstract;
 
 /**
  * Preslog Notification: Other Types
@@ -30,16 +30,28 @@ class Others extends TypeAbstract
      */
     public function checkCriteria()
     {
-        // TODO
-
-        // Validate: New log?
-        if (false)
+        // Validate: Must be a new log
+        $field = $this->log->getFieldByName('version');
+        if ( !$field instanceof LogInfo)
         {
             return false;
         }
 
-        // Validate: Sev1 or Sev2?
-        if (true)
+        $version = ($field ? $field->convertToFields()['Version']: 'ERROR');
+        if ($version != 1)
+        {
+            return false;
+        }
+
+        // Validate: Must be a Severity one log
+        $field = $this->log->getFieldByName('severity');
+        if ( !$field instanceof SelectSeverity)
+        {
+            return false;
+        }
+
+        $level = ($field ? $field->getSelectedSeverityLevel() : 'ERROR');
+        if ( 'level-1' == $level || 'level-2' == $level )
         {
             return false;
         }
@@ -56,7 +68,7 @@ class Others extends TypeAbstract
     public function getTemplateData()
     {
         // Get standard
-        $out = parent::getTemplateData();
+        $out = parent::getEmailTemplateData();
 
         // Locate description
         $field = $this->log->getFieldByName('what');

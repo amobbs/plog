@@ -459,6 +459,18 @@ abstract class FieldTypeAbstract
         return (isset($this->fieldSettings['deleted']) && $this->fieldSettings['deleted'] == true );
     }
 
+
+    /**
+     * Remove all fields that should be removed, saving the data supplied in $fieldData
+     * @param   array       $settings   Field configuration
+     * @param   array       $data       Field data to leave alone
+     * @return  array                   Corrected settings
+     */
+    public function removeDeleted( $settings, $data )
+    {
+        return $settings;
+    }
+
 }
 
 

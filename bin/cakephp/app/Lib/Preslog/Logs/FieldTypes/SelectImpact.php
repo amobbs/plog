@@ -93,4 +93,28 @@ class SelectImpact extends Select
         }
     }
 
+
+
+    /**
+     * Get the impact type reference for the selected item
+     * @return  string      Impact Type
+     */
+    public function getSelectedImpact()
+    {
+        // Must have a selection
+        if (!isset($this->data['data']['selected']) || empty( $this->data['data']['selected']))
+        {
+            return false;
+        }
+
+        // Opt must exist
+        if (!isset($this->options[ $this->data['data']['selected'] ]))
+        {
+            return fasle;
+        }
+
+        // Return the severity
+        return $this->options[ $this->data['data']['selected'] ]['impact'];
+    }
+
 }

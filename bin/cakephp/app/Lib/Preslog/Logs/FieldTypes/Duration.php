@@ -101,8 +101,10 @@ class Duration extends FieldTypeAbstract
 
     protected function defaultConvertToFields( $label, $field )
     {
-        $seconds = $field['data']['seconds'];
+        // Get seconds
+        $total = $seconds = $field['data']['seconds'];
 
+        // Conversion array
         $units = array(
             604800 => 'w',
             86400 => 'd',
@@ -113,15 +115,27 @@ class Duration extends FieldTypeAbstract
 
         $result = array();
 
-        foreach ($units as $divisor => $unitName) {
-            $units = intval($seconds / $divisor);
+        // For each unit..
+        foreach ($units as $divisor => $unitName)
+        {
+            // Get whole figure for divisor
+            $units = floor($seconds / $divisor);
 
-            if ($units) {
+            // If the divisor is less than total number, or is last item, display SOMETHING
+            if ($divisor <= $total || $divisor == 1)
+            {
+                // Get remainder seconds
                 $seconds %= $divisor;
+
+                // Make zero if empty
+                $units = (!empty($units) ? $units : 0);
+
+                // Output
                 $result[] = "$units$unitName";
             }
         }
 
+        // collapse
         $time = implode(' ', $result);
 
         return array($label => $time);

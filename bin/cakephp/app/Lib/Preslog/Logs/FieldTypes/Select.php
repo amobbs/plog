@@ -188,4 +188,39 @@ class Select extends FieldTypeAbstract
 
         return $deleted;
     }
+
+
+    /**
+     * Remove all fields that should be removed, saving the data supplied in $fieldData
+     * @param   array       $settings   Field configuration
+     * @param   array       $data       Field data to leave alone
+     * @return  array                   Corrected settings
+     */
+    public function removeDeleted( $settings, $data )
+    {
+        foreach ($settings['data']['options'] as $key=>$option)
+        {
+            // Existing log?
+            if ( isset($data['data']) )
+            {
+                // If items match, skip this one.
+                if ( $data['data']['selected'] == $option['_id'])
+                {
+                    continue;
+                }
+            }
+
+            // Not existing log. If field deleted..
+            if( $option['deleted'] == true )
+            {
+                unset( $settings['data']['options'][$key] );
+            }
+        }
+
+        $settings['data']['options'] = array_values($settings['data']['options']);
+
+        // Reindex the array
+        return $settings;
+    }
+
 }

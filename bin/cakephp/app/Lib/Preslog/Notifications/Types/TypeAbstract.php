@@ -142,14 +142,28 @@ abstract class TypeAbstract
 
 
     /**
-     * Fetch the subject line for this notification type
+     * Fetch the template data for Email
      * @return  string      Subject
      */
-    public function getTemplateData()
+    public function getEmailTemplateData()
     {
         $out = array();
         $out['fields'] = $this->log->toDisplay();
         $out['subject'] = 'I am a Teapot.';
+        $out['clientShortName'] = $this->log->getClient()->data['shortName'];
+
+        return $out;
+    }
+
+
+    /**
+     * Fetch the template data for Sms
+     * @return  string      Subject
+     */
+    public function getSmsTemplateData()
+    {
+        $out = array();
+        $out['log'] = $this->log;
         $out['clientShortName'] = $this->log->getClient()->data['shortName'];
 
         return $out;

@@ -50,14 +50,14 @@ class SearchController extends AppController
             {
                 $startDate = $this->request->query['variableStart'];
             }
-            $variables['start'] =  date('c', $startDate);
+            $variables['start'] =  date('r', $startDate);
 
             $endDate = strtotime($this->request->query['variableEnd']);
             if ( !$endDate )
             {
                 $endDate = $this->request->query['variableEnd'];
             }
-            $variables['end'] = date('c', $endDate);
+            $variables['end'] = date('r', $endDate);
         }
 
         // Perform search
@@ -106,8 +106,8 @@ class SearchController extends AppController
 
         if (isset($this->request->query['variableStart']) && isset($this->request->query['variableEnd']))
         {
-            $variables['start'] =  date('c',$this->request->query['variableStart']);
-            $variables['end'] = date('c',$this->request->query['variableEnd']);
+            $variables['start'] =  date('r',$this->request->query['variableStart']);
+            $variables['end'] = date('r',$this->request->query['variableEnd']);
         }
 
         $query = $this->request->query['query'];

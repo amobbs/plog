@@ -159,12 +159,14 @@ class Loginfo extends FieldTypeAbstract
         $mUser = (!isset($this->data['data']['modified_user']['_id']) ? '' :
             $this->data['data']['modified_user']['firstName'] .' '. $this->data['data']['modified_user']['lastName']
         );
+        $version = (!isset($this->data['data']['version']) ? '0' : $this->data['data']['version']);
 
         return array(
             'Created' => date('d/m/Y H:i:s', strtotime($this->data['data']['created'])),
             'Created By' => $cUser,
             'Modified' => date('d/m/Y H:i:s', strtotime($this->data['data']['modified'])),
             'Modified By' => $mUser,
+            'Version' => $version,
         );
     }
 

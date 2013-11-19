@@ -1,8 +1,8 @@
 <?php
 
 namespace Preslog\Notifications\Types;
-
-use Preslog\Notifications\Types\TypeAbstract;
+use Preslog\Logs\FieldTypes\Loginfo;
+use Preslog\Logs\FieldTypes\SelectSeverity;
 
 /**
  * Preslog Notification: Severity 1
@@ -34,16 +34,28 @@ class SeverityOne extends TypeAbstract
      */
     public function checkCriteria()
     {
-        // TODO
-
-        // Validate: new log?
-        if (false)
+        // Validate: Must be a new log
+        $field = $this->log->getFieldByName('version');
+        if ( !$field instanceof LogInfo)
         {
             return false;
         }
 
-        // Validate: Severity one log?
-        if (false)
+        $version = ($field ? $field->convertToFields()['Version']: 'ERROR');
+        if ($version != 1)
+        {
+            return false;
+        }
+
+        // Validate: Must be a Severity one log
+        $field = $this->log->getFieldByName('severity');
+        if ( !$field instanceof SelectSeverity)
+        {
+            return false;
+        }
+
+        $level = ($field ? $field->getSelectedSeverityLevel() : 'ERROR');
+        if ( 'level-1' != $level  )
         {
             return false;
         }
@@ -54,13 +66,13 @@ class SeverityOne extends TypeAbstract
 
 
     /**
-     * Construct Data
-     * @return  array       Fields for view
-     */
-    public function getTemplateData()
+ * Construct Data
+ * @return  array       Fields for view
+ */
+    public function getEmailTemplateData()
     {
         // Get standard
-        $out = parent::getTemplateData();
+        $out = parent::getEmailTemplateData();
 
         // Locate Severity field selected option
         $field = $this->log->getFieldByName('severity');
@@ -79,6 +91,23 @@ class SeverityOne extends TypeAbstract
         $out['subject'] = $hrid.' ['.$severity.'] '.$description;   // "WIN_#123 [Sev Level] Description"
         $out['slug'] = $slug;   // Log Slug
         $out['hrid'] = $hrid;   // Log HRID
+
+        return $out;
+    }
+
+
+    /**
+     * Construct Data
+     * @return  array       Fields for view
+     */
+    public function getSmsTemplateData()
+    {
+        // Get standard
+        $out = parent::getSmsTemplateData();
+
+        // Locate the HRID
+        $out['hrid'] = (isset($this->log->data['hrid']) ? $this->log->data['hrid'] : 'ERROR_NO_LOG_ID');
+        $out['slug'] = (isset($this->log->data['slug']) ? $this->log->data['slug'] : 'ERROR_NO_LOG_SLUG');
 
         return $out;
     }
