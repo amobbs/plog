@@ -38,7 +38,8 @@ class SeverityThree extends SeverityOne
             return false;
         }
 
-        $version = ($field ? $field->convertToFields()['Version']: 'ERROR');
+        $fields = $field->convertToFields();
+        $version = ($field ? $fields['Version']: 'ERROR');
         if ($version != 1)
         {
             return false;
