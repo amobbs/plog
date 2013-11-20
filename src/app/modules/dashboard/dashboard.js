@@ -307,7 +307,20 @@ angular.module( 'Preslog.dashboard', [
 
         //download a docx version of this dashboard
         $scope.exportReport = function() {
-            window.location = '/api/dashboards/' + $scope.id + '/export';
+            var loc = '/api/dashboards/' + $scope.id + '/export';
+
+            if ($scope.dashboard.session && $scope.dashboard.session.start && $scope.dashboard.session.end)
+            {
+                var startDate = new Date($scope.dashboard.session.start).getTime();
+                startDate = parseInt( startDate / 1000, 10); //remove milliseconds for php
+                var endDate = new Date($scope.dashboard.session.end).getTime();
+                endDate = parseInt( endDate / 1000, 10);
+
+                loc += '?variableStart=' + encodeURIComponent(startDate);
+                loc += '&variableEnd=' + encodeURIComponent(endDate);
+            }
+
+            window.location.href = loc;
         };
 
         //create new dashboard

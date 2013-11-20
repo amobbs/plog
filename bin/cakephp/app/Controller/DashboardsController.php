@@ -264,19 +264,18 @@ class DashboardsController extends AppController
     /*
      * given a dashboard that has just come out from the database replace all the widgets with kust widget ids
      */
-    private function _getParsedDashboard($dashboard, $populate = true) {
+    private function _getParsedDashboard($dashboard, $populate = true, $populateLists = false, $variables = array()) {
         $widgets = array();
 
         if (isset($dashboard['widgets'])) {
+
             //find if this has a date widget
-            $startDate = null;
-            $endDate = null;
             foreach($dashboard['widgets'] as $widget)
             {
-                if ($widget['type'] == 'date' && isset($widget['details']['start']) && isset($widget['details']['end']))
+                if (empty($variables) && $widget['type'] == 'date' && isset($widget['details']['start']) && isset($widget['details']['end']))
                 {
-                    $startDate = $widget['details']['start'];
-                    $endDate = $widget['details']['end'];
+                    $variables['start'] = $widget['details']['start'];
+                    $variables['end'] = $widget['details']['end'];
                     break;
                 }
             }
@@ -285,15 +284,7 @@ class DashboardsController extends AppController
                 $widgetObject = null;
                 if(!($widget instanceof Widget))
                 {
-                    $variables = array();
-
-                    if ($startDate !== null && $endDate !== null)
-                    {
-                        $variables['start'] = $startDate;
-                        $variables['end'] = $endDate;
-                    }
-
-                    $widgetObject = $this->_createWidgetObject($widget, $variables, $populate);
+                    $widgetObject = $this->_createWidgetObject($widget, $variables, $populate, $populateLists);
                     if (! ($widgetObject instanceof Widget))
                     {
                         throw new Exception($widgetObject['errors'][0]);
@@ -555,9 +546,17 @@ class DashboardsController extends AppController
     {
         set_time_limit(60*10);  // 10 mins
 
+        $variables = array();
+
+        if (isset($this->request->query['variableStart']) && isset($this->request->query['variableEnd']))
+        {
+            $variables['start'] =  date('r',$this->request->query['variableStart']);
+            $variables['end'] = date('r',$this->request->query['variableEnd']);
+        }
+
         $dashboard = $this->Dashboard->findById($dashboardId);
         $reportName = $dashboard['Dashboard']['name'] . '_' . date('Ymd_Hi') . '.docx';
-        $dashboard =  $this->_getParsedDashboard($dashboard['Dashboard']);
+        $dashboard =  $this->_getParsedDashboard($dashboard['Dashboard'], true, true, $variables);
 
         $clients = $this->getClientListForUser();
         $clientDetails = $this->Client->find('all', array(
@@ -700,15 +699,13 @@ class DashboardsController extends AppController
     /*
      * Create an instance of Preslog\Widget and populate it with data passed in
      */
-    private function _createWidgetObject($widget, $variables = array(), $populate = true) {
+    private function _createWidgetObject($widget, $variables = array(), $populate = true, $populateLists = false) {
         $widgetObject = WidgetFactory::createWidget($widget, $variables);
         //set the id if we have it otherwise it will be random
         if ( isset($widget['_id']) )
         {
             $widgetObject->setId(new MongoId($widget['_id']));
         }
-
-        $clients = $this->getClientListForUser();
 
         //populate the options available for this client on this widget
         $options = $widgetObject->getOptions();
@@ -723,8 +720,8 @@ class DashboardsController extends AppController
                 $widgetObject = $this->_populateOptions($options, $optionName, $widgetObject, $mongoPipeLine);
             }
 
-            //dont populate list widgets they will make their own call to search controller
-            if (!($widgetObject instanceof ListWidget))
+            //dont populate list widgets they will make their own call to search controller (unless this is for a report export)
+            if (!($widgetObject instanceof ListWidget) || $populateLists)
             {
                 $this->_populateSeries($widgetObject, $mongoPipeLine);
             }
