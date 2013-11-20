@@ -25,7 +25,6 @@ class Log extends AppModel
         'client_id'         => array('type' => 'string', 'length'=>24, 'mongoType'=>'mongoId'),
         'hrid'              => array('type' => 'integer'),
         'deleted'       => array('type' => 'boolean'),
-        'hidden'        => array('type', 'boolean'),
         'fields'        => array('type' => 'subCollection',
             'schema'=> array(
                 'field_id'      => array('type' => 'string', 'length'=>24, 'mongoType'=>'mongoId'),
@@ -340,7 +339,6 @@ class Log extends AppModel
                 'fields' => array('$push' => '$fields'),
                 'attributes' => array('$first' => '$attributes'),
                 'deleted' => array('$first' => '$deleted'),
-                'hidden' => array('$first' => '$hidden'),
             );
 
 

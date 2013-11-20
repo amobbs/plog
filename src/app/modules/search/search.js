@@ -138,7 +138,7 @@ angular.module( 'Preslog.search', [
                         {
                             return;
                         }
-                        
+
                         $scope.results = result;
                         var params = angular.copy($scope.logWidgetParams);
 

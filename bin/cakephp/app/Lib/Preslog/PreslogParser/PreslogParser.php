@@ -168,27 +168,6 @@ class PreslogParser extends JqlParser {
             return $errors;
         }
 
-        if ($clause->getField() == 'hidden')
-        {
-            $allowed = array(
-                new EqualsOperator(),
-                new NotEqualsOperator(),
-            );
-
-            $allowedString = '';
-            if ( ! $this->operatorAllowed($operator, $allowed, $allowedString) )
-            {
-                $errors[] = "The operator " . $operator->getHumanReadable() . ' can not be used with the field "' . $clause->getField() . '". Operators allowed are ' . $allowedString;
-            }
-
-            if  (! ($clause->getValue() == true || $clause->getValue() == false || $clause->getValue() == 0 || $clause->getValue() == 1) )
-            {
-                $errors[] = 'The field "Hidden" can only have a true or false value';
-            }
-
-            return $errors;
-        }
-
         if ($clause->getField() == 'created' || $clause->getField() == 'modified' )
         {
 
@@ -356,13 +335,6 @@ class PreslogParser extends JqlParser {
                     ),
                 );
             }
-        }
-
-        if ($fieldName == 'hidden')
-        {
-            return array(
-                'hidden' => (bool)$value
-            );
         }
 
         //add the option to search for clients using 'client' field
