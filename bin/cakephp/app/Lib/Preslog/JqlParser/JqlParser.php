@@ -531,7 +531,7 @@ class JqlParser {
 
         foreach($expression as $operator => $clauses) {
             if (is_array($clauses) && sizeof($clauses) == 1){
-                $jql .= $this->_expressionToSql($clauses);
+                $jql .= $this->_expressionToJql($clauses);
             } else if (is_array($clauses)) {
                 $jql .= '(';
 
@@ -588,7 +588,7 @@ class JqlParser {
     private function _groupsOnlyInString($string) {
         $groupStartCount = 0;
         $quoteCount = 0;
-        for($i = 0; $i < sizeof($string); $i++)
+        for($i = 0; $i < strlen($string); $i++)
         {
             $char = substr($string, $i, 1);
             if ($char == '"')
