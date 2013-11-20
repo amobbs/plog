@@ -251,11 +251,17 @@ angular.module( 'Preslog.dashboard', [
 
             for(var id in $scope.dashboard.widgets)
             {
-                if ($scope.dashboard.widgets[id]._id == widgetId &&
-                    ($scope.dashboard.widgets[id].type !== 'date' && $scope.dashboard.widgets[id].type !== 'list'))
+                if ($scope.dashboard.widgets[id]._id == widgetId)
                 {
-                    $scope.dashboard.widgets[id].loading = true;
-                    break;
+                    if ($scope.dashboard.widgets[id].type !== 'date' && $scope.dashboard.widgets[id].type !== 'list')
+                    {
+                        $scope.dashboard.widgets[id].loading = true;
+                        break;
+                    }
+                    else if ($scope.dashboard.widgets[id].type == 'list')
+                    {
+                        $scope.dashboard.widgets[id].params.forceUpdate = true;
+                    }
                 }
             }
 
