@@ -112,12 +112,13 @@ angular.module( 'Preslog.dashboard', [
         $scope.name = '';
         $scope.addDashboard = undefined;
 
+        //get list of dashboards for navigation on left
         Restangular.one('dashboards').get().then(function(result) {
             $scope.allDashboards = result.dashboards;
             $scope.presetDashboards = result.preset;
         });
 
-
+        //update favourite list as it changes
         $scope.$watch(
             function() { return $scope.addDashboard; },
             function(id) {
@@ -128,44 +129,44 @@ angular.module( 'Preslog.dashboard', [
 
         //move the widgets around
         $scope.sortableOptions = {
-                placeholder: 'placeholder',
-                items: '.widget',
-                revert: 150,
-                tolerance: 'pointer',
-                handle: '.widget-handle',
-                cursorAt: {
-                    left: 10,
-                    top: 10
-                },
-                start: function(event, ui) {
-                    if (ui.item.hasClass('col3')) {
-                        ui.placeholder.css('width', '98%');
-                    }
-
-                    if (ui.item.hasClass('col2')) {
-                        ui.placeholder.css('width', '62%');
-                    }
-                },
-                change: function(event, ui) {
-                    ui.placeholder.before('\n').after('\n');
-                },
-                stop: function(event, ui) {
-                    ui.item.before('\n').after('\n');
-                },
-                update: function(event, ui) {
-                    var order = $(event.target).sortable("toArray");
-
-                    for(var i = 0; i < order.length; i++) {
-                       for(var w = 0; w < $scope.dashboard.widgets.length; w++) {
-                           if ($scope.dashboard.widgets[w]._id == order[i]) {
-                               $scope.dashboard.widgets[w].order = i;
-                           }
-                       }
-                    }
-
-                   source.post('', {'widgets': $scope.dashboard.widgets});
+            placeholder: 'placeholder',
+            items: '.widget',
+            revert: 150,
+            tolerance: 'pointer',
+            handle: '.widget-handle',
+            cursorAt: {
+                left: 10,
+                top: 10
+            },
+            start: function(event, ui) {
+                if (ui.item.hasClass('col3')) {
+                    ui.placeholder.css('width', '98%');
                 }
-            };
+
+                if (ui.item.hasClass('col2')) {
+                    ui.placeholder.css('width', '62%');
+                }
+            },
+            change: function(event, ui) {
+                ui.placeholder.before('\n').after('\n');
+            },
+            stop: function(event, ui) {
+                ui.item.before('\n').after('\n');
+            },
+            update: function(event, ui) {
+                var order = $(event.target).sortable("toArray");
+
+                for(var i = 0; i < order.length; i++) {
+                   for(var w = 0; w < $scope.dashboard.widgets.length; w++) {
+                       if ($scope.dashboard.widgets[w]._id == order[i]) {
+                           $scope.dashboard.widgets[w].order = i;
+                       }
+                   }
+                }
+
+               source.post('', {'widgets': $scope.dashboard.widgets});
+            }
+        };
 
         if ($scope.dashboard.preset)
         {
@@ -251,7 +252,7 @@ angular.module( 'Preslog.dashboard', [
             for(var id in $scope.dashboard.widgets)
             {
                 if ($scope.dashboard.widgets[id]._id == widgetId &&
-                    $scope.dashboard.widgets[id].type !== 'date')
+                    ($scope.dashboard.widgets[id].type !== 'date' && $scope.dashboard.widgets[id].type !== 'list'))
                 {
                     $scope.dashboard.widgets[id].loading = true;
                     break;
@@ -271,18 +272,18 @@ angular.module( 'Preslog.dashboard', [
                         for(var wId in $scope.dashboard.widgets) {
                             var widget = $scope.dashboard.widgets[wId];
                             if (widget._id == widgetId) {
-                                //make sure params are updated for lost lists.
-                                if (widget.type == 'list') {
-                                    $scope.updateLogList(widget);
-                                }
                                 //specific to dateWidget, we want to be able to change the period without affecting the default.
-                                else if (widget.type == 'date')
+                                if (widget.type == 'date')
                                 {
                                     $scope.dashboard.session = {
                                         start: new Date(result.widget.details.start),
                                         end: new Date(result.widget.details.end),
                                         period: result.widget.details.period
                                     };
+                                }
+                                else if (widget.type == 'list' && $scope.dashboard.widgets[wId].params)
+                                {
+                                    $scope.dashboard.widgets[wId].params.forceUpdate = true;
                                 }
                                 else
                                 {
@@ -368,6 +369,10 @@ angular.module( 'Preslog.dashboard', [
                     .post('widgets', {'widget': data})
                     .then(function(data) {
                         $scope.dashboard.widgets.push(data.widget);
+                        if (data.widget.type == 'list')
+                        {
+                            $scope.setUpLogList(data.widget._id);
+                        }
                         $scope.openEditWidgetModal(data.widget);
                     });
             });
@@ -390,7 +395,10 @@ angular.module( 'Preslog.dashboard', [
                     .then(function(result) {
                         for(var index = 0; index < $scope.dashboard.widgets.length; index++) {
                             if ($scope.dashboard.widgets[index]._id == result.widget._id) {
-                                $scope.dashboard.widgets[index] = result.widget;
+                                if (result.widget.type !== 'list')
+                                {
+                                    $scope.dashboard.widgets[index] = result.widget;
+                                }
 
                                 //specific to dateWidget, we want to be able to change the period without affecting the default.
                                 if (result.widget.type == 'date')
@@ -491,13 +499,11 @@ angular.module( 'Preslog.dashboard', [
             return found;
         };
 
-
-
         //setup the properties needed to get the log list widget working.
         $scope.setUpLogList = function(widgetId) {
 
             for(var w in $scope.dashboard.widgets) {
-                if (widgetId && $scope.dashboard.widgets[widgetId] !== widgetId)
+                if (widgetId && $scope.dashboard.widgets[w]._id !== widgetId)
                 {
                     continue;
                 }
@@ -520,26 +526,10 @@ angular.module( 'Preslog.dashboard', [
                     orderDirection: 'Desc',
                     query: widget.details.query,
                     logs: widget.display,
-                    lastUpdated: new Date()
+                    forceUpdate: false
                 };
                 $scope.dashboard.widgets[w] = widget;
             }
-
-            //i had some issues adding the watch inside the loop, so just watch all widgets and re-update
-            // log list on any widget changes (not ideal)
-            $scope.$watch(
-                'dashboard.widgets',
-                function() {
-                    for(var id in $scope.dashboard.widgets) {
-                        var widget = $scope.dashboard.widgets[id];
-                        if (widget.type == 'list')
-                        {
-                            $scope.updateLogList(widget);
-                        }
-                    }
-                },
-                true
-            );
         };
 
         $scope.updatingWidgets = [];
@@ -566,78 +556,6 @@ angular.module( 'Preslog.dashboard', [
                 }
             }, 500);
 
-        };
-
-        //log list widget needs some different logic to display
-        $scope.updateLogList = function(widget) {
-            params = widget.params;
-            if (!params) {
-                $scope.setUpLogList(widget.id);
-                return;
-            }
-
-            var offset = ((params.page - 1) * params.perPage);
-            if (params.page === 1) {
-                offset = 0;
-            }
-
-            if ( ! $scope.isWidgetUpdating(widget._id) )
-            {
-                $scope.updatingWidgets.push(widget._id);
-                widget.loading = true;
-
-                var getRequest = {
-                    query: params.query,
-                    limit: params.perPage,
-                    start: offset,
-                    order: params.order,
-                    orderasc: params.orderDirection == 'Asc',
-                    widgetid: widget._id
-                };
-
-                if ($scope.dashboard.session && $scope.dashboard.session.start && $scope.dashboard.session.end)
-                {
-                    var startDate = new Date($scope.dashboard.session.start).getTime();
-                    startDate = parseInt( startDate / 1000, 10); //remove milliseconds for php
-                    var endDate = new Date($scope.dashboard.session.end).getTime();
-                    endDate = parseInt( endDate / 1000, 10);
-
-
-                    getRequest.variableStart = startDate;
-                    getRequest.variableEnd = endDate;
-
-                }
-
-
-                //request new list of logs
-                Restangular.one('search')
-                    .get(getRequest)
-                    .then(function(result) {
-                        for(var id in $scope.dashboard.widgets)
-                        {
-                            if ($scope.dashboard.widgets[id]._id == result.widgetid)
-                            {
-                                $scope.results = result;
-                                $scope.dashboard.widgets[id].params.total = result.total;
-                                $scope.dashboard.widgets[id].params.logs = result.logs;
-                                $scope.dashboard.widgets[id].params.sorting = result.fields;
-
-                                $scope.finishedUpdating(result.widgetid);
-                                $scope.dashboard.widgets[id].loading = false;
-                            }
-                        }
-                    }
-                );
-
-                widget.details.perPage = params.perPage;
-                widget.details.orderBy = params.order;
-                widget.details.orderDirection = params.orderDirection == 'Asc';
-
-                //save changes to the widget
-                Restangular.one('dashboards', $scope.id)
-                    .one('widgets', widget._id)
-                    .post('',{'widget': widget});
-            }
         };
 
         //debounce only run once the user stop spamming
@@ -669,39 +587,21 @@ angular.module( 'Preslog.dashboard', [
                         period: widget.details.period
                     };
                 }
+
+                else if (widget.type == 'list')
+                {
+                    $scope.setUpLogList(widget._id);
+                }
             }
 
             //add watch to update widgets when date range changes
-            var init = true;
             $scope.$watch(
                 function() { return $scope.dashboard.session; },
                 function() {
-                    if (init)
-                    {
-                        $timeout(function() { init = false; });
-                    }
-                    else
-                    {
-                        $scope.refreshAllWidgets();
-                    }
+                    $scope.refreshAllWidgets();
                 },
                 true
             );
-
-            for (var i in $scope.dashboard.widgets)
-            {
-                var widgetObj = $scope.dashboard.widgets[i];
-
-                if ( widgetObj.type == 'list' )
-                {
-                    $scope.$watch(
-                        'dashboard.widgets[id].params',
-                         $scope.setUpLogList
-
-                    );
-                }
-
-            }
         };
         $scope.initWidgets();
 

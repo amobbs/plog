@@ -1,83 +1,92 @@
 <div>
-
-
-    <div ng-show="logs.length == 0" class="no_data">
-        <div ng-show="params.errors && params.errors.length > 0">
-            <div class="log_error" ng-repeat="error in params.errors">
-                - {{error}}
-            </div>
-        </div>
-        <div ng-show="!params.errors || params.errors.length === 0">
-            No Logs Found
-        </div>
-    </div>
-
-    <div ng-show="logs.length > 0">
-
-        <div class="row-fluid control-row">
-            <div class="span4">
-                <p>Showing <strong>{{ showing }}</strong> of <strong>{{ params.total }}</strong> logs</p>
-            </div>
-            <div class="span4 control-pagination">
-                <div class="pagination pagination-centered">
-                    <ul>
-                        <li ng-class="{'disabled': params.page === 1}"><a ng-click="params.page = 1">&laquo;</a></li>
-                        <li ng-repeat="page in pages" ng-class="{'disabled': !page.enabled}"><a ng-click="params.page = page.number">{{ page.display }}</a></li>
-                        <li ng-class="{'disabled': params.page === totalPages}"><a ng-click="params.page = totalPages">&raquo;</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="span4 text-right">
-                <div class="control-group control-horizontal">
-                    <label class="control-label">Order By</label>
-                    <select
-                            class="input-medium"
-                            ng-model="params.order"
-                            ng-options="value for value in params.sorting"
-                    ></select>
-                    <select
-                        class="input-small"
-                        ng-model="params.orderDirection"
-                        ng-options="value for value in orderDirections"
-                    ></select>
-                    <button class="btn" ng-click="exportXLS(params.query, params.order, params.orderDirection, $parent.dashboard)"><i class="icon icon-download-alt"></i> Export to XLS</button>
-                </div>
-            </div>
-        </div>
-
-        <table class="table table-condensed log-list">
-            <tbody ng-repeat="log in logs" ng-click="redirectToLog(log.id)">
-                    <tr ng-repeat="row in log.rows">
-                        <td ng-repeat="attribute in row">
-                            <div popover-trigger="mouseenter" popover-title="{{ attribute.title }}" popover="{{ attribute.value }}" class="ng-scope">
-                                <label>{{ attribute.title }}</label><div class="truncate">{{ attribute.value }}</div>
-                            </div>
-                        </td>
-                    </tr>
-            </tbody>
-        </table>
-
-        <div class="row-fluid control-row">
-            <div class="span4"></div>
-            <div class="span4 control-pagination">
-                <div class="pagination pagination-centered">
-                    <ul>
-                        <li ng-class="{'disabled': params.page === 1}"><a ng-click="params.page = 1">&laquo;</a></li>
-                        <li ng-repeat="page in pages" ng-class="{'disabled': !page.enabled}"><a ng-click="params.page = page.number">{{ page.display }}</a></li>
-                        <li ng-class="{'disabled': params.page === totalPages}"><a ng-click="params.page = totalPages">&raquo;</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="span4 text-right">
-                Per Page:
-                <button type="button"
-                        class="btn btn-mini"
-                        ng-show="params.perPageOptions.length > 0"
-                        ng-repeat="pp in params.perPageOptions"
-                        ng-click="params.perPage = pp; params.page = 1;"
-                        ng-class="{'disabled': params.perPage === pp}">{{ pp }}</button>
+    <div ng-show="logsLoading" ng-animate="'fade'">
+        <div class="loading-widget">
+            <div class="loading-block">
+                <img src="/assets/img/layout/ajax-loader-widget.gif" width="64" height="64" alt="Loading..." />
+                <br/>
+                <span>Loading...</span>
             </div>
         </div>
     </div>
 
+    <div ng-hide="logsLoading">
+        <div ng-show="logs.length == 0" class="no_data">
+            <div ng-show="params.errors && params.errors.length > 0">
+                <div class="log_error" ng-repeat="error in params.errors">
+                    - {{error}}
+                </div>
+            </div>
+            <div ng-show="(!params.errors || params.errors.length === 0) && !firstRequest">
+                No Logs Found
+            </div>
+        </div>
+
+        <div ng-show="logs.length > 0">
+
+            <div class="row-fluid control-row">
+                <div class="span4">
+                    <p>Showing <strong>{{ showing }}</strong> of <strong>{{ params.total }}</strong> logs</p>
+                </div>
+                <div class="span4 control-pagination">
+                    <div class="pagination pagination-centered">
+                        <ul>
+                            <li ng-class="{'disabled': params.page === 1}"><a ng-click="params.page = 1">&laquo;</a></li>
+                            <li ng-repeat="page in pages" ng-class="{'disabled': !page.enabled}"><a ng-click="params.page = page.number">{{ page.display }}</a></li>
+                            <li ng-class="{'disabled': params.page === totalPages}"><a ng-click="params.page = totalPages">&raquo;</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="span4 text-right">
+                    <div class="control-group control-horizontal">
+                        <label class="control-label">Order By</label>
+                        <select
+                                class="input-medium"
+                                ng-model="params.order"
+                                ng-options="value for value in params.sorting"
+                        ></select>
+                        <select
+                            class="input-small"
+                            ng-model="params.orderDirection"
+                            ng-options="value for value in orderDirections"
+                        ></select>
+                        <button class="btn" ng-click="exportXLS(params.query, params.order, params.orderDirection, $parent.dashboard)"><i class="icon icon-download-alt"></i> Export to XLS</button>
+                    </div>
+                </div>
+            </div>
+
+            <table class="table table-condensed log-list">
+                <tbody ng-repeat="log in logs" ng-click="redirectToLog(log.id)">
+                        <tr ng-repeat="row in log.rows">
+                            <td ng-repeat="attribute in row">
+                                <div popover-trigger="mouseenter" popover-title="{{ attribute.title }}" popover="{{ attribute.value }}" class="ng-scope">
+                                    <label>{{ attribute.title }}</label><div class="truncate">{{ attribute.value }}</div>
+                                </div>
+                            </td>
+                        </tr>
+                </tbody>
+            </table>
+
+            <div class="row-fluid control-row">
+                <div class="span4"></div>
+                <div class="span4 control-pagination">
+                    <div class="pagination pagination-centered">
+                        <ul>
+                            <li ng-class="{'disabled': params.page === 1}"><a ng-click="params.page = 1">&laquo;</a></li>
+                            <li ng-repeat="page in pages" ng-class="{'disabled': !page.enabled}"><a ng-click="params.page = page.number">{{ page.display }}</a></li>
+                            <li ng-class="{'disabled': params.page === totalPages}"><a ng-click="params.page = totalPages">&raquo;</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="span4 text-right">
+                    Per Page:
+                    <button type="button"
+                            class="btn btn-mini"
+                            ng-show="params.perPageOptions.length > 0"
+                            ng-repeat="pp in params.perPageOptions"
+                            ng-click="params.perPage = pp; params.page = 1;"
+                            ng-class="{'disabled': params.perPage === pp}">{{ pp }}</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

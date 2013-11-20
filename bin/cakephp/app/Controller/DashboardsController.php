@@ -262,9 +262,9 @@ class DashboardsController extends AppController
     }
 
     /*
-     * given a dashboard that has just come out from the database replace all the widgets with widget objects
+     * given a dashboard that has just come out from the database replace all the widgets with kust widget ids
      */
-    private function _getParsedDashboard($dashboard, $populateLogSeries = true) {
+    private function _getParsedDashboard($dashboard, $populate = true) {
         $widgets = array();
 
         if (isset($dashboard['widgets'])) {
@@ -273,10 +273,6 @@ class DashboardsController extends AppController
             $endDate = null;
             foreach($dashboard['widgets'] as $widget)
             {
-                if ($widget instanceof Widget)
-                {
-                    echo "hey"; //TODO remove!!!!
-                }
                 if ($widget['type'] == 'date' && isset($widget['details']['start']) && isset($widget['details']['end']))
                 {
                     $startDate = $widget['details']['start'];
@@ -297,7 +293,7 @@ class DashboardsController extends AppController
                         $variables['end'] = $endDate;
                     }
 
-                    $widgetObject = $this->_createWidgetObject($widget, $variables, $populateLogSeries);
+                    $widgetObject = $this->_createWidgetObject($widget, $variables, $populate);
                     if (! ($widgetObject instanceof Widget))
                     {
                         throw new Exception($widgetObject['errors'][0]);
@@ -704,7 +700,7 @@ class DashboardsController extends AppController
     /*
      * Create an instance of Preslog\Widget and populate it with data passed in
      */
-    private function _createWidgetObject($widget, $variables = array(), $populateLogSeries = true) {
+    private function _createWidgetObject($widget, $variables = array(), $populate = true) {
         $widgetObject = WidgetFactory::createWidget($widget, $variables);
         //set the id if we have it otherwise it will be random
         if ( isset($widget['_id']) )
@@ -721,14 +717,17 @@ class DashboardsController extends AppController
         $mongoPipeLine = array();
 
         //populate any options that are available
-        foreach($options as $optionName => $value) {
-            $widgetObject = $this->_populateOptions($options, $optionName, $widgetObject, $mongoPipeLine);
-        }
-
-        //dont populate data for list widget, the widget will send its own request to the search controller
-        if (!($widgetObject instanceof ListWidget) )
+        if ( $populate )
         {
-            $this->_populateSeries($widgetObject, $mongoPipeLine);
+            foreach($options as $optionName => $value) {
+                $widgetObject = $this->_populateOptions($options, $optionName, $widgetObject, $mongoPipeLine);
+            }
+
+            //dont populate list widgets they will make their own call to search controller
+            if (!($widgetObject instanceof ListWidget))
+            {
+                $this->_populateSeries($widgetObject, $mongoPipeLine);
+            }
         }
 
         return $widgetObject;

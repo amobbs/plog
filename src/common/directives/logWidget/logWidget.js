@@ -4,7 +4,7 @@
  */
 
 angular.module('logWidget', [])
-    .directive('logWidget', [function () {
+    .directive('logWidget', ['Restangular', function (Restangular) {
 
         /**
          * Establish Directive
@@ -16,7 +16,8 @@ angular.module('logWidget', [])
             templateUrl: 'modules/dashboard/widgets/logList/logWidget.tpl.html',
             scope: {
                 params: '=',
-                logData: '='
+                logData: '=',
+                session: '='
             },
             link: function( scope, element, attrs, ctrl ) {
                 scope.total = 0; //total number of logs
@@ -27,6 +28,8 @@ angular.module('logWidget', [])
                 scope.showing = 0; //how many logs are currently showing (may differ from prePage)
 
                 scope.orderDirections = ['Asc', 'Desc'];
+
+                scope.logsLoading = false; //flag to display loading widget or not
 
                 //download a xls version of this dashboard
                 scope.exportXLS = function(query, orderBy, asc, dashboard) {
@@ -58,9 +61,68 @@ angular.module('logWidget', [])
                 };
 
                 //if any params change get new logs
+                var init = true;
                 scope.$watch(function() { return scope.params; }, function() {
-                    scope.getLogs();
+                    if (init || !scope.params)
+                    {
+                        init = false;
+                    }
+                    else
+                    {
+                        init = false;
+                        scope.params.forceUpdate = false;
+                        scope.requestLogsFromServer();
+                    }
                 }, true);
+
+
+                scope.firstRequest = true; //used to change display on search page so that we do not say no logs found when they have not seachred yet
+                scope.search = false;
+                scope.requestLogsFromServer = function()
+                {
+                    if (scope.search)
+                    {
+                        return;
+                    }
+                    scope.search = true;
+
+                    var getRequest = {
+                        query: scope.params.query,
+                        limit: scope.params.perPage,
+                        start: scope.params.offset,
+                        order: scope.params.order,
+                        orderasc: scope.params.orderDirection == 'Asc'
+                    };
+
+                    if (scope.session && scope.session.start && scope.session.end)
+                    {
+                        var startDate = new Date(scope.session.start).getTime();
+                        startDate = parseInt( startDate / 1000, 10); //remove milliseconds for php
+                        var endDate = new Date(scope.session.end).getTime();
+                        endDate = parseInt( endDate / 1000, 10);
+
+
+                        getRequest.variableStart = startDate;
+                        getRequest.variableEnd = endDate;
+
+                    }
+
+                    scope.logsLoading = true;
+                    scope.firstRequest = false;
+
+                    Restangular.one('search')
+                        .get(getRequest)
+                        .then(function(result) {
+                            scope.params.logs = result.logs;
+                            scope.params.total = result.total;
+                            scope.params.sorting = result.fields;
+
+                            scope.getLogs();
+                            scope.logsLoading = false;
+                            setTimeout(function() { scope.search = false; }, 1000 );
+                        }
+                    );
+                };
 
                 //logs have been updated in params so display them
                 scope.getLogs = function() {

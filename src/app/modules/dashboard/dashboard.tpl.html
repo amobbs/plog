@@ -85,9 +85,11 @@
                             </div>
 
                             <div ng-hide="widget.loading" ng-switch="widget.type">
-                                <date-widget ng-switch-when="date" session="dashboard.session"></date-widget>
-                                <log-widget ng-switch-when="list" params="widget.params"></log-widget>
-                                <chart ng-switch-default value="widget.display" type="widget.chartType" height="400"></chart>
+                                <div ng-switch="widget.type">
+                                    <date-widget ng-switch-when="date" session="dashboard.session"></date-widget>
+                                    <log-widget ng-switch-when="list" params="widget.params" session="dashboard.session"></log-widget>
+                                    <chart ng-switch-default value="widget.display" type="widget.chartType" height="400"></chart>
+                                </div>
                             </div>
                         </div>
                     </div>
