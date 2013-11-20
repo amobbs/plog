@@ -401,10 +401,15 @@ angular.module( 'Preslog.dashboard', [
                     .then(function(result) {
                         for(var index = 0; index < $scope.dashboard.widgets.length; index++) {
                             if ($scope.dashboard.widgets[index]._id == result.widget._id) {
-                                if (result.widget.type !== 'list')
+                                if (result.widget.type == 'list')
+                                {
+                                    $scope.updateLogList(result.widget);
+                                }
+                                else
                                 {
                                     $scope.dashboard.widgets[index] = result.widget;
                                 }
+
 
                                 //specific to dateWidget, we want to be able to change the period without affecting the default.
                                 if (result.widget.type == 'date')
@@ -535,6 +540,31 @@ angular.module( 'Preslog.dashboard', [
                     forceUpdate: false
                 };
                 $scope.dashboard.widgets[w] = widget;
+                break;
+            }
+        };
+
+        $scope.updateLogList = function(widget)
+        {
+            for (var wId in $scope.dashboard.widgets)
+            {
+                if ($scope.dashboard.widgets[wId]._id == widget._id)
+                {
+                    var workingWidget = $scope.dashboard.widgets[wId];
+
+                    workingWidget.params = {
+                        page: 1,
+                        total: 0,
+                        perPageOptions: [3, 5, 10, 25],
+                        perPage: widget.details.perPage,
+                        sorting: [],
+                        order: 'Created',
+                        orderDirection: 'Desc',
+                        query: widget.details.query,
+                        logs: widget.display,
+                        forceUpdate: false
+                    };
+                }
             }
         };
 
