@@ -21,19 +21,26 @@ angular.module('Preslog.dashboard.widgetModal', [])
                 return;
             }
 
-            Restangular.one('search/validate')
-                .get({'query': $scope.widget.details.query})
-                .then(function (result) {
-                    if (result.ok)
-                    {
-                        $modalInstance.close($scope.widget);
-                    }
-                    else
-                    {
-                       $scope.queryValid = false;
-                       $scope.queryErrors = result.errors;
-                    }
-                });
+            if ($scope.widget.type !== 'date')
+            {
+                Restangular.one('search/validate')
+                    .get({'query': $scope.widget.details.query})
+                    .then(function (result) {
+                        if (result.ok)
+                        {
+                            $modalInstance.close($scope.widget);
+                        }
+                        else
+                        {
+                           $scope.queryValid = false;
+                           $scope.queryErrors = result.errors;
+                        }
+                    });
+            }
+            else
+            {
+                $modalInstance.close($scope.widget);
+            }
         };
 
         $scope.cancel = function() {

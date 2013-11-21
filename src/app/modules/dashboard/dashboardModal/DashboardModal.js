@@ -20,7 +20,7 @@ angular.module('Preslog.dashboard.dashboardModal', [])
             var returnShares = [];
             for (var key in $scope.share) {
                 if (key === 'length' || !$scope.share.hasOwnProperty(key)) continue;
-                else if ($scope.share[key])
+                else if ($scope.share[key] && key.length == 24 )
                 {
                     returnShares.push(key);
                 }
