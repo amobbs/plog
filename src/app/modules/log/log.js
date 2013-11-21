@@ -165,7 +165,12 @@ angular.module( 'Preslog.log', [
                     label: group.label,
                     children: []
                 };
-                attr.children = $scope.attributesDisplay(group.children);
+
+                if (group.children !== undefined)
+                {
+                    attr.children = $scope.attributesDisplay(group.children);
+                }
+
                 $scope.displayAttributes.push(attr);
             }
         };

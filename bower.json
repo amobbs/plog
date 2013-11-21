@@ -4,6 +4,7 @@
     "devDependencies": {
         "jquery": "~1.10.2",
         "jquery-ui": "~1.10.3",
+        "json3": "latest",
         "angular-unstable": "~1.1.5",
         "angular-mocks-unstable": "~1.1.5",
         "angular-resource-unstable": "~1.1.5",
