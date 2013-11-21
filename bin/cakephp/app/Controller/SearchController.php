@@ -389,6 +389,12 @@ class SearchController extends AppController
             // Track all field names
             foreach ($fields as $key=>$value)
             {
+                //skip create/modified by. it wasn't specifically in the spec and we have not hard coded it into the jql parser. this will remove it from the sort by drop down.
+                if ($key == 'Created By' || $key == 'Modified By')
+                {
+                    continue;
+                }
+
                 // Track field names
                 $allFieldNames[$key] = true;
 
