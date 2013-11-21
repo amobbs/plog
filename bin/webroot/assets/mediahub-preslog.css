@@ -9293,11 +9293,6 @@ div.loading-screen .loading-block span {
   border-top: 0px none;
 }
 
-.modal {
-  width: 70%;
-  margin-left: -35%;
-}
-
 .icon.help {
   margin-top: 5px;
   font-size: 16px;
@@ -9315,6 +9310,17 @@ div.loading-screen .loading-block span {
 
 .help-docs h2 {
   border-bottom: 1px solid #444;
+}
+
+/**
+ * Modals
+ */
+
+@media (min-width: 767px) {
+  .modal {
+    width: 70%;
+    margin-left: -35%;
+  }
 }
 
 /**
@@ -10062,6 +10068,10 @@ table.rqbComparison table {
   #preslog_log_entry {
     min-width: 0px;
     padding-top: 0px;
+  }
+  #preslog_log_entry .hierarchy-fields .row-fluid .span6 {
+    width: 100% !important;
+    margin: 0px !important;
   }
 }
 
