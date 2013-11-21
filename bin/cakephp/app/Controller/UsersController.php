@@ -516,7 +516,7 @@ class UsersController extends AppController
         $options['clients'] = $this->Client->getClientsAsOptions();
 
         // Get all clients and attributes
-        $options['notifications'] = $this->Client->getNotificationsList( $userId );
+        $options['notifications'] = $this->Client->getNotificationsList( $userId, $this );
 
         // Output
         $this->set($options);

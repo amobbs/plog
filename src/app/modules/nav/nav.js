@@ -18,6 +18,9 @@ angular.module( 'Preslog.nav', [])
          * Init
          */
 
+        // nav Collapse
+        $scope.navCollapsed = true;
+
         // Fetch user
         userService.getUser().then(function(user)
         {

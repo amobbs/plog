@@ -37,25 +37,10 @@ table.log-list
             border-bottom: @log-list-outer-border;
             border-right: @log-list-outer-border;
 
-            &:first-child
-            {
-                border-top: @log-list-outer-border;
-                td
-                {
-                    border-top :0px;
-                }
-            }
-
             td
             {
                 // Always a link
                 cursor: pointer;
-
-                // Outer border
-                &:first-child
-                {
-                    border-left: @log-list-outer-border;
-                }
 
                 // Inner borders
                 border-top: @log-list-inner-border;
@@ -105,7 +90,9 @@ table.log-list
   vertical-align: middle;
 }
 
-@media only screen and (max-width: 979px)
+
+
+@media (min-width: 979px)
 {
     .log-list
     {
@@ -113,24 +100,54 @@ table.log-list
         {
             tr
             {
+                &:first-child
+                {
+                    border-top: @log-list-outer-border;
+                    td
+                    {
+                        border-top :0px;
+                    }
+                }
+
+                td
+                {
+                    // Outer border
+                    &:first-child
+                    {
+                        border-left: @log-list-outer-border;
+                    }
+                }
+
+            }
+        }
+    }
+}
+
+@media (max-width: 979px)
+{
+    .log-list
+    {
+        tbody
+        {
+
+            tr
+            {
                 display: block;
                 .clearfix;      // Solve issue with floating labels
 
                 // Borders
                 border: none 0px;
+                border-left: @log-list-outer-border;
+                border-right: @log-list-outer-border;
 
                 td
                 {
                     border-top: @log-list-inner-border;
-                    border-left: @log-list-outer-border;
-                    border-right: @log-list-outer-border;
                 }
 
                 // First element border
                 &:first-child
                 {
-                    border: none 0px;
-
                     td:first-child
                     {
                         border-top: @log-list-outer-border;

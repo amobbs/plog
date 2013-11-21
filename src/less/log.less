@@ -188,3 +188,41 @@
       border: none;
     }
 }
+
+
+
+/**
+ * Mobile Compatibility Views
+ */
+
+@media (max-width: 979px)
+{
+    #preslog_log_entry
+    {
+        padding-top: 0px;
+        min-width: 0px;
+    }
+}
+
+@media (max-width: 768px)
+{
+    #preslog_log_entry
+    {
+        .form-horizontal
+        {
+            .control-label
+            {
+                float: none;
+                width: 100%         !important;
+                text-align: left    !important;
+            }
+            .controls, .controls-date
+            {
+                float: none;
+                width: 100%         !important;
+                margin-left: 0px    !important;
+            }
+        }
+    }
+
+}

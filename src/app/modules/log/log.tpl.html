@@ -2,25 +2,17 @@
     <nav class="navbar navbar-fixed-top" id="preslog_sub_nav">
         <div class="navbar-inner">
             <div class="container-fluid">
-                <a class="btn btn-navbar" data-toggle="collapse" data-target=".navbar-responsive-collapse">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </a>
-
                 <h2 ng-show="{{log.hrid != undefined}}">Log - {{ log.hrid }}</h2>
                 <h2 ng-show="{{!log.hrid}}">Create Log</h2>
 
-                <div class="nav-collapse collapse navbar-responsive-collapse">
-                    <ul class="nav pull-right">
-                        <li>
-                            <button class="btn btn-success"
-                                    type="submit"
-                                    ng-disabled="logForm.$invalid"
-                                    ><i class="icon icon-ok"></i> Save Changes</button>
-                        </li>
-                    </ul>
-                </div><!-- /.nav-collapse -->
+                <ul class="nav pull-right">
+                    <li>
+                        <button class="btn btn-success"
+                                type="submit"
+                                ng-disabled="logForm.$invalid"
+                                ><i class="icon icon-ok"></i> Save Changes</button>
+                    </li>
+                </ul>
             </div>
         </div><!-- /navbar-inner -->
     </nav>
@@ -47,7 +39,7 @@
                 <div log-fields data="log.fields" fields="options.fields"></div>
 
                 <!-- Controls -->
-                <div class="row-fluid">
+                <div class="row-fluid hidden-phone hidden-tablet">
                     <div class="offset2 span10 text-center">
                         <br/>
                         <button class="btn btn-success"

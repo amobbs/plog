@@ -2,6 +2,28 @@
  * Nav Styles
  */
 
+@navbarCollapseWidth: 1024px;
+
+
+/**
+ * Collapse nav
+ */
+@media(max-width: @navbarCollapseWidth)
+{
+    .navbar-fixed-top {
+        margin-bottom: 0px;
+    }
+
+    #main_layout
+    {
+        padding-top: 0px;
+    }
+}
+
+
+/**
+ * Generical Nav
+ */
 
 #preslog_nav
 {

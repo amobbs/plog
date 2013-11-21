@@ -24,19 +24,10 @@
         <div ng-show="logs.length > 0">
 
             <div class="row-fluid control-row">
-                <div class="span4">
+                <div class="span4 loglist-pages">
                     <p>Showing <strong>{{ showing }}</strong> of <strong>{{ params.total }}</strong> logs</p>
                 </div>
-                <div class="span4 control-pagination">
-                    <div class="pagination pagination-centered">
-                        <ul>
-                            <li ng-class="{'disabled': params.page === 1}"><a ng-click="params.page = 1">&laquo;</a></li>
-                            <li ng-repeat="page in pages" ng-class="{'disabled': !page.enabled}"><a ng-click="params.page = page.number">{{ page.display }}</a></li>
-                            <li ng-class="{'disabled': params.page === totalPages}"><a ng-click="params.page = totalPages">&raquo;</a></li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="span4 text-right">
+                <div class="span8 text-right loglist-controls">
                     <div class="control-group control-horizontal">
                         <label class="control-label">Order By</label>
                         <select
@@ -49,7 +40,18 @@
                             ng-model="params.orderDirection"
                             ng-options="value for value in orderDirections"
                         ></select>
-                        <button class="btn" ng-click="exportXLS(params.query, params.order, params.orderDirection, $parent.dashboard)"><i class="icon icon-download-alt"></i> Export to XLS</button>
+                        <button class="btn hidden-phone hidden-tablet" ng-click="exportXLS(params.query, params.order, params.orderDirection, $parent.dashboard)"><i class="icon icon-download-alt"></i> Export to XLS</button>
+                    </div>
+                </div>
+            </div>
+            <div class="row-fluid">
+                <div class="span12 control-pagination loglist-pagination">
+                    <div class="pagination pagination-centered">
+                        <ul>
+                            <li ng-class="{'disabled': params.page === 1}"><a ng-click="params.page = 1">&laquo;</a></li>
+                            <li ng-repeat="page in pages" ng-class="{'disabled': !page.enabled}"><a ng-click="params.page = page.number">{{ page.display }}</a></li>
+                            <li ng-class="{'disabled': params.page === totalPages}"><a ng-click="params.page = totalPages">&raquo;</a></li>
+                        </ul>
                     </div>
                 </div>
             </div>

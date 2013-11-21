@@ -320,10 +320,10 @@ class Client extends AppModel
      * Fetch the notifications for clients
      * If UserID is specified
      * @param       string      UserId
-     * @param       object      Authable object
+     * @param       Controller  Authable object
      * @return      array       Notification structure
      */
-    public function getNotificationsList( $userId=null, $authObject=null )
+    public function getNotificationsList( $userId, $authObject )
     {
         $this->User = ClassRegistry::init('User');
 
