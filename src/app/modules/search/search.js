@@ -187,7 +187,24 @@ angular.module( 'Preslog.search', [
             if ($scope.sql === "") {
                 return;
             }
-            Restangular.one('search/wizard/translate').get({sql : $scope.sql, args : JSON.stringify($scope.args)}).then(function(data) {
+
+            var parsedArgs = [];
+            var getClassOf = Function.prototype.call.bind(Object.prototype.toString);
+            for(var i = 0; i < $scope.args.length; i++)
+            {
+                if (getClassOf($scope.args[i]) == '[object Date]')
+                {
+                    var date = $scope.args[i];
+                    var dateString = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
+                    parsedArgs.push(dateString);
+                }
+                else
+                {
+                    parsedArgs.push($scope.args[i]);
+                }
+            }
+
+            Restangular.one('search/wizard/translate').get({sql : $scope.sql, args : JSON.stringify(parsedArgs)}).then(function(data) {
                 if (data) {
                     $scope.jql = data.jql;
                     $scope.args = data.args;
@@ -230,7 +247,14 @@ angular.module( 'Preslog.search', [
                         $scope.logWidgetParams.errors = [];
 
                         $scope.sql = data.sql;
-                        $scope.args = data.args;
+                        $scope.args = {};
+
+                        //red query builder requires an object passed in not an array
+                        for (var i = 0; i < data.args.length; i++)
+                        {
+                            $scope.args[i] = data.args[i];
+                        }
+
                         $scope.queryMeta = data.fieldList;
                         $scope.selectOptions = data.selectOptions;
 

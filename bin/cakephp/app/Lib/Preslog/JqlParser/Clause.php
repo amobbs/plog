@@ -44,6 +44,14 @@ class Clause {
     public function getFunctionEvaluatedForMongo() {
         //convert dates to mongo date
         if (strtotime($this->_value)) {
+            //mediahub have insisted on using a non existent date format D/M/Y, convert that into a real format
+            if (strpos($this->_value, '/') > 0)
+            {
+                $parts = explode('/', $this->_value);
+                $this->_value = $parts[2] . '-' . $parts[1] . '-' . $parts[0];
+            }
+
+
             return new MongoDate(strtotime($this->_value));
         }
 
