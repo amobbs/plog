@@ -142,7 +142,7 @@ class Log extends AppModel
             $sourceLog->fromArray($sourceLogData[ $this->name ]);
 
             // Perform overwrite of readonly fields
-            $sourceLog->overwiteWithChanges( $log );
+            $sourceLog->overwriteWithChanges( $log );
 
             // Swap entities. We're done with the original.
             $log = $sourceLog;

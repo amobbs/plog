@@ -1,4 +1,4 @@
-<div class="container-fluid" id="preslog_admin_users_index">
+<div class="container-fluid" id="preslog_admin_clients_index">
     <div class="row-fluid">
         <div class="span8">
             <h1>Client Administration</h1>
@@ -27,7 +27,7 @@
         <div class="span12">
             <table ng-table="tableParams" show-filter="true" class="table table-bordered table-condensed">
                 <tr ng-repeat="client in clients">
-                    <td data-title="'Logo'">
+                    <td data-title="'Logo'" class="logo">
                         <img src="{{client.logo}}" style="width:68px; height:20px;" alt="{{ client.name }}" />
                     </td>
                     <td data-title="'Client'" sortable="name" filter="{ 'name': 'text' }">

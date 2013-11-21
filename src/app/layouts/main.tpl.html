@@ -8,14 +8,18 @@
             </a>
             <a class="brand" href="/">
                 <img src="/assets/img/layout/logo.png" alt="Mediahub Australia" />
-                <img ng-show="{{global.clients.length < 2}}" title="{{client.name}}" src="{{client.logo}}" />
             </a>
 
             <div class="nav-collapse collapse navbar-responsive-collapse">
                 <ul class="nav">
-                    <li class="dropdown" ng-show="clients.length > 1">
+                    <li class="dropdown client-logo" ng-show="{{global.clients.length < 2}}" class="client-logo">
+                        <a href="/">
+                            <img title="{{client.name}}" src="{{client.logo}}" />
+                        </a>
+                    </li>
+                    <li class="dropdown client-logo" ng-show="clients.length > 1">
                         <a title="{{client.name}}" href class="dropdown-toggle" data-toggle="dropdown"><img alt="{{client.name}}" src="{{client.logo}}"> <b class="caret"></b></a>
-                        <ul class="dropdown-menu">
+                        <ul class="dropdown-menu inverse">
                             <li ng-repeat="clientItem in clients" ng-show="clientItem._id != client._id">
                                 <a href ng-click="switchClient( clientItem._id );" title="{{ clientItem.name }}"><img alt="{{ clientItem.name }}" src="{{ clientItem.logo }}"></a>
                             </li>
