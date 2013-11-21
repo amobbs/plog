@@ -251,11 +251,17 @@ angular.module( 'Preslog.dashboard', [
 
             for(var id in $scope.dashboard.widgets)
             {
-                if ($scope.dashboard.widgets[id]._id == widgetId &&
-                    ($scope.dashboard.widgets[id].type !== 'date' && $scope.dashboard.widgets[id].type !== 'list'))
+                if ($scope.dashboard.widgets[id]._id == widgetId)
                 {
-                    $scope.dashboard.widgets[id].loading = true;
-                    break;
+                    if ($scope.dashboard.widgets[id].type !== 'date' && $scope.dashboard.widgets[id].type !== 'list')
+                    {
+                        $scope.dashboard.widgets[id].loading = true;
+                        break;
+                    }
+                    else if ($scope.dashboard.widgets[id].type == 'list')
+                    {
+                        $scope.dashboard.widgets[id].params.forceUpdate = true;
+                    }
                 }
             }
 
@@ -301,7 +307,20 @@ angular.module( 'Preslog.dashboard', [
 
         //download a docx version of this dashboard
         $scope.exportReport = function() {
-            window.location = '/api/dashboards/' + $scope.id + '/export';
+            var loc = '/api/dashboards/' + $scope.id + '/export';
+
+            if ($scope.dashboard.session && $scope.dashboard.session.start && $scope.dashboard.session.end)
+            {
+                var startDate = new Date($scope.dashboard.session.start).getTime();
+                startDate = parseInt( startDate / 1000, 10); //remove milliseconds for php
+                var endDate = new Date($scope.dashboard.session.end).getTime();
+                endDate = parseInt( endDate / 1000, 10);
+
+                loc += '?variableStart=' + encodeURIComponent(startDate);
+                loc += '&variableEnd=' + encodeURIComponent(endDate);
+            }
+
+            window.location.href = loc;
         };
 
         //create new dashboard
@@ -395,10 +414,15 @@ angular.module( 'Preslog.dashboard', [
                     .then(function(result) {
                         for(var index = 0; index < $scope.dashboard.widgets.length; index++) {
                             if ($scope.dashboard.widgets[index]._id == result.widget._id) {
-                                if (result.widget.type !== 'list')
+                                if (result.widget.type == 'list')
+                                {
+                                    $scope.updateLogList(result.widget);
+                                }
+                                else
                                 {
                                     $scope.dashboard.widgets[index] = result.widget;
                                 }
+
 
                                 //specific to dateWidget, we want to be able to change the period without affecting the default.
                                 if (result.widget.type == 'date')
@@ -529,6 +553,31 @@ angular.module( 'Preslog.dashboard', [
                     forceUpdate: false
                 };
                 $scope.dashboard.widgets[w] = widget;
+                break;
+            }
+        };
+
+        $scope.updateLogList = function(widget)
+        {
+            for (var wId in $scope.dashboard.widgets)
+            {
+                if ($scope.dashboard.widgets[wId]._id == widget._id)
+                {
+                    var workingWidget = $scope.dashboard.widgets[wId];
+
+                    workingWidget.params = {
+                        page: 1,
+                        total: 0,
+                        perPageOptions: [3, 5, 10, 25],
+                        perPage: widget.details.perPage,
+                        sorting: [],
+                        order: 'Created',
+                        orderDirection: 'Desc',
+                        query: widget.details.query,
+                        logs: widget.display,
+                        forceUpdate: false
+                    };
+                }
             }
         };
 
