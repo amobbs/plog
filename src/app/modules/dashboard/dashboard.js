@@ -339,8 +339,8 @@ angular.module( 'Preslog.dashboard', [
                 var dashboard = Restangular.all('dashboards');
                 //find which clients we want to share with
                 var shares = [];
-                for(var id in details.share) {
-                    if (details.share[id]) {
+                for(var id in details.shares) {
+                    if (details.shares[id]) {
                         shares.push(id);
                     }
                 }
