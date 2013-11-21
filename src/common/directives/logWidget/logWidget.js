@@ -89,7 +89,7 @@ angular.module('logWidget', [])
                     var getRequest = {
                         query: scope.params.query,
                         limit: scope.params.perPage,
-                        start: 0,
+                        start: ((scope.params.page - 1) * scope.params.perPage),
                         order: scope.params.order,
                         orderasc: scope.params.orderDirection == 'Asc'
                     };
