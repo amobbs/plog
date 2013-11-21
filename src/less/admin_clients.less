@@ -1,7 +1,6 @@
 
 .table-admin-fields
 {
-
     .order
     {
         width: 20px;
@@ -24,17 +23,20 @@
 
     tbody
     {
-        tr:hover
+        tr
         {
-            td
+            &:hover
             {
-                background: #eee;
-                cursor: default;
-            }
+                td
+                {
+                    background: #eee;
+                    cursor: default;
+                }
 
-            td.order i
-            {
-                visibility: visible;
+                td.order i
+                {
+                    visibility: visible;
+                }
             }
         }
 
@@ -49,6 +51,28 @@
     th.actions
     {
         width: 125px;
+    }
+}
+
+
+#preslog_admin_clients_index
+{
+    table
+    {
+        tr
+        {
+            td
+            {
+                &.logo
+                {
+                    img
+                    {
+                        padding: 5px;
+                        background: #000;
+                    }
+                }
+            }
+        }
     }
 }
 

@@ -18,17 +18,17 @@ Configure::write('auth-acl', array(
         'super-admin'   => array(
             'name'=>'Super Admin',
             'hidden'=>true,
-            'permissions'=>array('guest', 'user', 'log-create', 'dashboard-export-reports', 'log-accountability', 'log-delete', 'admin', 'user-manager', 'client-manager', 'edit-preset-dashboards', 'super-admin'),
+            'permissions'=>array('guest', 'user', 'log-create', 'dashboard-export-reports', 'log-accountability', 'log-delete', 'admin', 'user-manager', 'client-manager', 'edit-preset-dashboards', 'super-admin', 'dashboard-create'),
         ),
 
         'admin'         => array(
             'name'=>'Administrator',
-            'permissions'=>array('guest', 'user', 'log-create', 'dashboard-export-reports', 'log-accountability', 'log-delete', 'admin', 'user-manager', 'client-manager'),
+            'permissions'=>array('guest', 'user', 'log-create', 'dashboard-export-reports', 'log-accountability', 'log-delete', 'admin', 'user-manager', 'client-manager', 'dashboard-create'),
         ),
 
         'supervisor'    => array(
             'name'=>'Supervisor',
-            'permissions'=>array('guest', 'user', 'log-create', 'dashboard-export-reports', 'log-accountability', 'log-delete'),
+            'permissions'=>array('guest', 'user', 'log-create', 'dashboard-export-reports', 'log-accountability', 'log-delete', 'dashboard-create'),
         ),
 
         'operator'      => array(
@@ -43,7 +43,7 @@ Configure::write('auth-acl', array(
 
         'client'        => array(
             'name'=>'Client',
-            'permissions'=>array('guest', 'user', 'single-client', 'dashboard-export-reports', 'comment-only'),
+            'permissions'=>array('guest', 'user', 'single-client', 'dashboard-export-reports', 'comment-only', 'dashboard-create'),
         ),
 
         'guest'         => array(
@@ -94,6 +94,9 @@ Configure::write('auth-acl', array(
         array('controller'=>'Dashboards',   'action'=>'*',              'permissions'=>array('user')),
         array('controller'=>'Search',       'action'=>'*',              'permissions'=>array('user')),
         array('controller'=>'Pages',        'action'=>'*',              'permissions'=>array('user')),
+
+        // Dash create/Edot
+        array('controller'=>'Dashboards',   'action'=>'editDashboard',  'permissions'=>array('dashboard-create')),
     )
 
 ));

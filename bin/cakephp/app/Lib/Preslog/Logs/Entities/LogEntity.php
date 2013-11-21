@@ -251,7 +251,7 @@ class LogEntity
      * - Conditionally make certain other changes.
      * @param       LogEntity       $newLog      Long Entity to inherit from
      */
-    public function overwiteWithChanges( $newLog )
+    public function overwriteWithChanges( $newLog )
     {
         // Note: Standard fields (_id, client_id, etc) aren't modified on the origin (this) log.
 
@@ -264,6 +264,12 @@ class LogEntity
         // Skim $newLog fields - if a field is not READONLY or HIDDEN then update the content of this log.
         foreach ($newLog->fields as $fieldKey=>$field)
         {
+            // If field doesn't exist on the old log; add it.
+            if (!isset($this->fields[ $fieldKey ]))
+            {
+                $this->fields[ $fieldKey ] = $field;
+            }
+
             // If permissions permit, overwriteWithChanges will overwrite the current field data with new daat
             $this->fields[ $fieldKey ]->overwriteWithChanges( $field->data );
         }
