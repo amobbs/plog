@@ -82,7 +82,7 @@ class PieWidget extends Widget {
         }
 
         $yLabel = '';
-        if (isset($this->details['yAxis'])) {
+        if (isset($this->details['yAxis']) && isset($this->displayOptions['yAxis'])) {
             foreach($this->displayOptions['yAxis'] as $option) {
                 if ($option['id'] == $this->details['yAxis']) {
                     $yLabel = $option['name'];
