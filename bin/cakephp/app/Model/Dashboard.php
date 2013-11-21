@@ -106,6 +106,7 @@ class Dashboard extends AppModel
         $parsed['name'] = $dashboard['name'];
         $parsed['type'] = $dashboard['type'];
         $parsed['preset'] = $dashboard['preset'];
+        $parsed['shares'] = $dashboard['shares'];
         $parsed['widgets'] = array();
         foreach($dashboard['widgets'] as $widget) {
             $parsed['widgets'][] = $widget->toArray($forMongo);
@@ -113,6 +114,7 @@ class Dashboard extends AppModel
         return $parsed;
     }
 
+    //use an export server for rasterization. NOT BEING USED.
     public function getChartImage($chartOptions, $tmpFilename) {
         $data = array(
             'options' => $chartOptions,
@@ -131,6 +133,7 @@ class Dashboard extends AppModel
         fclose($f);
     }
 
+    //use a server running on this machine to create the chart image
     public function getChartImageLocal($chartOptions, $tmpFilename) {
 
         //get details about export exec locations
@@ -171,6 +174,13 @@ class Dashboard extends AppModel
         $phpWord->setDefaultFontSize(10);
         $section= $phpWord->createSection();
 
+        $sectionStyle = $section->getSettings();
+        $sectionStyle->setMarginLeft(900);
+        $sectionStyle->setMarginRight(900);
+        $sectionStyle->setMarginTop(900);
+        $sectionStyle->setMarginBottom(900);
+
+
         //used to ensure tmp image names are unqique
         $salt = md5(date('Y-m-d h:s'));
 
@@ -179,12 +189,12 @@ class Dashboard extends AppModel
         $tocDepth = 1;
         $phpWord->addTitleStyle( $tocDepth, $styleFont);
 
-//
-//        //toc
-//        $section->addText('Table of Contents', array('bold' => true, 'size' => 24));
-//        $styleTOC = array('tabLeader' => PHPWord_Style_TOC::TABLEADER_DOT);
-//        $section->addTOC($styleFont, $styleTOC);
-//        $section->addPageBreak();
+
+        //toc
+        $section->addText('Table of Contents', array('bold' => true, 'size' => 24));
+        $styleTOC = array('tabLeader' => PHPWord_Style_TOC::TABLEADER_DOT);
+        $section->addTOC($styleFont, $styleTOC);
+        $section->addPageBreak();
 
 
         //loop through the weidgets, generate charts and add one per page
@@ -204,6 +214,8 @@ class Dashboard extends AppModel
                 $unique = substr(md5($widget->getName()), 0, 6);
                 $imageFilename = $salt .$unique . '.png';
                 $this->getChartImageLocal($widget->getDisplayData(), $imageFilename);
+
+                //$style = array('width' => '700');
                 $section->addImage(TMP . $imageFilename);
 
             }
@@ -245,9 +257,7 @@ class Dashboard extends AppModel
                     $this->addLog($log, $section);
                 }
 
-
                 $section->addPageBreak();
-
 
                 $section->addText('Non-Primetime', array('color' => $layout['brown']));
                 $section->addTextBreak();
@@ -323,9 +333,8 @@ class Dashboard extends AppModel
 
         }
 
-        //add a space before next table.
-        $section->addTextBreak();
-
+        //each log on one page
+        $section->addPageBreak();
     }
 
     private function createSummaryPage($primeTime, $nonPrimeTime, $totalSize, &$section)
@@ -431,7 +440,15 @@ class Dashboard extends AppModel
             //we don't know that field will always be called datetime or that it will even exist. but the time at which
             //the event happened is not specifically stated in the log, we only have the fields provided.
             //START ONE OF THE STUPID PARTS!
-            $time = isset($logFields['Date']) ?  $logFields['Date'] : 0;
+            $time = 0;
+            foreach($logFields as $key => $value)
+            {
+                if (strtolower(substr($key, 0, 4)) == 'date')
+                {
+                    $time = $value ;
+                    break;
+                }
+            }
             //END ONE OF THE STUPID PARTS!
 
             //account for 0 being start and end of day

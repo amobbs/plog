@@ -104,8 +104,8 @@ if ('development' == APPLICATION_ENV)
     Configure::write('Preslog.export.exec', array(
 
         //location of executable and scripts to perform export
-        'phantomjs' => 'C:\Users\Dave\Downloads\phantomjs-1.9.2-windows\phantomjs-1.9.2-windows\phantomjs.exe',
-        'highchartsExport.js' => 'C:\Users\Dave\Downloads\phantomjs-1.9.2-windows\phantomjs\highcharts-convert.js',
+        'phantomjs' => 'D:\tmp\phantomjs\phantomjs-1.9.1-windows\phantomjs.exe',
+        'highchartsExport.js' => 'D:\Development\local.preslog\web\vendor\highcharts.com\exporting-server\phantomjs\highcharts-convert.js',
     ));
 }
 
