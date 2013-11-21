@@ -332,7 +332,8 @@ angular.module( 'Preslog.dashboard', [
                 resolve: {
                     name: function() { return ''; },
                     isCreate: function() { return true; },
-                    clients: function() { return $scope.splitClients(); }
+                    clients: function() { return $scope.splitClients(); },
+                    share: function() { return {};}
                 }
             });
             createModal.result.then(function(details) {
@@ -363,13 +364,15 @@ angular.module( 'Preslog.dashboard', [
                 resolve: {
                     name: function() { return $scope.dashboard.name; },
                     isCreate: function() { return false; },
-                    clients: function() { return []; }
+                    clients: function() { return $scope.splitClients(); },
+                    share: function() { return $scope.dashboard.shares;}
                 }
             });
             editModal.result.then(function(details) {
                 source.post('', details)
                     .then(function(result) {
                         $scope.dashboard.name = details.name;
+                        $scope.dashboard.shares = details.shares;
                     });
             });
         };

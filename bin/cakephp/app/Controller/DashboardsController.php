@@ -187,13 +187,22 @@ class DashboardsController extends AppController
                     $dashboard = $this->Dashboard->findById($id);
 
                     $dashboard = $this->_getParsedDashboard($dashboard['Dashboard']);
+
+
                     $this->set('dashboard', $this->Dashboard->toArray($dashboard));
                     $this->set('status', 'saved');
 
                 //update the name
                 } else {
-                    $dashboard['Dashboard']['name'] = $this->request->data['name'];
-                    //$dashboard['Dashboard']['shares'] = $this->request->data['shares'];
+                    if (isset($this->request->data['name']))
+                    {
+                        $dashboard['Dashboard']['name'] = $this->request->data['name'];
+                    }
+
+                    if (isset($this->request->data['shares']))
+                    {
+                        $dashboard['Dashboard']['shares'] = $this->request->data['shares'];
+                    }
 
                     $this->Dashboard->save($dashboard['Dashboard']);
 

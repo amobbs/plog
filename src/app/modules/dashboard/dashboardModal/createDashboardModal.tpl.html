@@ -16,7 +16,7 @@
                 <div class="row-fluid">
                     <div class="span6" ng-repeat="clientGroup in $parent.clients">
                         <label class="checkbox" ng-repeat="client in clientGroup">
-                            <input type="checkbox" ng-model="share[client.Client._id]"/> {{ client.Client.name }}
+                            <input type="checkbox" ng-model="share[client.Client._id]" /> {{ client.Client.name }}
                         </label>
                     </div>
                 </div>
