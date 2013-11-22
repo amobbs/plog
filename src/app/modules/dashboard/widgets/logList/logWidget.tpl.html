@@ -49,7 +49,10 @@
                     <div class="pagination pagination-centered">
                         <ul>
                             <li ng-class="{'disabled': params.page === 1}"><a ng-click="params.page = 1">&laquo;</a></li>
-                            <li ng-repeat="page in pages" ng-class="{'disabled': !page.enabled}"><a ng-click="params.page = page.number">{{ page.display }}</a></li>
+                            <li ng-repeat="page in pages" ng-class="{'disabled': !page.enabled}">
+                                <a ng-show="page.enabled" ng-click="params.page = page.number">{{ page.display }}</a>
+                                <span ng-hide="page.enabled">{{ page.display }}</span>
+                            </li>
                             <li ng-class="{'disabled': params.page === totalPages}"><a ng-click="params.page = totalPages">&raquo;</a></li>
                         </ul>
                     </div>
@@ -73,7 +76,10 @@
                     <div class="pagination pagination-centered">
                         <ul>
                             <li ng-class="{'disabled': params.page === 1}"><a ng-click="params.page = 1">&laquo;</a></li>
-                            <li ng-repeat="page in pages" ng-class="{'disabled': !page.enabled}"><a ng-click="params.page = page.number">{{ page.display }}</a></li>
+                            <li ng-repeat="page in pages" ng-class="{'disabled': !page.enabled}">
+                                <a ng-show="page.enabled" ng-click="params.page = page.number">{{ page.display }}</a>
+                                <span ng-hide="page.enabled">{{ page.display }}</span>
+                            </li>
                             <li ng-class="{'disabled': params.page === totalPages}"><a ng-click="params.page = totalPages">&raquo;</a></li>
                         </ul>
                     </div>

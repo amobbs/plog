@@ -355,7 +355,7 @@ class Log extends AppModel
             foreach($clients as $clientDetails) {
                 $clientEntity = $clientModel->getClientEntityById((string)$clientDetails['_id']);
 
-                $clientField = $clientEntity->getFieldTypeByName( strtolower($orderBy) );
+                $clientField = $clientEntity->getFieldTypeByLabel( strtolower($orderBy) );
                 if ( ! $clientField)
                 {
                     continue;
