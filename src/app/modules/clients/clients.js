@@ -358,7 +358,7 @@ angular.module( 'Preslog.clients', [
             field = field[0];
 
             // Get the array index of this item
-            var index = $scope.client.fields.indexOf(field);
+            var index = _.indexOf($scope.client.fields, field);
 
             // Create a copt of the item so we break the binding
             var fieldCopy = angular.copy(field);
@@ -457,7 +457,7 @@ angular.module( 'Preslog.clients', [
             group = group[0];
 
             // Get the array index of this item
-            var index = $scope.client.attributes.indexOf(group);
+            var index = _.indexOf($scope.client.attributes, group);
 
             // Create a copt of the item so we break the binding
             var groupCopy = angular.copy(group);
@@ -618,15 +618,10 @@ angular.module( 'Preslog.clients', [
             }
 
             //fix the children and grandchildren
-            for(var child in $scope.group.children) {
-                if ($scope.group.children[child]._id.$id) {
-                    $scope.group.children[child]._id = $scope.group.children[child]._id.$id;
-                    for(var subChild in $scope.group.children[child].children) { //this is stupid should be some kind of recursion
-                        if ($scope.group.children[child].children[subChild]._id.$id) {
-                            $scope.group.children[child].children[subChild]._id = $scope.group.children[child].children[subChild]._id.$id;
-                        }
-                    }
-                } else if ($scope.group.children[child]._id !== undefined && !isNaN($scope.group.children[child]._id)) {
+            for(var child in $scope.group.children)
+            {
+                if ($scope.group.children[child]._id !== undefined && !isNaN($scope.group.children[child]._id))
+                {
                     $scope.newId = parseInt($scope.group.children[child]._id, 10) + 1;
                 }
             }
@@ -698,13 +693,13 @@ angular.module( 'Preslog.clients', [
 
                 //find any ids that are selected and deleted state
                 for(var itemId in $scope.group.children) {
-                    if ($scope.hierarchySelected.indexOf($scope.group.children[itemId]._id) != -1) {
+                    if (_.indexOf($scope.hierarchySelected, $scope.group.children[itemId]._id) != -1) {
                         $scope.group.children[itemId].live_date = liveDate;
                     }
                     //TODO do we want to display an error or something if someone selects to set a live date on a sub child
                     // don't forget to check the children
                     for(var subItemId in $scope.group.children[itemId].children) {
-                        if ($scope.hierarchySelected.indexOf($scope.group.children[itemId].children[subItemId]._id) != -1) {
+                        if (_.indexOf($scope.hierarchySelected, $scope.group.children[itemId].children[subItemId]._id) != -1) {
                             $scope.group.children[itemId].children[subItemId].live_date = liveDate;
                         }
                     }
@@ -720,12 +715,12 @@ angular.module( 'Preslog.clients', [
         $scope.setDeletedOnChildren = function(deleted) {
             //find any ids that are selected and deleted state
             for(var itemId in $scope.group.children) {
-                if ($scope.hierarchySelected.indexOf($scope.group.children[itemId]._id) != -1) {
+                if (_.indexOf($scope.hierarchySelected, $scope.group.children[itemId]._id) != -1) {
                     $scope.group.children[itemId].deleted = deleted;
                 }
                 //don't forget to check the children
                 for(var subItemId in $scope.group.children[itemId].children) {
-                    if ($scope.hierarchySelected.indexOf($scope.group.children[itemId].children[subItemId]._id) != -1) {
+                    if (_.indexOf($scope.hierarchySelected, $scope.group.children[itemId].children[subItemId]._id) != -1) {
                         $scope.group.children[itemId].children[subItemId].deleted = deleted;
                     }
                 }

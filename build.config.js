@@ -58,8 +58,10 @@ module.exports = {
          * Files to be concatenated and minified into the project
          */
         js: [
+            'vendor/lodash/dist/lodash.compat.js',
             'vendor/jquery/jquery.min.js',
             'vendor/jquery-ui/ui/minified/jquery-ui.min.js',
+            'vendor/json3/lib/json3.js',
             'vendor/select2/select2.js',
             'vendor/angular-unstable/angular.js',
             'vendor/angular-bootstrap/ui-bootstrap-tpls.min.js',
@@ -79,7 +81,6 @@ module.exports = {
             'vendor/angular-resource-unstable/angular-resource.js',
             'vendor/angular-highcharts-directive/src/directives/highcharts.js',
             'vendor/ng-table/ng-table.js',
-            'vendor/lodash/dist/lodash.js',
             'vendor/restangular/dist/restangular.js',
             'vendor/dynatree/dist/jquery.dynatree.min.js'
         ],

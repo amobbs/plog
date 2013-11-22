@@ -279,7 +279,7 @@ angular.module('hierarchyFields', [])
                             {
                                 for(var id in fields[i].children)
                                 {
-                                    if (scope.hierarchySelected.indexOf(fields[i].children[id]._id) !== -1)
+                                    if (_.indexOf(scope.hierarchySelected, fields[i].children[id]._id) !== -1)
                                     {
                                         dynaField.expand = true;
                                     }

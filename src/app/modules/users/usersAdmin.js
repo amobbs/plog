@@ -228,10 +228,6 @@ angular.module( 'Preslog.usersAdmin', [
         // Save the new notification back to the client.
         $scope.user.notifications.clients = clientNotifications;
 
-        $scope.$watch('user.notifications.clients', function() {
-            console.log($scope.user.notifications.clients);
-        }, true);
-
         /**
          * format the attribute children so we can display hierachy fields in 2 columns
          * @param children
@@ -239,7 +235,12 @@ angular.module( 'Preslog.usersAdmin', [
          */
         $scope.attributesDisplay = function(children) {
             var columns = [[], []];
+
             //there is nothing to show
+            if (children === undefined)
+            {
+                return columns;
+            }
             if (children.length === 0) {
                 return columns;
             }
@@ -268,10 +269,15 @@ angular.module( 'Preslog.usersAdmin', [
          *
          */
         $scope.setClientAttributes = function() {
-            for(var id in $scope.options.notifications.clients) {
+            for(var id in $scope.options.notifications.clients)
+            {
                 var client = $scope.options.notifications.clients[id];
-                for(var attrId in client.attributes) {
-                    client.attributes[attrId].children = $scope.attributesDisplay(client.attributes[attrId].children);
+                for(var attrId in client.attributes)
+                {
+                    if (client.attributes[attrId].children !== undefined)
+                    {
+                        client.attributes[attrId].children = $scope.attributesDisplay(client.attributes[attrId].children);
+                    }
                 }
                 $scope.options.notifications.clients[id] = client;
             }
