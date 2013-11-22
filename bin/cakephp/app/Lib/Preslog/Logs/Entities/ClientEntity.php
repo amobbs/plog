@@ -363,6 +363,35 @@ class ClientEntity
         return false;
     }
 
+    /**
+     * Get the field type by given $label
+     *
+     * @param $fieldLabel
+     *
+     * @internal param string $fieldName Name of searchable field
+     * @return  FieldTypeAbstract|bool                 Name of the field, or false is no match is found
+     */
+    public function getFieldTypeByLabel( $fieldLabel )
+    {
+        $lowerLabel = strtolower($fieldLabel);
+        if ($lowerLabel = 'created' || $lowerLabel == 'modified' || $lowerLabel == 'version' || $lowerLabel == 'ID')
+        {
+            $fieldLabel = 'Log Info';
+        }
+
+        // Loop through fields and find the matching fieldname
+        foreach( $this->fields as $field )
+        {
+            // Check field names
+            if ($field->isLabel($fieldLabel))
+            {
+                // Return the field name
+                return $field;
+            }
+        }
+
+        return false;
+    }
 
     /**
      * Set Data Source

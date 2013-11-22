@@ -383,6 +383,18 @@ abstract class FieldTypeAbstract
         return ($this->fieldSettings['name'] == $name ? true : false);
     }
 
+    /**
+     * Check the field label matches the one given
+     *
+     * @param $label
+     *
+     * @internal param string $label Field name to check
+     * @return  bool            True is name is a match
+     */
+    public function isLabel( $label )
+    {
+        return (strtolower($this->fieldSettings['label']) == strtolower($label) ? true : false);
+    }
 
     /**
      * Subroutine for LogEntity::overwriteWithChanges
