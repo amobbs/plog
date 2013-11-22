@@ -129,7 +129,7 @@ class Datetime extends FieldTypeAbstract
         // Validate as RFC2822
         if ( $received != $expected )
         {
-            $errors[] = "Date must be supplied as valid RFC2822 format. Received '{$received}' which was read as '{$expected}'.";
+            $errors[] = "Date must be supplied as valid RFC2822 format.";
         }
 
         return $errors;

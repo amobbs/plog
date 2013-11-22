@@ -6,6 +6,8 @@
             />
     <label class="control-label">{{options.label}}</label>
     <div class="controls">
-        <input-field-duration ng-model="log.data.seconds" />
+        <input inputduration="h" inputdurationshared="log.data.shareseconds" type="text" class="input-time" ng-model="log.data.seconds" /> H &nbsp;
+        <input inputduration="m" inputdurationshared="log.data.shareseconds" type="text" class="input-time" ng-model="log.data.seconds" /> M &nbsp;
+        <input inputduration="s" inputdurationshared="log.data.shareseconds" type="text" class="input-time" ng-model="log.data.seconds" /> S &nbsp;
     </div>
 </div>

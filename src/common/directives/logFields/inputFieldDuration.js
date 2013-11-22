@@ -3,7 +3,7 @@
  */
 
 angular.module('inputFieldDuration', [])
-    .directive('inputFieldDuration', ['$templateCache', '$compile', function ( $templateCache, $compile ) {
+    .directive('input', ['$templateCache', '$compile', '$parse', function ( $templateCache, $compile, $parse ) {
 
         // Unit types
         var unitList = {
@@ -21,74 +21,164 @@ angular.module('inputFieldDuration', [])
          */
         var linker = function( scope, element, attrs, ctrl ) {
 
-            // Prep scope
-            scope.duration = {h:0, m:0, s:0};
-
-            // Prevent watch being triggered during field update, and causing recusive watch
-            var denyWatch = false;
-
-            // On source change
-            scope.$watch(function() { return scope.ngModel; }, function(value) {
-
-                // Abort if empty
-                if (value === undefined || denyWatch)
-                {
-                    return;
-                }
-
-                denyWatch = true;
-
-                var seconds = scope.ngModel;
-
-                // Split to units and populate field
-                for (var i in unitList)
-                {
-                    units = Math.floor( seconds / unitList[i] );
-
-                    // If split was OK
-                    if (units)
-                    {
-                        seconds -= (units * unitList[i]);
-
-                        // Populate field for this unit type
-                        scope.duration[i] = units;
-                    }
-                    else
-                    {
-                        scope.duration[i] = 0;
-                    }
-                }
-
-                denyWatch = false;
-            });
-
-
-            // On field change
-            scope.$watch(function() { return ' '+scope.duration.h+scope.duration.m+scope.duration.s; }, function(duration)
+            // Skip non-match types
+            if (attrs.inputduration === undefined)
             {
-                // Abort if empty
-                if (duration === undefined || denyWatch)
+                return;
+            }
+
+            // Fetch model
+            var model = $parse(attrs.ngModel);
+
+            // Apply a placeholder for duration value
+            if (model.$sharedValue === undefined)
+            {
+                model.$sharedValue = {h:0, m:0, s:0};
+            }
+
+
+            /**
+            * Hour Parser
+            * Convert from View to Model
+            * @param value
+            */
+            var hourParser = function(value)
+            {
+                return calculateSeconds('h', value, model.$sharedValue);
+            };
+
+            /**
+             * Hour Formatter. Convert from Model to View
+             * @param value
+             */
+            var hourFormatter = function(value)
+            {
+                return calculatePart('h', value, model.$sharedValue);
+            };
+
+
+            /**
+            * Minute Parser
+            * Convert from View to Model
+            * @param value
+            */
+            var minuteParser = function(value)
+            {
+                return calculateSeconds('m', value, model.$sharedValue);
+            };
+
+            /**
+             * Minute Formatter. Convert from Model to View
+             * @param value
+             */
+            var minuteFormatter = function(value)
+            {
+                return calculatePart('m', value, model.$sharedValue);
+            };
+
+            /**
+            * Second Parser
+            * Convert from View to Model
+            * @param value
+            */
+            var secondParser = function(value)
+            {
+                return calculateSeconds('s', value, model.$sharedValue);
+            };
+
+            /**
+             * Second Formatter. Convert from Model to View
+             * @param value
+             */
+            var secondFormatter = function(value)
+            {
+                return calculatePart('s', value, model.$sharedValue);
+            };
+
+
+            /**
+             * Calculate the seconds from the H/M/S supplied
+             * obj contains an object with updated reference.
+             * A statically available object contains the H/M/S
+             * @param   obj
+             * @param   obj
+             */
+            var calculateSeconds = function( part, value, source)
+            {
+                var total = 0;
+
+                // Update seconds in each section
+                source[part] = parseInt(value, 10);
+
+                if ( isNaN(source[part]) )
                 {
-                    return;
+                    source[part] = 0;
                 }
 
-                denyWatch = true;
-
-                var seconds = 0;
-
-                // Cycle units
-                for (var i in unitList)
+                // Update the model with the seconds
+                for (var i in source)
                 {
-                    // Calc
-                    seconds += parseInt(scope.duration[i],10) * unitList[i];
-
-                    // Pass to model
-                    scope.ngModel = seconds;
+                    // Convert to seconds
+                    total += parseInt(source[i] * unitList[i], 10);
                 }
 
-                denyWatch = false;
-            });
+                // Return summary for model
+                return total;
+            };
 
+
+            /**
+             * Calculate the $part from the $seconds.
+             * h = hour
+             * m = minute
+             * s = second
+             * @param part
+             */
+            var calculatePart = function( part, seconds, source )
+            {
+                if ( isNaN(seconds) || seconds === undefined)
+                {
+                    seconds = 0;
+                }
+
+                // Convert to units
+                // Also write to storage
+                source.h = Math.floor(seconds / unitList.h);
+                seconds %= unitList.h;
+                source.m = Math.floor(seconds / unitList.m);
+                source.s = seconds % unitList.m;
+
+                return parseInt(source[part], 10);
+            };
+
+
+            /**
+             * Apply parser/formatter
+             */
+
+            // Only apply to "date" type
+            if (attrs.inputduration == 'h')
+            {
+                ctrl.$parsers.unshift(hourParser);
+                ctrl.$formatters.unshift(hourFormatter);
+            }
+            // Only apply to "time" type
+            else if (attrs.inputduration == 'm')
+            {
+                ctrl.$parsers.unshift(minuteParser);
+                ctrl.$formatters.unshift(minuteFormatter);
+            }
+            // Only apply to "time" type
+            else if (attrs.inputduration == 's')
+            {
+                ctrl.$parsers.unshift(secondParser);
+                ctrl.$formatters.unshift(secondFormatter);
+            }
+            // Abort this directives actions
+            else
+            {
+                return;
+            }
         };
 
 
@@ -97,16 +187,7 @@ angular.module('inputFieldDuration', [])
          */
         return {
             restrict: "E",
-            replace: true,
-            transclude: true,
-            template: '<div>'+
-                      '<input type="text" class="input-time" ng-model="duration.h" /> H &nbsp;'+
-                      '<input type="text" class="input-time" ng-model="duration.m" /> M &nbsp;'+
-                      '<input type="text" class="input-time" ng-model="duration.s" /> S &nbsp;'+
-                      '</div>',
-            link: linker,
-            scope: {
-                ngModel: '='
-            }
+            require: '?ngModel',
+            link: linker
         };
     }]);

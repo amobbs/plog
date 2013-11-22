@@ -47,9 +47,6 @@ class LogNotificationComponent extends Component
      */
     public function issueNotifications( $log )
     {
-        // Reformat for simplicity
-        $log = $log['Log'];
-
         // Logs are issued by Attributes - bail if no attributes are supplied
         if (empty($log['attributes'])) {
             return;

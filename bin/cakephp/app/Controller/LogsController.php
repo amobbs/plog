@@ -97,7 +97,8 @@ class LogsController extends AppController
         $ret = $this->Log->save( $log );
 
         // Notifications: Issue Email and SMS notifications relevant to this logs update.
-        //$this->LogNotification->issueNotifications( $log );   // TODO: ENABLE ME
+        $ret = $this->Log->find( 'first', array('conditions'=>array('_id'=>$ret['Log']['_id']) ) );
+        $this->LogNotification->issueNotifications( $ret['Log'] );
 
         // Return success
         $return = array('Success'=>$ret);

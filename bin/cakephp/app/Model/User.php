@@ -477,10 +477,7 @@ class User extends AppModel
     public function validateNotifications( $check )
     {
         // Fetch all notifications that are available to this user
-        // TODO: Make this load the USER TO BE SAVED and pass it to the function
-        $this->Client->getNotificationsList( array() );
-
-        // TODO: Validation code
+        $this->Client->getNotificationsList( array(), $this );
 
         return true;
     }
