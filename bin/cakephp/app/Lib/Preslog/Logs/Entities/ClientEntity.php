@@ -374,7 +374,7 @@ class ClientEntity
     public function getFieldTypeByLabel( $fieldLabel )
     {
         $lowerLabel = strtolower($fieldLabel);
-        if ($lowerLabel = 'created' || $lowerLabel == 'modified' || $lowerLabel == 'version' || $lowerLabel == 'ID')
+        if ($lowerLabel == 'created' || $lowerLabel == 'modified' || $lowerLabel == 'version' || $lowerLabel == 'ID')
         {
             $fieldLabel = 'Log Info';
         }
