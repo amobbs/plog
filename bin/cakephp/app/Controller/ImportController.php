@@ -869,19 +869,19 @@ class ImportController extends AppController
                     array(
                         'field_id' =>  $this->_getMongoIDFromFormatByName($client['fields'], 'program'),
                         'data' => array(
-                            'text' => mb_convert_encoding($row['program'], 'utf-8'),
+                            'text' => trim(mb_convert_encoding($row['program'], 'utf-8')),
                         ),
                     ),
                     array(
                         'field_id' =>  $this->_getMongoIDFromFormatByName($client['fields'], 'asset_id'),
                         'data' => array(
-                            'text' => mb_convert_encoding($row['assetid'], 'utf-8'),
+                            'text' => trim(mb_convert_encoding($row['assetid'], 'utf-8')),
                         ),
                     ),
                     array(
                         'field_id' =>  $this->_getMongoIDFromFormatByName($client['fields'], 'description'),
                         'data' => array(
-                            'text' => mb_convert_encoding($row['description'], 'utf-8'),
+                            'text' => trim(mb_convert_encoding($row['description'], 'utf-8')),
                         ),
                     ),
                     array(
@@ -905,19 +905,19 @@ class ImportController extends AppController
                     array(
                         'field_id' =>  $this->_getMongoIDFromFormatByName($client['fields'], 'details'),
                         'data' => array(
-                            'text' => mb_convert_encoding($row['details'], 'utf-8'),
+                            'text' => trim(mb_convert_encoding($row['details'], 'utf-8')),
                         ),
                     ),
                     array(
                         'field_id' =>  $this->_getMongoIDFromFormatByName($client['fields'], 'action_taken'),
                         'data' => array(
-                            'text' => mb_convert_encoding($row['action'], 'utf-8'),
+                            'text' => trim(mb_convert_encoding($row['action'], 'utf-8')),
                         ),
                     ),
                     array(
                         'field_id' =>  $this->_getMongoIDFromFormatByName($client['fields'], 'follow_up'),
                         'data' => array(
-                            'text' => mb_convert_encoding($row['resolution'], 'utf-8'),
+                            'text' => trim(mb_convert_encoding($row['resolution'], 'utf-8')),
                         ),
                     ),
                     array(
