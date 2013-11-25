@@ -4,32 +4,24 @@
     <nav class="navbar navbar-fixed-top" id="preslog_sub_nav">
         <div class="navbar-inner">
             <div class="container-fluid">
-                <a class="btn btn-navbar" data-toggle="collapse" data-target=".navbar-responsive-collapse">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </a>
-
                 <h2>Edit Client</h2>
 
-                <div class="nav-collapse collapse navbar-responsive-collapse">
-                    <ul class="nav pull-right">
-                        <li>
-                            <button type="submit" class="btn btn-success"
-                                    ng-disabled="clientForm.$invalid">
-                                <i class="icon icon-ok"></i>
-                                Save Changes
-                            </button>
-                            <button type="button" class="btn btn-danger"
-                                    ng-click="deleteClient()"
-                                    ng-show="{{client._id && !client.deleted}}"
-                                    ng-confirm-click="Are you sure you want to delete this client? All users assigned to this client will be unable to access Preslog if you do this.">
-                                <i class="icon icon-remove"></i>
-                                Delete Client
-                            </button>
-                        </li>
-                    </ul>
-                </div><!-- /.nav-collapse -->
+                <ul class="nav pull-right">
+                    <li>
+                        <button type="submit" class="btn btn-success"
+                                ng-disabled="clientForm.$invalid">
+                            <i class="icon icon-ok"></i>
+                            Save Changes
+                        </button>
+                        <button type="button" class="btn btn-danger"
+                                ng-click="deleteClient()"
+                                ng-show="{{client._id && !client.deleted}}"
+                                ng-confirm-click="Are you sure you want to delete this client? All users assigned to this client will be unable to access Preslog if you do this.">
+                            <i class="icon icon-remove"></i>
+                            Delete Client
+                        </button>
+                    </li>
+                </ul>
             </div>
         </div><!-- /navbar-inner -->
     </nav>
