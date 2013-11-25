@@ -567,7 +567,7 @@ class User extends AppModel
      */
     public function listUsersByIds($userIds) {
         return $this->find('all', array(
-            'conditions' => array(
+                'conditions' => array(
                 '_id' => array(
                     '$in' => $userIds,
                 ),
@@ -598,6 +598,7 @@ class User extends AppModel
             'conditions'=>$conditions,
             'fields'=>array(
                 '_id',
+                'logoUrl',
                 'name',
             )
         ));

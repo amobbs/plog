@@ -29,6 +29,10 @@ class Client extends AppModel
             'type' => 'string',
             'length' => 255
         ),
+        'logoUrl' => array(
+            'type' => 'string',
+            'length' => 255
+        ),
         'shortName' => array(
             'type' => 'string',
             'length' => 4
@@ -489,7 +493,19 @@ class Client extends AppModel
      */
     public function getLogoPath( $client )
     {
-        return '/assets/clients/'.(string) $client['_id'].'/logo.png';
+        // Use logo if not missing
+        if (isset($client['logoUrl']) && !empty($client['logoUrl']))
+        {
+            $path = $client['logoUrl'];
+        }
+        else
+        {
+            // Placeholder URL
+            $path = Configure::read('Preslog.Client.logoPlaceholder');
+
+        }
+
+        return $path;
     }
 
 

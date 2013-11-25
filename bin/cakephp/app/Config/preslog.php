@@ -83,7 +83,15 @@ Configure::write('Preslog', array(
      */
     'Dashboards' => array(
         'unqualified' => '5260bf91ad7cc5782600002a'
-    )
+    ),
+
+    /**
+     * Client Placeholder
+     */
+    'Client' => array(
+        'logoPlaceholder' => '/assets/clients/logo-placeholder.gif',
+    ),
+
 ));
 
 
