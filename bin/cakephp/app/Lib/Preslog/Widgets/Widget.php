@@ -98,6 +98,7 @@ class Widget {
 
         $sumX = 0;
         $sumY = 0;
+        $sumSqX = 0;
         $sumXY = 0;
         for ($x = 1; $x < sizeof($data) -1; $x++)
         {
@@ -106,13 +107,12 @@ class Widget {
             $sumX += $x;
             $sumY += $y;
             $sumXY += ($x * $y);
+            $sumSqX += pow($x, 2);
         }
-        $meanX = $sumX / $n;
-        $meanY = $sumY / $n;
 
-        $slope = (($sumXY - ($n * $meanX * $meanY)) / ($sumX - ($n * ($meanX ^ 2))) / $n);
+        $slope = (($sumXY * $n) - ($sumX * $sumY)) / (($n * $sumSqX) - pow($sumX, 2));
 
-        $yIntercept = $meanY - ($slope * $meanX);
+        $yIntercept = ($sumY - ($slope * $sumX)) / $n;
 
         $y = array();
         for($x = 0; $x < sizeof($data); $x++)
