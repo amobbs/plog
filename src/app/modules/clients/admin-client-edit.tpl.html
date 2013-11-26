@@ -4,32 +4,24 @@
     <nav class="navbar navbar-fixed-top" id="preslog_sub_nav">
         <div class="navbar-inner">
             <div class="container-fluid">
-                <a class="btn btn-navbar" data-toggle="collapse" data-target=".navbar-responsive-collapse">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </a>
-
                 <h2>Edit Client</h2>
 
-                <div class="nav-collapse collapse navbar-responsive-collapse">
-                    <ul class="nav pull-right">
-                        <li>
-                            <button type="submit" class="btn btn-success"
-                                    ng-disabled="clientForm.$invalid">
-                                <i class="icon icon-ok"></i>
-                                Save Changes
-                            </button>
-                            <button type="button" class="btn btn-danger"
-                                    ng-click="deleteClient()"
-                                    ng-show="{{client._id && !client.deleted}}"
-                                    ng-confirm-click="Are you sure you want to delete this client? All users assigned to this client will be unable to access Preslog if you do this.">
-                                <i class="icon icon-remove"></i>
-                                Delete Client
-                            </button>
-                        </li>
-                    </ul>
-                </div><!-- /.nav-collapse -->
+                <ul class="nav pull-right">
+                    <li>
+                        <button type="submit" class="btn btn-success"
+                                ng-disabled="clientForm.$invalid">
+                            <i class="icon icon-ok"></i>
+                            Save Changes
+                        </button>
+                        <button type="button" class="btn btn-danger"
+                                ng-click="deleteClient()"
+                                ng-show="{{client._id && !client.deleted}}"
+                                ng-confirm-click="Are you sure you want to delete this client? All users assigned to this client will be unable to access Preslog if you do this.">
+                            <i class="icon icon-remove"></i>
+                            Delete Client
+                        </button>
+                    </li>
+                </ul>
             </div>
         </div><!-- /navbar-inner -->
     </nav>
@@ -98,24 +90,22 @@
                     <!-- Company Logo -->
                     <div class="control-group" ng-class="{error: clientForm.logo.$dirty && clientForm.logo.$invalid && clientForm.logo.$invalid}">
 
-                        <label class="control-label"
-                               for="inputLogo"
-                               tooltip-placement="right"
-                               tooltip="Displayed on the Client Selection tab. Must be 68x20 pixel PNG."
-                                >
-                            <span ng-show="client._id">Change </span>Logo
+                        <label class="control-label" for="inputLogoUrl">
+                            Logo Url
                         </label>
                         <div class="controls">
-                            <img ng-show="client._id" src="{{ client.logo-img }}" width="68" height="20" />
-                            <br/>
-                            <input type="file"
-                                   accept="image/*"
-                                   image="image"
-                                   id="inputLogo"
-                                   name="logo"
-                                   ng-model="logo"
+                            <input type="text"
+                                   id="inputLogoUrl"
+                                   name="logoUrl"
+                                   placeholder="Logo Url..."
+                                   ng-model="client.logoUrl"
+                                   required
+                                   tooltip-placement="right"
+                                   tooltip="The url of the client logo to be displayed in the top-left corner. Should be 120x35 pixels and look good on a black background."
                                     />
-                            <span class="help-inline" ng-show="clientForm.logo.$error.validateServer" ng-bind="serverErrors.logo"></span>
+                            <img ng-show="client._id" src="{{ client.logoUrl }}" width="68" height="20" class="logo-preview" alt="Logo Preview" />
+                            <br/>
+                            <span class="help-inline" ng-show="clientForm.logo.$error.validateServer" ng-bind="serverErrors.logoUrl"></span>
                         </div>
                     </div>
 

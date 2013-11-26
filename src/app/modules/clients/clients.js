@@ -196,7 +196,6 @@ angular.module( 'Preslog.clients', [
         $scope.options = clientOptions;
 
         // Page opts
-        $scope.logo = [];
         $scope.newField = {};
         $scope.showDeleted = false;
         $scope.newGroup = {};
@@ -248,12 +247,6 @@ angular.module( 'Preslog.clients', [
                 // On success
                 function()
                 {
-                    // Post the image
-                    console.log($scope.clientForm.logo.$modelValue);
-
-                    // Save upload logo
-                    // TODO
-
                     // Redirect to user list
                     $location.path('/admin/clients');
                 },

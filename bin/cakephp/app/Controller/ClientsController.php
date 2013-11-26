@@ -13,7 +13,7 @@ use Swagger\Annotations as SWG;
  */
 class ClientsController extends AppController
 {
-    public $uses = array('Client', 'Log');
+    public $uses = array('Client', 'Log', 'User');
 
 
     /**
@@ -33,6 +33,7 @@ class ClientsController extends AppController
             'fields'=>array(
                 '_id',
                 'name',
+                'logoUrl',
                 'activationDate',
                 'benchmark',
                 'created',
@@ -49,11 +50,19 @@ class ClientsController extends AppController
             // Get the Logo
             $client['logo'] = $this->Client->getLogoPath($client);
 
-            // TODO: Attach num_logs stats to the individual clients
-            $client['stats']['numLogs'] = "Not Available";
+            // Get the number of logs
+            $client['stats']['numLogs'] = $this->Log->find('count', array(
+                'conditions'=>array(
+                    'client_id' => new MongoId($client['_id'])
+                )
+            ));
 
-            // TODO: Number of logs / Number of users
-            $client['stats']['numUsers'] = "Not Available";
+            // Get the number of users
+            $client['stats']['numUsers'] = $this->User->find('count', array(
+                'conditions'=>array(
+                    'client_id' => new MongoId($client['_id'])
+                )
+            ));
         }
 
         // Output
