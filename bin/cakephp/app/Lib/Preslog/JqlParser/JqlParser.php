@@ -43,27 +43,66 @@ class JqlParser {
         return $this->_errors;
     }
 
+    /**
+     * populate an array with all the values found in the expression
+     *
+     * @return array
+     */
     public function getArguments() {
         $args = array();
         $this->_getArgumentsFromArray($this->_expression, $args);
         return $args;
     }
 
+    /**
+     * recursively populate array with all values found in an expression
+     *
+     * @param $clauses
+     * @param $args
+     *
+     * @return mixed
+     */
     private function _getArgumentsFromArray($clauses, &$args) {
         if(is_array($clauses)) {
             foreach($clauses as $clause) {
                 if($clause instanceof Clause) {
-                    $args[] = $clause->getValue();
+                    $this->_addValue($clause, $args);
                 } else if (is_array($clause)) {
                     $this->_getArgumentsFromArray($clause, $args);
                 }
             }
         } else if($clauses instanceof Clause) {
-            $args[] = $clauses->getValue();
+            $this->_addValue($clauses, $args);
         }
         return $args;
     }
 
+    /**
+     * add the data type onto the value so that we know how to format it on the other end
+     *
+     * @param $clause
+     * @param $args
+     */
+    private function _addValue($clause, &$args)
+    {
+        $arg = array(
+            'type' => 'string',
+            'value' => $clause->getValue()
+        );
+
+        if (strtotime($arg['value']))
+        {
+            $arg['type'] = 'date';
+        }
+        $args[] = $arg;
+    }
+
+    /**
+     * Given an sql string, split up the expression in to logical groups and then into seperate clauses.
+     * once done output the expression as jql
+     * @param $sql
+     * @param $args
+     */
     public function setJqlFromSql($sql, $args) {
         $this->_sql = strtoupper($sql);
         $where = $this->_getWhereFromSql($this->_sql, $args);
@@ -84,6 +123,11 @@ class JqlParser {
         }
     }
 
+    /**
+     * given a jql string split up the expression in to logical groups and then into seperate clauses.
+     * once done output the expression as sql
+     * @param $jql
+     */
     public function setSqlFromJql($jql) {
         if (empty($jql)) {
             $this->_sql = 'SELECT * FROM "LOGS"';
@@ -112,6 +156,10 @@ class JqlParser {
         }
     }
 
+    /**
+     * given the expression this object holds out put an array that can be used to match in mongo
+     * @return array
+     */
     public function getMongoCriteria() {
         return $this->_buildMongoCriteria($this->_expression);
     }
