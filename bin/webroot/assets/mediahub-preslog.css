@@ -10165,6 +10165,14 @@ table.rqbComparison table {
   padding-top: 60px;
 }
 
+#admin_client_edit img.logo-preview {
+  width: 120px;
+  height: 35px;
+  padding: 2px;
+  background: #000;
+  border: none 0px;
+}
+
 #admin_client_edit_fields form {
   margin: 0px;
 }
