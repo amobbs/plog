@@ -386,16 +386,30 @@ angular.module( 'Preslog.dashboard', [
                     clients: function() { return []; }
                 }
             });
-            addWidgetModal.result.then(function(data) {
+            addWidgetModal.result.then(function(modalResult) {
                 Restangular.one('dashboards', $scope.id)
-                    .post('widgets', {'widget': data})
+                    .post('widgets', {'widget': modalResult.widget})
                     .then(function(data) {
                         $scope.dashboard.widgets.push(data.widget);
                         if (data.widget.type == 'list')
                         {
                             $scope.setUpLogList(data.widget._id);
                         }
-                        $scope.openEditWidgetModal(data.widget);
+
+                        if (!modalResult.preset)
+                        {
+                            $scope.openEditWidgetModal(data.widget);
+                        }
+                        else
+                        {
+                            if (data.widget.type == 'list')
+                            {
+                                $scope.updateLogList(data.widget);
+                            }
+
+                            $scope.refreshWidget(data.widget._id);
+                            $scope.updateRefreshTimer(data.widget._id, data.widget.details.refresh);
+                        }
                     });
             });
         };
@@ -413,7 +427,7 @@ angular.module( 'Preslog.dashboard', [
             editWidgetModal.result.then(function(data) {
                 Restangular.one('dashboards', $scope.id)
                     .one('widgets', widget._id)
-                    .post('',{'widget': data})
+                    .post('',{'widget': data.widget})
                     .then(function(result) {
                         for(var index = 0; index < $scope.dashboard.widgets.length; index++) {
                             if ($scope.dashboard.widgets[index]._id == result.widget._id) {

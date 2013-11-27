@@ -8,18 +8,38 @@ angular.module('Preslog.dashboard.widgetModal', [])
         $scope.refreshValid = true;
         $scope.queryErrors = [];
 
-        $scope.addChart = function(type) { //create new widget
+        /**
+         * Create a new widget on current dashboard
+         *
+         * @param type
+         * @param preset - false means user will be given the option to edit settings right away
+         */
+        $scope.addChart = function(type, preset) {
             $scope.widget.type = type;
-            $modalInstance.close($scope.widget);
+
+            var result = {
+                widget: $scope.widget,
+                preset: preset
+            };
+
+            $modalInstance.close(result);
         };
 
-        $scope.saveWidget = function() { //completion of edit widget
+        /**
+         * Completion of edit widget
+         */
+        $scope.saveWidget = function() {
             if ($scope.widget.details.refresh && $scope.widget.details.refresh < 1)
             {
                 $scope.refreshValid = false;
                 $scope.queryErrors = ['Refresh interval can not be below 1 minute.'];
                 return;
             }
+
+            var widgetResult = {
+                widget: $scope.widget,
+                preset: false
+            };
 
             if ($scope.widget.type !== 'date')
             {
@@ -28,7 +48,7 @@ angular.module('Preslog.dashboard.widgetModal', [])
                     .then(function (result) {
                         if (result.ok)
                         {
-                            $modalInstance.close($scope.widget);
+                            $modalInstance.close(widgetResult);
                         }
                         else
                         {
@@ -39,7 +59,7 @@ angular.module('Preslog.dashboard.widgetModal', [])
             }
             else
             {
-                $modalInstance.close($scope.widget);
+                $modalInstance.close(widgetResult);
             }
         };
 
