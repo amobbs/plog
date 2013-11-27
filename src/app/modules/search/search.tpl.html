@@ -8,21 +8,7 @@
         </div>
     </div>
     <div class="row-fluid">
-
-        <div class="span10 textarea-fill">
-            <div class="control-group" ng-class="{error: !queryValid}" >
-                <div class="controls">
-                    <textarea class="search-textarea" rows="3" ng-model="jql"></textarea>
-                </div>
-            </div>
-        </div>
-
-        <div class="span2 text-right">
-            <div class="btn-group btn-group-vertical search-buttons">
-                <button class="btn btn-success" ng-click="doSearch()"><i class="icon icon-search"></i> Search</button>
-                <button class="btn btn-info" ng-click="jqlToSql()"><i class="icon icon-wrench"></i> Advanced Search</button>
-            </div>
-        </div>
+        <button class="btn btn-info" ng-click="jqlToSql()"><i class="icon icon-wrench"></i> Build Search</button>
     </div>
     <div class="row-fluid">
         <div class="span12">

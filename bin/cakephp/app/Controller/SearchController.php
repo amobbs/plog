@@ -381,13 +381,11 @@ class SearchController extends AppController
                 }
 
                 //skip attributes as these are a group of values and it does not make sense to sort based on them.
-                if ($clientEntity->isAttributeLabel($key))
+                if ( ! $clientEntity->isAttributeLabel($key))
                 {
-                    continue;
+                    // Track field names
+                    $allFieldNames[$key] = true;
                 }
-
-                // Track field names
-                $allFieldNames[$key] = true;
 
                 // Convert to arrangement the client is expecting
                 $logData = array(
@@ -397,7 +395,6 @@ class SearchController extends AppController
 
                 // Put to field list
                 $fieldList[] = $logData;
-
             }
 
             // Put to log list
