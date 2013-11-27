@@ -394,6 +394,26 @@ class ClientEntity
     }
 
     /**
+     * does the label passed in match an attribute group on this client.
+     *
+     * @param $attributeLabel
+     *
+     * @return bool
+     */
+    public function isAttributeLabel($attributeLabel)
+    {
+        foreach($this->data['attributes'] as $attribute)
+        {
+            if ($attribute['label'] == $attributeLabel)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Set Data Source
      * - Attach the data source to this object so we can run parse processes
      * @param   $dataSource

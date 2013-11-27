@@ -23,6 +23,10 @@ angular.module('redQueryBuilder', [])
                 RedQueryBuilderFactory.create({
                         targetId : 'rqb',
                         meta : scope.queryMeta,
+                        onLoad: function() {
+                            scope.$parent.$parent.sql = scope.sql;
+                            scope.$parent.$parent.args = scope.args;
+                        },
                         onSqlChange : function(sql, args) {
                             //$parent.$parent - i'm sorry, fix to get the directive to respond to correct scope.
                             scope.$parent.$parent.sql = sql;

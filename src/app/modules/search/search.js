@@ -192,13 +192,24 @@ angular.module( 'Preslog.search', [
             var getClassOf = Function.prototype.call.bind(Object.prototype.toString);
             for(var i = 0; i < $scope.args.length; i++)
             {
-                if (getClassOf($scope.args[i]) == '[object Date]')
+                //some times we get a date object, sometimes we get a rqb date object returned.
+                //parse it so we get the date format we want to send to the server
+                if ($scope.args[i].q || getClassOf($scope.args[i]) == '[object Date]')
                 {
                     var date = $scope.args[i];
-                    var dateString = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
+                    if ($scope.args[i].q)
+                    {
+                        date = $scope.args[i].q;
+                    }
+
+                    //pad with 0
+                    var month = ('0' + (date.getMonth() + 1)).slice(-2);
+                    var day = ('0' + date.getDate()).slice(-2);
+
+                    var dateString = date.getFullYear() + '-' + month + '-' + day;
                     parsedArgs.push(dateString);
                 }
-                else
+                else //something other then a date just add it.
                 {
                     parsedArgs.push($scope.args[i]);
                 }
@@ -247,12 +258,20 @@ angular.module( 'Preslog.search', [
                         $scope.logWidgetParams.errors = [];
 
                         $scope.sql = data.sql;
-                        $scope.args = {};
+                        $scope.args = [];
 
-                        //red query builder requires an object passed in not an array
+                        //red query builder does not have dates implemented correctly. we need to pass the date in the
+                        // internal format rqb uses. which seems to have type casting/detection in it
                         for (var i = 0; i < data.args.length; i++)
                         {
-                            $scope.args[i] = data.args[i];
+                            if (data.args[i].type == 'date')
+                            {
+                                $scope.args.push({q:new Date(data.args[i].value), cM:{97:1}}); //format rqb is expecting
+                            }
+                            else
+                            {
+                                $scope.args.push(data.args[i].value);
+                            }
                         }
 
                         $scope.queryMeta = data.fieldList;

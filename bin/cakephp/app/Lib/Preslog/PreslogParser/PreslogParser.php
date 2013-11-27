@@ -104,8 +104,9 @@ class PreslogParser extends JqlParser {
         {
             $logRegex = $config['regex']['logid'];
 
+            $parts = array();
             //check logid matches required format
-            if ( !preg_match($logRegex, $clause->getValue()) )
+            if ( !preg_match($logRegex, $clause->getValue(), $parts) )
             {
                 $errors[] = "The Log ID provided does not match the format required. [prefix]_#[numeric id] ";
             }
@@ -114,6 +115,19 @@ class PreslogParser extends JqlParser {
             {
                 $errors[] = "The operator " . $operator->getHumanReadable() . ' can not be used with the field "ID". Operators allowed are = ';
                 //"You can only use the Equals or not Equals operator when searching by Log ID";
+            }
+
+            $clientModel = ClassRegistry::init('Client');
+            //find client the prefix matches
+            $client = $clientModel->find('first', array(
+                'conditions' => array(
+                    'logPrefix' => $parts[1]
+                ),
+            ));
+
+            if (empty($client))
+            {
+                $errors[] = $parts[1] . ' is not a valid log prefix';
             }
 
             return $errors;

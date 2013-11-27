@@ -395,6 +395,12 @@ class SearchController extends AppController
                     continue;
                 }
 
+                //skip attributes as these are a group of values and it does not make sense to sort based on them.
+                if ($clientEntity->isAttributeLabel($key))
+                {
+                    continue;
+                }
+
                 // Track field names
                 $allFieldNames[$key] = true;
 
