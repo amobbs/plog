@@ -254,7 +254,10 @@ class SearchController extends AppController
             $errors = $parser->validate($fullClients);
         }
 
-        $return = array();
+        $return = array(
+            'ok' => true,
+            'errors' => array(),
+        );
 
         if ( sizeof($errors) > 0 )
         {
@@ -262,24 +265,6 @@ class SearchController extends AppController
                 'ok' => false,
                 'errors' => $errors
             );
-        }
-        else
-        {
-            $result = $this->Log->findByQuery($query, $fullClients);
-            if ( isset($result['ok']) && $result['ok'] === 0 )
-            {
-                $return = array(
-                    'ok' => false,
-                    'errors' => $result['errors'],
-                );
-            }
-            else
-            {
-                $return = array(
-                    'ok' => true,
-                    'errors' => array(),
-                );
-            }
         }
 
         $this->set($return);

@@ -3,53 +3,68 @@
     <h3 id="myModalLabel">Add Widget</h3>
 </div>
 <div class="modal-body">
-    <div class="control-group form-horizontal">
-        <label class="control-label">Widget Name </label>
-        <div class="controls">
-            <input type="text" placeholder="Widget Name..." ng-model="widget.name" required/>
-        </div>
-    </div>
-
     <h3>Select a widget</h3>
 
     <table class="table table-widget-select">
-        <tr ng-click="addChart('Pie')">
+        <tr ng-click="addChart('highlighted', true)">
             <td>
                 <img src="/assets/img/placeholder/graph2.png" width="150">
             </td>
             <td>
-                <strong>Pie Chart</strong>
-                <p>Pie Charts can be used for displaying numerical portions and the distribution of data within one particular field/attribute. </p>
+                <strong>Highlighted Incidents</strong>
+                <p>A List of logs that have been been marked as "Show in Report"</p>
             </td>
         </tr>
-        <tr ng-click="addChart('Line')">
+        <tr ng-click="addChart('level1number', true)">
             <td>
-                <img src="/assets/img/placeholder/graph1.png" width="150">
+                <img src="/assets/img/placeholder/graph2.png" width="150">
             </td>
             <td>
-                <strong>Line Graph</strong>
-                <p>Line graphs are good for displaying a quantity distributed over time.</p>
-            </td>
-        </tr>
-        <tr ng-click="addChart('List')">
-            <td>
-                <img src="/assets/img/placeholder/list.png" width="150">
-            </td>
-            <td>
-                <strong>Log List</strong>
-                <p>Log List will display a list of logs and their details, matching your chosen criteria.</p>
+                <strong>Level 1 Errors By Number</strong>
+                <p>A line graph showing 1 year worth of level 1 errors Separated by Accountability</p>
             </td>
         </tr>
-        <tr ng-click="addChart('benchmark')">
+        <tr ng-click="addChart('level1duration', true)">
             <td>
-                <img src="/assets/img/placeholder/benchmark.png" width="150">
+                <img src="/assets/img/placeholder/graph2.png" width="150">
             </td>
             <td>
-                <strong>Benchmark Graph</strong>
-                <p>Benchmark Graphs are used to display the Broadcast Hours Per Month (BHPM) vs Service Level Agreement (SLA) across one or more clients.</p>
+                <strong>Level 1 Errors by Duration</strong>
+                <p>A line graph showing 1 year worth of level 1 errors. Separated by Accountability and each point on the line is a sum of the duration for a month</p>
             </td>
         </tr>
-        <tr ng-click="addChart('date')">
+        <tr ng-click="addChart('level2number', true)">
+            <td>
+                <img src="/assets/img/placeholder/graph2.png" width="150">
+            </td>
+            <td>
+                <strong>Level 2 Errors by Number</strong>
+                <p>A line graph showing 1 year worth of level 2 errors Separated by Accountability</p>
+            </td>
+        </tr>
+        <tr ng-click="addChart('level2duration', true)">
+            <td>
+                <img src="/assets/img/placeholder/graph2.png" width="150">
+            </td>
+            <td>
+                <strong>Level 2 Errors by Duration</strong>
+                <p>A line graph showing 1 year worth of level 2 errors. Separated by Accountability and each point on the line is a sum of the duration for a month</p>
+            </td>
+        </tr>
+        <tr ng-click="addChart('bycause', true)">
+            <td>
+                <img src="/assets/img/placeholder/graph2.png" width="150">
+            </td>
+            <td>
+                <strong>Number of Errors by Cause</strong>
+                <p>A Pie Chart that shows the number of logs separated by their cause</p>
+            </td>
+        </tr>
+
+        <tr>
+            <td colspan="2"><h3>Create A Widget</h3></td>
+        </tr>
+        <tr ng-click="addChart('date', false)">
             <td>
                 <img src="/assets/img/placeholder/date.png" width="150">
             </td>
@@ -58,11 +73,47 @@
                 <p>
                     The Date Selection widget is a helper which allows you to specify a date range for a dashboard. The range can be a Day, Week, Month or a specific period.
                     <br/>The following value names can be inserted into dashboard queries (eg. "created = {start}"):
-                    <ul>
-                        <li><strong>{start}</strong> - The start of the date range</li>
-                        <li><strong>{end}</strong> - The end of the date range</li>
-                    </ul>
+                <ul>
+                    <li><strong>{start}</strong> - The start of the date range</li>
+                    <li><strong>{end}</strong> - The end of the date range</li>
+                </ul>
                 </p>
+            </td>
+        </tr>
+        <tr ng-click="addChart('Line', false)">
+            <td>
+                <img src="/assets/img/placeholder/graph1.png" width="150">
+            </td>
+            <td>
+                <strong>Line Graph</strong>
+                <p>Line graphs are good for displaying a quantity distributed over time.</p>
+            </td>
+        </tr>
+        <tr ng-click="addChart('List', false)">
+            <td>
+                <img src="/assets/img/placeholder/list.png" width="150">
+            </td>
+            <td>
+                <strong>Log List</strong>
+                <p>Log List will display a list of logs and their details, matching your chosen criteria.</p>
+            </td>
+        </tr>
+        <tr ng-click="addChart('benchmark', false)">
+            <td>
+                <img src="/assets/img/placeholder/benchmark.png" width="150">
+            </td>
+            <td>
+                <strong>Benchmark Graph</strong>
+                <p>Benchmark Graphs are used to display the Broadcast Hours Per Month (BHPM) vs Service Level Agreement (SLA) across one or more clients.</p>
+            </td>
+        </tr>
+        <tr ng-click="addChart('Pie', false)">
+            <td>
+                <img src="/assets/img/placeholder/graph2.png" width="150">
+            </td>
+            <td>
+                <strong>Pie Chart</strong>
+                <p>Pie Charts can be used for displaying numerical portions and the distribution of data within one particular field/attribute. </p>
             </td>
         </tr>
     </table>

@@ -223,12 +223,16 @@ class DashboardsController extends AppController
                     'shares' => $this->_getShares(),
                     'preset' => false, //users can not create preset dashboards.
                 );
+
+                $dateWidget = WidgetFactory::createWidget(array('type' => 'date'));
+                $dashboard['widgets'][] = $dateWidget->toArray();
+
                 $this->Dashboard->create($dashboard);
                 $this->Dashboard->save();
 
-                $dashboard = $this->Dashboard->findById($dashboard['_id']);
-                $dashboard = $this->_getParsedDashboard($dashboard);
-                $this->set('dashboard', $this->Dashboard->toArray($dashboard['Dashboard'], false));
+                $dashboardResult = $this->Dashboard->findById($dashboard['_id']);
+                $dashboard = $this->_getParsedDashboard($dashboardResult['Dashboard']);
+                $this->set('dashboard', $this->Dashboard->toArray($dashboard, false));
                 $this->set('status', 'created');
             }
         }
