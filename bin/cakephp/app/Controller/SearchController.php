@@ -92,11 +92,13 @@ class SearchController extends AppController
                 {
                     // Only convert if strtotime can do something useful with it
                     $convValue = strtotime($value);
-                    $value = (!$convValue ? $value : $convValue);
+                    $value = (!$convValue ? date('r', $value) : $convValue);
                 }
 
+                //remove the word variable from the start
+                $variableName = strtolower(substr($key, 8));
                 // Save to vars list
-                $search['variables'][ $key ] = $value;
+                $search['variables'][ $variableName ] = $value;
             }
         }
 
