@@ -3,12 +3,12 @@
  * Singleton that houses all of the users credentials.
  */
 
-angular.module('userService', ['restangular'])
+angular.module('userService', ['restangular', 'cookieStore'])
 
     /**
      * User Service Object
      */
-    .factory('userService', function (Restangular, $q, $rootScope, $log) {
+    .factory('userService', function (Restangular, $q, $rootScope, $log, cookieStore) {
         var user,
             permissions,
             clients,
@@ -369,6 +369,47 @@ angular.module('userService', ['restangular'])
 
 
                 return deferred.promise;
+            },
+
+
+            /**
+             * Fetch this users reembered username, where available.
+             * @return string
+             */
+            getRememberedUsername: function() {
+                var username = cookieStore.get('auth.remember.username');
+
+                if (username === undefined)
+                {
+                    username = '';
+                }
+
+                // re-remember the username for another X days
+                service.setRememberedUsername(username);
+
+                return username;
+            },
+
+
+            /**
+             * Set this users remembered username
+             * @param string    username
+             */
+            setRememberedUsername: function( username ) {
+
+                // Unset?
+                if (username === undefined)
+                {
+                    cookieStore.remove('auth.remember.username');
+                    return;
+                }
+
+                // Expiry date = today +14 days
+                var expiry = new Date();
+                expiry.setDate( expiry.getDate()+14 );
+
+                // Set cookie
+                cookieStore.put('auth.remember.username', username, {expires:expiry});
             }
 
         };

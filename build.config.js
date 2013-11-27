@@ -60,6 +60,7 @@ module.exports = {
         js: [
             'vendor/lodash/dist/lodash.compat.js',
             'vendor/jquery/jquery.min.js',
+            'vendor/jquery-cookie/jquery.cookie.js',
             'vendor/jquery-ui/ui/minified/jquery-ui.min.js',
             'vendor/json3/lib/json3.js',
             'vendor/select2/select2.js',

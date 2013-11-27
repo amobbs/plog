@@ -2,7 +2,7 @@
 
 <h1>Password Reset</h1>
 
-<p>Hi <?php echo $user['firstName'].' '.$user['lastName']; ?>,</p>
+<p>Dear <?php echo $user['firstName'].' '.$user['lastName']; ?>,</p>
 
 <p>To reset your password for MediaHub Preslog, follow the link below, where you will be able to specify a new password.</p>
 

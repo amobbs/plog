@@ -15,7 +15,8 @@ angular.module('moduleManager', [
     'titleService',
     'ngTable',
 
-    // Services and Interceptors
+    // Providers, Services and Interceptors
+    'cookieStore',
     'userService',
     'errorHandler',
     'loadingHandler',

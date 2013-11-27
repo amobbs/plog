@@ -59,6 +59,14 @@ angular.module( 'Preslog.auth', [
                     }
 
                     return defer.promise;
+                }],
+                username: ['$q', 'userService', function($q, userService) {
+                    var defer = $q.defer();
+
+                    var username = userService.getRememberedUsername();
+                    defer.resolve( username );
+
+                    return defer.promise;
                 }]
             }
         });
@@ -159,19 +167,44 @@ angular.module( 'Preslog.auth', [
     /**
      * Controller
      */
-    .controller( 'AuthLoginCtrl', function AuthLoginController( $rootScope, $scope, $location, titleService, userService, $modal, resetPasswordToken ) {
+    .controller( 'AuthLoginCtrl', function AuthLoginController( $rootScope, $scope, $location, titleService, userService, $modal, resetPasswordToken, username ) {
 
         // Title
         titleService.setTitle( 'Login' );
+
+        // User obj
+        $scope.user = {email:'', password:''};
+
+        /**
+         * Remember me?
+         */
+        if (username !== '')
+        {
+            $scope.user.email = username;
+            $scope.user.remember = true;
+        }
+
 
         /**
          * Submit Form
          * @param user
          */
-        $scope.submit = function (user) {
+        $scope.submit = function () {
 
             // Fire user login
-            userService.login(user).then(function(ret) {
+            userService.login($scope.user).then(function(ret) {
+
+                // remember me?
+                if ($scope.user.remember === true)
+                {
+                    // Remember
+                    userService.setRememberedUsername($scope.user.email);
+                }
+                else
+                {
+                    // Clear "remember me"
+                    userService.setRememberedUsername();
+                }
 
                 // Successful login
                 $rootScope.$broadcast('event:auth-loginConfirmed', ret.user);
