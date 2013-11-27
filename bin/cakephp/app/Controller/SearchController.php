@@ -11,6 +11,8 @@ use Preslog\Logs\Entities\LogEntity;
 /**
  * Class SearchController
  * @property    Log     Log
+ * @property    Client  Client
+ * @property    User    User
  */
 class SearchController extends AppController
 {
@@ -36,35 +38,14 @@ class SearchController extends AppController
      */
     public function search()
     {
-        $limit = isset($this->request->query['limit']) ? $this->request->query['limit'] : 3;
-        $start =  isset($this->request->query['start']) ? $this->request->query['start'] : 1;
-        $orderBy =  isset($this->request->query['order']) ? $this->request->query['order'] : 'Created'; //default to created if nothing else is selected
-        $asc = isset($this->request->query['orderasc']) ? $this->request->query['orderasc'] == 'true' : false; //default to descending if nothing else is selected
-
-        $variables = array();
-
-        if (isset($this->request->query['variableStart']) && isset($this->request->query['variableEnd']))
-        {
-            $startDate = strtotime($this->request->query['variableStart']);
-            if ( !$startDate )
-            {
-                $startDate = $this->request->query['variableStart'];
-            }
-            $variables['start'] =  date('r', $startDate);
-
-            $endDate = strtotime($this->request->query['variableEnd']);
-            if ( !$endDate )
-            {
-                $endDate = $this->request->query['variableEnd'];
-            }
-            $variables['end'] = date('r', $endDate);
-        }
+        // Prep the search criteria
+        $search = $this->prepareSearchCriteria();
 
         // Perform search
         // Returns Logs and Options to accompany
-        $return = $this->executeSearch( $this->request->query, $limit, $start, $orderBy, $asc, $variables);
+        $return = $this->executeSearch( $search['query'], $search['limit'], $search['start'], $search['orderBy'], $search['asc'], $search['variables']);
 
-        //used for dashboards to determin which widget we are updating.
+        // used for dashboards to determin which widget we are updating.
         if ( isset($this->request->query['widgetid']) )
         {
             $return['widgetid'] = $this->request->query['widgetid'];
@@ -73,6 +54,54 @@ class SearchController extends AppController
         // Return search result
         $this->set($return);
         $this->set('_serialize', array_keys($return));
+    }
+
+
+    /**
+     * Prepare the search criteria
+     * Shared functionality between Search and Export
+     */
+    protected function prepareSearchCriteria()
+    {
+        // Build search query params
+        $search = array(
+            'query'     => $this->request->query['query'],
+            'limit'     => (isset($this->request->query['limit']) ? $this->request->query['limit'] : 3),
+            'start'     => (isset($this->request->query['start']) ? $this->request->query['start'] : 1),
+            'orderBy'   => (isset($this->request->query['order']) ? $this->request->query['order'] : 'Created'),
+            'asc'       => (isset($this->request->query['orderasc']) ? $this->request->query['orderasc'] == 'true' : false),
+            'variables' => array(),
+        );
+
+        // List of vars available in search
+        $variableList = array(
+            'variableStart' =>array('type'=>'date'),
+            'variableEnd'   =>array('type'=>'date'),
+        );
+
+        // Parse variables
+        foreach ($variableList as $key=>$variable)
+        {
+            // Is this var available?
+            if (isset($this->request->query[$key]))
+            {
+                $value = $this->request->query[$key];
+
+                // Convert to datetime
+                if ($variable['type'] == 'date')
+                {
+                    // Only convert if strtotime can do something useful with it
+                    $convValue = strtotime($value);
+                    $value = (!$convValue ? $value : $convValue);
+                }
+
+                // Save to vars list
+                $search['variables'][ $key ] = $value;
+            }
+        }
+
+        // Done
+        return $search;
     }
 
 
@@ -96,57 +125,44 @@ class SearchController extends AppController
      */
     public function export()
     {
-        set_time_limit(60*10);  // 10 mins
+        // Export is allowed to take up to 10 mins
+        set_time_limit(60*10);
 
-        $orderBy =  isset($this->request->query['order']) ? $this->request->query['order'] : '';
-        $asc = isset($this->request->query['orderasc']) ? $this->request->query['orderasc'] == 'true' : true;
+        // Prepare criteria
+        $search = $this->prepareSearchCriteria();
 
-        //paginate results so that we dont hit the 16mb result limit.
-        $variables = array();
-
-        if (isset($this->request->query['variableStart']) && isset($this->request->query['variableEnd']))
+        $clientObjs = $this->Client->find('all');
+        $clients = array();
+        foreach($clientObjs as $c)
         {
-            $variables['start'] =  date('r',$this->request->query['variableStart']);
-            $variables['end'] = date('r',$this->request->query['variableEnd']);
+            $clients[] = $c['Client'];
         }
 
-        $query = $this->request->query['query'];
-
-        $user = $this->User->findById(
-            $this->PreslogAuth->user('_id')
-        );
-
-        // add a query value which ensures they only get results from their own client_id
-        if ($this->isAuthorized('single-client'))
+        // convert string from jql to mongo array
+        $parser = new PreslogParser();
+        $parser->setSqlFromJql($search['query']);
+        $errors = $parser->getErrors();
+        if ( sizeof($errors) !== 0)
         {
-            $query .= 'AND client_id = ' . $user['User']['client_id'] ;
+            $errors = $parser->validate($clients);
+
+            $this->errorBadRequest(array('message'=>'There was a problem with your query. Please try again.', 'data'=>$errors));
         }
 
-        //replace any variables that are passed in
-        foreach($variables as $variable => $value)
+        // Fetch the match query
+        $match = $parser->parse($clients);
+
+        // Add to search criteria
+        $criteria = array();
+        if ( !empty($match))
         {
-            $query = str_replace('{' . $variable . '}', $value, $query);
+            $criteria[] = array('$match'=>$match);
         }
 
-        $clients = $this->User->listAvailableClientsForUser($user['User']);
-        $fullClients = array();
-        foreach($clients as $client) {
-            $c = $this->Client->findById($client['_id']);
-            $fullClients[] = $c['Client'];
-            $options[(string)$client['_id']] = $c['Client'];
-        }
-
-        $count = $this->Log->countByQuery($query, $fullClients);
-        if ( isset($return['errors']) )
-        {
-            $this->errorGeneric(array('data'=>$return['errors'], 'message'=>'Export failed') );
-            return;
-        }
-
+        // Begin output
         // Output is using view class
         $this->viewClass = 'View';
         $this->layout = 'ajax';
-
 
         // Instigate headers
         header("Content-Type: application/force-download");
@@ -166,38 +182,153 @@ class SearchController extends AppController
         // Start the file off
         echo " ";
 
+
+        // Build the aggregate pipeline
+        // Unwind fields and attributes, then add-to-set into a big array of both.
+        $criteria[] = array('$unwind' => '$fields');
+        $criteria[] = array('$unwind' => '$attributes');
+        $criteria[] = array('$group'  => array(
+            '_id'       => '1',
+            'clients'   =>array('$addToSet'=>'$client_id'),
+            'fields'    =>array('$addToSet'=>'$fields.field_id'),
+            'attributes'=>array('$addToSet'=>'$attributes'),
+        ));
+        $mongo = $this->Log->getMongoDb();
+        $fieldResult = $mongo->selectCollection('logs')->aggregate($criteria);
+        $fieldResult = $fieldResult['result'][0];
+
+        // Aggregate the Client list to fetch the friendly names of fields in this query
+        // Match clients first for efficient find
+        // Unwind fields
+        // Match on the fields._id to restrict to ones showing up in the export.
+        $criteria = array(
+            array('$match'  => array('_id'=>array('$in'=>$fieldResult['clients']))),
+            array('$project'=> array('field'=>'$fields')),
+            array('$unwind' => '$field'),
+            array('$match'  => array('field._id'=>array('$in'=>$fieldResult['fields']))),
+            array('$sort'   => array('client_id'=>-1, 'field.order'=>1)),
+        );
+        $clientFieldResult = $mongo->selectCollection('clients')->aggregate($criteria);
+
+        // Aggregate the Client list to fetch the friendly Attribute group names for each client
+        // Match the client first
+        // Unwind the attributes
+        $criteria = array(
+            array('$match'  => array('_id'=>array('$in'=>$fieldResult['clients']))),
+            array('$project'=> array('field'=>'$attributes')),
+            array('$unwind' => '$field'),
+            array('$sort'   => array('client_id'=>1, 'field.order'=>1)),
+        );
+        $clientAttributeResult = $mongo->selectCollection('clients')->aggregate($criteria);
+
+        // :WARN: There's a potential bug here.
+        // If the Client has two fields (named A and B) with the same label (X and X) then the nameMap
+        // will fail to align A and B separately, they'll instead both go into A, and B will be empty.
+        // This can only be fixed if we modify toDisplay, or the executeSearch function to return more data.
+        // Similarly, an Attribute with the same Label and a Field will cause this problem.
+
+        // Combine both result sets
+        $sourceFields = array_merge( array_values($clientFieldResult['result']), array_values($clientAttributeResult['result']) );
+        $finalFields = array(
+            0=>array('field'=>array(
+                'name'=>'id',
+                'label'=>'ID',
+            ))
+        );
+
+        // Locate "LogInfo" type field, and expand to individual field references
+        foreach ($sourceFields as $pos=>$field)
+        {
+            // Type is loginfo?
+            if (isset($field['field']['type']) && $field['field']['type'] == 'loginfo')
+            {
+                // Duplicate, with the appropriate labels, and splice into the array
+                $splice = array();
+                $labels = array(
+                    'loginfo.created'       =>'Created',
+                    'loginfo.created_user'  =>'Created By',
+                    'loginfo.modified'      =>'Modified',
+                    'loginfo.modified_user' =>'Modified By',
+                    'loginfo.version'       =>'Version'
+                );
+
+                // Replace names and labels
+                foreach ($labels as $name=>$label)
+                {
+                    $field['field']['name'] = $name;
+                    $field['field']['label'] = $label;
+                    $finalFields[] = $field;
+                }
+            }
+            else
+            {
+                $finalFields[] = $field;
+            }
+        }
+
+
+        // Collate Field and then Attribute list
+        $fieldList = array();           // List of unique fields, for use as labels/headings
+        $labelToPositionMap = array();  // Map Field.Label to position
+
+        $pos = 0;
+        foreach ($finalFields as $field)
+        {
+            $field = $field['field'];
+
+            // If the name isn't already set, this is a new field.
+            if (!isset($fieldList[ $field['name'] ]))
+            {
+                // Map unique fields by name
+                $fieldList[ $field['name'] ] = array(
+                    'label'     => $field['label'],
+                    'name'      => $field['name'],
+                    'position'  => $pos,
+                );
+
+                // increment position
+                $pos++;
+            }
+
+            // Map the label of this field to a position
+            $labelToPositionMap[ $field['label'] ] = $fieldList[ $field['name'] ]['position'];
+        }
+
+
         // Perform search
         // Returns Logs and Options to accompany
-        $logs = array();
-        $limit = 200;
-        $start = 0;
+        $search['limit'] = 100;
+        $search['start'] = 0;
 
         do
         {
             // Search for logs
-            $return = $this->executeSearch( $this->request->query, $limit, $start, $orderBy, $asc, $variables);
+            $return = $this->executeSearch( $search['query'], $search['limit'], $search['start'], $search['orderBy'], $search['asc'], $search['variables']);
 
-            if ( isset($return['errors']) )
+            // Generate export XLS from data
+            $this->set('logs', $return['logs']);
+            $this->set('map', $labelToPositionMap);
+            $this->set('headings', false);
+
+            // Show heading?
+            if (0 == $search['start'])
             {
-                $this->errorGeneric(array('data'=>$return['errors'], 'message'=>'Export failed') );
-                return;
+                $this->set('headings', $fieldList);
             }
 
-            $logs = array_merge($logs, $return['logs']);
+            // Render
+            $this->viewClass = 'View';
+            echo $this->render('export_xls');
 
-            // Increment
-            $start += $limit;
+            // Increment limits
+            $search['start'] += $search['limit'];
 
-        } while ($start < $count);
-
-        // Generate export XLS from data
-        $this->set('logs', $logs);
-        $this->viewClass = 'View';
-        echo $this->render('export_xls');
+        } while (isset($return['logs']) && sizeof($return['logs']));
 
         // Complete request
         exit();
     }
+
 
     /**
      * Search using the given query string
@@ -271,21 +402,15 @@ class SearchController extends AppController
         $this->set('_serialize', array_keys($return));
     }
 
+
     /**
-     * Perform the search operation and return a series of log data sufficient for search results.
+     * Reformat duration (seconds) into H:M:S
+     * @param $duration
+     * @return string
      */
-    protected function executeSearch( $params, $limit = 3, $start = 0, $orderBy = '', $orderAsc = true, $variables = array())
+    protected function executeSearch( $query, $limit = 3, $start = 0, $orderBy = '', $orderAsc = true, $variables = array())
     {
         $options = array();
-
-        // Validate: Search criteria must not be empty
-        if ( !isset($params['query']) )
-        {
-            $this->errorBadRequest(array('message'=>"Search parameters must not be empty. Please supply a valid JQL query to the 'query' variable."));
-        }
-
-        // Load query
-        $query = $params['query'];
 
         // add a query value which ensures they only get results from their own client_id
         if ($this->isAuthorized('single-client'))
@@ -426,7 +551,12 @@ class SearchController extends AppController
         return $string;
     }
 
-    //find the users name from the id
+    /**
+     * Fetch username from user._id
+     * @param $id
+     * @param $users
+     * @return string
+     */
     private function _getUserName($id, $users) {
         foreach($users as $user) {
             if ($user['User']['_id'] == $id) {
@@ -437,7 +567,12 @@ class SearchController extends AppController
         return '';
     }
 
-    //find the clients company name from its id
+    /**
+     * Fetch client Company from client._id
+     * @param $clientId
+     * @param $clients
+     * @return string
+     */
     private function _getCompanyName($clientId, $clients) {
         foreach($clients as $client) {
             if ($client['_id'] == (string)$clientId) {
@@ -448,7 +583,13 @@ class SearchController extends AppController
         return '';
     }
 
-    //find field from a client given an id
+
+    /**
+     * Find field within the client, by the fields._id
+     * @param $fieldId
+     * @param $clientFields
+     * @return bool
+     */
     private function _getFieldFromClientById($fieldId, $clientFields) {
         foreach($clientFields['fields'] as $field) {
             if ($field['_id'] == $fieldId) {
@@ -459,7 +600,12 @@ class SearchController extends AppController
         return false;
     }
 
-    //find the text value for a select option from a client
+    /**
+     * Fetch the selected option name from the field list, given the option._id and options list.
+     * @param $optionId
+     * @param $options
+     * @return mixed
+     */
     private function _getSelectValueFromClient($optionId, $options) {
         foreach($options as $option) {
             if ($option['_id'] == $optionId) {
@@ -535,6 +681,11 @@ class SearchController extends AppController
         $this->set('_serialize', array('sql', 'args', 'fieldList', 'selectOptions'));
     }
 
+
+    /**
+     * Meta-data for query builder
+     * @return array
+     */
     private function _getQueryBuilderMeta()
     {
         //list clients this user has access to
@@ -789,6 +940,12 @@ class SearchController extends AppController
         $this->set('_serialize', array('jql'));
     }
 
+
+    /**
+     * List operators available to query builder
+     * @param $type
+     * @return array
+     */
     private function listOperators($type)
     {
         $operators = array();
@@ -847,6 +1004,7 @@ class SearchController extends AppController
         $this->set('args', $parser->getArguments());
         $this->set('_serialize', array('jql', 'args'));
     }
+
 
     /**
      * get the list of clients the logged in user can access
