@@ -20,7 +20,7 @@
     <div class="container-fluid" id="preslog_log_entry">
 
         <!-- Validation Errors -->
-        <div class="alert alert-error" ng-show="Object.keys(serverErrors).length > 0">
+        <div class="alert alert-error" ng-show="_.keys(serverErrors).length > 0">
             <strong>An error occurred attempting to save the log.</strong>
             <ul>
                 <li ng-repeat="error in serverErrors">
@@ -36,7 +36,7 @@
 
             <!-- Log Fields -->
             <div class="span8 form-horizontal log-fields">
-                <div log-fields data="log.fields" fields="options.fields"></div>
+                <div log-fields logdata="log.fields" logfields="options.fields"></div>
 
                 <!-- Controls -->
                 <div class="row-fluid hidden-phone hidden-tablet">

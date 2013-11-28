@@ -1,7 +1,8 @@
     <div class="span6" ng-show="log.data.created">
         <label class="control-label">Created</label>
         <div class="controls input-fill">
-            <input-field-loginfo-datetime
+            <input
+                datetime="datetime"
                 type="text"
                 disabled
                 ng-model="log.data.created"
@@ -21,7 +22,8 @@
         <label class="control-label">Modified</label>
         <div class="controls controls-modified">
             <span>
-                <input-field-loginfo-datetime
+                <input
+                    datetime="datetime"
                     class="input-date"
                     type="text"
                     disabled

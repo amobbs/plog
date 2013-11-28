@@ -35,13 +35,13 @@ angular.module('logFields', [])
          */
         var linker = function( scope, element, attrs, ctrl ) {
 
-            if (scope.data === undefined)
+            if (scope.logdata === undefined)
             {
-                scope.data = [];
+                scope.logdata = [];
             }
 
             // Sort the FIELDS data into the correct order.
-            scope.fields = scope.fields.sort(function(a,b) {
+            scope.logfields = scope.logfields.sort(function(a,b) {
                 return (parseInt(a.order, 10) < parseInt(b.order, 10)) ? -1 : (parseInt(a.order, 10) > parseInt(b.order, 10)) ? 1 : 0;
             });
 
@@ -56,13 +56,13 @@ angular.module('logFields', [])
             var rowElement = rowElementTemplate;
             var rows = [];
 
-            for (var i in scope.fields)
+            for (var i in scope.logfields)
             {
                 // Quick ref for this field
-                field = scope.fields[i];
+                field = scope.logfields[i];
 
                 // Fetch the data from the data array by the ID of the field
-                var data = $.map( scope.data, function(v,k){ if (v.field_id == field._id) { return v; } });
+                var data = $.map( scope.logdata, function(v,k){ if (v.field_id == field._id) { return v; } });
 
                 if ( !data.length )
                 {
@@ -71,7 +71,7 @@ angular.module('logFields', [])
                         'field_id':field._id,
                         'data':{}
                     };
-                    scope.data.push(data);
+                    scope.logdata.push(data);
                 }
                 else
                 {
@@ -126,14 +126,12 @@ angular.module('logFields', [])
                 currentWidth += type.width;
             }
 
-
             // Condense each row to actual html
             for (i in rows)
             {
                 // each row ..
                 element.append( rows[i] );
             }
-
 
             // Attach dynamic elements to the parent form
             // Find all ng-model references under this item
@@ -182,12 +180,11 @@ angular.module('logFields', [])
         return {
             restrict: "EA",
             priority: -1,
-            replace: true,
             transclude: true,
             link: linker,
             scope: {
-                fields: '=',
-                data: '='
+                logfields: '=',
+                logdata: '='
             }
         };
     }]);

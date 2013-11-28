@@ -20,8 +20,13 @@ angular.module('errorHandler', [])
          * 404 Error Handler
          * Executes the function on 404, which changes the state to an error state.
          */
-        $urlRouterProvider.otherwise(function( $injector )
+        $urlRouterProvider.otherwise(function( $injector, $location )
         {
+            if (_.indexOf($location.absUrl(), '#/') === -1)
+            {
+                $location.path('/');
+            }
+
             var $rootScope = $injector.get('$rootScope');
             $rootScope.$broadcast('event:error-generic', {
                 title: "404 - Not Found",

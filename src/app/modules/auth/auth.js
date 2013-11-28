@@ -217,7 +217,7 @@ angular.module( 'Preslog.auth', [
                 // Write error messages to fields
                 for (var i in ret.login.data)
                 {
-                    $scope.errors[i] = ret.login.data[i][Object.keys(ret.login.data[i])[0]];
+                    $scope.errors[i] = ret.login.data[i][_.keys(ret.login.data[i])[0]];
                 }
 
             });

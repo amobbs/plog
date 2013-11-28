@@ -212,7 +212,7 @@ angular.module( 'Preslog.log', [
                     $scope.serverErrors = response.data.data;
 
                     // If field exists, mark is as invalid
-                    var keys = Object.keys($scope.serverErrors);
+                    var keys = _.keys($scope.serverErrors);
                     for (var i in keys)
                     {
                         if ($scope.logForm[ keys[i] ] !== undefined)

@@ -24,6 +24,58 @@ angular.module('inputFieldDatetime', [])
 
 
             /**
+             * DateTime Parser
+             * Translate the value from YYYY-MM-DD HH:MM:SS to RFC2822
+             * @param value
+             */
+            var datetimeParser = function(value)
+            {
+                var date = new Date( ctrl.$modelValue );
+                var dateSplit = value.split(' ');
+                var dateParts = dateSplit[0].split('/');
+                var newDate = new Date(dateParts[2]+'-'+dateParts[1]+'-'+dateParts[0]+' '+dateSplit[1]);
+
+                // Fix the source date if not set, undefined, etc
+                if (isNaN( date.getTime()))
+                {
+                    date = new Date('0001-01-01 00:00:00');
+                }
+
+                // Apply, or fail and return original
+                if (!isNaN( newDate.getTime()))
+                {
+                    ctrl.$setValidity('date', true);
+                    return $filter('date')(newDate, 'EEE, dd MMM yyyy hh:mm:ss Z');
+                }
+                else
+                {
+                    ctrl.$setValidity('date', false);
+                    return $filter('date')(date, 'EEE, dd MMM yyyy hh:mm:ss Z');
+                }
+            };
+
+
+            /**
+             * DateTime Formatter
+             * Translate the value from RFC2822 to YYYY-MM-DD HH:MM:SS
+             * @param value
+             */
+            var datetimeFormatter = function(value)
+            {
+                var date = new Date(value);
+
+                if (!isNaN( date.getTime()))
+                {
+                    return $filter('date')(date, 'dd/MM/yyyy hh:mm:ss');
+                }
+                else
+                {
+                    return null;
+                }
+            };
+
+
+            /**
              * Date Parser
              * Translate the value from YYYY-MM-DD to RFC2822
              * @param value
@@ -141,8 +193,14 @@ angular.module('inputFieldDatetime', [])
              * Apply parser/formatter
              */
 
+            // Only apply to "datetime" type
+            if (attrs.datetime == 'datetime')
+            {
+                ctrl.$parsers.unshift(datetimeParser);
+                ctrl.$formatters.unshift(datetimeFormatter);
+            }
             // Only apply to "date" type
-            if (attrs.datetime == 'date')
+            else if (attrs.datetime == 'date')
             {
                 ctrl.$parsers.unshift(dateParser);
                 ctrl.$formatters.unshift(dateFormatter);
@@ -165,7 +223,7 @@ angular.module('inputFieldDatetime', [])
          * Establish Directive
          */
         return {
-            restrict: "E",
+            restrict: "EA",
             require: "?ngModel",
             link: linker
         };

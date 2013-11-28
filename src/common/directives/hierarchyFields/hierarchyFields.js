@@ -39,10 +39,10 @@ angular.module('hierarchyFields', [])
                 // Draw dynaTree
                 function drawHierarchy(fields, hideDeleted, enableDnD, allowEdit) {
                     var triggerSelected = function(id, selected) {
-                        if (selected && (scope.hierarchySelected.indexOf(id) === -1 )) {
+                        if (selected && (_.indexOf(scope.hierarchySelected, id) === -1 )) {
                             scope.hierarchySelected.push(id);
-                        } else if (!selected && (scope.hierarchySelected.indexOf(id) !== -1)) {
-                            var index = scope.hierarchySelected.indexOf(id);
+                        } else if (!selected && (_.indexOf(scope.hierarchySelected, id) !== -1)) {
+                            var index = _.indexOf(scope.hierarchySelected, id);
                             scope.hierarchySelected.splice(index, 1);
                         }
                     };

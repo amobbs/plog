@@ -33,7 +33,7 @@ App::uses('Controller', 'Controller');
 class AppController extends Controller {
 
     // use Json responses
-    public $viewClass = 'Json';
+    public $viewClass = 'PreslogJson';
     public $components = array('PreslogAuth', 'RequestHandler', 'Session');
 
 
@@ -178,12 +178,6 @@ class AppController extends Controller {
             $userRole,
             array('controller'=>$this->name, 'action'=>$this->action)
         );
-
-
-
-
-        // Permisson check failed
-        return false;
     }
 
 
