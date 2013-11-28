@@ -4,7 +4,7 @@
  */
 
 angular.module('logWidget', [])
-    .directive('logWidget', ['Restangular', function (Restangular) {
+    .directive('logWidget', ['Restangular', '$location', function (Restangular, $location) {
 
         /**
          * Establish Directive
@@ -57,7 +57,7 @@ angular.module('logWidget', [])
                 scope.redirectToLog = function(logId)
                 {
                     logId = logId.replace('#', '');
-                    window.location.href = '/logs/' + logId;
+                    $location.path('/logs/' + logId);
                 };
 
                 //if any params change get new logs

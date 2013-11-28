@@ -111,7 +111,7 @@ angular.module( 'Preslog.log', [
 /**
  * And of course we define a controller for our route.
  */
-    .controller( 'LogCtrl', function LogController( $scope, titleService, logData, logOptions, LogRestangular, $location ) {
+    .controller( 'LogCtrl', function LogController( $scope, $location, titleService, logData, logOptions, LogRestangular, stateHistory ) {
 
         // Set title
         titleService.setTitle( 'Create Log' );
@@ -201,8 +201,11 @@ angular.module( 'Preslog.log', [
                 // On success
                 function(response)
                 {
-                    // Redirect to homepage
-                    $location.path('/');
+                    // Redirect to previous state, or homepage
+                    if (stateHistory.goBack() === false)
+                    {
+                        $location.path('/');
+                    }
                 },
 
                 // On failure

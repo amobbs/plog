@@ -12,6 +12,7 @@ angular.module('moduleManager', [
     'ui.sortable',
 //    'queryBuilder',
     'stateHelper',
+    'stateHistory',
     'titleService',
     'ngTable',
 
