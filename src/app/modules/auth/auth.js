@@ -32,8 +32,7 @@ angular.module( 'Preslog.auth', [
                     // If the user IS logged in, reject this action and redirect
                     userService.login().then(function()
                     {
-                        defer.reject();
-                        $location.path('/');
+                        defer.resolve(false);
                     }, function()
                     {
                         // Assuming the user isn't logged in, resolve as OK.
@@ -102,7 +101,7 @@ angular.module( 'Preslog.auth', [
         var requestedPath = null;
         var loginRequiredInProgress = false;
 
-        // Will succeed if the users if logged in, otherwise will instigate the login process.
+        // Will succeed if the users is logged in, otherwise a call to getUser will instigate the login process.
         userService.getUser().then(function (user) {
         });
 
@@ -167,10 +166,16 @@ angular.module( 'Preslog.auth', [
     /**
      * Controller
      */
-    .controller( 'AuthLoginCtrl', function AuthLoginController( $rootScope, $scope, $location, titleService, userService, $modal, resetPasswordToken, username ) {
+    .controller( 'AuthLoginCtrl', function AuthLoginController( $rootScope, $scope, $location, titleService, userService, $modal, resetPasswordToken, username, loggedOut ) {
 
         // Title
         titleService.setTitle( 'Login' );
+
+        // If logged in, then redirect to the homepage
+        if (loggedOut === false)
+        {
+            $location.path('/');
+        }
 
         // User obj
         $scope.user = {email:'', password:''};
