@@ -400,18 +400,27 @@ class Log extends AppModel
                 '$group' => $group
             );
 
+            $orderDirection = -1;
+            if ($orderAsc) {
+                $orderDirection = 1;
+            }
+
             if ( sizeof($fieldIds) > 0 )
             {
-                $orderDirection = -1;
-                if ($orderAsc) {
-                    $orderDirection = 1;
-                }
 
                 //do the sort
                 $criteria[] = array(
                     '$sort' => array(
                         'sort.' . $orderByDataFieldName => $orderDirection,
                     )
+                );
+            }
+            else if ($orderBy == 'ID')
+            {
+                $criteria[] = array(
+                    '$sort' => array(
+                        'hrid' => $orderDirection,
+                    ),
                 );
             }
         }
