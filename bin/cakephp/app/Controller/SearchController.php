@@ -133,8 +133,8 @@ class SearchController extends AppController
      */
     public function export()
     {
-        // Export is allowed to take up to 10 mins
-        set_time_limit(60*10);
+        // Export is allowed to continue until it's done.
+        set_time_limit(0);
         @ini_set('memory_limit', '32M');
 
         // Prepare criteria
