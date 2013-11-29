@@ -17,6 +17,7 @@ use Preslog\JqlParser\JqlOperator\LikeOperator;
 use Preslog\JqlParser\JqlOperator\NotEqualsOperator;
 use Preslog\JqlParser\JqlOperator\NotInOperator;
 use Preslog\JqlParser\JqlParser;
+use Preslog\Logs\FieldTypes\Checkbox;
 use Preslog\Logs\FieldTypes\Select;
 
 class PreslogParser extends JqlParser {
@@ -393,6 +394,7 @@ class PreslogParser extends JqlParser {
         $dataField = '';
         $isText = false;
         $isSelect = false;
+        $isBoolean = false;
         $selectIn = array();
 
         //get matching field ids so we only search against the fields specified
@@ -492,6 +494,12 @@ class PreslogParser extends JqlParser {
                         }
                     }
                 }
+
+                //need to make sure we get a boolean value out, not text
+                if ($clientField instanceof Checkbox)
+                {
+                    $isBoolean = true;
+                }
             }
         }
 
@@ -518,6 +526,11 @@ class PreslogParser extends JqlParser {
             $value = array(
                 '$in' => $selectIn,
             );
+        }
+
+        if ($isBoolean)
+        {
+            $value = 'true' === strtolower($value);
         }
 
        return array(
