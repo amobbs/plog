@@ -102,6 +102,12 @@ class SearchController extends AppController
             }
         }
 
+        // replace any variables that are passed into the query
+        foreach( $search['variables'] as $variable => $value)
+        {
+            $search['query'] = str_replace('{' . $variable . '}', $value, $search['query']);
+        }
+
         // Done
         return $search;
     }
@@ -129,6 +135,7 @@ class SearchController extends AppController
     {
         // Export is allowed to take up to 10 mins
         set_time_limit(60*10);
+        @ini_set('memory_limit', '32M');
 
         // Prepare criteria
         $search = $this->prepareSearchCriteria();
@@ -161,11 +168,6 @@ class SearchController extends AppController
             $criteria[] = array('$match'=>$match);
         }
 
-        // Begin output
-        // Output is using view class
-        $this->viewClass = 'View';
-        $this->layout = 'ajax';
-
         // Instigate headers
         header("Content-Type: application/force-download");
         header("Content-Type: application/octet-stream");
@@ -179,11 +181,7 @@ class SearchController extends AppController
 
         // Ensures output is immediate
         ob_implicit_flush(true);
-        ob_end_clean();
-
-        // Start the file off
-        echo " ";
-
+        echo "\n";
 
         // Build the aggregate pipeline
         // Unwind fields and attributes, then add-to-set into a big array of both.
@@ -299,7 +297,7 @@ class SearchController extends AppController
 
         // Perform search
         // Returns Logs and Options to accompany
-        $search['limit'] = 100;
+        $search['limit'] = 200;
         $search['start'] = 0;
 
         do
@@ -307,23 +305,31 @@ class SearchController extends AppController
             // Search for logs
             $return = $this->executeSearch( $search['query'], $search['limit'], $search['start'], $search['orderBy'], $search['asc'], $search['variables']);
 
+            // Load view
+            // :BUGFIX: View is created independently, as loading the view via the controller
+            // creates a circular reference, resulting in a memory leak for each loop of this renderer.
+            // See http://paul-m-jones.com/archives/262
+            $view = new View();
+            $view->layout = 'ajax';
+
             // Generate export XLS from data
-            $this->set('logs', $return['logs']);
-            $this->set('map', $labelToPositionMap);
-            $this->set('headings', false);
+            $view->set('logs', $return['logs']);
+            $view->set('map', $labelToPositionMap);
+            $view->set('headings', false);
 
             // Show heading?
             if (0 == $search['start'])
             {
-                $this->set('headings', $fieldList);
+                $view->set('headings', $fieldList);
             }
 
             // Render
-            $this->viewClass = 'View';
-            echo $this->render('export_xls');
+            echo $view->render('Search/export_xls');
 
             // Increment limits
             $search['start'] += $search['limit'];
+
+            unset($view);
 
         } while (isset($return['logs']) && sizeof($return['logs']));
 
@@ -422,12 +428,6 @@ class SearchController extends AppController
             );
 
             $query .= ' AND client_id = ' . $user['User']['client_id'] ;
-        }
-
-        // replace any variables that are passed into the query
-        foreach($variables as $variable => $value)
-        {
-            $query = str_replace('{' . $variable . '}', $value, $query);
         }
 
         // Fetch current user
