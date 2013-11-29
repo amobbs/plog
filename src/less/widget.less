@@ -67,14 +67,6 @@
             }
 
         }
-
-
-        // Hide unless title bar is hovered
-        .hover-show
-        {
-            visibility:hidden;
-        }
-
     }
 
     &:hover
@@ -126,6 +118,21 @@
 }
 
 
+/**
+ * Desktop only drop-down hider
+ */
+
+@media (min-width: 979px)
+{
+    .widget-box
+    {
+        // Hide unless title bar is hovered
+        .hover-show
+        {
+            visibility:hidden;
+        }
+    }
+}
 
 /**
  * Mobile device compatibility for Widgets

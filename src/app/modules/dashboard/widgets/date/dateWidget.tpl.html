@@ -10,7 +10,7 @@
         <div class="row-fluid date-selection">
             <div class="input-prepend period-selection-field">
                 <span class="add-on">Period</span>
-                <select ng-model="session.period" ng-click="changePeriod()" class="input-small">
+                <select ng-model="session.period" ng-change="changePeriod()" class="input-small">
                     <option value="Week">Week</option>
                     <option value="Month">Month</option>
                     <option value="Day">Day</option>
@@ -41,7 +41,7 @@
             </div>
             <div class="input-prepend period-selection-field">
                 <span class="add-on">Period</span>
-                <select ng-model="session.period" ng-click="changePeriod()" class="input-small">
+                <select ng-model="session.period" ng-change="changePeriod()" class="input-small">
                     <option value="Week">Week</option>
                     <option value="Month">Month</option>
                     <option value="Day">Day</option>

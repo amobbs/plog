@@ -7,7 +7,10 @@ class PreslogJsonView extends JsonView {
 	public function render($view = null, $layout = null) {
 
         // Custom headers
-        header('Cache-Control: no-cache');
+        if (!headers_sent())
+        {
+            header('Cache-Control: no-cache');
+        }
 
         // Standard render
         return parent::render($view, $layout);
