@@ -159,7 +159,7 @@ class Duration extends FieldTypeAbstract
         // Seconds must be numeric
         if (!is_numeric($this->data['data']['seconds']))
         {
-            $errors[] = "Durations must be supplied as numeric values in seconds. Received '{$this->data['data']['seconds']}'.";
+            $errors[] = "Durations must be supplied as numeric values in seconds.";
         }
 
         return $errors;

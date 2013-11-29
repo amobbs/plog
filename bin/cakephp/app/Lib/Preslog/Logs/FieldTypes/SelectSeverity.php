@@ -140,7 +140,7 @@ class SelectSeverity extends Select
 
         // Fetch duration field
         $durationField = $this->log->getFieldByName('duration');
-        if ( is_object($durationField) )
+        if ( is_object($durationField) && $durationField instanceof Duration )
         {
             $option = null;
 
@@ -157,33 +157,42 @@ class SelectSeverity extends Select
             // If option found, and severity check exists on the field
             if (is_array($option) && isset($option['severity']))
             {
-
-                // Validate: Duration must be > 10s
-                if ($option['severity'] == 'level-1')
-                {
-                    if ($durationField->data['data']['seconds'] < 10)
-                    {
-                        $errors[] = 'Severity 1 can only be selected for faults with duration 10 seconds or greater.';
-                    }
-                }
-
-                // Validate: Duration must be < 10s and > 0s
-                if ($option['severity'] == 'level-2')
-                {
-                    if ($durationField->data['data']['seconds'] >= 10 || $durationField->data['data']['seconds'] <= 0)
-                    {
-                        $errors[] = 'Severity 2 can only be selected for faults with between zero and 10 seconds.';
-                    }
-                }
-
                 // Validate: Duration must not be set, or 0
                 if ($option['severity'] == 'reported')
                 {
-                    if ($durationField->data['data']['seconds'] > 0)
+                    if (isset($durationField->data['data']['seconds']) && $durationField->data['data']['seconds'] > 0)
                     {
                         $errors[] = 'Reported events must have a duration of zero seconds.';
                     }
                 }
+
+                // Validate: Duration must be > 10s
+                elseif ($option['severity'] == 'level-1')
+                {
+                    if (!isset($durationField->data['data']['seconds']))
+                    {
+                        $errors[] = 'Severity 1 requires a duration 10 seconds or greater.';
+                    }
+                    elseif ($durationField->data['data']['seconds'] < 10)
+                    {
+                        $errors[] = 'Severity 1 can only be selected with a duration 10 seconds or greater.';
+                    }
+                }
+
+                // Validate: Duration must be < 10s and > 0s
+                elseif ($option['severity'] == 'level-2')
+                {
+                    if (!isset($durationField->data['data']['seconds']))
+                    {
+                        $errors[] = 'Severity 2 requires a duration between zero and 10 seconds.';
+                    }
+
+                    elseif ($durationField->data['data']['seconds'] >= 10 || $durationField->data['data']['seconds'] <= 0)
+                    {
+                        $errors[] = 'Severity 2 can only be selected with a duration between zero and 10 seconds.';
+                    }
+                }
+
             }
         }
 
