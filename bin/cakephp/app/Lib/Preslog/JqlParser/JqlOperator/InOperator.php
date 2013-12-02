@@ -17,10 +17,10 @@ class InOperator extends JqlOperator {
      */
     public function __construct() {
         parent::_construct(
-            'IN',
-            'IN',
+            ' IN',
+            ' IN',
             '$in',
-            'IN',
+            ' IN',
             array(),
             true);
     }
