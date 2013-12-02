@@ -33,115 +33,96 @@ textarea.query
 {
   color: red;
 }
+
+
 /**
  * Query Wizard
  */
 
-.query-builder
-{
-    min-height: 600px;
-    min-width: 800px;
-}
-
+// Config
+@queryBuilder-main-background: transparent;
 @queryBuilder-background: #ddd;
 @queryBuilder-border: #ccc;
 
-
-
-//hide the table drop down since we only have one table for the query builder
-select.rqbWhat
+.query-builder
 {
-  display: none;
-}
-
-input[type="text"].gwt-TextBox,
-input[type="text"].gwt-DateBox,
-select.gwt-ListBox
-{
-  margin-bottom: 0px;
-}
-div.rqbAndOrOp select.gwt-ListBox
-{
-  width: 70px;
-  z-index: 200;
-  background: @queryBuilder-background;
-  border: 1px solid @queryBuilder-border;
-  border-radius: 4px;
-}
-
-div.rqbAndOrOpUpper
-{
-  z-index: 0;
-}
-
-table.rqbComparison
-{
-  z-index: 200;
-  background: @queryBuilder-background;
-  border: 0px solid #fff;
-  border-radius: 4px;
-  margin-left: 8px;
-
-  td
-  {
-    padding: 2px;
-  }
-
-  td:last-child { padding-right: 4px; }
-
-  table
-  {
-    background: @queryBuilder-background;
-  }
-}
-
-
-.queryBuilderContainer
-{
-  // inputs fix
-  select,input
-  {
-    margin: 0px;
-    width: auto;
-    height: auto;
-  }
-
-  // zindex fix
-  .rqbAndOrOpUpper
-  {
-    z-index: 180;
-  }
-
-  // And/Or selector
-  .rqbAndOrOp
-  {
-    z-index: 200;
-    background: @queryBuilder-background;
-    border: 1px solid @queryBuilder-border;
-    border-radius: 4px;
-  }
-
-  // Comparison
-  .rqbComparison
-  {
-    z-index: 200;
-    background: @queryBuilder-background;
-    border: 0px solid #fff;
-    border-radius: 4px;
-    margin-left: 8px;
-
-
-
-    td
-    {
-      padding: 2px;
-    }
-
-    td:last-child { padding-right: 4px; }
+    margin-bottom: 20px;
 
     table
     {
-      background: @queryBuilder-background;
+        background: @queryBuilder-main-background;
     }
-  }
+
+    // hide the table drop down since we only have one table for the query builder
+    select.rqbWhat
+    {
+      display: none;
+    }
+
+    input[type="text"].gwt-TextBox,
+    input[type="text"].gwt-DateBox,
+    select.gwt-ListBox
+    {
+      margin-bottom: 0px;
+    }
+
+    // AND/OR block
+    div.rqbAndOrOpUpper
+    {
+      z-index: 0;
+    }
+    div.rqbAndOrOp select.gwt-ListBox
+    {
+        width: 70px;
+        z-index: 200;
+        background: @queryBuilder-background;
+        border: 1px solid @queryBuilder-border;
+        border-radius: 4px;
+    }
+
+
+    // Comparison parent block
+    table.rqbComparison
+    {
+        z-index: 200;
+        background: @queryBuilder-background;
+        border: 0px solid #fff;
+        border-radius: 4px;
+        margin-left: 13px;
+
+        td
+        {
+            padding: 2px;
+        }
+
+        td:last-child { padding-right: 4px; }
+
+        table
+        {
+            background: @queryBuilder-background;
+        }
+
+        // inputs fix
+        select,input
+        {
+            margin: 0px;
+            height: auto;
+        }
+
+    }
+    // zindex fix
+    .rqbAndOrOpUpper
+    {
+        z-index: 180;
+        margin-left: 4.2em;
+    }
+
+    // And/Or selector
+    .rqbAndOrOp
+    {
+        z-index: 200;
+        background: @queryBuilder-background;
+        border: 1px solid @queryBuilder-border;
+        border-radius: 4px;
+    }
 }

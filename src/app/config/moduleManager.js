@@ -19,6 +19,7 @@ angular.module('moduleManager', [
     // Providers, Services and Interceptors
     'cookieStore',
     'userService',
+    'queryBuilderService',
     'errorHandler',
     'loadingHandler',
     'httpAuthInterceptor',

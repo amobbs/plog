@@ -93,47 +93,74 @@ class PreslogParser extends JqlParser {
         return $errors;
     }
 
+    /**
+     * Validate the specific $clause being used.
+     * First check if the field being looked for is a "special" type field, and validate as appropriate.
+     * Lastly, check if the field at least exists in one of the clients.
+     * @param $clause
+     * @param $clients
+     * @return array
+     */
     protected function _validateClause($clause, $clients)
     {
+        // Models
+        $clientModel = ClassRegistry::init('Client');
+
+        // Config
+        $config = Configure::read('Preslog');
+
+        // Error container
         $errors = parent::_validateClause($clause);
 
-        $config = Configure::read('Preslog');
+        // Operator, field and value
         $operator = $clause->getOperator();
+        $field = $clause->getField();
+        $value = $clause->getValue();
 
-        if ($clause->getField() == 'id')
+        // Field type: ID
+        if ($field == 'id')
         {
             $logRegex = $config['regex']['logid'];
-
             $parts = array();
-            //check logid matches required format
-            if ( !preg_match($logRegex, $clause->getValue(), $parts) )
+
+            // check the log ID isn't empty
+            if (empty($value))
             {
-                $errors[] = "The Log ID provided does not match the format required. [prefix]_#[numeric id] ";
+                $errors[] = "A Log ID must be provided in the format [prefix]_#[numeric id]";
             }
 
-            if ( ! ($operator instanceof EqualsOperator) )
+            //check logid matches required format
+            elseif ( !preg_match($logRegex, $value, $parts) )
+            {
+                $errors[] = "The Log ID provided does not match the format required. [prefix]_#[numeric id]";
+            }
+
+            elseif ( !($operator instanceof EqualsOperator) )
             {
                 $errors[] = "The operator " . $operator->getHumanReadable() . ' can not be used with the field "ID". Operators allowed are = ';
-                //"You can only use the Equals or not Equals operator when searching by Log ID";
             }
 
-            $clientModel = ClassRegistry::init('Client');
-            //find client the prefix matches
-            $client = $clientModel->find('first', array(
-                'conditions' => array(
-                    'logPrefix' => $parts[1]
-                ),
-            ));
-
-            if (empty($client))
+            else
             {
-                $errors[] = $parts[1] . ' is not a valid log prefix';
+                //find client the prefix matches
+                $client = $clientModel->find('first', array(
+                    'conditions' => array(
+                        'logPrefix' => $parts[1]
+                    ),
+                ));
+
+                if (empty($client))
+                {
+                    $errors[] = $parts[1] . ' is not a valid log prefix';
+
+                }
             }
 
             return $errors;
         }
 
-        if ($clause->getField() == 'client')
+        // Field Type: Client
+        elseif ($field == 'client')
         {
             $allowed = array(
                 new EqualsOperator(),
@@ -148,10 +175,12 @@ class PreslogParser extends JqlParser {
             {
                 $errors[] = "The operator " . $operator->getHumanReadable() . ' can not be used with the field "' . $clause->getField() . '". Operators allowed are ' . $allowedString;
             }
+
             return $errors;
         }
 
-        if ($clause->getField() == 'client_id')
+        // Field Type: Client_Id
+        elseif ($field == 'client_id')
         {
             $allowed = array(
                 new EqualsOperator(),
@@ -163,10 +192,12 @@ class PreslogParser extends JqlParser {
             {
                 $errors[] = "The operator " . $operator->getHumanReadable() . ' can not be used with the field "' . $clause->getField() . '". Operators allowed are ' . $allowedString;
             }
+
             return $errors;
         }
 
-        if ($clause->getField() == 'text')
+        // Field type: Text
+        elseif ($field == 'text')
         {
             $allowed = array(
                 new EqualsOperator(),
@@ -179,10 +210,13 @@ class PreslogParser extends JqlParser {
             {
                 $errors[] = "The operator " . $operator->getHumanReadable() . ' can not be used with the field "' . $clause->getField() . '". Operators allowed are ' . $allowedString;
             }
+
             return $errors;
         }
 
-        if ($clause->getField() == 'created' || $clause->getField() == 'modified' )
+
+        // Field Type: Created/Modified
+        elseif ($field == 'created' || $clause->getField() == 'modified' )
         {
 
             $allowed = array(
@@ -197,46 +231,51 @@ class PreslogParser extends JqlParser {
             {
                 $errors[] = "The operator " . $operator->getHumanReadable() . ' can not be used with the field "' . $clause->getField() . '". Operators allowed are ' . $allowedString;
             }
-            //validate date time
+
+            // TODO: validate date time
+
             return $errors;
         }
 
-
-        $clientModel = ClassRegistry::init('Client');
-
-        $foundOnce = false; //check the field exists for at least one client
-        foreach($clients as $client)
+        // check the field exists for at least one client
+        else
         {
-            $clientEntity = $clientModel->getClientEntityById($client['_id']);
-            $clientField = $clientEntity->getFieldTypeByName( $clause->getField() );
-            if ($clientField == null)
+
+            $foundOnce = false;
+            foreach($clients as $client)
             {
-                //check attribute groups
-                foreach($clientEntity->data['attributes'] as $attr)
+                $clientEntity = $clientModel->getClientEntityById($client['_id']);
+                $clientField = $clientEntity->getFieldTypeByName( $clause->getField() );
+                if ($clientField == null)
                 {
-                    if (strtolower($attr['name']) == strtolower($clause->getField()))
+                    //check attribute groups
+                    foreach($clientEntity->data['attributes'] as $attr)
                     {
-                        $foundOnce = true;
+                        if (strtolower($attr['name']) == strtolower($clause->getField()))
+                        {
+                            $foundOnce = true;
+                        }
                     }
+                    continue;
                 }
-                continue;
+
+                $foundOnce = true;
+
+                $allowedString = '';
+                if ( ! $this->operatorAllowed($operator, $clientField->getProperties('allowedJqlOperators'), $allowedString) )
+                {
+                    $errors[] = "The operator " . $operator->getHumanReadable() . ' can not be used with the field ' . $clause->getField() . '. Operators allowed are ' . $allowedString;
+                }
             }
 
-            $foundOnce = true;
-
-            $allowedString = '';
-            if ( ! $this->operatorAllowed($operator, $clientField->getProperties('allowedJqlOperators'), $allowedString) )
+            // Field couldn't be found!
+            if ( ! $foundOnce )
             {
-                $errors[] = "The operator " . $operator->getHumanReadable() . ' can not be used with the field ' . $clause->getField() . '. Operators allowed are ' . $allowedString;
+                $errors[] = 'The field "' . $field . '" does not exist.';
             }
         }
 
-        if ( ! $foundOnce )
-        {
-            return array('The field "' . $clause->getField() . '" does not exist.');
-        }
-
-
+        // Return any errors.
         return $errors;
     }
 

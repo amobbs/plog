@@ -7,9 +7,7 @@ angular.module('redQueryBuilder', [])
     function() {
         return {
             //element only
-            restrict:'E',
-
-            transclude: true,
+            restrict:'EA',
 
             //data binding
             scope: {
@@ -20,17 +18,20 @@ angular.module('redQueryBuilder', [])
             },
 
             link : function(scope, element, attrs) {
+
+                var sql = angular.copy(scope.sql);
+                var args = angular.copy(scope.args);
+
                 RedQueryBuilderFactory.create({
                         targetId : 'rqb',
                         meta : scope.queryMeta,
                         onLoad: function() {
-                            scope.$parent.$parent.sql = scope.sql;
-                            scope.$parent.$parent.args = scope.args;
                         },
                         onSqlChange : function(sql, args) {
-                            //$parent.$parent - i'm sorry, fix to get the directive to respond to correct scope.
-                            scope.$parent.$parent.sql = sql;
-                            scope.$parent.$parent.args = args;
+                            scope.sql = sql;
+                            scope.args = args;
+
+                            scope.$apply();
                         },
                         enumerate : function(request, response) {
                             if (!scope.selectOptions[request.columnName])
@@ -45,11 +46,10 @@ angular.module('redQueryBuilder', [])
                             format : 'dd/MM/yyyy'
                         } ],
                         suggest: function(args, callback) {
-                            console.log(args);
                         }
                     },
-                    scope.sql,
-                    scope.args);
+                    sql,
+                    args);
             }
         };
     }

@@ -63,6 +63,9 @@ class SearchController extends AppController
      */
     protected function prepareSearchCriteria()
     {
+        // Create empty search if not set
+        $this->request->query['query'] = (isset($this->request->query['query']) ? $this->request->query['query'] : array());
+
         // Build search query params
         $search = array(
             'query'     => $this->request->query['query'],
@@ -995,15 +998,17 @@ class SearchController extends AppController
         $sql = strtoupper($this->request->query['sql']);
         $args = json_decode($this->request->query['args']);
 
-        if ($args === null) {
-            throw new Exception('invalid array of arguments');
+        // Check args
+        if ($args === null || !is_array($args)) {
+            $type = gettype($args);
+            $this->errorBadRequest(array('message'=>"Query translator expected 'args' to be an array, received '$type'."));
         }
 
         $parser = new PreslogParser();
         $parser->setJqlFromSql($sql, $args);
 
         $this->set('jql', $parser->getJql());
-        $this->set('args', $parser->getArguments());
+        //$this->set('args', $parser->getArguments());      // Not required - JQL has the args
         $this->set('_serialize', array('jql', 'args'));
     }
 

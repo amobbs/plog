@@ -8,7 +8,20 @@
         </div>
     </div>
     <div class="row-fluid">
-        <button class="btn btn-info" ng-click="jqlToSql()"><i class="icon icon-wrench"></i> Build Search</button>
+        <div class="span12 control-group" ng-show="searchMode == 'advanced'" >
+            <div class="controls">
+                <textarea class="search-textarea" rows="3" ng-model="jql"></textarea>
+            </div>
+        </div>
+        <div class="span12 query-builder" ng-show="searchMode == 'wizard'">
+            <div red-query-builder sql="sql" args="args" query-meta="queryMeta" select-options="selectOptions" id="rqb">&nbsp;</div>
+        </div>
+    </div>
+    <div class="row-fluid">
+        <div class="span12">
+            <button class="btn btn-info" ng-click="Search()"><i class="icon icon-search"></i> Search Logs</button>
+            <button class="btn btn-link" ng-show="flase" ng-click="ChangeSearchMode()">Switch to {{ searchMode == 'advanced' && 'wizard' || 'Advanced' }} Mode</button>
+        </div>
     </div>
     <div class="row-fluid">
         <div class="span12">
