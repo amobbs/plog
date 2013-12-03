@@ -424,6 +424,14 @@ class PreslogParser extends JqlParser {
         //we have a special case, to just search all text fields, mostly used for quick search
         if ($fieldName == 'text')
         {
+            if (is_array($value)) //handle NOT
+            {
+                $valueKey = array_keys($value);
+                return array(
+                    'fields.data.text' => array($valueKey[0] => new MongoRegex("/^" . $value[$valueKey[0]] . "$/i"))
+                );
+            }
+
             return array(
                 'fields.data.text' => new MongoRegex("/^$value$/i"),
             );
