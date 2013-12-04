@@ -71,12 +71,22 @@ angular.module( 'Preslog.search', [
         // Title
         titleService.setTitle( 'Search' );
 
-        // Search mode
-        $scope.searchMode = 'wizard';
-
         // Pre-fill JQL from Query Resolve
         $scope.jql = searchParams.jql;
 
+        // Search mode default selections
+        $scope.searchMode = 'wizard';
+        $scope.searchModeAvailable = true;
+        $scope.searchFallback = false;
+
+        // :BUGFIX: if a browser which doesn't support ECMAScript5 (eg. IE8), then we can't use the Query Builder
+        // We tried using ES5-shim to fix this, but too many features are missing for RQB to work correctly.
+        if ( Array.prototype.indexOf === undefined )
+        {
+            $scope.searchMode = 'advanced';
+            $scope.searchModeAvailable = false;
+            $scope.searchFallback = true;
+        }
 
         /**
          * Prepare Red Query Builder
@@ -132,8 +142,35 @@ angular.module( 'Preslog.search', [
          */
         $scope.ChangeSearchMode = function()
         {
-            // TODO: Changeing search mode not yet implemented.
-            alert('Change mode not yet implemented!');
+            if ($scope.searchMode == 'wizard')
+            {
+                // Parse SQL to JQL
+                queryBuilderService
+                    .sqlToJql($scope.sql, $scope.args)
+                    .then(function(data)
+                    {
+                        // Put to returnable object
+                        $scope.jql = data.jql;
+
+                        // Mode change
+                        $scope.searchMode = 'advanced';
+                    });
+            }
+            else
+            {
+                // Parse JQL to SQL
+                queryBuilderService
+                    .jqlToSql($scope.jql)
+                    .then(function(data)
+                    {
+                        // Put to returnable object
+                        $scope.sql = data.sql;
+                        $scope.args = data.args;
+
+                        // Mode change
+                        $scope.searchMode = 'wizard';
+                    });
+            }
         };
 
 

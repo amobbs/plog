@@ -19,6 +19,8 @@ angular.module('redQueryBuilder', [])
 
             link : function(scope, element, attrs) {
 
+                // TODO: Watch scope args and reinit RedQueryBuilder with a new copy on change
+
                 var sql = angular.copy(scope.sql);
                 var args = angular.copy(scope.args);
 

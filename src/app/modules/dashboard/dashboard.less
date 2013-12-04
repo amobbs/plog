@@ -46,11 +46,17 @@
 
 /* 3 COL */
 
+// Default width
+#widget-area .widget,
+#widget-area .placeholder{
+    width: 31%;
+}
 
-@media (min-width: 992px){
+// Responsive width
+@media (max-width: 992px){
   #widget-area .widget,
   #widget-area .placeholder{
-    width: 31%;
+    width: 100%;
   }
 }
 
