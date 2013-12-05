@@ -10,6 +10,9 @@ angular.module('stateHistory', ['ui.router'])
                     params: params
                 });
             },
+            setCurrent: function(state) {
+                current = state;
+            },
             goBack: function() {
                 if (history.length === 1)
                 {
@@ -17,6 +20,13 @@ angular.module('stateHistory', ['ui.router'])
                 }
 
                 var state = history.pop();
+
+                // Can't "go back" to the same
+                if (state.state.url == current.url)
+                {
+                    return false;
+                }
+
                 $state.transitionTo(state.state, state.params);
             },
             goForward: function() {
@@ -28,6 +38,7 @@ angular.module('stateHistory', ['ui.router'])
     .run(function($rootScope, stateHistory) {
         $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
             stateHistory.addHistory(fromState, fromParams);
+            stateHistory.setCurrent(toState);
         });
     })
 ;
