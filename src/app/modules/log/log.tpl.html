@@ -25,7 +25,7 @@
     <div class="container-fluid" id="preslog_log_entry">
 
         <!-- Validation Errors -->
-        <div class="alert alert-error" ng-show="_.keys(serverErrors).length > 0">
+        <div class="alert alert-error" ng-show="serverErrorsPresent">
             <strong>An error occurred attempting to save the log.</strong>
             <ul>
                 <li ng-repeat="error in serverErrors">

@@ -122,6 +122,7 @@ angular.module( 'Preslog.log', [
         $scope.serverErrors = {};
         $scope.Object = Object;
         $scope.displayAttributes = [];
+        $scope.serverErrorsPresent = false;
 
 
         /**
@@ -183,6 +184,8 @@ angular.module( 'Preslog.log', [
         {
             var deferred = $q.defer();
 
+            $scope.serverErrorsPresent = false;
+
             // Data Fudge
             logData.Log = $scope.log;
 
@@ -203,10 +206,12 @@ angular.module( 'Preslog.log', [
                 // On success
                 function(response)
                 {
+                    // Resolve
+                    deferred.resolve();
+
                     // Redirect to previous state, or homepage
                     if (stateHistory.goBack() === false)
                     {
-                        deferred.resolve();
                         $location.path('/');
                     }
                 },
@@ -224,6 +229,7 @@ angular.module( 'Preslog.log', [
                         if ($scope.logForm[ keys[i] ] !== undefined)
                         {
                             $scope.logForm[ keys[i] ].$setValidity('validateServer', false);
+                            $scope.serverErrorsPresent = true;
                         }
                     }
 

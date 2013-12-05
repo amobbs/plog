@@ -58,6 +58,17 @@ angular.module( 'Preslog.users', [
                 }
             },
             resolve: {
+                // Resource permissions
+                permissions: ['$q', 'userService', function($q, userService) {
+                    var defer = $q.defer();
+
+                    userService.checkAccessPermission('user-manager').then(function()
+                    {
+                        defer.resolve();
+                    });
+
+                    return defer.promise;
+                }],
                 userSource: ['$q', 'Restangular', '$stateParams', function($q, Restangular, $stateParams) {
                     // Fetch notify details
                     var deferred = $q.defer();
