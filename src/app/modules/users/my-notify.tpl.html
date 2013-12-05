@@ -1,4 +1,4 @@
-<form name="userForm" ng-submit="saveNotifications()" id="userForm" validate-server="serverErrors">
+<form name="userForm" id="userForm" validate-server="serverErrors">
     <nav class="navbar navbar-fixed-top" id="preslog_sub_nav">
         <div class="navbar-inner">
             <div class="container-fluid">
@@ -6,7 +6,15 @@
 
                 <ul class="nav pull-right">
                     <li>
-                        <button type="submit" name="submitButton" class="btn btn-success" ng-disabled="userForm.$invalid"><i class="icon icon-ok"></i> Save Changes</button>
+                        <button type="button"
+                                class="btn btn-success"
+                                click-wait="saveNotifications()"
+                                click-wait-bind="saveUserToggle"
+                                ng-disabled="userForm.$invalid">
+                            <i class="icon icon-loading click-wait-loader"></i>
+                            <i class="icon icon-ok click-wait-static"></i>
+                            Save Changes
+                        </button>
                     </li>
                 </ul>
             </div>

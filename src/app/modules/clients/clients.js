@@ -183,7 +183,7 @@ angular.module( 'Preslog.clients', [
     /**
      * Admin Client Edit
      */
-    .controller( 'AdminClientEditCtrl', function AdminClientEditController( $scope, titleService, clientData, clientOptions, $location, $filter, $modal ) {
+    .controller( 'AdminClientEditCtrl', function AdminClientEditController( $q, $scope, titleService, clientData, clientOptions, $location, $filter, $modal ) {
 
          // ID Pool. Increment a unique ID for field names when created, for their ID.
         var idPool = 1;
@@ -237,6 +237,7 @@ angular.module( 'Preslog.clients', [
          * Save Client
          */
         $scope.saveClient = function() {
+            var deferred = $q.defer();
 
             // Fetch data from form
             clientData.Client = $scope.client;
@@ -249,6 +250,7 @@ angular.module( 'Preslog.clients', [
                 {
                     // Redirect to user list
                     $location.path('/admin/clients');
+                    deferred.resolve();
                 },
 
                 // On failure
@@ -265,8 +267,11 @@ angular.module( 'Preslog.clients', [
                         }
                     }
 
+                    deferred.resolve();
                 }
             );
+
+            return deferred.promise;
         };
 
 

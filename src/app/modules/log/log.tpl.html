@@ -1,4 +1,4 @@
-<form name="logForm" ng-submit="saveLog()">
+<form name="logForm">
     <nav class="navbar navbar-fixed-top" id="preslog_sub_nav">
         <div class="navbar-inner">
             <div class="container-fluid">
@@ -8,9 +8,14 @@
                 <ul class="nav pull-right">
                     <li>
                         <button class="btn btn-success"
-                                type="submit"
+                                type="button"
                                 ng-disabled="logForm.$invalid"
-                                ><i class="icon icon-ok"></i> Save Changes</button>
+                                click-wait="saveLog()"
+                                click-wait-bind="saveLogToggle"
+                                >
+                            <i class="icon icon-loading click-wait-loader"></i>
+                            <i class="icon icon-ok click-wait-static"></i> Save Changes
+                        </button>
                     </li>
                 </ul>
             </div>
@@ -43,9 +48,14 @@
                     <div class="offset2 span10 text-center">
                         <br/>
                         <button class="btn btn-success"
-                                type="submit"
+                                type="button"
                                 ng-disabled="logForm.$invalid"
-                                ><i class="icon icon-ok"></i> Save Changes</button>
+                                click-wait="saveLog()"
+                                click-wait-bind="saveLogToggle"
+                                >
+                            <i class="icon icon-loading click-wait-loader"></i>
+                            <i class="icon icon-ok click-wait-static"></i> Save Changes
+                        </button>
                         &nbsp;
                         <div class="btn-group" permissions="log-delete" ng-show="{{!log.newLog}}">
                             <a class="btn btn-info dropdown-toggle" data-toggle="dropdown" href="#">
@@ -53,7 +63,15 @@
                                 <span class="caret"></span>
                             </a>
                             <ul class="dropdown-menu">
-                                <li ng-show="{{!log.newLog}}"><a href="#" ng-click="deleteLog()" ng-confirm-click="This will delete this log and make it invisible to all reports. Are you sure?"><i class="icon icon-trash"></i> Delete Log</a></li>
+                                <li ng-show="{{!log.newLog}}">
+                                    <a href="#"
+                                       ng-confirm-click="This will delete this log and make it invisible to all reports. Are you sure?"
+                                       click-wait="deleteLog()"
+                                       click-wait-bind="saveLogToggle">
+                                        <i class="icon icon-loading click-wait-loader"></i>
+                                        <i class="icon icon-ok click-wait-static"></i> Delete Log
+                                    </a>
+                                </li>
                             </ul>
                         </div>
 

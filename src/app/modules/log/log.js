@@ -111,7 +111,7 @@ angular.module( 'Preslog.log', [
 /**
  * And of course we define a controller for our route.
  */
-    .controller( 'LogCtrl', function LogController( $scope, $location, titleService, logData, logOptions, LogRestangular, stateHistory ) {
+    .controller( 'LogCtrl', function LogController( $scope, $q, $location, titleService, logData, logOptions, LogRestangular, stateHistory ) {
 
         // Set title
         titleService.setTitle( 'Create Log' );
@@ -181,6 +181,8 @@ angular.module( 'Preslog.log', [
          */
         $scope.saveLog = function()
         {
+            var deferred = $q.defer();
+
             // Data Fudge
             logData.Log = $scope.log;
 
@@ -204,6 +206,7 @@ angular.module( 'Preslog.log', [
                     // Redirect to previous state, or homepage
                     if (stateHistory.goBack() === false)
                     {
+                        deferred.resolve();
                         $location.path('/');
                     }
                 },
@@ -224,8 +227,13 @@ angular.module( 'Preslog.log', [
                         }
                     }
 
+                    // Reject the promise.
+                    deferred.reject();
                 }
             );
+
+            // Return a promise that the log will be saved
+            return deferred.promise;
         };
 
         /**

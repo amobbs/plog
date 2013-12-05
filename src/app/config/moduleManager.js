@@ -26,6 +26,7 @@ angular.module('moduleManager', [
 
     // Directives
     'ngConfirmClick',
+    'clickWait',
     'hierarchyFields',
     'validateServer',
     'validatePassword',

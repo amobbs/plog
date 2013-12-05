@@ -1,5 +1,5 @@
 <!-- Client Details -->
-<form name="clientForm" ng-submit="saveClient()" id="admin_client_edit" validate-server="serverErrors">
+<form name="clientForm" id="admin_client_edit" validate-server="serverErrors">
 
     <nav class="navbar navbar-fixed-top" id="preslog_sub_nav">
         <div class="navbar-inner">
@@ -8,9 +8,13 @@
 
                 <ul class="nav pull-right">
                     <li>
-                        <button type="submit" class="btn btn-success"
+                        <button type="button"
+                                class="btn btn-success"
+                                click-wait="saveClient()"
+                                click-wait-bind="saveClientToggle"
                                 ng-disabled="clientForm.$invalid">
-                            <i class="icon icon-ok"></i>
+                            <i class="icon icon-loading click-wait-loader"></i>
+                            <i class="icon icon-ok click-wait-static"></i>
                             Save Changes
                         </button>
                         <button type="button" class="btn btn-danger"

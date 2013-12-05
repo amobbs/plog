@@ -85,7 +85,7 @@ angular.module( 'Preslog.users', [
     /**
      * User: My Profile
      */
-    .controller( 'UserMyProfileCtrl', function UserMyProfileController( $scope, titleService, userSource, optionsSource, $location, userService ) {
+    .controller( 'UserMyProfileCtrl', function UserMyProfileController( $q, $scope, titleService, userSource, optionsSource, $location, userService ) {
         titleService.setTitle( 'My Profile' );
 
         // Pass resolves to the scope
@@ -97,6 +97,8 @@ angular.module( 'Preslog.users', [
          */
         $scope.saveProfile = function()
         {
+            var deferred = $q.defer();
+
             // Clear flash message
             $scope.flashMessage = {
                 error: false,
@@ -117,6 +119,9 @@ angular.module( 'Preslog.users', [
 
                     // Show a success message
                     $scope.flashMessage.success = true;
+
+                    // Resolve
+                    deferred.resolve();
                 },
 
                 // On failure
@@ -135,8 +140,13 @@ angular.module( 'Preslog.users', [
                             $scope.userForm[i].$setValidity('validateServer', false);
                         }
                     }
+
+                    // Resolve
+                    deferred.resolve();
                 }
             );
+
+            return deferred.promise;
         };
     })
 
@@ -144,7 +154,7 @@ angular.module( 'Preslog.users', [
     /**
      * User: My Notifications
      */
-    .controller( 'UserMyNotifyCtrl', function UserMyNotifyController( $scope, titleService, userSource, optionsSource, $location ) {
+    .controller( 'UserMyNotifyCtrl', function UserMyNotifyController( $q, $scope, titleService, userSource, optionsSource, $location ) {
         titleService.setTitle( 'My Notifications' );
 
         // Pass resolves to the scope
@@ -177,17 +187,13 @@ angular.module( 'Preslog.users', [
          */
         $scope.saveNotifications = function()
         {
+            var deferred = $q.defer();
+
             // Clear flash message
             $scope.flashMessage = {
                 error: false,
                 success: false
             };
-
-            // Will not submit without validation passing
-            if ( $scope.userForm.$invalid ) {
-                alert('Your submission is not valid. Please check for errors.');
-                return false;
-            }
 
             // Fetch data from form
             userSource.User = $scope.user;
@@ -200,6 +206,9 @@ angular.module( 'Preslog.users', [
                 {
                     // Flash
                     $scope.flashMessage.success = true;
+
+                    // Resolve
+                    deferred.resolve();
                 },
 
                 // On failure
@@ -210,8 +219,13 @@ angular.module( 'Preslog.users', [
 
                     // Extrapolate all fields to the scope
                     $scope.serverErrors = response.data.data;
+
+                    // Resolve
+                    deferred.resolve();
                 }
             );
+
+            return deferred.promise;
         };
     })
 

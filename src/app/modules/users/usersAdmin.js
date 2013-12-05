@@ -191,7 +191,7 @@ angular.module( 'Preslog.usersAdmin', [
     /**
      * Admin: User: Edit
      */
-    .controller( 'AdminUserEditCtrl', function UserAdminEditController( $scope, titleService, userSource, optionsSource, $location ) {
+    .controller( 'AdminUserEditCtrl', function UserAdminEditController( $q, $scope, titleService, userSource, optionsSource, $location ) {
         titleService.setTitle( ['Edit User', 'Admin'] );
 
         /**
@@ -288,12 +288,7 @@ angular.module( 'Preslog.usersAdmin', [
          * Save User
          */
         $scope.saveUser = function() {
-
-            // Will not submit without validation passing
-            if ( $scope.userForm.$invalid ) {
-                alert('Your submission is not valid. Please check for errors.');
-                return false;
-            }
+            var deferred = $q.defer();
 
             // Fetch data from form
             userSource.User = $scope.user;
@@ -309,6 +304,7 @@ angular.module( 'Preslog.usersAdmin', [
                 {
                     // Redirect to user list
                     $location.path('/admin/users');
+                    deferred.resolve();
                 },
 
                 // On failure
@@ -324,8 +320,11 @@ angular.module( 'Preslog.usersAdmin', [
                             $scope.userForm[i].$setValidity('validateServer', false);
                         }
                     }
+                    deferred.resolve();
                 }
             );
+
+            return deferred.promise;
         };
 
 
