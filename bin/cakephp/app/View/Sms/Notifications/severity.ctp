@@ -30,7 +30,8 @@ $out[] = ($field ? current($field->convertToFields()) : '');
 
 // Date/Time
 $field = $log->getFieldByName('created');
-$out[] = ($field ? $field->convertToFields()['Created'] : '');
+$created = $field->convertToFields();
+$out[] = ((isset($created['Created']) && !empty($created['Created'])) ? $created['Created'] : '');
 
 
 // Duration
