@@ -9304,6 +9304,10 @@ div.loading-screen .loading-block span {
   color: #000;
 }
 
+.icon.icon-loading {
+  background: url('img/layout/ajax-loader-button.gif') no-repeat;
+}
+
 /**
  * Help docs
  */
@@ -9651,10 +9655,6 @@ table.log-list {
   cursor: pointer;
 }
 
-.widget-box .widget-title .hover-show {
-  visibility: hidden;
-}
-
 .widget-box:hover .hover-show {
   visibility: visible;
 }
@@ -9685,6 +9685,16 @@ table.log-list {
 .widget-box .widget-footnote textarea {
   width: 100%;
   margin: -8px;
+}
+
+/**
+ * Desktop only drop-down hider
+ */
+
+@media (min-width: 979px) {
+  .widget-box .hover-show {
+    visibility: hidden;
+  }
 }
 
 /**
@@ -9836,6 +9846,7 @@ table.log-list {
 }
 
 #preslog_search .search-textarea {
+  width: 100%;
   background: #fff;
 }
 
@@ -9852,21 +9863,28 @@ textarea.query {
  */
 
 .query-builder {
-  min-width: 800px;
-  min-height: 600px;
+  margin-bottom: 20px;
 }
 
-select.rqbWhat {
+.query-builder table {
+  background: transparent;
+}
+
+.query-builder select.rqbWhat {
   display: none;
 }
 
-input[type="text"].gwt-TextBox,
-input[type="text"].gwt-DateBox,
-select.gwt-ListBox {
+.query-builder input[type="text"].gwt-TextBox,
+.query-builder input[type="text"].gwt-DateBox,
+.query-builder select.gwt-ListBox {
   margin-bottom: 0px;
 }
 
-div.rqbAndOrOp select.gwt-ListBox {
+.query-builder div.rqbAndOrOpUpper {
+  z-index: 0;
+}
+
+.query-builder div.rqbAndOrOp select.gwt-ListBox {
   z-index: 200;
   width: 70px;
   background: #dddddd;
@@ -9874,66 +9892,42 @@ div.rqbAndOrOp select.gwt-ListBox {
   border-radius: 4px;
 }
 
-div.rqbAndOrOpUpper {
-  z-index: 0;
-}
-
-table.rqbComparison {
+.query-builder table.rqbComparison {
   z-index: 200;
-  margin-left: 8px;
+  margin-left: 13px;
   background: #dddddd;
   border: 0px solid #fff;
   border-radius: 4px;
 }
 
-table.rqbComparison td {
+.query-builder table.rqbComparison td {
   padding: 2px;
 }
 
-table.rqbComparison td:last-child {
+.query-builder table.rqbComparison td:last-child {
   padding-right: 4px;
 }
 
-table.rqbComparison table {
+.query-builder table.rqbComparison table {
   background: #dddddd;
 }
 
-.queryBuilderContainer select,
-.queryBuilderContainer input {
-  width: auto;
+.query-builder table.rqbComparison select,
+.query-builder table.rqbComparison input {
   height: auto;
   margin: 0px;
 }
 
-.queryBuilderContainer .rqbAndOrOpUpper {
+.query-builder .rqbAndOrOpUpper {
   z-index: 180;
+  margin-left: 4.2em;
 }
 
-.queryBuilderContainer .rqbAndOrOp {
+.query-builder .rqbAndOrOp {
   z-index: 200;
   background: #dddddd;
   border: 1px solid #cccccc;
   border-radius: 4px;
-}
-
-.queryBuilderContainer .rqbComparison {
-  z-index: 200;
-  margin-left: 8px;
-  background: #dddddd;
-  border: 0px solid #fff;
-  border-radius: 4px;
-}
-
-.queryBuilderContainer .rqbComparison td {
-  padding: 2px;
-}
-
-.queryBuilderContainer .rqbComparison td:last-child {
-  padding-right: 4px;
-}
-
-.queryBuilderContainer .rqbComparison table {
-  background: #dddddd;
 }
 
 #preslog_log_entry {
@@ -10651,10 +10645,15 @@ span.custom1 a {
 
 /* 3 COL */
 
-@media (min-width: 992px) {
+#widget-area .widget,
+#widget-area .placeholder {
+  width: 31%;
+}
+
+@media (max-width: 992px) {
   #widget-area .widget,
   #widget-area .placeholder {
-    width: 31%;
+    width: 100%;
   }
 }
 
