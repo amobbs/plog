@@ -335,6 +335,10 @@ module.exports = function (grunt) {
                     {
                         from: /select2(\.png|-spinner\.gif|x2\.png)/g,
                         to: '/assets/vendor/select2/select2$1'
+                    },
+                    {
+                        from: /\.\.\/img\/glyph/g,
+                        to: '/assets/vendor/bootstrap/img/glyph'
                     }
                 ]
             }

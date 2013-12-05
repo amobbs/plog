@@ -116,7 +116,8 @@ module.exports = {
             'vendor/select2/select2.png',
             'vendor/select2/select2-spinner.gif',
             'vendor/select2/select2x2.png',
-            'vendor/dynatree/src/skin/*.gif'
+            'vendor/dynatree/src/skin/*.gif',
+            'vendor/bootstrap/img/**'
         ]
     }
 };
