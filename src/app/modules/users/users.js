@@ -169,15 +169,17 @@ angular.module( 'Preslog.users', [
          * _.defaults() - http://lodash.com/docs#defaults
          */
         var clientNotifications = [];
-        angular.forEach(optionsSource.notifications.clients, function(client) {
+        for (var c in optionsSource.notifications.clients)
+        {
+            var client = optionsSource.notifications.clients[c];
             var search = _.where($scope.user.notifications.clients, {"client_id": client._id}),
                 currentVals = {client_id: client._id};
             if (search.length > 0) {
                 currentVals.attributes = search[0].attributes;
-                currentVals.types = Array.isArray(search[0].types) ? {} : search[0].types;
+                currentVals.types = _.isArray(search[0].types) ? {} : search[0].types;
             }
             clientNotifications.push(_.defaults(currentVals, {"attributes": [], "types": {}}));
-        });
+        };
 
         // Save the new notification back to the client.
         $scope.user.notifications.clients = clientNotifications;
