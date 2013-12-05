@@ -13,15 +13,15 @@
                                 click-wait="saveClient()"
                                 click-wait-bind="saveClientToggle"
                                 ng-disabled="clientForm.$invalid">
-                            <i class="icon icon-loading click-wait-loader"></i>
-                            <i class="icon icon-ok click-wait-static"></i>
+                            <i class="icon icon-loading click-wait-loader icon-white"></i>
+                            <i class="icon icon-ok click-wait-static icon-white"></i>
                             Save Changes
                         </button>
                         <button type="button" class="btn btn-danger"
                                 ng-click="deleteClient()"
                                 ng-show="{{client._id && !client.deleted}}"
                                 ng-confirm-click="Are you sure you want to delete this client? All users assigned to this client will be unable to access Preslog if you do this.">
-                            <i class="icon icon-remove"></i>
+                            <i class="icon icon-remove icon-white"></i>
                             Delete Client
                         </button>
                     </li>
@@ -267,8 +267,8 @@
                                     <span ng-switch-default>&nbsp;</span>
                                 </td>
                                 <td>
-                                    <button ng-show="!field.deleted" class="btn btn-block btn-info" ng-click="editField( field._id )"><i class="icon icon-edit"></i> Edit</button>
-                                    <button ng-show="field.deleted" class="btn btn-block btn-warning" ng-click="field.deleted = false"><i class="icon icon-plus"></i> Restore</button>
+                                    <button ng-show="!field.deleted" class="btn btn-block btn-info" ng-click="editField( field._id )"><i class="icon icon-edit icon-white"></i> Edit</button>
+                                    <button ng-show="field.deleted" class="btn btn-block btn-warning" ng-click="field.deleted = false"><i class="icon icon-plus icon-white"></i> Restore</button>
                                 </td>
                             </tr>
                         </tbody>
@@ -303,7 +303,7 @@
                                 </td>
                                 <td>&nbsp;</td>
                                 <td>
-                                    <button class="btn btn-block btn-primary" ng-click="addField()" ng-disabled="!newFieldForm.$valid"><i class="icon icon-plus"></i> Add</button>
+                                    <button class="btn btn-block btn-primary" ng-click="addField()" ng-disabled="!newFieldForm.$valid"><i class="icon icon-plus icon-white"></i> Add</button>
                                 </td>
                             </tr>
                         </tfoot>
@@ -352,8 +352,8 @@
                                 <td>{{ group.name }}</td>
                                 <td>{{ group.children.length }}</td>
                                 <td>
-                                    <button ng-show="!group.deleted" class="btn btn-block btn-info" ng-click="editGroup( group._id )"><i class="icon icon-edit"></i> Edit</button>
-                                    <button ng-show="group.deleted" class="btn btn-block btn-warning" ng-click="group.deleted = false"><i class="icon icon-plus"></i> Restore</button>
+                                    <button ng-show="!group.deleted" class="btn btn-block btn-info" ng-click="editGroup( group._id )"><i class="icon icon-edit icon-white"></i> Edit</button>
+                                    <button ng-show="group.deleted" class="btn btn-block btn-warning" ng-click="group.deleted = false"><i class="icon icon-plus icon-white"></i> Restore</button>
                                 </td>
                             </tr>
                         </tbody>
@@ -379,7 +379,10 @@
                                 </td>
                                 <td>&nbsp;</td>
                                 <td>
-                                    <button class="btn btn-block btn-primary" ng-click="addGroup()" ng-disabled="!newGroupForm.$valid"><i class="icon icon-plus"></i> Add</button>
+                                    <button class="btn btn-block btn-primary" ng-click="addGroup()" ng-disabled="!newGroupForm.$valid">
+                                        <i class="icon icon-plus icon-white"></i>
+                                        Add
+                                    </button>
                                 </td>
                             </tr>
                         </tfoot>

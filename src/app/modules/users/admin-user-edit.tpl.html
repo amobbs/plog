@@ -13,8 +13,8 @@
                                 click-wait="saveUser()"
                                 click-wait-bind="saveUserToggle"
                                 ng-disabled="userForm.$invalid">
-                            <i class="icon icon-loading click-wait-loader"></i>
-                            <i class="icon icon-ok click-wait-static"></i>
+                            <i class="icon icon-loading click-wait-loader icon-white"></i>
+                            <i class="icon icon-ok click-wait-static icon-white"></i>
                             Save Changes
                         </button>
                         <button type="button"
@@ -22,7 +22,7 @@
                                 ng-click="deleteUser()"
                                 ng-show="{{user._id && !user.deleted}}"
                                 ng-confirm-click="Are you sure you want to delete this user?">
-                            <i class="icon icon-remove"></i>
+                            <i class="icon icon-remove icon-white"></i>
                             Delete User
                         </button>
                     </li>
@@ -197,8 +197,8 @@
                                 click-wait="saveUser()"
                                 click-wait-bind="saveUserToggle"
                                 ng-disabled="userForm.$invalid">
-                            <i class="icon icon-loading click-wait-loader"></i>
-                            <i class="icon icon-ok click-wait-static"></i>
+                            <i class="icon icon-white icon-loading click-wait-loader"></i>
+                            <i class="icon icon-white icon-ok click-wait-static"></i>
                             Save Changes
                         </button>
                         <button type="button"
@@ -206,7 +206,7 @@
                                 ng-click="deleteUser()"
                                 ng-show="{{user._id && !user.deleted}}"
                                 ng-confirm-click="Are you sure you want to delete this user?">
-                            <i class="icon icon-remove"></i>
+                            <i class="icon icon-white icon-remove"></i>
                             Delete User
                         </button>
                     </div>

@@ -11,11 +11,20 @@
     <button class="btn btn-danger pull-left"
             ng-show="!field.newField"
             ng-click="remove()"
-            ng-confirm-click="Are you sure you want to delete this field?"><i class="icon icon-remove"></i> Delete Entire Field</button>
+            ng-confirm-click="Are you sure you want to delete this field?">
+        <i class="icon icon-white icon-remove"></i>
+        Delete Entire Field
+    </button>
     <button class="btn"
-            ng-click="dismiss()">Discard Changes</button>
+            ng-click="dismiss()">
+        <i class="icon icon-remove"></i>
+        Discard Changes
+    </button>
     <button class="btn btn-success"
             ng-click="save()"
             ng-disabled="fieldForm.$invalid"
-            >Save changes</button>
+            >
+        <i class="icon icon-white icon-ok"></i>
+        Save changes
+    </button>
 </div>

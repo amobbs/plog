@@ -62,15 +62,15 @@
                     <li class="dropdown" permission="admin" ng-show="!userSvc.checkPermission('single-client')" data-match-route="/admin/.*">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Admin <b class="caret"></b></a>
                         <ul class="dropdown-menu">
-                            <li permission="user-manager"><a href="/admin/users"><i class="icon icon-user icon-white"></i> Users</a></li>
-                            <li permission="client-manager"><a href="/admin/clients"><i class="icon icon-briefcase icon-white"></i> Clients</a></li>
+                            <li permission="user-manager"><a href="/admin/users"><i class="icon icon-user"></i> Users</a></li>
+                            <li permission="client-manager"><a href="/admin/clients"><i class="icon icon-briefcase"></i> Clients</a></li>
                         </ul>
                     </li>
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{user.firstName}} {{user.lastName}} <b class="caret"></b></a>
                         <ul class="dropdown-menu">
-                            <li><a data-match-route="/my-profile" href="/my-profile"><i class="icon icon-white icon-user"></i> My Profile</a></li>
-                            <li><a href="/logout"><i class="icon icon-white icon-share-alt"></i> Logout</a></li>
+                            <li><a data-match-route="/my-profile" href="/my-profile"><i class="icon icon-user"></i> My Profile</a></li>
+                            <li><a href="/logout"><i class="icon icon-share-alt"></i> Logout</a></li>
                         </ul>
                     </li>
 
