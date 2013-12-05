@@ -224,7 +224,7 @@ angular.module( 'Preslog.usersAdmin', [
                 currentVals.types = _.isArray(search[0].types) ? {} : search[0].types;
             }
             clientNotifications.push(_.defaults(currentVals, {"attributes": [], "types": {}}));
-        });
+        }
 
         // Save the new notification back to the client.
         $scope.user.notifications.clients = clientNotifications;
