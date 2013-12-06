@@ -37,8 +37,8 @@ class EmailConfig {
         'host' => 'ssl://smtp.gmail.com',
         'port' => 465,
         'timeout' => 30,
-        'username' => 'dave@4mation.com.au',
-        'password' => 'poiu1qaz',
+        'username' => '@4mation.com.au',
+        'password' => '',
         'log' => false,
         'charset' => 'utf-8',
         'headerCharset' => 'utf-8',
@@ -52,8 +52,39 @@ class EmailConfig {
         'host' => 'ssl://smtp.gmail.com',
         'port' => 465,
         'timeout' => 30,
-        'username' => 'dave@4mation.com.au',
-        'password' => 'poiu1qaz',
+        'username' => '@4mation.com.au',
+        'password' => '',
+        'log' => false,
+        'charset' => 'utf-8',
+        'headerCharset' => 'utf-8',
+        'emailFormat'=>'both',
+    );
+
+
+    // Staging Config: Standard emails
+    public $staging = array(
+        'transport' => 'Smtp',
+        'from' => array('preslog@mediahub.tv' => 'Mediahub Preslog'),
+        'host' => '192.168.0.2',
+        'port' => 465,
+        'timeout' => 30,
+        'username' => '4mation',
+        'password' => 'mediahub',
+        'log' => false,
+        'charset' => 'utf-8',
+        'headerCharset' => 'utf-8',
+        'emailFormat'=>'both',
+    );
+
+    // Staging Config: Instant Notifications
+    public $staging_notification = array(
+        'transport' => 'Smtp',
+        'from' => array('preslog@mediahub.tv' => 'IncRpt_'),
+        'host' => '192.168.0.2',
+        'port' => 465,
+        'timeout' => 30,
+        'username' => '4mation',
+        'password' => 'mediahub',
         'log' => false,
         'charset' => 'utf-8',
         'headerCharset' => 'utf-8',
@@ -68,7 +99,7 @@ class EmailConfig {
         'port' => 465,
         'timeout' => 30,
         'username' => '4mation',
-        'password' => '4mation',
+        'password' => 'mediahub',
         'log' => false,
         'charset' => 'utf-8',
         'headerCharset' => 'utf-8',
@@ -83,7 +114,7 @@ class EmailConfig {
         'port' => 465,
         'timeout' => 30,
         'username' => '4mation',
-        'password' => '4mation',
+        'password' => 'mediahub',
         'log' => false,
         'charset' => 'utf-8',
         'headerCharset' => 'utf-8',
@@ -95,10 +126,18 @@ class EmailConfig {
      */
     public function __construct()
     {
+        // Dev
         if ('development' == APPLICATION_ENV)
         {
             $this->default = $this->development;
             $this->instant_notification = $this->development_in;
+        }
+
+        // Staging
+        if ('staging' == APPLICATION_ENV)
+        {
+            $this->default = $this->staging;
+            $this->instant_notification = $this->staging_in;
         }
     }
 }
