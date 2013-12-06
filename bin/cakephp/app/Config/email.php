@@ -94,11 +94,11 @@ class EmailConfig {
     // Production Config: Standard emails
     public $default = array(
         'transport' => 'Smtp',
-        'from' => array('preslog@mediahub.tv' => 'Mediahub Preslog'),
+        'from' => array('preslog-noreply@mediahub.tv' => 'Mediahub Preslog'),
         'host' => '192.168.0.2',
         'port' => 465,
         'timeout' => 30,
-        'username' => '4mation',
+        'username' => 'preslog',
         'password' => 'mediahub',
         'log' => false,
         'charset' => 'utf-8',
@@ -109,11 +109,11 @@ class EmailConfig {
     // Production Config: Instant Notifications
     public $instant_notification = array(
         'transport' => 'Smtp',
-        'from' => array('preslog@mediahub.tv' => 'IncRpt_'),
+        'from' => array('preslog-noreply@mediahub.tv' => 'IncRpt_'),
         'host' => '192.168.0.2',
         'port' => 465,
         'timeout' => 30,
-        'username' => '4mation',
+        'username' => 'preslog',
         'password' => 'mediahub',
         'log' => false,
         'charset' => 'utf-8',
