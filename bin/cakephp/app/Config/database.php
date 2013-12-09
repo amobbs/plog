@@ -7,13 +7,13 @@ class DATABASE_CONFIG {
         'datasource'    => 'Mongodb.MongodbSource',
         'persistent'    => 'true',
         'prefix'        => '',
-        'slaveok'       => true,
+        'slaveok'       => false,
         'database'      => 'preslog',
         'replicaset'    => array(
             'host'          => 'mongodb://preslog:cup$shiny&hat!purple@192.168.0.18:27017,192.168.0.19:27017',
             'options'       => array(
                 'connect'           => true,
-                'readPreference'    => \MongoClient::RP_PRIMARY_PREFERRED,
+                'readPreference'    => \MongoClient::RP_PRIMARY,
                 'replicaSet'        => 'mediahub-preslog'
             ),
         ),
@@ -25,13 +25,13 @@ class DATABASE_CONFIG {
         'datasource'    => 'Mongodb.MongodbSource',
         'persistent'    => 'true',
         'prefix'        => '',
-        'slaveok'       => true,
+        'slaveok'       => false,
         'database'      => 'preslog-test',
         'replicaset'    => array(
             'host'          => 'mongodb://preslog:cup$shiny&hat!purple@192.168.0.18:27017,192.168.0.19:27017',
             'options'       => array(
                 'connect'           => true,
-                'readPreference'    => \MongoClient::RP_PRIMARY_PREFERRED,
+                'readPreference'    => \MongoClient::RP_PRIMARY,
                 'replicaSet'        => 'mediahub-preslog'
             ),
         ),
@@ -48,7 +48,7 @@ class DATABASE_CONFIG {
             'host'          => 'mongodb://root:root@192.168.4.125:27017',
             'options'       => array(
                 'connect'           => true,
-                'readPreference'    => \MongoClient::RP_PRIMARY_PREFERRED,
+                'readPreference'    => \MongoClient::RP_PRIMARY,
             ),
         ),
     );
@@ -65,7 +65,7 @@ class DATABASE_CONFIG {
             'host'          => 'mongodb://preslog:cup$shiny&hat!purple@192.168.4.125:27018,192.168.4.127:27017',
             'options'       => array(
                 'connect'           => true,
-                'readPreference'    => \MongoClient::RP_PRIMARY_PREFERRED,
+                'readPreference'    => \MongoClient::RP_PRIMARY,
                 'replicaSet'        => '4mation'),
         ),
     );
