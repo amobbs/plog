@@ -233,7 +233,7 @@ class LogNotificationComponent extends Component
         $list = array();
         foreach ($users as $user)
         {
-            $list[] = "{$user['firstName']} {$user['lastName']} <{$user['email']}>";
+            $list[ $user['email'] ] = "{$user['firstName']} {$user['lastName']}";
         }
 
         // Use debug email if in debug mode
@@ -257,7 +257,23 @@ class LogNotificationComponent extends Component
 
         // Author email to the user for their reset
         $email->from( $fromEmail, $fromName );
-        $email->bcc( $list );
+
+        // Arrange BCC/TO list
+        foreach ($list as $toEmail=>$toName)
+        {
+            // Bad emails throw exceptions!
+            try
+            {
+                $email->bcc( $toEmail, $toName );
+            }
+            catch (Exception $e)
+            {
+                // Do nothing with bad emails
+            }
+        }
+
+
+        // Compose
         $email->subject( $data['subject'] );
         $email->viewVars( $data );
 
