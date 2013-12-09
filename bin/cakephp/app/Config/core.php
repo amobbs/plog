@@ -12,6 +12,14 @@
  */
 
 /**
+ * Development Environment detection
+ */
+
+defined('APPLICATION_ENV')
+|| define('APPLICATION_ENV', (getenv('APPLICATION_ENV') ? getenv('APPLICATION_ENV') : 'production'));
+
+
+/**
  * CakePHP Debug Level:
  *
  * Production Mode:

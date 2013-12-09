@@ -15,13 +15,6 @@
  * @since         CakePHP(tm) v 0.10.8.2117
  */
 
-/**
- * Development Environment detection
- */
-
-defined('APPLICATION_ENV')
-    || define('APPLICATION_ENV', (getenv('APPLICATION_ENV') ? getenv('APPLICATION_ENV') : 'production'));
-
 
 /**
  * Timezone configuration - convert everything to AEST.
