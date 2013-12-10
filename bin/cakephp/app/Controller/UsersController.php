@@ -687,7 +687,7 @@ class UsersController extends AppController
         // Find the user
         $user = $this->User->find('first', array(
             'conditions'=>array(
-                'email'=>$emailAddress
+                'email'=>new MongoRegex("/^" . $emailAddress . "$/i")
             )
         ));
 
