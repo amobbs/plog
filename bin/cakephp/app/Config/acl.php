@@ -38,7 +38,7 @@ Configure::write('auth-acl', array(
 
         'engineer'      => array(
             'name'=>'Engineer',
-            'permissions'=>array('guest', 'user', 'single-client', 'comment-only'),
+            'permissions'=>array('guest', 'user', 'comment-only'),
         ),
 
         'client'        => array(
