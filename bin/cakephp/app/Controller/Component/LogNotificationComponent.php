@@ -330,7 +330,7 @@ class LogNotificationComponent extends Component
             // Bad emails throw exceptions!
             try
             {
-                $email->bcc( $toEmail, $toName );
+                $email->addBcc( $toEmail, $toName );
             }
             catch (Exception $e)
             {
