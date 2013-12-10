@@ -45,12 +45,12 @@ angular.module('inputFieldDatetime', [])
                 if (!isNaN( newDate.getTime()))
                 {
                     ctrl.$setValidity('date', true);
-                    return $filter('date')(newDate, 'EEE, dd MMM yyyy hh:mm:ss Z');
+                    return $filter('date')(newDate, 'EEE, dd MMM yyyy HH:mm:ss Z');
                 }
                 else
                 {
                     ctrl.$setValidity('date', false);
-                    return $filter('date')(date, 'EEE, dd MMM yyyy hh:mm:ss Z');
+                    return $filter('date')(date, 'EEE, dd MMM yyyy HH:mm:ss Z');
                 }
             };
 
@@ -66,7 +66,8 @@ angular.module('inputFieldDatetime', [])
 
                 if (!isNaN( date.getTime()))
                 {
-                    return $filter('date')(date, 'dd/MM/yyyy hh:mm:ss');
+                    var x =  $filter('date')(date, 'dd/MM/yyyy HH:mm:ss');
+                    return x;
                 }
                 else
                 {
@@ -101,12 +102,12 @@ angular.module('inputFieldDatetime', [])
                 if (!isNaN( newDate.getTime()))
                 {
                     ctrl.$setValidity('date', true);
-                    return $filter('date')(newDate, 'EEE, dd MMM yyyy hh:mm:ss Z');
+                    return $filter('date')(newDate, 'EEE, dd MMM yyyy HH:mm:ss Z');
                 }
                 else
                 {
                     ctrl.$setValidity('date', false);
-                    return $filter('date')(date, 'EEE, dd MMM yyyy hh:mm:ss Z');
+                    return $filter('date')(date, 'EEE, dd MMM yyyy HH:mm:ss Z');
                 }
             };
 
@@ -156,12 +157,12 @@ angular.module('inputFieldDatetime', [])
                 if (!isNaN( date.getTime()))
                 {
                     ctrl.$setValidity('time', true);
-                    return $filter('date')(newDate, 'EEE, dd MMM yyyy hh:mm:ss Z');
+                    return $filter('date')(newDate, 'EEE, dd MMM yyyy HH:mm:ss Z');
                 }
                 else
                 {
                     ctrl.$setValidity('time', false);
-                    return $filter('date')(date, 'EEE, dd MMM yyyy hh:mm:ss Z');
+                    return $filter('date')(date, 'EEE, dd MMM yyyy HH:mm:ss Z');
                 }
 
 
@@ -180,7 +181,7 @@ angular.module('inputFieldDatetime', [])
 
                 if (!isNaN( date.getTime()))
                 {
-                    return $filter('date')(date, 'hh:mm:ss');
+                    return $filter('date')(date, 'HH:mm:ss');
                 }
                 else
                 {

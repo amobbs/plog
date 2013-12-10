@@ -26,7 +26,7 @@ angular.module('inputFieldLoginfo', [])
                 {
                     // Convert date to desired string
                     var date = new Date(v);
-                    element[0].value = $filter('date')(date, 'dd/MM/yyyy hh:mm:ss');
+                    element[0].value = $filter('date')(date, 'dd/MM/yyyy HH:mm:ss');
                 }
 
             });
