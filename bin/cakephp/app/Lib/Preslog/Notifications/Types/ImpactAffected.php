@@ -1,6 +1,7 @@
 <?php
 
 namespace Preslog\Notifications\Types;
+use Preslog\Logs\FieldTypes\Loginfo;
 use Preslog\Logs\FieldTypes\SelectImpact;
 
 
@@ -14,6 +15,7 @@ class ImpactAffected extends TypeAbstract
 {
     protected $key  = 'impact-affected';
     protected $name = 'Impact Affected Transmission';
+    protected $priority = 10;
 
     public $settings = array(
         'email'=>array(
@@ -32,7 +34,7 @@ class ImpactAffected extends TypeAbstract
     {
         // Validate: Must be a new log
         $field = $this->log->getFieldByName('version');
-        if ( !$field instanceof LogInfo)
+        if ( !$field instanceof Loginfo)
         {
             return false;
         }
@@ -66,7 +68,7 @@ class ImpactAffected extends TypeAbstract
      * Construct Data
      * @return  array       Fields for view
      */
-    public function getTemplateData()
+    public function getEmailTemplateData()
     {
         // Get standard
         $out = parent::getEmailTemplateData();

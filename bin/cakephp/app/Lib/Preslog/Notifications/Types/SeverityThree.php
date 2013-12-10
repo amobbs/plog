@@ -8,13 +8,14 @@ use Preslog\Logs\FieldTypes\SelectSeverity;
  * Preslog Notification: Severity 3
  * Sends alerts for:
  * - New logs only
- * - Severity 2 logs
+ * - Severity 3 logs
  * - Email only
  */
 class SeverityThree extends SeverityOne
 {
     protected $key  = 'severity-three';
     protected $name = 'Severity 3';
+    protected $priority = 3;
 
     public $settings = array(
         'email'=>array(
@@ -33,7 +34,7 @@ class SeverityThree extends SeverityOne
     {
         // Validate: Must be a new log
         $field = $this->log->getFieldByName('version');
-        if ( !$field instanceof LogInfo)
+        if ( !$field instanceof Loginfo)
         {
             return false;
         }

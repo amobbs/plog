@@ -15,6 +15,7 @@ class SeverityTwo extends SeverityOne
 {
     protected $key  = 'severity-two';
     protected $name = 'Severity 2';
+    protected $priority = 2;
 
     public $settings = array(
         'email'=>array(
@@ -33,7 +34,7 @@ class SeverityTwo extends SeverityOne
     {
         // Validate: Must be a new log
         $field = $this->log->getFieldByName('version');
-        if ( !$field instanceof LogInfo)
+        if ( !$field instanceof Loginfo)
         {
             return false;
         }

@@ -218,32 +218,6 @@
 
         <div class="alert alert-error" ng-show="validation.notifications" ng-bind="validation.notifications"></div>
 
-        <div class="row-fluid">
-            <div class="span12 form-horizontal">
-                <p>Select the types of instant notifications this user will receive</p>
-                <div class="control-group">
-                    <label class="control-label" for="inputNotifyEmail">Email Notifications</label>
-                    <div class="controls">
-                        <input type="checkbox"
-                               id="inputNotifyEmail"
-                               ng-model="user.notifications.methods.email"
-                                />
-                    </div>
-                </div>
-                <div class="control-group">
-                    <label class="control-label" for="inputNotifyPhone">SMS Notifications</label>
-                    <div class="controls">
-                        <input type="checkbox"
-                               id="inputNotifyPhone"
-                               ng-model="user.notifications.methods.sms"
-                               tooltip-placement="right"
-                               tooltip="SMS Notifications are issued for high severity events."
-                                />
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <!-- Notify -->
         <div class="alert alert-info">
             <strong>Note:</strong> The notification criteria is inclusive; you will receive alerts for logs that match ANY of the items selected in the criteria below.
@@ -254,9 +228,34 @@
         <div class="row-fluid" ng-repeat="client in options.notifications.clients">
             <div class="span12">
                 <h2>{{client.name}}</h2>
+
+                <p><strong>This user will receive ...</strong></p>
+                <div class="row-fluid">
+                    <div class="span12">
+                        <div class="control-group">
+                            <div class="controls">
+                                <label class="checkbox">
+                                    <input type="checkbox"
+                                           ng-model="user.notifications.clients[$index].methods.email"
+                                            />
+                                    Email Notifications
+                                </label>
+                                <label class="checkbox"
+                                       tooltip-placement="right"
+                                       tooltip="SMS Notifications are only issued for high severity entries.">
+                                    <input type="checkbox"
+                                           ng-model="user.notifications.clients[$index].methods.sms"
+                                            />
+                                        SMS Notifications
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <p><strong>For alerts of logs which are ...</strong></p>
                 <div class="row-fluid">
                     <div class="span4">
-                        <p>Send alerts for logs which are..</p>
                         <div class="control-group">
                             <div class="controls">
                                 <label class="checkbox" ng-repeat="type in client.types">
@@ -291,6 +290,7 @@
                         </div>
                 </div>
             </div>
+            <hr />
         </div>
 
     </div>

@@ -16,7 +16,7 @@ Configure::write('Preslog', array(
         'severity-two'      => new \Preslog\Notifications\Types\SeverityTwo,
         'severity-three'    => new \Preslog\Notifications\Types\SeverityThree,
         'impact-affected'   => new \Preslog\Notifications\Types\ImpactAffected,
-        'others'            => new \Preslog\Notifications\Types\Others,
+        'other'            => new \Preslog\Notifications\Types\Others,
     ),
 
 
