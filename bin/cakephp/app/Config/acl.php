@@ -18,17 +18,17 @@ Configure::write('auth-acl', array(
         'super-admin'   => array(
             'name'=>'Super Admin',
             'hidden'=>true,
-            'permissions'=>array('guest', 'user', 'log-create', 'dashboard-export-reports', 'log-accountability', 'log-delete', 'admin', 'user-manager', 'client-manager', 'edit-preset-dashboards', 'super-admin', 'dashboard-create'),
+            'permissions'=>array('guest', 'user', 'log-create', 'dashboard-export-reports', 'log-accountability', 'log-delete', 'admin', 'user-manager', 'client-manager', 'edit-preset-dashboards', 'super-admin', 'dashboard-create', 'dashboard-custom'),
         ),
 
         'admin'         => array(
             'name'=>'Administrator',
-            'permissions'=>array('guest', 'user', 'log-create', 'dashboard-export-reports', 'log-accountability', 'log-delete', 'admin', 'user-manager', 'client-manager', 'dashboard-create'),
+            'permissions'=>array('guest', 'user', 'log-create', 'dashboard-export-reports', 'log-accountability', 'log-delete', 'admin', 'user-manager', 'client-manager', 'dashboard-create', 'dashboard-custom'),
         ),
 
         'supervisor'    => array(
             'name'=>'Supervisor',
-            'permissions'=>array('guest', 'user', 'log-create', 'dashboard-export-reports', 'log-accountability', 'log-delete', 'dashboard-create'),
+            'permissions'=>array('guest', 'user', 'log-create', 'dashboard-export-reports', 'log-accountability', 'log-delete', 'dashboard-create', 'dashboard-custom'),
         ),
 
         'operator'      => array(
@@ -43,7 +43,7 @@ Configure::write('auth-acl', array(
 
         'client'        => array(
             'name'=>'Client',
-            'permissions'=>array('guest', 'user', 'single-client', 'dashboard-export-reports', 'comment-only', 'dashboard-create'),
+            'permissions'=>array('guest', 'user', 'single-client', 'dashboard-export-reports', 'comment-only', 'dashboard-create', 'dashboard-custom'),
         ),
 
         'guest'         => array(
@@ -58,11 +58,6 @@ Configure::write('auth-acl', array(
      * Controller-based access permissions
      */
     'routes'=>array(
-
-        // Super Routes (TODO: DELETEME)
-        array('controller'=>'Users',    'action'=>'debugTask',          'permissions'=>array('super-admin')),
-        array('controller'=>'Logs',     'action'=>'notificationtest',   'permissions'=>array('guest')),
-        array('controller'=>'Import',   'action'=>'runImport',          'permissions'=>array('admin')),
 
         // Public Routes
         array('controller'=>'Users',    'action'=>'login',              'permissions'=>array('guest')),

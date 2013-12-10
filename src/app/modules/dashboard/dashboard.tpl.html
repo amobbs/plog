@@ -10,22 +10,24 @@
             </li>
         </ul>
 
-        <h3>Favourite Dashboards</h3>
-        <ul class="nav nav-tabs nav-stacked">
-            <li ng-repeat="favourite in favourites">
-                <a ng-href="/dashboard/{{favourite._id}}">
-                    <div class="truncate_name">{{ favourite.name }}</div>
-                    <i class="icon-chevron-right"></i>
-                </a>
-            </li>
-        </ul>
+        <div ng-show="userSvc.checkPermission('dashboard-custom')">
+            <h3>Favourite Dashboards</h3>
+            <ul class="nav nav-tabs nav-stacked">
+                <li ng-repeat="favourite in favourites">
+                    <a ng-href="/dashboard/{{favourite._id}}">
+                        <div class="truncate_name">{{ favourite.name }}</div>
+                        <i class="icon-chevron-right"></i>
+                    </a>
+                </li>
+            </ul>
 
-        <h3>All Dashboards</h3>
-        <div class="favourites-manager">
-            <select ui-select2 ng-model="addDashboard" data-placeholder="Add to Favourites">
-                <option value=""></option>
-                <option ng-repeat="dashboard in allDashboards" value="{{ dashboard._id }}">{{ dashboard.name }}</option>
-             </select>
+            <h3>All Dashboards</h3>
+            <div class="favourites-manager">
+                <select ui-select2 ng-model="addDashboard" data-placeholder="Add to Favourites">
+                    <option value=""></option>
+                    <option ng-repeat="dashboard in allDashboards" value="{{ dashboard._id }}">{{ dashboard.name }}</option>
+                 </select>
+            </div>
         </div>
     </div>
 

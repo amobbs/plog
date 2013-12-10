@@ -29,16 +29,15 @@
                     <li class="dropdown" data-match-route="/dashboard/.*">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dashboard <b class="caret"></b></a>
                         <ul class="dropdown-menu dropdown-dashboard">
-                            <div class="nav-header">Preset Dashboards</div>
+                            <li ng-show="userSvc.checkPermission('dashboard-custom')" class="nav-header">Preset Dashboards</li>
                             <li ng-repeat="dashboard in presets">
                                 <a ng-href="/dashboard/{{dashboard._id}}">
                                     <div class="truncate_name">{{ dashboard.name }}</div>
                                 </a>
                             </li>
-                            <div class="divider"></div>
-
-                            <div class="nav-header">Favourite Dashboards</div>
-                            <li ng-repeat="favourite in favourites">
+                            <li ng-show="userSvc.checkPermission('dashboard-custom')" class="divider"></li>
+                            <li ng-show="userSvc.checkPermission('dashboard-custom')" class="nav-header">Favourite Dashboards</li>
+                            <li ng-show="userSvc.checkPermission('dashboard-custom')" ng-repeat="favourite in favourites">
                                 <a ng-href="/dashboard/{{favourite._id}}">
                                     <div class="truncate_name">{{ favourite.name }}</div>
                                 </a>
@@ -59,7 +58,7 @@
                         </form>
                     </li>
                     <li class="divider-vertical"></li>
-                    <li class="dropdown" permission="admin" ng-show="!userSvc.checkPermission('single-client')" data-match-route="/admin/.*">
+                    <li class="dropdown" ng-show="userSvc.checkPermission('admin')" data-match-route="/admin/.*">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Admin <b class="caret"></b></a>
                         <ul class="dropdown-menu">
                             <li permission="user-manager"><a href="/admin/users"><i class="icon icon-user"></i> Users</a></li>
