@@ -225,8 +225,21 @@ class ImportController extends AppController
                 'order' => $order++,
                 'type' => 'textbig',
                 'name' => 'program',    // PROGRAM
-                'label' => 'AFFECTED PROGRAMME or EVENT:',
+                'label' => 'PROGRAMME or EVENT:',
                 'data' => array('placeholder' => 'Name of programme, event, promo etc.'),
+            ),
+            array(
+                '_id' => null,
+                'order' => $order++,
+                'type' => 'select-impact',
+                'name' => 'impact',     // ONAIRIMPACT
+                'label' => 'ON-AIR IMPACT:',
+                'data' => array(
+                    'placeholder' => 'Choose from below',
+                    'options' => array(
+                        '?'
+                    )
+                ),
             ),
             array(
                 '_id' => null,
@@ -242,20 +255,7 @@ class ImportController extends AppController
                 'type' => 'textarea',
                 'name' => 'description', // DESCRIPTION
                 'label' => 'BRIEF DESCRIPTION:',
-                'data' => array('placeholder' => 'Details go here'),
-            ),
-            array(
-                '_id' => null,
-                'order' => $order++,
-                'type' => 'select-impact',
-                'name' => 'impact',     // ONAIRIMPACT
-                'label' => 'ON-AIR IMPACT:',
-                'data' => array(
-                    'placeholder' => 'None, Negative or Affected?',
-                    'options' => array(
-                        '?'
-                    )
-                ),
+                'data' => array('placeholder' => 'A brief summation goes here'),
             ),
             array(
                 '_id' => null,
@@ -301,7 +301,7 @@ class ImportController extends AppController
                 'type' => 'textarea',
                 'name' => 'follow_up',      // RESOLUTION
                 'label' => 'FOLLOW UP or RESOLUTION:',
-                'data' => array('placeholder' => 'Senior or Engineering follow up'),
+                'data' => array('placeholder' => 'Supervisor or Engineering follow up'),
             ),
             array(
                 '_id' => null,
@@ -310,7 +310,7 @@ class ImportController extends AppController
                 'name' => 'severity',       // SEVERITY
                 'label' => 'SEVERITY:',
                 'data' => array(
-                    'placeholder' => 'An Outage or Reported?',
+                    'placeholder' => 'Choose from below',
                     'options' => array(
                         '?',
                     ),
@@ -323,7 +323,7 @@ class ImportController extends AppController
                 'name' => 'accountability',     // ACCOUNTABILITY
                 'label' => 'ACCOUNTABILITY:',
                 'data' => array(
-                    'placeholder' => 'Senior Section',
+                    'placeholder' => 'Supervisor Section',
                     'options' => array(
                         '?'
                     ),
@@ -336,7 +336,7 @@ class ImportController extends AppController
                 'name' => 'status',             // STATUS
                 'label' => 'STATUS:',
                 'data' => array(
-                    'placeholder' => 'Senior Section',
+                    'placeholder' => 'Supervisor Section',
                     'options' => array(
                         '?'
                     ),
