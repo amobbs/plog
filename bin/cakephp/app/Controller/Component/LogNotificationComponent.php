@@ -64,10 +64,22 @@ class LogNotificationComponent extends Component
             array('$unwind'=>'$notifications.clients'),
             array('$match'=>array(
                 'notifications.clients.attributes'=>array('$in'=>$attributes),
-                'notifications.clients.client_id'=>new MongoId( $log['client_id'] )),
-            )
+                'notifications.clients.client_id'=>new MongoId( $log['client_id'] ),
+                '$or'=>array(
+                    array('notifications.clients.methods.email'=>true),
+                    array('notifications.clients.methods.sms'=>true),
+                ),
+            )),
         );
         $users = $this->User->getMongoDb()->selectCollection('users')->aggregate($criteria);
+
+        // Abort on error
+        if (!isset($users['result']))
+        {
+            return;
+        }
+
+        // Continue to be useful
         $users = $users['result'];
 
         // Build log data into Log Entity to make our lives easier
@@ -97,18 +109,43 @@ class LogNotificationComponent extends Component
                 continue;
             }
 
-            // Skim users and check if they're interested
-            foreach ($users as $user)
+            // Skim users and check if they're interested in this notification
+            foreach ($users as &$user)
             {
                 // Include with notification if they're interested
                 if ($this->isUserInterested( $user, $notifyTypeKey ))
                 {
-                    $notifyType->addRecipient( $user );
+                    // If notification not set, or existing notification is of lower priority
+                    if (!isset($user['notify']) || $user['notify']->getPriority() > $notifyType->getPriority())
+                    {
+                        // Link the user to the notification
+                        // Users can only possess one notification
+                        $user['notify'] = &$notifyType;
+                    }
                 }
             }
         }
 
-        // Attach log and issue notifications where possible
+        // Now users have one notification attached, for those who are interested and it applied
+        // Skim through the users and attach the user to that notification.
+        foreach ($users as &$user)
+        {
+            // Must have notification
+            if (!isset($user['notify']))
+            {
+                continue;
+            }
+
+            // Correct the user object
+            $notify = $user['notify'];
+            unset($user['notify']);
+
+            // Add user as recipient.
+            $notify->addRecipient($user);
+        }
+
+
+        // Issue all notifications.
         foreach ($notificationTypes as $notifyTypeKey=>&$notifyType)
         {
             // Notify types
@@ -153,7 +190,7 @@ class LogNotificationComponent extends Component
         }
 
         // Must have users
-        $users = $notifyType->getRecipients('sms');
+        $users = $notifyType->getRecipients();
         if (!sizeof($users))
         {
             return;
@@ -166,6 +203,13 @@ class LogNotificationComponent extends Component
         $list = array();
         foreach ($users as $user)
         {
+            // If user doesn't care for SMS
+            if (!isset($user['notifications']['clients']['methods']['sms'])
+                || $user['notifications']['clients']['methods']['sms'] == false)
+            {
+                continue;
+            }
+
             // Skip users with no number, or invalid number
             if (!isset($user['phoneNumber']) || empty($user['phoneNumber']) || strlen($user['phoneNumber']) < 6)
             {
@@ -181,6 +225,12 @@ class LogNotificationComponent extends Component
         if (Configure::read('debug') > 0)
         {
             $list = array(Configure::read('Preslog.Debug.sms'));
+        }
+
+        // Abort if no interested parties
+        if (!sizeof($list))
+        {
+            return;
         }
 
         // Get view
@@ -204,6 +254,8 @@ class LogNotificationComponent extends Component
 
         // Send SMS
         file_get_contents($url);
+
+        return;
     }
 
 
@@ -220,7 +272,7 @@ class LogNotificationComponent extends Component
         }
 
         // Must have users
-        $users = $notifyType->getRecipients('email');
+        $users = $notifyType->getRecipients();
         if (!sizeof($users))
         {
             return;
@@ -233,13 +285,27 @@ class LogNotificationComponent extends Component
         $list = array();
         foreach ($users as $user)
         {
+            // If user doesn't care for Emails
+            if (!isset($user['notifications']['clients']['methods']['email'])
+                || $user['notifications']['clients']['methods']['email'] == false)
+            {
+                continue;
+            }
+
+            // Add to recipient list
             $list[ $user['email'] ] = "{$user['firstName']} {$user['lastName']}";
         }
 
         // Use debug email if in debug mode
         if (Configure::read('debug') > 0)
         {
-            $list = array(Configure::read('Preslog.Debug.email'));
+            $list = array(Configure::read('Preslog.Debug.email')=>'Debug User');
+        }
+
+        // Abort if no interested parties
+        if (!sizeof($list))
+        {
+            return;
         }
 
         // Email object
@@ -279,6 +345,8 @@ class LogNotificationComponent extends Component
 
         // Send the email
         $email->send();
+
+        return;
     }
 
 }

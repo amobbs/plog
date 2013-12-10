@@ -97,7 +97,6 @@ angular.module( 'Preslog.usersAdmin', [
                             id:'',
                             deleted:false,
                             notifications: {
-                                methods:{},
                                 clients:[]
                             }
                         };
@@ -222,8 +221,9 @@ angular.module( 'Preslog.usersAdmin', [
             if (search.length > 0) {
                 currentVals.attributes = search[0].attributes;
                 currentVals.types = _.isArray(search[0].types) ? {} : search[0].types;
+                currentVals.methods = _.isArray(search[0].methods) ? {} : search[0].methods;
             }
-            clientNotifications.push(_.defaults(currentVals, {"attributes": [], "types": {}}));
+            clientNotifications.push(_.defaults(currentVals, {"attributes": [], "types": {}, "methods":{} }));
         }
 
         // Save the new notification back to the client.

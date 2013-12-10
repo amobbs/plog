@@ -15,6 +15,7 @@ class SeverityOne extends TypeAbstract
 {
     protected $key  = 'severity-one';
     protected $name = 'Severity 1';
+    protected $priority = 1;
 
     public $settings = array(
         'email'=>array(
@@ -36,7 +37,7 @@ class SeverityOne extends TypeAbstract
     {
         // Validate: Must be a new log
         $field = $this->log->getFieldByName('version');
-        if ( !$field instanceof LogInfo)
+        if ( !$field instanceof Loginfo)
         {
             return false;
         }

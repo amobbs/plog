@@ -99,25 +99,17 @@ abstract class TypeAbstract
      */
     public function addRecipient( $user )
     {
-        // Sort into interest groups
-        foreach ($user['notifications']['methods'] as $method=>$enabled)
-        {
-            if ($enabled !== false)
-            {
-                $this->recipients[ $method ][] = $user;
-            }
-        }
+        $this->recipients[] = $user;
     }
 
 
     /**
      * Fetch recipients for the specified method
-     * @param   string  $method     Notification method
      * @return  array               List of users attached
      */
-    public function getRecipients($method)
+    public function getRecipients()
     {
-        return (isset($this->recipients[ $method ]) ? $this->recipients[ $method ] : array());
+        return $this->recipients;
     }
 
 
@@ -167,6 +159,16 @@ abstract class TypeAbstract
         $out['clientShortName'] = $this->log->getClient()->data['shortName'];
 
         return $out;
+    }
+
+
+    /**
+     * Fetch this notification types priority
+     * @return mixed
+     */
+    public function getPriority()
+    {
+        return $this->priority;
     }
 
 }

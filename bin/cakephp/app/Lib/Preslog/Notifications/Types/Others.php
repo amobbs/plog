@@ -1,6 +1,7 @@
 <?php
 
 namespace Preslog\Notifications\Types;
+use Preslog\Logs\FieldTypes\Loginfo;
 use Preslog\Logs\FieldTypes\SelectSeverity;
 
 
@@ -15,6 +16,7 @@ class Others extends TypeAbstract
 {
     protected $key  = 'other';
     protected $name = 'Everything else';
+    protected $priority = 1000;
 
     public $settings = array(
         'email'=>array(
@@ -32,7 +34,7 @@ class Others extends TypeAbstract
     {
         // Validate: Must be a new log
         $field = $this->log->getFieldByName('version');
-        if ( !$field instanceof LogInfo)
+        if ( !$field instanceof Loginfo)
         {
             return false;
         }
@@ -52,7 +54,7 @@ class Others extends TypeAbstract
         }
 
         $level = ($field ? $field->getSelectedSeverityLevel() : 'ERROR');
-        if ( 'level-1' == $level || 'level-2' == $level )
+        if ( 'level-1' == $level || 'level-2' == $level || 'level-3' == $level )
         {
             return false;
         }
@@ -66,7 +68,7 @@ class Others extends TypeAbstract
      * Construct Data
      * @return  array       Fields for view
      */
-    public function getTemplateData()
+    public function getEmailTemplateData()
     {
         // Get standard
         $out = parent::getEmailTemplateData();

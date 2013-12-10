@@ -90,19 +90,6 @@ class User extends AppModel
         'notifications' => array(
             'type' => 'subDocument',
             'schema' => array(
-                'methods' => array(
-                    'type' => 'subDocument',
-                    'schema' => array(
-                        'sms' => array(
-                            'type' => 'boolean',
-                            'default' => false,
-                        ),
-                        'email' => array(
-                            'type' => 'boolean',
-                            'default' => false
-                        )
-                    )
-                ),
                 'clients' => array(
                     'type' => 'subCollection',
                     'schema' => array(
@@ -116,7 +103,20 @@ class User extends AppModel
                         ),
                         'types' => array(
                             'type' => 'object'
-                        )
+                        ),
+                        'methods' => array(
+                            'type' => 'subDocument',
+                            'schema' => array(
+                                'sms' => array(
+                                    'type' => 'boolean',
+                                    'default' => false,
+                                ),
+                                'email' => array(
+                                    'type' => 'boolean',
+                                    'default' => false
+                                )
+                            )
+                        ),
                     )
                 )
             )
@@ -195,7 +195,7 @@ class User extends AppModel
             'max-length'=>array(
                 'rule'=>array('maxLength', 40),
                 'message'=>'Maximum length is 40 characters',
-                'required'=>true,
+                'required'=>false,
                 'allowEmpty'=>true,
             ),
             'min-length'=>array(
@@ -324,7 +324,7 @@ class User extends AppModel
 
     /**
      * Fetch all available roles and return a simple array
-     * @param   string      $requiredRole       Role that must be included.
+     * @param   string|bool     $requiredRole       Role that must be included, or true to include all roles.
      * @return  array
      */
     public function getAvailableRoles( $requiredRole=null )
@@ -339,7 +339,7 @@ class User extends AppModel
             $item['name'] = $role['name'];
             $item['id'] = $roleKey;
 
-            if ($item['hidden'] && $requiredRole != $item['id'])
+            if ($item['hidden'] && $requiredRole != $item['id'] && $requiredRole !== true)
             {
                 continue;
             }
@@ -491,7 +491,7 @@ class User extends AppModel
     public function validateRole( $check )
     {
         // Fetch roles
-        $roles = $this->getAvailableRoles();
+        $roles = $this->getAvailableRoles(true);
 
         // Check for the role existing
         foreach ($roles as $role)
