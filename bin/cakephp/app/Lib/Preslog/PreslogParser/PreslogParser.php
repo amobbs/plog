@@ -160,6 +160,22 @@ class PreslogParser extends JqlParser {
             return $errors;
         }
 
+        //log flagged as deleted
+        elseif ($field == 'deleted')
+        {
+            $allowed = array(
+                new EqualsOperator(),
+                new NotEqualsOperator(),
+            );
+
+            if ( ! $this->operatorAllowed($operator, $allowed, $allowedString) )
+            {
+                $errors[] = "The operator " . $operator->getHumanReadable() . ' can not be used with the field "' . $clause->getField() . '". Operators allowed are ' . $allowedString;
+            }
+
+            return $errors;
+        }
+
         // Field Type: Client
         elseif ($field == 'client')
         {
@@ -389,6 +405,21 @@ class PreslogParser extends JqlParser {
                     ),
                 );
             }
+        }
+
+
+        if ($fieldName == 'deleted')
+        {
+            $deleted = true;
+
+            if (strtoupper($value) == "FALSE" )
+            {
+                $deleted = false;
+            }
+
+            return array(
+                'deleted' => $deleted,
+            );
         }
 
         //add the option to search for clients using 'client' field

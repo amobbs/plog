@@ -64,11 +64,16 @@ class SearchController extends AppController
     protected function prepareSearchCriteria()
     {
         // Create empty search if not set
-        $this->request->query['query'] = (isset($this->request->query['query']) ? $this->request->query['query'] : array());
+        $query = array();
+        if (isset($this->request->query['query']))
+        {
+            $query = empty($this->request->query['query']) ? "" : $this->request->query['query'] . " and ";
+            $query .= "deleted = false";
+        }
 
         // Build search query params
         $search = array(
-            'query'     => $this->request->query['query'],
+            'query'     => $query,
             'limit'     => (isset($this->request->query['limit']) ? $this->request->query['limit'] : 3),
             'start'     => (isset($this->request->query['start']) ? $this->request->query['start'] : 1),
             'orderBy'   => (isset($this->request->query['order']) ? $this->request->query['order'] : 'Created'),
