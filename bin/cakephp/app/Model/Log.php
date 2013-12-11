@@ -353,6 +353,10 @@ class Log extends AppModel
             $fieldIds = array();
             $orderByDataFieldName = '';
             foreach($clients as $clientDetails) {
+                if (isset($clientDetails['Client']))
+                {
+                    $clientDetails = $clientDetails['Client'];
+                }
                 $clientEntity = $clientModel->getClientEntityById((string)$clientDetails['_id']);
 
                 $clientField = $clientEntity->getFieldTypeByLabel( strtolower($orderBy) );
@@ -489,7 +493,7 @@ class Log extends AppModel
         ));
     }
 
-    public function findAggregate($query, $clients, $mongoPipeLine = array(), $fields = array()) {
+    public function findAggregate($query, &$clients, $mongoPipeLine = array(), $fields = array()) {
         if (empty($query)) {
             return array(
                 'result' => array(),

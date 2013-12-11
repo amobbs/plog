@@ -227,7 +227,7 @@ class JqlParser {
         if(is_array($clauses)) {
             foreach($clauses as $clause) {
                 if($clause instanceof Clause) {
-                    $args[] = $clause->getField();
+                    $fieldList[] = $clause->getField();
                 } else if (is_array($clause)) {
                     $this->_getFields($clause, $fieldList);
                 }

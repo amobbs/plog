@@ -160,7 +160,7 @@ class LineWidget extends Widget {
             $categorieData = array();
             $seriesData = array();
 
-            //go through each point in the series and
+            //go through each point in the series
             foreach($this->series as $point) {
                 $seriesId = $point['series'];
                 if ( empty($seriesId) )
@@ -168,6 +168,7 @@ class LineWidget extends Widget {
                     $seriesId = '(Empty)' ;
                 }
 
+                //find if this line(series) has been seen before if not add it.
                 if (!isset($seriesData[$seriesId])) {
                     $seriesData[$seriesId] = array(
                         'name' => $seriesId,
@@ -175,7 +176,10 @@ class LineWidget extends Widget {
                     );
                 }
 
+                //get the name of this point
                 $pointLabel = $point['xAxis'];
+
+                //there is no x axis and so no label
                 if ($xFieldType == null)
                 {
                     $pointLabel = '';
@@ -228,11 +232,54 @@ class LineWidget extends Widget {
                         'enabled' => true,
                     );
                 }
+                $data['x'] = $pointLabel;
 
                 $seriesData[$seriesId]['data'][] = $data;
             }
 
-            $series = array_values($seriesData);
+            //populate any missing data with 0's (eg: missing months)
+            $seriesComplete = array();
+            foreach($seriesData as $sd)
+            {
+                //add series to array to be populated
+                $seriesComplete[$sd['name']] = array(
+                    'name' => $sd['name'],
+                    'data' => array(),
+                );
+
+                //are all labels in this series?
+                foreach($categorieData as $label => $val)
+                {
+                    $found = false;
+                    $dataLabels = array();
+                    foreach($sd['data'] as $sdData)
+                    {
+                        $dataLabels = isset($sdData['dataLabels']) ? $sdData['dataLabels'] : null;
+                        if ($sdData['x'] == $label)
+                        {
+                            $found = true;
+                            unset($sdData['x']);
+                            $seriesComplete[$sd['name']]['data'][] = $sdData;
+                            break;
+                        }
+                    }
+
+                    if (!$found)
+                    {
+                        $sc = array(
+                            'y' => 0,
+                        );
+                        if ($dataLabels != null)
+                        {
+                            $sc['dataLabels'] = $dataLabels;
+                        }
+                        $seriesComplete[$sd['name']]['data'][] = $sc;
+                    }
+                }
+            }
+
+            //get the values for each series
+            $series = array_values($seriesComplete);
             $categories = array_values($categorieData);
 
             $chart->xAxis->categories = $categories;

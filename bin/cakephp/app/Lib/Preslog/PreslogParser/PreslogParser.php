@@ -36,7 +36,7 @@ class PreslogParser extends JqlParser {
      * @throws \Exception
      * @return array
      */
-    public function parse($clients) {
+    public function parse(&$clients) {
         $errors = $this->validate($clients);
         if (sizeof($errors) > 0 )
         {
@@ -44,6 +44,7 @@ class PreslogParser extends JqlParser {
         }
         $this->clients = $clients;
         $result = $this->buildPreslog($this->_expression);
+        $clients = $this->clients;
         return $result;
     }
 
@@ -428,6 +429,7 @@ class PreslogParser extends JqlParser {
         if ($fieldName == 'client')
         {
             $clientIds = array();
+            $clientModels = array();
             $clients = $clientModel->find('all');
             foreach($clients as $client)
             {
@@ -435,8 +437,12 @@ class PreslogParser extends JqlParser {
                 if ($operator->matches(strtoupper($client['Client']['name']), $value))
                 {
                     $clientIds[] = new MongoId($client['Client']['_id']);
+                    $clientModels[] = $client;
                 }
             }
+
+            //updated the client list to only include clients that will be in the search
+            $this->clients = $clientModels;
 
             return array(
                 'client_id' => array(
