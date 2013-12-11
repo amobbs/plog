@@ -37,6 +37,18 @@ angular.module('inputFieldDuration', [])
             }
 
 
+            // Apply a model watch, for when the data has been loaded to refresh the model
+            scope.$watch('ctrl', function()
+            {
+                // Set model valid to zero if not set
+                if ( !_.isNumber(ctrl.$modelValue) )
+                {
+                    ctrl.$setViewValue(0);
+                    //ctrl.$modelValue = 0;
+                    ctrl.$apply();
+                }
+            });
+
             /**
             * Hour Parser
             * Convert from View to Model
