@@ -320,26 +320,29 @@ class JqlParser {
      * @return array|bool|Clause
      */
     private function _seperateIntoGroups($string, $jql) {
+        //there are no groups to find
         if (empty($string)) {
             return FALSE;
         }
 
-        if (!$this->_groupsOnlyInString($string)) { //no grouping
+        //there are no groups in this string ( or )
+        if (!$this->_groupsOnlyInString($string)) {
             return $this->_seperateClauses($string, $jql);
         }
 
 
+        //ok so now we know there are some groups we need to separate all the groups
         $groups = array();
 
-        //find any groups
-        $openPos = FALSE;
-        $quoteCount = 0;
+        $openPos = FALSE; //the position of last ( we find
+        $quoteCount = 0; //counting how many " there are to make sure we ignore group start/end and keywords inside quotes
 
-        $lastChar = ' ';
-        $thisChar = '';
-        $i = 0;
+        $lastChar = ' '; //the last character we looked at, start with white space so if the first character is a ( we recognize it as the begining of a group
+        $thisChar = ''; //the current character we are looking at,
+        $i = 0; //position we are up to in the string
 
-        //a group starts with a ( which is preceded with a space or another ( anything else and it is a function
+        //a group starts with a ( which is preceded with a space or another (, anything else and it is a function
+        //loop through each character in the string to find groups
         while ( ! $openPos && $thisChar !== false) {
             $thisChar = substr($string, $i, 1);
             if($thisChar == '(' &&
@@ -347,10 +350,10 @@ class JqlParser {
                 ($quoteCount % 2 == 0) //if there are an odd number of quotes before this character we are inside quotes and it is a literal string
             )
             {
-                $openPos = $i + 1;
+                $openPos = $i + 1; //record the position
             }
 
-            if ($thisChar == '"')
+            if ($thisChar == '"') //increment quote count, so we can mod it later
             {
                 $quoteCount++;
             }
@@ -407,47 +410,72 @@ class JqlParser {
         $startOfString = '';
         $firstKeyword = 'NO KEYWORD';
         $startClause = false;
-        if ($openPos > 1) {
-            $startOfString = substr($string, 0, $openPos - 1);
+        if ($openPos > 1) { //openPos will be greater then one if we found some groups
+            $startOfString = substr($string, 0, $openPos - 1); //grab anything before the first (
             $firstKeyword = $this->_findFirstKeyword($string, $jql);
-            if (!$firstKeyword) { //just a single clause eg: a = 1
+
+            //just a single clause eg: a = 1
+            if (!$firstKeyword)
+            {
                 //throw exception there should be a clause before the first group at this point
-            } else { //s  eg: a = 1 AND (b = 2) assumption there is only on
+            }
+            //eg: a = 1 AND (b = 2) assumption there is only one clause before the group
+            else
+            {
                 $startClause = $this->_seperateClauses(substr($startOfString, 0, strpos($startOfString, $firstKeyword)), $jql);
             }
         }
 
         //there are groups inside this group
         $clauses = false;
-        if ($this->_groupsOnlyInString($groupString)) {
+        if ($this->_groupsOnlyInString($groupString))
+        {
             $subGroups = $this->_seperateIntoGroups($groupString, $jql);
-            if (sizeof($subGroups) > 1) {
+            if (sizeof($subGroups) > 1)
+            {
                 $clauses[] = array($this->_findFirstKeyword($groupString, $jql) => $subGroups);
-            } else {
+            }
+            else
+            {
                 $subGroupKeys = array_keys($subGroups);
                 $subGroupValues = array_values($subGroups);
                 $clauses[$subGroupKeys[0]] = $subGroupValues[0];
             }
-        }  else if ($this->_findFirstKeyword($groupString, $jql)) {
+        }
+        //no group but there are a couple of clauses eg: a = 1 and b = 2
+        else if ($this->_findFirstKeyword($groupString, $jql))
+        {
             $clauses = $this->_seperateClauses($groupString, $jql);
-        } else {
+        }
+        //only one clause found
+        else
+        {
             $clauses = new Clause($groupString, $jql);
         }
 
-        if($clauses == false) {
-            //wtf how did that happen?
-        }
-
-        //add group to start of string
-        if($startClause) {
-            if (is_array($clauses)) {
+        //we found there was something before the group, so include that into the output
+        if($startClause)
+        {
+            //there are many clauses, add them into the groups in the correct format
+            if (is_array($clauses))
+            {
                 $clausesKeys = array_keys($clauses);
                 $clausesValues = array_values($clauses);
                 $groups[$firstKeyword] = array($startClause, array($clausesKeys[0] => $clausesValues[0]));
-            } else {
+            }
+            //just one clause, add to group in the correct format
+            else
+            {
                 $groups[$firstKeyword] = array($startClause, $clauses);
             }
-        } else {
+        }
+        else if ($clauses instanceof Clause)
+        {
+            $groups = array(' AND ' => $clauses);
+        }
+        //no start clause just the groups, already in correct format so just set
+        else
+        {
             $groups = $clauses;
         }
 
@@ -455,33 +483,49 @@ class JqlParser {
         $groupStringLen = strlen($startOfString) + strlen($groupString) + 2; //+2 to include the ( and )
         $restOfString = substr($string, $groupStringLen);
 
-        if (!empty($restOfString)) {
+        if (!empty($restOfString))
+        {
             $joiningKeyword = $this->_findFirstKeyword($restOfString, $jql);
             $clausesInRestOfString = substr($restOfString, strpos($joiningKeyword, $restOfString) + strlen($joiningKeyword));
             $clauses = $this->_seperateIntoGroups($clausesInRestOfString, $jql);
-            if (isset($groups[$joiningKeyword])) {
-                if (is_array($groups[$joiningKeyword])) {
+            //we need to make sure that if they keyword is already used in this group we add the clause to the existing keyword and do not overwrite it.
+            if (isset($groups[$joiningKeyword]))
+            {
+                if (is_array($groups[$joiningKeyword]))
+                {
                     $groups[$joiningKeyword][] = $clauses;
-                } else {
+                }
+                else
+                {
                     $currentValue = $groups[$joiningKeyword];
                     $groups[$joiningKeyword] = array($currentValue, $clauses);
                 }
-            } else {
+            }
+            //this keyword has not been used in the group before so add it in.
+            else
+            {
                 $groups[$joiningKeyword] = $clauses;
             }
         }
 
-        if (sizeof($groups) == 2) {
+        //i have no idea why we are looking for groups that are the size of 2. as far as i can tell it is something to do with formatting the output if there is an OR + AND in the array
+        if (sizeof($groups) == 2)
+        {
             $clausesValues = array_values($clauses);
             $groupValues = array_values($groups);
-            if (!(is_array($clausesValues[0]) && is_array($groupValues[1]))) {
+            if (!(is_array($clausesValues[0]) && is_array($groupValues[1])))
+            {
                 return new Clause($groups, $jql);
-            } else {
+            }
+            else
+            {
                 return array(
                     array($this->_findFirstKeyword($string, $jql) => $groups)
                 );
             }
-        } else {
+        }
+        else
+        {
             return $groups;
         }
     }

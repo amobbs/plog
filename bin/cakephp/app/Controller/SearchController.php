@@ -67,8 +67,9 @@ class SearchController extends AppController
         $query = array();
         if (isset($this->request->query['query']))
         {
-            $query = empty($this->request->query['query']) ? "" : $this->request->query['query'] . " and ";
-            $query .= "deleted = false";
+            $query = "deleted = false";
+            $query .= empty($this->request->query['query']) ? "" : ' and ' . $this->request->query['query'];
+
         }
 
         // Build search query params
