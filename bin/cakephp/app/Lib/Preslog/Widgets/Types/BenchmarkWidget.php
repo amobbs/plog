@@ -5,6 +5,7 @@ namespace Preslog\Widgets\Types;
 use ClassRegistry;
 use Configure;
 use Highchart;
+use Preslog\Logs\FieldTypes\Datetime;
 use Preslog\Widgets\Widget;
 
 class BenchmarkWidget extends Widget {
@@ -35,7 +36,7 @@ class BenchmarkWidget extends Widget {
             $this->details['clients'] = isset($data['details']['clients']) ? $data['details']['clients'] : array();
 
             //clients can not change the below values for this widget type
-            $this->details['xAxis'] = 'created:month';
+            $this->details['xAxis'] = 'datetime:month';
             $this->details['yAxis'] = 'duration:minutes';
 
             $clientList = '';
@@ -54,7 +55,7 @@ class BenchmarkWidget extends Widget {
         $fields = $preslogSettings['Fields'];
         $this->options = array(
             'xAxis' => array(
-                array('fieldType' => 'created'),
+                array('fieldType' => new Datetime()),
             ),
             'yAxis' => array(
                 array('fieldType' => $fields['duration']),
@@ -299,10 +300,19 @@ class BenchmarkWidget extends Widget {
         {
             foreach( $client['Client']['attributes'] as $attr)
             {
-                if ( isset($attr['network']) && $attr['network'] )
+                if ( isset($attr['network']) && $attr['network'])
                 {
                     foreach ( $attr['children'] as $child )
                     {
+
+                        //------------------------------------
+                        //TODO: add a deleted date on to attributes and then use the deleted date to decide if it should be included
+                        //------------------------------------
+                        if (isset($child['deleted']) && $child['deleted'])
+                        {
+                            continue;
+                        }
+
                         if ( isset($child['live_date']) )
                         {
                             $bhpmDates[] = $child['live_date'];
