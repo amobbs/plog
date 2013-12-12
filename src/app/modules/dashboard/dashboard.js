@@ -560,10 +560,10 @@ angular.module( 'Preslog.dashboard', [
                 widget.params = {
                     page: 1,
                     total: 0,
-                    perPageOptions: [3, 5, 10, 25],
+                    perPageOptions: [25, 50, 100],
                     perPage: widget.details.perPage,
                     sorting: [],
-                    order: 'Created',
+                    order: 'ID',
                     orderDirection: 'Desc',
                     query: widget.details.query,
                     logs: widget.display,

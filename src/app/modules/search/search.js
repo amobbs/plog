@@ -105,10 +105,10 @@ angular.module( 'Preslog.search', [
         $scope.logWidgetParams = {
             page: 1,
             total: 0,
-            perPageOptions: [3, 5, 10, 25],
+            perPageOptions: [25, 50, 100],
             perPage: 3,
             sorting: [],
-            order: 'Created',
+            order: 'ID',
             orderDirection: 'Desc',
             query: '',
             logs: [],

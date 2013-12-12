@@ -20,8 +20,8 @@ class ListWidget extends Widget {
             $this->details = array();
         }
 
-        $this->details['perPage'] = isset($data['details']['perPage']) ? $data['details']['perPage'] : 3;
-        $this->details['orderBy'] = isset($data['details']['orderBy']) ? $data['details']['orderBy'] : 'Created';
+        $this->details['perPage'] = isset($data['details']['perPage']) ? $data['details']['perPage'] : 25;
+        $this->details['orderBy'] = isset($data['details']['orderBy']) ? $data['details']['orderBy'] : 'ID';
         $this->details['orderDirection'] = isset($data['details']['orderDirection']) ? $data['details']['orderDirection'] : 'Desc';
         $this->details['summary'] = isset($data['details']['summary']) ? $data['details']['summary'] : false;
 
