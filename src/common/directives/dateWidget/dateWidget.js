@@ -77,13 +77,15 @@ angular.module('dateWidget', [])
                     {
                         case 'Week':
                             end.setDate(start.getDate() + 6);
+                            end = scope.endOfDay(end);
                             break;
                         case 'Day':
-                            end.setDate(start.getDate() + 1);
+                            end = scope.endOfDay(start);
                             break;
                         case 'Month':
                             end.setMonth(start.getMonth() + 1);
                             end.setDate(start.getDate() - 1);
+                            end = scope.endOfDay(end);
                             break;
                     }
 

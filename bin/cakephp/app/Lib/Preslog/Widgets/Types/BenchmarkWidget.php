@@ -302,14 +302,14 @@ class BenchmarkWidget extends Widget {
 
         $bhpmDates = $this->getBHMPDates();
         $bhpmTotal = 0;
-        $bhpmSeconds = $quantities['BHPM'];
+        $bhpmHours = $quantities['BHPM'];
 
         //find BHPM total before start of graph
         foreach( $bhpmDates as $bDate )
         {
             if ( strtotime($bDate) < $date)
             {
-                $bhpmTotal += $bhpmSeconds;
+                $bhpmTotal += $bhpmHours;
             }
         }
         $bhpmTotal = $bhpmTotal  * 60 * 60;
