@@ -208,7 +208,9 @@ class Dashboard extends AppModel
 
 
         //loop through the widgets, generate charts and add one per page
-        foreach($dashboard['widgets'] as $widget) {
+        for($i = 0; $i < sizeof($dashboard['widgets']); $i++)
+        {
+            $widget = $dashboard['widgets'][$i];
             $widgetDetails = $widget->toArray();
             if ($widgetDetails['type'] == 'date')
             {
@@ -253,6 +255,7 @@ class Dashboard extends AppModel
 
                 if (empty($logs)) {
                     $section->addText('No Errors Shown');
+                    $section->addPageBreak();
                     continue;
                 }
 
@@ -278,7 +281,10 @@ class Dashboard extends AppModel
                 }
             }
 
-            $section->addPageBreak();
+            if ($i !== (sizeof($dashboard['widgets']) -1))
+            {
+                $section->addPageBreak();
+            }
         }
 
         $objWriter = PHPWord_IOFactory::createWriter($phpWord, 'Word2007');

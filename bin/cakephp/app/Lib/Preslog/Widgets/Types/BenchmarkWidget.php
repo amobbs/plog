@@ -150,12 +150,14 @@ class BenchmarkWidget extends Widget {
             $dates = array();
             foreach ($this->series as $point)
             {
-                $dates[] = mktime(0, 0, 0, $point['xAxis']['month'], 1, $point['xAxis']['year']);
+                //calculate last day on the month for the given date
+                $wholeDate = mktime(0, 0, 0, $point['xAxis']['month'] + 1, -1, $point['xAxis']['year']);
+                $dates[] = $wholeDate;
                 $month = mktime(0, 0, 0, $point['xAxis']['month'], 1, 1);
                 $date = date('M', $month) . '-' . substr($point['xAxis']['year'], 2);
 
                 $data = array();
-                $data['y'] = $this->asPercentageOfBHPM($point['yAxis']);
+                $data['y'] = $this->asPercentageOfBHPM($point['yAxis'], $wholeDate);
                 $data['dataLabels'] = array(
                     'enabled' => true,
                     'format' => '{y}%',
@@ -289,22 +291,38 @@ class BenchmarkWidget extends Widget {
      *
      * @param $value
      *
+     * @param $date
+     *
      * @return float
      */
-    private function asPercentageOfBHPM($value)
+    private function asPercentageOfBHPM($value, $date)
     {
         $preslogSettings = Configure::read('Preslog');
         $quantities = $preslogSettings['Quantities'];
-        $bhpmSeconds = $quantities['BHPM'] * 60 * 60;
+
+        $bhpmDates = $this->getBHMPDates();
+        $bhpmTotal = 0;
+        $bhpmSeconds = $quantities['BHPM'];
+
+        //find BHPM total before start of graph
+        foreach( $bhpmDates as $bDate )
+        {
+            if ( strtotime($bDate) < $date)
+            {
+                $bhpmTotal += $bhpmSeconds;
+            }
+        }
+        $bhpmTotal = $bhpmTotal  * 60 * 60;
+
         $decimalPlaces = pow(10, $quantities['decimalPlacesForPercentages']);
 
-        $percent = ($value / $bhpmSeconds) * 100;
+        $percent = ($value / $bhpmTotal) * 100;
         return floor($percent * $decimalPlaces) / $decimalPlaces; //round to number of places required
     }
 
-    private function calculateBHPM($dates, &$min = 0)
+    private function getBHMPDates()
     {
-        //find all the times whena  network comes live for the affected clients
+        //find all the times when a network comes live for the affected clients
         $bhpmDates = array();
         foreach( $this->clients as $client )
         {
@@ -335,6 +353,14 @@ class BenchmarkWidget extends Widget {
                 }
             }
         }
+        return $bhpmDates;
+    }
+
+    private function calculateBHPM($dates, &$min = 0)
+    {
+        //find all the times whena  network comes live for the affected clients
+        $bhpmDates = $this->getBHMPDates();
+
 
         $preslogSettings = Configure::read('Preslog');
         $bhpm = $preslogSettings['Quantities']['BHPM'];
@@ -343,7 +369,7 @@ class BenchmarkWidget extends Widget {
         //find BHPM total before start of graph
         foreach( $bhpmDates as $bDate )
         {
-            if ( $bDate < $dates[0])
+            if ( strtotime($bDate) < $dates[0])
             {
                 $bhpmTotal += $bhpm;
             }

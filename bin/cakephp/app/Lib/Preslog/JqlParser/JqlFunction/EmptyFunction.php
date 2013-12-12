@@ -13,7 +13,7 @@ class EmptyFunction extends JqlFunction {
 
 
     public function execute($args = null) {
-        return '';
+        return null;
     }
 
     public function executeForMongo($args = null)
