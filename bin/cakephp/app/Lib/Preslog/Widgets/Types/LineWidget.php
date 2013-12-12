@@ -60,6 +60,12 @@ class LineWidget extends Widget {
         );
 
         parent::__construct($data, $variables);
+
+        $this->printOptions = array(
+            'width' => 700,
+            'height' => 400,
+        );
+
     }
 
     public function getDisplayData() {
@@ -69,6 +75,11 @@ class LineWidget extends Widget {
             'type' => $this->chartType,
             'marginRight' => 120,
             'marginBottom' => 100,
+        );
+
+        $chart->exporting = array(
+            'sourceWidth' => 1200,
+            'sourceHeight' => 600,
         );
 
         $chart->title = array(

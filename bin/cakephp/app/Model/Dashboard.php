@@ -114,7 +114,12 @@ class Dashboard extends AppModel
         return $parsed;
     }
 
-    //use an export server for rasterization. NOT BEING USED.
+    /**
+     * use an export server for rasterization. NOT BEING USED.
+     *
+     * @param $chartOptions
+     * @param $tmpFilename
+     */
     public function getChartImage($chartOptions, $tmpFilename) {
         $data = array(
             'options' => $chartOptions,
@@ -133,7 +138,12 @@ class Dashboard extends AppModel
         fclose($f);
     }
 
-    //use a server running on this machine to create the chart image
+    /**
+     * run a program on this machine that will create the chart image
+     *
+     * @param $chartOptions
+     * @param $tmpFilename
+     */
     public function getChartImageLocal($chartOptions, $tmpFilename) {
 
         //get details about export exec locations
@@ -150,7 +160,7 @@ class Dashboard extends AppModel
         $convertScript = $export['highchartsExport.js'];
 
 
-        $command = $phantomjs . ' ' . $convertScript . '  -infile ' . $jsonFile . ' -outfile ' . $outFile . ' -scale 1 -width 600 -constr Chart';
+        $command = $phantomjs . ' ' . $convertScript . '  -infile ' . $jsonFile . ' -outfile ' . $outFile . ' -scale 1 -width 1200 -constr Chart';
         $result = exec($command);
     }
 
@@ -175,10 +185,10 @@ class Dashboard extends AppModel
         $section= $phpWord->createSection();
 
         $sectionStyle = $section->getSettings();
-        $sectionStyle->setMarginLeft(900);
-        $sectionStyle->setMarginRight(900);
-        $sectionStyle->setMarginTop(900);
-        $sectionStyle->setMarginBottom(900);
+        $sectionStyle->setMarginLeft(500);
+        $sectionStyle->setMarginRight(500);
+        $sectionStyle->setMarginTop(500);
+        $sectionStyle->setMarginBottom(500);
 
 
         //used to ensure tmp image names are unqique
@@ -197,7 +207,7 @@ class Dashboard extends AppModel
         $section->addPageBreak();
 
 
-        //loop through the weidgets, generate charts and add one per page
+        //loop through the widgets, generate charts and add one per page
         foreach($dashboard['widgets'] as $widget) {
             $widgetDetails = $widget->toArray();
             if ($widgetDetails['type'] == 'date')
@@ -215,8 +225,9 @@ class Dashboard extends AppModel
                 $imageFilename = $salt .$unique . '.png';
                 $this->getChartImageLocal($widget->getDisplayData(), $imageFilename);
 
-                //$style = array('width' => '700');
-                $section->addImage(TMP . $imageFilename);
+                $printOptions = $widget->getPrintOptions();
+                $style = array('width' => $printOptions['width'], 'height' => $printOptions['height']);
+                $section->addImage(TMP . $imageFilename, $style);
 
             }
             else

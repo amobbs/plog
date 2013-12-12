@@ -63,6 +63,11 @@ class BenchmarkWidget extends Widget {
         );
 
         parent::__construct($data, $variables);
+
+        $this->printOptions = array(
+            'width' => 700,
+            'height' => 400,
+        );
     }
 
     //note: i have not been able to find away to get the line to start right on the yaxis line because when using catagory
@@ -75,6 +80,11 @@ class BenchmarkWidget extends Widget {
             'type' => $this->chartType,
             'marginRight' => 220,
             'marginBottom' => 100,
+        );
+
+        $chart->exporting = array(
+            'sourceWidth' => 1200,
+            'sourceHeight' => 600,
         );
 
         $chart->title = array(

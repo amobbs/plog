@@ -14,6 +14,7 @@ class PieWidget extends Widget {
         $this->type = 'pie';
         $this->chartType = 'pie';
         $this->aggregate = true;
+
         if (isset($data['details'])) {
             if (!is_array($this->details)) {
                 $this->details = array();
@@ -40,6 +41,11 @@ class PieWidget extends Widget {
         );
 
         parent::__construct($data, $variables);
+
+        $this->printOptions = array(
+            'width' => 700,
+            'height' => 450,
+        );
     }
 
     public function getDisplayData() {

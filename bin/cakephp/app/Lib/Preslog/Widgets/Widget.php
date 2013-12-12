@@ -18,17 +18,20 @@ class Widget {
     protected $aggregate; //is the result of the data an aggregate or just a list of logs?
     protected $clients = array();
 
+    protected $printOptions = array(); //options that are used when generating the graph for printing
+
     public function setId($id) { $this->id = $id; }
     public function setSeries($series) { $this->series = $series; }
     public function setDetail($key, $value) { $this->details[$key] = $value; }
     public function setDisplayOptions($key, $value) { $this->displayOptions[$key] = $value; }
     public function setClients( $clients ) { $this->clients = $clients; }
-
+    public function setPrintOptions( $printOptions )  { $this->printOptions = $printOptions; }
 
     public function getDetail($key) { return isset($this->details[$key]) ? $this->details[$key] : ''; }
     public function getName() { return $this->name; }
     public function getOptions() { return $this->options; }
     public function isAggregate() { return $this->aggregate; }
+    public function getPrintOptions()  { return $this->printOptions; }
 
 
     public function __construct($data, $variables = array()) {
@@ -39,6 +42,11 @@ class Widget {
         if (!is_array($this->details)) {
             $this->details = array();
         }
+
+        $this->printOptions = array(
+            'width' => 700,
+            'height' => 400,
+        );
 
         //set details about the chart that will be displayed
         if (isset($data['details'])) {
