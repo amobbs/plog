@@ -181,6 +181,9 @@ abstract class FieldTypeAbstract
     {
         // Add to flags
         $this->flags = $this->flags|$flag;
+
+        // Apply Read-Only flag which needs to be passed in getOptions.
+        $this->fieldSettings['readonly'] = ($this->flags & self::FLAG_READONLY);
     }
 
 
@@ -483,6 +486,30 @@ abstract class FieldTypeAbstract
         return $settings;
     }
 
+
+    /**
+     * Fetch the Options data for this field
+     * @param   array   $log        Log data
+     * @return  array|bool          Field options or false if it shouldn't be included.
+     */
+    public function getOptions( $log=null )
+    {
+        // If hidden - remove
+        if ( $this->isHiddenFromOptions())
+        {
+            return false;
+        }
+
+        // If should be deleted and doesn't contain data in this log:
+        if ($this->isDeleted() && !isset( $log['fields'][ $this->fieldSettings['_id'] ] ))
+        {
+            return false;
+        }
+
+        // Create a copy of the field options data
+        $data = $this->fieldSettings;
+        return $data;
+    }
 }
 
 

@@ -4,6 +4,7 @@
         <select id="fields_{{options._id}}"
                 ng-model="log.data.selected"
                 ng-options="o._id as o.name for o in options.data.options"
+                ng-disabled="options.readonly"
                 >
             <option value="">{{options.data.placeholder}}</option>
         </select>

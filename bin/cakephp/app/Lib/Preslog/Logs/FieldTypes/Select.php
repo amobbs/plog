@@ -3,10 +3,9 @@
 namespace Preslog\Logs\FieldTypes;
 
 use Preslog\JqlParser\JqlOperator\EqualsOperator;
-use Preslog\JqlParser\JqlOperator\LessThanOperator;
 use Preslog\JqlParser\JqlOperator\LikeOperator;
 use Preslog\JqlParser\JqlOperator\NotEqualsOperator;
-use Preslog\Logs\FieldTypes\FieldTypeAbstract;
+
 
 /**
  * Preslog Field Type: Select
@@ -191,36 +190,63 @@ class Select extends FieldTypeAbstract
 
 
     /**
-     * Remove all fields that should be removed, saving the data supplied in $fieldData
-     * @param   array       $settings   Field configuration
-     * @param   array       $data       Field data to leave alone
-     * @return  array                   Corrected settings
+     * Get Options for this field type
+     * - Remove all fields that should be removed, bar any data supplied in $fieldData
+     * @param   array       $log        Log we're trying to load
+     * @return  array                   Modified Options
      */
-    public function removeDeleted( $settings, $data )
+    public function getOptions( $log=null )
     {
-        foreach ($settings['data']['options'] as $key=>$option)
+        $data = parent::getOptions($log);
+
+        // Abort if the field isn't available
+        if (!$data)
+        {
+            return false;
+        }
+
+        if (isset($log['fields']))
+        {
+            // Find this field in the log
+            foreach ($log['fields'] as $field)
+            {
+                // Use $field
+                if ($field['field_id'] == $this->fieldSettings['_id'])
+                {
+                    break;
+                }
+
+                // Clear $field if not found.
+                unset($field);
+            }
+        }
+
+        // Modify the field options in $data to REMOVE any fields which are:
+        // DELETED and NOT in the $log data.
+        foreach ($data['data']['options'] as $key=>$option)
         {
             // Existing log?
-            if ( isset($data['data']) )
+            if ( isset($field) && isset($field['data']) )
             {
-                // If items match, skip this one.
-                if ( $data['data']['selected'] == $option['_id'])
+                // If we find a match, esure we don't remove it from the options available
+                if ( $field['data']['selected'] == $option['_id'])
                 {
                     continue;
                 }
             }
 
-            // Not existing log. If field deleted..
+            // Not an existing log. If field deleted..
             if( $option['deleted'] == true )
             {
-                unset( $settings['data']['options'][$key] );
+                unset( $data['data']['options'][$key] );
             }
         }
 
-        $settings['data']['options'] = array_values($settings['data']['options']);
+        // Reformat the array so values are sequential.
+        $data['data']['options'] = array_values($data['data']['options']);
 
-        // Reindex the array
-        return $settings;
+        // Done
+        return $data;
     }
 
 }

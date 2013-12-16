@@ -252,42 +252,17 @@ class ClientEntity
     public function getOptions( $log=array() )
     {
         // Take a copy of the client
-        $data = $this->data;
+        $data = array('attributes'=>$this->data['attributes']);
 
-        // Store for the log fields
-        $logFields = array();
-
-        // Are we checking an existing log?
-        if (isset($log['fields']) && is_array($log['fields']))
+        // Fetch each fields option data
+        foreach ($this->fields as $k=>&$field)
         {
-            // Create a reverse lookup for log fields
-            foreach ($log['fields'] as $field)
-            {
-                $logFields[ $field['field_id'] ] = $field;
-            }
-        }
+            $optionData = $field->getOptions( $log );
 
-        // Remove fields that should be hidden from this user anyway
-        foreach ($data['fields'] as $k=>&$field)
-        {
-            // If hidden - remove
-            if ( $this->fields[ $field['_id'] ]->isHiddenFromOptions())
+            // Only include the field if it returns from getOptions
+            if ($optionData)
             {
-                unset( $data['fields'][ $k ] );
-            }
-
-            // If should be deleted and doesn't contain data in this log:
-            elseif ($this->fields[ $field['_id'] ]->isDeleted() && !isset( $logFields[ $field['_id'] ] ))
-            {
-                unset( $data['fields'][ $k ] );
-            }
-
-
-            // Remove field elements that should be deleted.
-            else
-            {
-                $fieldData = ( isset($logFields[ $field['_id'] ]) ? $logFields[ $field['_id'] ] : array());
-                $data['fields'][ $k ] = $this->fields[ $field['_id'] ]->removeDeleted( $data['fields'][ $k ], $fieldData );
+                $data['fields'][ $k ] = $optionData;
             }
         }
 
@@ -437,7 +412,7 @@ class ClientEntity
         // Everything except CommentOnly is ReadOnly.
         if ($this->userModel->isAuthorized( 'comment-only', $this->user['role'] ))
         {
-            if (!$field->isName('comments'))
+            if (!$field->isName('follow_up'))
             {
                 $field->setFlag( FieldTypeAbstract::FLAG_READONLY );
             }

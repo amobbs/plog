@@ -3,7 +3,9 @@
         <label class="checkbox" for="fields_{{options._id}}">
             <input id="fields_{{options._id}}"
                    type="checkbox"
-                   ng-model="log.data.checked"> {{options.label}}
+                   ng-model="log.data.checked"
+                   ng-disabled="options.readonly"
+                    > {{options.label}}
         </label>
     </div>
 </div>

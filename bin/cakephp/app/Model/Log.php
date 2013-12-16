@@ -706,18 +706,18 @@ class Log extends AppModel
      * Fetch options fields for this client.
      * - fields
      * - Attributes hierarchy
-     * @param   string  $client_id      client of the log
-     * @param   array   $selectedAttr   selected attributes of the log
+     * @param   string  $client_id      Client ID to get options for
+     * @param   array   $log            Log data
      * @return  array
      */
-    public function getOptionsByClientId( $client_id, $selectedAttr=array() )
+    public function getOptionsByClientId( $client_id, $log=array() )
     {
         // Load client
         $clientModel = ClassRegistry::init('Client');
         $clientEntity = $clientModel->getClientEntityById( $client_id );
 
         // Get the settings limited field list
-        $opt = $clientEntity->getOptions($selectedAttr);
+        $opt = $clientEntity->getOptions($log);
 
         // Save only the items relevant to this action
         // note: Array_keys is used because arrays MUST be sequential numeric.

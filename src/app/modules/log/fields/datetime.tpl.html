@@ -12,6 +12,7 @@
                 datetime="date"
                 datetime-datepicker
                 ng-model="log.data.datetime"
+                ng-disabled="options.readonly"
                 placeholder="DD/MM/YYYY"
                 data-date-format="dd/mm/yyyy"
                 />
@@ -23,6 +24,7 @@
                 type="text"
                 datetime="time"
                 ng-model="log.data.datetime"
+                ng-disabled="options.readonly"
                 placeholder="H:M:S"
                 />
     </div>
