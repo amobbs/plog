@@ -57,13 +57,13 @@
                             <i class="icon icon-white icon-ok click-wait-static"></i> Save Changes
                         </button>
                         &nbsp;
-                        <div class="btn-group" permissions="log-delete" ng-show="{{!log.newLog}}">
+                        <div class="btn-group" ng-show="userSvc.checkPermission('admin')" ng-show="{{!log.newLog}}">
                             <a class="btn btn-info dropdown-toggle" data-toggle="dropdown" href="#">
                                 <i class="icon icon-fire"></i> Admin Actions
                                 <span class="caret"></span>
                             </a>
                             <ul class="dropdown-menu">
-                                <li ng-show="{{!log.newLog}}">
+                                <li ng-show="{{!log.newLog}}" ng-show="userSvc.checkPermission('log-delete')">
                                     <a href="#"
                                        ng-confirm-click="This will delete this log and make it invisible to all reports. Are you sure?"
                                        click-wait="deleteLog()"

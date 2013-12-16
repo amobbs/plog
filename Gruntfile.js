@@ -336,9 +336,15 @@ module.exports = function (grunt) {
                         from: /select2(\.png|-spinner\.gif|x2\.png)/g,
                         to: '/assets/vendor/select2/select2$1'
                     },
+                    // Fix for bootstrap glyphicons
                     {
                         from: /\.\.\/img\/glyph/g,
                         to: '/assets/vendor/bootstrap/img/glyph'
+                    },
+                    // Fix for jquery-ui icons
+                    {
+                        from: /images\/ui-/g,
+                        to: '/assets/vendor/jquery-ui/themes/base/images/ui-'
                     }
                 ]
             }

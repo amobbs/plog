@@ -4,7 +4,7 @@
  */
 
 angular.module('inputFieldDatetime', [])
-    .directive('input', ['$templateCache', '$compile', '$filter', function ( $templateCache, $compile, $filter ) {
+    .directive('input', ['$templateCache', '$compile', '$filter', '$timeout', function ( $templateCache, $compile, $filter, $timeout ) {
 
         /**
          * Linker.
@@ -33,7 +33,23 @@ angular.module('inputFieldDatetime', [])
                 var date = new Date( ctrl.$modelValue );
                 var dateSplit = value.split(' ');
                 var dateParts = dateSplit[0].split('/');
-                var newDate = new Date(dateParts[2]+'-'+dateParts[1]+'-'+dateParts[0]+' '+dateSplit[1]);
+                var timeParts = dateSplit[1].split(':');
+
+                // Bugfix: if the year is two digit, prefix with current century
+                if (dateParts[2].length <= 2)
+                {
+                    dateParts[2] = "20"+dateParts[2];
+                }
+                // Bugfix: Month is 0-11
+                dateParts[1] = (parseInt(dateParts[1], 10) -1);
+
+                var newDate = new Date();
+                newDate.setDate(dateParts[0]);
+                newDate.setMonth(dateParts[1]);
+                newDate.setYear(dateParts[2]);
+                newDate.setHours(timeParts[0]);
+                newDate.setMinutes(timeParts[1]);
+                newDate.setSeconds(timeParts[2]);
 
                 // Fix the source date if not set, undefined, etc
                 if (isNaN( date.getTime()))
@@ -85,7 +101,19 @@ angular.module('inputFieldDatetime', [])
             {
                 var date = new Date( ctrl.$modelValue );
                 var dateParts = value.split('/');
-                var newDate = new Date(dateParts[2]+'-'+dateParts[1]+'-'+dateParts[0]+' 00:00:00');
+
+                // Bugfix: if the year is two digit, prefix with current century
+                if (dateParts[2].length <= 2)
+                {
+                    dateParts[2] = "20"+dateParts[2];
+                }
+                // Bugfix: Month is 0-11
+                dateParts[1] = (parseInt(dateParts[1], 10) -1);
+
+                var newDate = new Date('0001-01-01 00:00:00');
+                newDate.setDate(dateParts[0]);
+                newDate.setMonth(dateParts[1]);
+                newDate.setYear(dateParts[2]);
 
                 // Fix the source date if not set, undefined, etc
                 if (isNaN( date.getTime()))
@@ -140,7 +168,13 @@ angular.module('inputFieldDatetime', [])
             var timeParser = function(value)
             {
                 var date = new Date( ctrl.$modelValue );
-                var newDate = new Date('0001-01-01 '+value);
+                var dateSplit = value.split(' ');
+                var timeParts = dateSplit[1].split(':');
+
+                var newDate = new Date('0001-01-01 00:00:00');
+                newDate.setHours(timeParts[0]);
+                newDate.setMinutes(timeParts[1]);
+                newDate.setSeconds(timeParts[2]);
 
                 // Fix the source date if not set, undefined, etc
                 if (isNaN( date.getTime()))
@@ -217,6 +251,34 @@ angular.module('inputFieldDatetime', [])
             {
                 return;
             }
+
+
+            /**
+             * Apply datepicker if specified
+             */
+            if (attrs.datetimeDatepicker !== undefined)
+            {
+                // Attach datepicker next frame. Avoid problems with dynamic forms.
+                $timeout( function()
+                {
+                    // Remove any picker that exists
+                    element.datepicker('destroy');
+
+                    // Apply picker
+                    element.datepicker({
+                        dateFormat:'dd/mm/yy',
+                        constrainInput:true,
+                        shortYearCutoff: 0,
+                        onSelect:function (value, picker)
+                        {
+                            scope.$apply(function() {
+                                ctrl.$setViewValue(value);
+                                element.blur();
+                            });
+                        }
+                    });
+                });
+            }
         };
 
 
@@ -226,6 +288,7 @@ angular.module('inputFieldDatetime', [])
         return {
             restrict: "EA",
             require: "?ngModel",
-            link: linker
+            link: linker,
+            transclude: true
         };
     }]);

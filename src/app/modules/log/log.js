@@ -242,6 +242,7 @@ angular.module( 'Preslog.log', [
             return deferred.promise;
         };
 
+
         /**
          * Delete Log
          */
@@ -251,10 +252,6 @@ angular.module( 'Preslog.log', [
                 function()
                 {
                     $location.path('/');
-                },
-                function()
-                {
-                    alert('There was a problem deleting this log.');
                 }
             );
         };

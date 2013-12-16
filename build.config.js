@@ -100,6 +100,8 @@ module.exports = {
          * CSS files to be explicitly included in the concatenated CSS
          */
         css: [
+            'vendor/jquery-ui/themes/base/minified/jquery-ui.min.css',
+            'vendor/jquery-ui/themes/base/minified/jquery-ui.datepicker.min.css',
             'vendor/select2/select2.css'
         ],
 
@@ -119,7 +121,8 @@ module.exports = {
             'vendor/select2/select2-spinner.gif',
             'vendor/select2/select2x2.png',
             'vendor/dynatree/src/skin/*.gif',
-            'vendor/bootstrap/img/**'
+            'vendor/bootstrap/img/**',
+            'vendor/jquery-ui/themes/base/images/**'
         ]
     }
 };

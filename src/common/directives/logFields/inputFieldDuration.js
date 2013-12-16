@@ -44,8 +44,6 @@ angular.module('inputFieldDuration', [])
                 if ( !_.isNumber(ctrl.$modelValue) )
                 {
                     ctrl.$setViewValue(0);
-                    //ctrl.$modelValue = 0;
-                    ctrl.$apply();
                 }
             });
 
