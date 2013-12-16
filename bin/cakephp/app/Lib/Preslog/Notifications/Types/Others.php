@@ -73,6 +73,10 @@ class Others extends TypeAbstract
         // Get standard
         $out = parent::getEmailTemplateData();
 
+        // Locate Severity field selected option
+        $field = $this->log->getFieldByName('severity');
+        $severity = ($field ? current($field->convertToFields()) : 'ERROR_NO_SEVERITY_FIELD');
+
         // Locate description
         $field = $this->log->getFieldByName('what');
         $description = ($field ? current($field->convertToFields()) : 'ERROR_NO_DESCRIPTION_FIELD');
@@ -82,7 +86,7 @@ class Others extends TypeAbstract
         $slug = (isset($this->log->data['slug']) ? $this->log->data['slug'] : 'ERROR_NO_LOG_SLUG');
 
         // Output
-        $out['subject'] = $hrid.' [Other] '.$description;   // "WIN_#123 [Sev Level] Description"
+        $out['subject'] = $hrid.' ['.$severity.'] '.$description;   // "WIN_#123 [Sev Level] Description"
         $out['slug'] = $slug;   // Log Slug
         $out['hrid'] = $hrid;   // Log HRID
 
