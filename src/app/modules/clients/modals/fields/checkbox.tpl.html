@@ -1,4 +1,4 @@
-    <!-- Date-time field -->
+    <!-- Checkbox field -->
 
     <div class="control-group" ng-class="{error: fieldForm.label.$dirty && fieldForm.label.$invalid && fieldForm.label.$dirty}">
         <label class="control-label" for="inputName">Friendly Label</label>
@@ -30,7 +30,7 @@
         </div>
     </div>
 
-    <div class="control-group" ng-class="{error: fieldForm.name.$dirty && fieldForm.name.$invalid && fieldForm.name.$dirty}">
+    <div class="control-group" ng-class="{error: fieldForm.default.$dirty && fieldForm.default.$invalid && fieldForm.default.$dirty}">
         <div class="controls">
             <label class="checkbox" for="inputDefault">
             <input type="checkbox"
@@ -39,6 +39,22 @@
                    ng-model="field.data.default"
                     />
             Default state of checkbox
+            </label>
+        </div>
+    </div>
+
+    <div class="control-group" ng-class="{error: fieldForm.required.$dirty && fieldForm.required.$invalid && fieldForm.required.$dirty}">
+        <div class="controls">
+            <label class="checkbox"
+                   for="inputRequired"
+                    >
+                <input type="checkbox"
+                       id="inputRequired"
+                       name="required"
+                       ng-model="field.required"
+                        />
+                <span tooltip-placement="right"
+                      tooltip="Selecting this option will require this field to contain data before a log can be submitted.">Required</span>
             </label>
         </div>
     </div>

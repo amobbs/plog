@@ -51,6 +51,12 @@ class Checkbox extends FieldTypeAbstract
     {
         $errors = array();
 
+        // Required?
+        if ($this->fieldSettings['required'] == true && (!isset($this->data['data']['checked']) || $this->data['data']['checked'] == false))
+        {
+            $errors[] = 'Field must be checked.';
+        }
+
         return $errors;
     }
 

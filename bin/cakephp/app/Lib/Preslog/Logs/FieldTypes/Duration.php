@@ -150,10 +150,10 @@ class Duration extends FieldTypeAbstract
     {
         $errors = array();
 
-        // Must not be empty
-        if (!isset($this->data['data']['seconds']) || (empty($this->data['data']['seconds']) && $this->data['data']['seconds'] !== 0))
+        // Required? Must not be empty
+        if ($this->fieldSettings['required'] == true && (!isset($this->data['data']['seconds']) || (empty($this->data['data']['seconds']) && $this->data['data']['seconds'] !== 0)))
         {
-            return array("Duration must not be empty.");
+            return array("Duration is required and must not be empty.");
         }
 
         // Seconds must be numeric

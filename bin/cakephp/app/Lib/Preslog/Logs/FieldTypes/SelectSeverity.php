@@ -132,12 +132,6 @@ class SelectSeverity extends Select
         // parent validation
         $errors = parent::validates();
 
-        if (!isset($this->data['data']['selected']) || empty($this->data['data']['selected']))
-        {
-            return array("You must select an option.");
-        }
-
-
         // Fetch duration field
         $durationField = $this->log->getFieldByName('duration');
         if ( is_object($durationField) && $durationField instanceof Duration )
@@ -145,12 +139,15 @@ class SelectSeverity extends Select
             $option = null;
 
             // Find the selected option
-            foreach ( $this->fieldSettings['data']['options'] as $opt )
+            if (isset($this->data['data']['selected']) && !empty($this->data['data']['selected']))
             {
-                if ($this->data['data']['selected'] == $opt['_id'])
+                foreach ( $this->fieldSettings['data']['options'] as $opt )
                 {
-                    $option = $opt;
-                    break;
+                    if ($this->data['data']['selected'] == $opt['_id'])
+                    {
+                        $option = $opt;
+                        break;
+                    }
                 }
             }
 

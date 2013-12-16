@@ -111,6 +111,12 @@ class Select extends FieldTypeAbstract
     {
         $errors = array();
 
+        // Required? Must not be empty
+        if ($this->fieldSettings['required'] == true && (!isset($this->data['data']['selected']) || empty($this->data['data']['selected'])))
+        {
+            return array("This field is required. An option must be selected.");
+        }
+
         // Field may not exist under certain circumstances
         if (isset($this->data['data']['selected']))
         {
@@ -121,10 +127,6 @@ class Select extends FieldTypeAbstract
             {
                 $errors[] = 'The selected option could not be found in the database schema.';
             }
-        }
-        else
-        {
-            //$errors[] = "Must not be empty.";
         }
 
         return $errors;

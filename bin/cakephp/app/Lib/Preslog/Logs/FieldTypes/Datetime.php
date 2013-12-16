@@ -117,19 +117,23 @@ class Datetime extends FieldTypeAbstract
     {
         $errors = array();
 
-        // Must not be empty
-        if (!isset($this->data['data']['datetime']) || empty($this->data['data']['datetime']))
+        // Required? Must not be empty
+        if ($this->fieldSettings['required'] == true && (!isset($this->data['data']['datetime']) || empty($this->data['data']['datetime'])))
         {
-            return array("Date/Time must not be empty.");
+            return array("Date/Time is required and must not be empty.");
         }
 
-        $received = $this->data['data']['datetime'];
-        $expected = date('r', strtotime( $this->data['data']['datetime'] ));
-
-        // Validate as RFC2822
-        if ( $received != $expected )
+        if ($this->fieldSettings['required'] || (isset($this->data['data']['datetime']) && strlen($this->data['data']['datetime']) > 0))
         {
-            $errors[] = "Date must be supplied as valid RFC2822 format.";
+            // Interpret dates. Must be RFC2822 ("r")
+            $received = $this->data['data']['datetime'];
+            $expected = date('r', strtotime( $this->data['data']['datetime'] ));
+
+            // Validate as RFC2822
+            if ( $received != $expected )
+            {
+                $errors[] = "Date must be supplied as valid RFC2822 format.";
+            }
         }
 
         return $errors;

@@ -44,6 +44,13 @@ class Textarea extends FieldTypeAbstract
     public function validates()
     {
         $errors = array();
+
+        // Required? Must not be empty
+        if ($this->fieldSettings['required'] == true && (!isset($this->data['data']['text']) || empty($this->data['data']['text'])))
+        {
+            $errors[] = ("This field is required. You must enter some text content.");
+        }
+
         return $errors;
     }
 

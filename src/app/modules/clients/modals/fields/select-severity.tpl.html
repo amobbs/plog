@@ -30,6 +30,22 @@
         </div>
     </div>
 
+    <div class="control-group" ng-class="{error: fieldForm.required.$dirty && fieldForm.required.$invalid && fieldForm.required.$dirty}">
+        <div class="controls">
+            <label class="checkbox"
+                   for="inputRequired"
+                    >
+                <input type="checkbox"
+                       id="inputRequired"
+                       name="required"
+                       ng-model="field.required"
+                        />
+                    <span tooltip-placement="right"
+                          tooltip="Selecting this option will require this field to contain data before a log can be submitted.">Required</span>
+            </label>
+        </div>
+    </div>
+
     <div class="control-group" ng-class="{error: fieldForm.placeholder.$dirty && fieldForm.placeholder.$invalid && fieldForm.placeholder.$dirty}">
         <label class="control-label" for="inputPlaceholder">Placeholder Text</label>
         <div class="controls">

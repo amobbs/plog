@@ -62,6 +62,7 @@ class Client extends AppModel
                 ),
                 'order' => array('type' => 'int'),
                 'deleted' => array('type' => 'boolean'),
+                'required' => array('type' => 'boolean'),
                 'type' => array('type' => 'string', 'length'=>32),
                 'name' => array('type' => 'string', 'length' => 64),
                 'label' => array('type' => 'string', 'length'=>64),
