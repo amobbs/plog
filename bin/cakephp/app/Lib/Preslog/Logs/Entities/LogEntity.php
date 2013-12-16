@@ -324,6 +324,12 @@ class LogEntity
             }
         }
 
+        // Validate attributes; at least one item must be selected.
+        if (!isset($this->data['attributes']) || sizeof($this->data['attributes']) < 1)
+        {
+            $errors['attributes'][] = 'You must select at least one attribute/network.';
+        }
+
         // Validate attributes; all given items must exist in the schema keys
         foreach( $this->data['attributes'] as $attr)
         {
