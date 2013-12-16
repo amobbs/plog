@@ -46,6 +46,11 @@ Configure::write('auth-acl', array(
             'permissions'=>array('guest', 'user', 'single-client', 'dashboard-export-reports', 'comment-only', 'dashboard-create', 'dashboard-custom'),
         ),
 
+        'client-logs-only'        => array(
+            'name'=>'Client (Logs Only)',
+            'permissions'=>array('guest', 'user', 'single-client', 'comment-only'),
+        ),
+
         'guest'         => array(
             'name'=>'Guest',
             'hidden'=>true,
