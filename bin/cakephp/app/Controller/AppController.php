@@ -152,6 +152,16 @@ class AppController extends Controller {
             ),
         );
 
+        // BUGFIX: CakePHP Cookie expiry fix
+        // Until CakePHP 2.3, the cookie expiry will not update when cookie content is updated. This is a workaround.
+        // http://cakephp.lighthouseapp.com/projects/42648/tickets/3047-session-cookie-timeout-is-not-refreshed
+        if(isset($_COOKIE[Configure::read("Session.cookie")]))
+        {
+            $session_delay = Configure::read("Session.timeout");
+            setcookie(Configure::read("Session.cookie"), $_COOKIE[Configure::read("Session.cookie")], time() + $session_delay, "/");
+        }
+
+        // Run parent filters
         parent::beforeFilter();
     }
 

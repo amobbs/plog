@@ -93,7 +93,7 @@ angular.module( 'Preslog.auth', [
      * Executed at startup
      * - Checks users authentication
      */
-    .run(function ($rootScope, $location, Restangular, userService) {
+    .run(function ($rootScope, $location, Restangular, userService, $timeout) {
         if (typeof $rootScope.global === 'undefined') {
             $rootScope.global = {};
         }
@@ -136,6 +136,12 @@ angular.module( 'Preslog.auth', [
 
             // Redirect to login form
             $location.path('/login');
+
+            // After 1s allow login rquest again
+            $timeout(function()
+            {
+                loginRequiredInProgress = false;
+            }, 1000);
         });
 
         // On LoginConfirmed event; set the user, go back to requested path
@@ -145,9 +151,6 @@ angular.module( 'Preslog.auth', [
             if (requestedPath === null) {
                 requestedPath = '/';
             }
-
-            // Mark in-progress as false.
-            loginRequiredInProgress = false;
 
             // Redirect
             $location.path(requestedPath);

@@ -225,7 +225,9 @@ if ('development' == APPLICATION_ENV || 'staging' == APPLICATION_ENV)
  *
  */
 	Configure::write('Session', array(
-		'defaults' => 'php'
+		'defaults' => 'php',
+        'cookie' => 'CAKEPHP',
+        'timeout'=>(86400*14),       // 14 days
 	));
 
 /**
