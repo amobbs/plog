@@ -19,7 +19,7 @@ class LessThanOperator extends JqlOperator {
         parent::_construct(
             '<',
             '<',
-            '$lt',
+            '$lte',
             'LESS THAN',
             array(
                 'DATE',

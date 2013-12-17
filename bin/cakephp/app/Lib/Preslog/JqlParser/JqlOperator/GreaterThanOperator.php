@@ -19,7 +19,7 @@ class GreaterThanOperator extends JqlOperator {
         parent::_construct(
             '>',
             '>',
-            '$gt',
+            '$gte',
             'GREATER THAN',
             array(
                 'DATE',
