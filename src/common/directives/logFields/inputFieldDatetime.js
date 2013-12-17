@@ -168,8 +168,7 @@ angular.module('inputFieldDatetime', [])
             var timeParser = function(value)
             {
                 var date = new Date( ctrl.$modelValue );
-                var dateSplit = value.split(' ');
-                var timeParts = dateSplit[1].split(':');
+                var timeParts = value.split(':');
 
                 var newDate = new Date('0001-01-01 00:00:00');
                 newDate.setHours(timeParts[0]);
