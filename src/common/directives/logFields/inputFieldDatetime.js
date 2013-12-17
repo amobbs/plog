@@ -170,6 +170,11 @@ angular.module('inputFieldDatetime', [])
                 var date = new Date( ctrl.$modelValue );
                 var timeParts = value.split(':');
 
+                if (timeParts.length < 3)
+                {
+                    timeParts = ["12", "00", "00"];
+                }
+
                 var newDate = new Date('0001-01-01 00:00:00');
                 newDate.setHours(timeParts[0]);
                 newDate.setMinutes(timeParts[1]);
