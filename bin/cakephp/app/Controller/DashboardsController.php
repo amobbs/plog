@@ -975,7 +975,7 @@ class DashboardsController extends AppController
         if ($widgetObject->isAggregate()) {
            $result = $this->Log->findAggregate($query, $fullClients, $aggregationPipeLine, $fields);
         } else {
-            $result = $this->Log->findByQuery($query, $fullClients);
+            $result = $this->Log->findByQuery($query, $fullClients, $widgetObject->getDetail('orderBy'));
         }
 
         if ( isset($result['ok']) && !$result['ok'] )
