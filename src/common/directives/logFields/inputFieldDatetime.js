@@ -172,12 +172,12 @@ angular.module('inputFieldDatetime', [])
 
                 if (timeParts.length == 1)
                 {
-                    timeParts.push(00);
-                    timeParts.push(00);
+                    timeParts.push(0);
+                    timeParts.push(0);
                 }
                 else if (timeParts.length == 2)
                 {
-                    timeParts.push(00);
+                    timeParts.push(0);
                 }
 
                 var newDate = new Date('0001-01-01 00:00:00');
