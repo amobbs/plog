@@ -144,9 +144,14 @@ class LogsController extends AppController
             }
         }
 
+        //we want to show the user the client name at the top
+        $client = $this->Client->findById($log['Log']['client_id']);
+
+        $return = array('Log' => $log['Log'], 'Client' => $client['Client']);
+
         // Output
-        $this->set($log);
-        $this->set('_serialize', array_keys($log));
+        $this->set($return);
+        $this->set('_serialize', array_keys($return));
     }
 
 

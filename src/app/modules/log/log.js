@@ -111,7 +111,7 @@ angular.module( 'Preslog.log', [
 /**
  * And of course we define a controller for our route.
  */
-    .controller( 'LogCtrl', function LogController( $scope, $q, $location, titleService, logData, logOptions, LogRestangular, stateHistory ) {
+    .controller( 'LogCtrl', function LogController( $scope, $q, $location, titleService, logData, logOptions, LogRestangular, stateHistory, userService ) {
 
         // Set title
         titleService.setTitle( 'Create Log' );
@@ -123,6 +123,20 @@ angular.module( 'Preslog.log', [
         $scope.Object = Object;
         $scope.displayAttributes = [];
         $scope.serverErrorsPresent = false;
+
+        //Either get the clients name from the api when getting the log, or if a new log get it via userservice
+        $scope.clientName = undefined;
+        if (!logData.Client)
+        {
+            userService.getClient().then(function(client)
+            {
+                $scope.clientName = client.name;
+            });
+        }
+        else
+        {
+            $scope.clientName = logData.Client.name;
+        }
 
 
         /**

@@ -341,12 +341,14 @@ class Log extends AppModel
                 'deleted' => array('$first' => '$deleted'),
             );
 
-
-
             //split all the fields up so we can order based on sub field
             $criteria[] = array(
                 '$unwind' => '$fields',
             );
+
+//            $criteria[] = array(
+//                '$match' => $match,
+//            );
 
             $clientModel = ClassRegistry::init('Client');
 
