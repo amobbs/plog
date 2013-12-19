@@ -388,15 +388,41 @@ abstract class FieldTypeAbstract
 
     /**
      * Check the field label matches the one given
-     *
      * @param $label
-     *
-     * @internal param string $label Field name to check
      * @return  bool            True is name is a match
      */
     public function isLabel( $label )
     {
         return (strtolower($this->fieldSettings['label']) == strtolower($label) ? true : false);
+    }
+
+
+    /**
+     * Check if this field should be visible for the chosen $type of display
+     * @param   string  $type       Type of view we're checking against
+     * @return  bool                True if visible
+     */
+    public function isVisibleFor( $type='' )
+    {
+        // Always visible on the standard list
+        if ($type == 'list')
+        {
+            return true;
+        }
+
+        // Visible?
+        if ( isset($this->fieldSettings['visibility'][$type]) && $this->fieldSettings['visibility'][$type] == true)
+        {
+            return true;
+        }
+
+        // Legacy; if it isn't set, then allow it.
+        if (!isset($this->fieldSettings['visibility']) || !isset($this->fieldSettings['visibility'][$type]))
+        {
+            return true;
+        }
+
+        return false;
     }
 
     /**

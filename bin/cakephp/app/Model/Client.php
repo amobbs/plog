@@ -52,66 +52,38 @@ class Client extends AppModel
         'benchmark' => array(
             'type' => 'float',
         ),
-        'fields' => array(
-            'type' => 'subCollection',
-            'schema' => array(
-                '_id' => array(
-                    'type' => 'string',
-                    'length' => 24,
-                    'mongoType' => 'mongoId'
-                ),
-                'order' => array('type' => 'int'),
-                'deleted' => array('type' => 'boolean'),
-                'required' => array('type' => 'boolean'),
-                'type' => array('type' => 'string', 'length'=>32),
-                'name' => array('type' => 'string', 'length' => 64),
-                'label' => array('type' => 'string', 'length'=>64),
-                'data' => array('type' => 'array')
-            )
-        ),
-        'attributes' => array(
-            'type' => 'subCollection',
-            'schema' => array(
-                '_id' => array(
-                    'type' => 'string',
-                    'length' => 24,
-                    'mongoType' => 'mongoId'
-                ),
-                'name' => array('type' => 'string', 'length'=>64),
-                'label' => array('type' => 'string', 'length'=>64),
-                'deleted' => array('type' => 'boolean'),
-                'network' => array('type' => 'boolean'),
-                'children' => array(
-                    'type' => 'subCollection',
-                    'schema' => array(
-                        '_id' => array(
-                            'type' => 'string',
-                            'length' => 24,
-                            'mongoType' => 'mongoId'
-                        ),
-                        'name' => array('type' => 'string', 'length'=>64),
-                        'live_date' => array(
-                            'type' => 'datetime',
-                            'mongoType' => 'mongoDate'
-                        ),
-                        'deleted' => array('type' => 'boolean'),
-                        'children' => array(
-                            'type' => 'subCollection',
-                            'schema' => array(
-                                '_id' => array(
-                                    'type' => 'string',
-                                    'length' => 24,
-                                    'mongoType' => 'mongoId'
-                                ),
-                                'name' => array('type' => 'string', 'length'=>64),
-                                'deleted' => array('type' => 'boolean'),
-                                'children' => array('type' => 'array')
-                            )
-                        )
-                    )
-                )
-            )
-        ),
+        'fields' => array('type' => 'subCollection', 'schema' => array(
+            '_id'       => array('type' => 'string', 'length' => 24, 'mongoType' => 'mongoId'),
+            'order'     => array('type' => 'int'),
+            'deleted'   => array('type' => 'boolean'),
+            'required'  => array('type' => 'boolean'),
+            'type'      => array('type' => 'string', 'length'=>32),
+            'name'      => array('type' => 'string', 'length' => 64),
+            'label'     => array('type' => 'string', 'length'=>64),
+            'data'      => array('type' => 'array'),
+            'visibility'=> array('type' => 'subDocument', 'schema'=>array(
+                'email'     =>array('type'=>'boolean'),
+            )),
+        )),
+        'attributes' => array('type' => 'subCollection', 'schema' => array(
+            '_id'       => array('type' => 'string', 'length' => 24, 'mongoType' => 'mongoId'),
+            'name'      => array('type' => 'string', 'length'=>64),
+            'label'     => array('type' => 'string', 'length'=>64),
+            'deleted'   => array('type' => 'boolean'),
+            'network'   => array('type' => 'boolean'),
+            'children'  => array('type' => 'subCollection', 'schema' => array(
+                '_id'       => array('type' => 'string', 'length' => 24, 'mongoType' => 'mongoId'),
+                'name'      => array('type' => 'string', 'length'=>64),
+                'live_date' => array('type' => 'datetime', 'mongoType' => 'mongoDate'),
+                'deleted'   => array('type' => 'boolean'),
+                'children'  => array('type' => 'subCollection', 'schema' => array(
+                    '_id'       => array('type' => 'string','length' => 24,'mongoType' => 'mongoId'),
+                    'name'      => array('type' => 'string', 'length'=>64),
+                    'deleted'   => array('type' => 'boolean'),
+                    'children'  => array('type' => 'array')
+                ))
+            ))
+        )),
         'deleted'=>array( 'type'=>'boolean'),
         'created' => array(
             'type' => 'datetime',

@@ -112,3 +112,22 @@
             </tr>
         </tfoot>
     </table>
+
+
+    <h3>Visibility</h3>
+
+    <div class="control-group" ng-class="{error: fieldForm.visibilityEmail.$dirty && fieldForm.visibilityEmail.$invalid && fieldForm.visibilityEmail.$dirty}">
+        <div class="controls">
+            <label class="checkbox"
+                   for="inputVisibilityEmail"
+                    >
+                <input type="checkbox"
+                       id="inputVisibilityEmail"
+                       name="visibilityEmail"
+                       ng-model="field.visibility.email"
+                        />
+                            <span tooltip-placement="right"
+                                  tooltip="Toggle this option to change this fields visibility in Email notifications">Visible in Email Notifications</span>
+            </label>
+        </div>
+    </div>

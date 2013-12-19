@@ -140,7 +140,7 @@ abstract class TypeAbstract
     public function getEmailTemplateData()
     {
         $out = array();
-        $out['fields'] = $this->log->toDisplay();
+        $out['fields'] = $this->log->toDisplay('email');
         $out['subject'] = 'I am a Teapot.';
         $out['clientShortName'] = $this->log->getClient()->data['shortName'];
 

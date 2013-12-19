@@ -144,10 +144,11 @@ class LogEntity
 
     /**
      * Parse the Log structure to a Field-based array of key:value pairs.
+     * @param   string          $type                   Type of Display (list, email, etc)
      * @param   array|null      $fieldTypeCallbacks     Callback functions per field type, for alternate processing methods
      * @return  array                                   Key/Value pair fields and values
      */
-    public function toDisplay( $fieldTypeCallbacks = null )
+    public function toDisplay( $type='list', $fieldTypeCallbacks = null )
     {
         $outFields = array();
 
@@ -158,6 +159,12 @@ class LogEntity
 
             // Skip deleted fields that do not contain data
             if ($field->isDeleted())
+            {
+                continue;
+            }
+
+            // If email, check the field visibility
+            if ($type == 'email' && !$field->isVisibleFor('email'))
             {
                 continue;
             }
