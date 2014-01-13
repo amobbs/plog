@@ -144,7 +144,7 @@ class SearchController extends AppController
     {
         // Export is allowed to continue until it's done.
         set_time_limit(0);
-        @ini_set('memory_limit', '32M');
+        @ini_set('memory_limit', '64M');
 
         // Prepare criteria
         $search = $this->prepareSearchCriteria();
