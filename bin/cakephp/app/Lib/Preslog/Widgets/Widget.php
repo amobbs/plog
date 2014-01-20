@@ -108,7 +108,7 @@ class Widget {
         $sumY = 0;
         $sumSqX = 0;
         $sumXY = 0;
-        for ($x = 1; $x < sizeof($data) -1; $x++)
+        for ($x = 1; $x <= sizeof($data); $x++)
         {
             $y = $data[$x - 1];
 
