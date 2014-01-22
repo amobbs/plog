@@ -1,6 +1,7 @@
 <?php
 
 namespace Preslog\Notifications\Types;
+use Preslog\Logs\FieldTypes\Loginfo;
 use Preslog\Logs\FieldTypes\SelectSeverity;
 
 
