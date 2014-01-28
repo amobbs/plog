@@ -35,7 +35,7 @@ angular.module( 'Preslog.dashboard', [
 
                     userService.getDashboards().then(function (dashboards) {
                         var dashId = dashboard_live_logs;
-                        if (dashboards.favourites.length > 0)
+                        if (dashboards.favourites.length > 0 && userService.checkPermission('dashboard-custom'))
                         {
                             dashId = dashboards.favourites[0]._id;
                         }
@@ -50,7 +50,7 @@ angular.module( 'Preslog.dashboard', [
 
                     userService.getDashboards().then(function (dashboards) {
                         var dashId = dashboard_live_logs;
-                        if (dashboards.favourites.length > 0)
+                        if (dashboards.favourites.length > 0 && userService.checkPermission('dashboard-custom'))
                         {
                             dashId = dashboards.favourites[0]._id;
                         }

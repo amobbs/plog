@@ -35,11 +35,16 @@ class DashboardsController extends AppController
 
 
     /**
-     * given the logged in user list their favourite dashbaords
+     * given the logged in user list their favourite dashboards
      * @return array
      */
 
     private function listLoggedInFavouriteDashboards() {
+        if ($this->isAuthorized('dashboard-custom'))
+        {
+            return array();
+        }
+
         $user = $this->User->findById(
             $this->PreslogAuth->user('_id'),
             array('fields'=>array(
@@ -69,6 +74,11 @@ class DashboardsController extends AppController
      * Retrieve a list of all custom (not preset) dashboards that exist and are shared with the current logged in users default client.
      */
     private function listAllCustomDashboards() {
+        if (!$this->isAuthorized('dashboard-custom'))
+        {
+            return array();
+        }
+
         $clientIds = $this->getClientListForUser();
 
         $dashboards = $this->Dashboard->find('all', array(
@@ -158,8 +168,10 @@ class DashboardsController extends AppController
         //read dashboard
         if ($this->request->is('get')) {
             $dashboard = $this->Dashboard->findById($id);
-            if (empty($dashboard)) {
-                throw new Exception('We are unable to find this dashboard in the system');
+
+            if (empty($dashboard) || (!$dashboard['Dashboard']['preset'] && !$this->isAuthorized('dashboard-custom')))
+            {
+                throw new Exception('We are unable to find this dashboard in the system or you do not have permission');
             }
 
             $dashboard = $this->_getParsedDashboard($dashboard['Dashboard'], false);
