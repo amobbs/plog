@@ -147,8 +147,57 @@ class BenchmarkWidget extends Widget {
                 ),
             );
             $categorieData = array();
+            $parsedSeries = $this->series;
+            //try and figure out what data will have to show based on the dtaes passed into the query. not the best method.
+            if (isset($this->variables['lowestDate']) && isset($this->variables['highestDate']))
+            {
+                $start = $this->variables['lowestDate'];
+                $end = $this->variables['highestDate'];
+
+                $workingDate = $start;
+                while ($workingDate < $end)
+                {
+                    //find each point in the series that should have a value.
+                    $date = date('M', $workingDate) . '-' . substr(date('Y',$workingDate), 2);
+                    $key = mktime(0, 0, 0, date('n', $workingDate), 1,  date('Y',$workingDate));
+                    $categorieData[$key] = $date . '<br/>0s';
+
+                    $found = false;
+                    for($i = 0; $i < sizeOf($parsedSeries); $i++)
+                    {
+                        $xAxis = $parsedSeries[$i]['xAxis'];
+                        if (isset($xAxis['year']) && isset($xAxis['month']))
+                        {
+                            if ($xAxis['year'] == date('Y', $workingDate)
+                                && $xAxis['month'] == date('n', $workingDate))
+                            {
+                                $found = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (!$found)
+                    {
+                        $yearMonth = array('year' => date('Y', $workingDate), 'month' => date('n', $workingDate));
+                        $insert = array(
+                            array(
+                                '_id' => array('datetime' => $yearMonth),
+                                'yAxis' => 0,
+                                'xAxis' => $yearMonth,
+                            )
+                        );
+
+                        array_splice($parsedSeries, sizeOf($categorieData), 0, $insert);
+                    }
+                    $workingDate = mktime(date("H", $workingDate), 0, 0, date("n", $workingDate) + 1, date("j", $workingDate), date("Y", $workingDate));
+                }
+
+            }
+
+            //benchmark still does not add the 0's at the end because there is not data that matches they key in the series. !!!!
             $dates = array();
-            foreach ($this->series as $point)
+            foreach ($parsedSeries as $point)
             {
                 //calculate last day on the month for the given date
                 $wholeDate = mktime(0, 0, 0, $point['xAxis']['month'] + 1, -1, $point['xAxis']['year']);
@@ -162,10 +211,13 @@ class BenchmarkWidget extends Widget {
                     'enabled' => true,
                     'format' => '{y}%',
                 );
-                $categorieData[] = $date . '<br/>' . $this->_formatDuration($point['yAxis'])  ;
+                $key = mktime(0, 0, 0, date('n', $month), 1,  $point['xAxis']['year']);
+                $categorieData[$key] = $date . '<br/>' . $this->_formatDuration($point['yAxis'])  ;
 
                 $oatSeries['data'][] = $data;
             }
+
+            ksort($categorieData, SORT_STRING);
 
             $series = array($oatSeries);
             $categories = array_values($categorieData);

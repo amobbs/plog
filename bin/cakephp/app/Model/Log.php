@@ -495,7 +495,7 @@ class Log extends AppModel
         ));
     }
 
-    public function findAggregate($query, &$clients, $mongoPipeLine = array(), $fields = array()) {
+    public function findAggregate($query, &$clients, $mongoPipeLine = array(), $fields = array(), &$parser = null) {
         if (empty($query)) {
             return array(
                 'result' => array(),

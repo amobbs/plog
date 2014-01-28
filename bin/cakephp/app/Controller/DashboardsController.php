@@ -973,7 +973,37 @@ class DashboardsController extends AppController
 
         //send to database and get results.
         if ($widgetObject->isAggregate()) {
-           $result = $this->Log->findAggregate($query, $fullClients, $aggregationPipeLine, $fields);
+            $parser = null;
+            $result = $this->Log->findAggregate($query, $fullClients, $aggregationPipeLine, $fields, $parser);
+
+            //we need to find the dates used in the query so that we can calculate what values to show,
+            //without the date range we would miss any dates that have a value of 0 at the start/end
+            //of the range due to the way mongo returns data.
+            if ($parser !== null)
+            {
+                $variables = $widgetObject->getVariables();
+                $variables['lowestDate'] = false;
+                $variables['highestDate'] = false;
+
+                $arguments = $parser->getArguments(true);
+                foreach($arguments as $arg)
+                {
+                    if ($arg['type'] == 'date')
+                    {
+                        if (!$variables['lowestDate'] || $variables['lowestDate'] > $arg['value'])
+                        {
+                            $variables['lowestDate'] = $arg['value'];
+                        }
+
+                        if (!$variables['highestDate'] || $variables['highestDate'] < $arg['value'])
+                        {
+                            $variables['highestDate'] = $arg['value'];
+                        }
+                    }
+                }
+
+                $widgetObject->setVariables($variables);
+            }
         } else {
             $result = $this->Log->findByQuery($query, $fullClients, $widgetObject->getDetail('orderBy'));
         }

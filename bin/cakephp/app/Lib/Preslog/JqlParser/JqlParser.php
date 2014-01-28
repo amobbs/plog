@@ -46,11 +46,14 @@ class JqlParser {
     /**
      * populate an array with all the values found in the expression
      *
+     * @param bool $evaluateFunction - if true run any functions found in the arguments
+     *
+     *
      * @return array
      */
-    public function getArguments() {
+    public function getArguments($evaluateFunction = false) {
         $args = array();
-        $this->_getArgumentsFromArray($this->_expression, $args);
+        $this->_getArgumentsFromArray($this->_expression, $args, $evaluateFunction);
         return $args;
     }
 
@@ -60,19 +63,21 @@ class JqlParser {
      * @param $clauses
      * @param $args
      *
+     * @param $evaluateFunction - if true run any functions found in the arguments
+     *
      * @return mixed
      */
-    private function _getArgumentsFromArray($clauses, &$args) {
+    private function _getArgumentsFromArray($clauses, &$args, $evaluateFunction) {
         if(is_array($clauses)) {
             foreach($clauses as $clause) {
                 if($clause instanceof Clause) {
-                    $this->_addValue($clause, $args);
+                    $this->_addValue($clause, $args, $evaluateFunction);
                 } else if (is_array($clause)) {
-                    $this->_getArgumentsFromArray($clause, $args);
+                    $this->_getArgumentsFromArray($clause, $args, $evaluateFunction);
                 }
             }
         } else if($clauses instanceof Clause) {
-            $this->_addValue($clauses, $args);
+            $this->_addValue($clauses, $args, $evaluateFunction);
         }
         return $args;
     }
@@ -83,12 +88,21 @@ class JqlParser {
      * @param $clause
      * @param $args
      */
-    private function _addValue($clause, &$args)
+    private function _addValue($clause, &$args, $evaluateFunction = false)
     {
         $arg = array(
             'type' => 'string',
-            'value' => $clause->getValue()
+            'value' => $clause->getValue(),
         );
+
+        if ($evaluateFunction)
+        {
+            $arg['value'] = $clause->getFunctionEvaluated();
+            if (is_numeric($arg['value'])) //all the function either return boolean or date functions. if its a number it is really a date
+            {
+                $arg['type'] = 'date';
+            }
+        }
 
         if (strtotime($arg['value']))
         {

@@ -168,7 +168,72 @@ class LineWidget extends Widget {
                 }
             }
 
+            //find all the values that are within the given range,
+            //so we can fill the ones that are not returned by mongo with 0's
             $categorieData = array();
+            if (isset($this->variables['lowestDate']) && isset($this->variables['highestDate']))
+            {
+                $start = $this->variables['lowestDate'];
+                $end = $this->variables['highestDate'];
+
+                $workingDate = $start;
+                while ($workingDate < $end)
+                {
+                    //find each point in the series that should have a value.
+                    $display = array();
+                    switch ($xParts[1])
+                    {
+                        case 'hour':
+                            $display = array(
+                                'hour' => date("H", $workingDate),
+                            );
+                            $workingDate = mktime(date("H", $workingDate) + 1, 0, 0, date("n", $workingDate), date("j", $workingDate), date("Y", $workingDate));
+                            break;
+                        case 'day' :
+                            $display = array(
+                                'day' => date("j", $workingDate),
+                                'month' => date("n", $workingDate),
+                            );
+                            $workingDate = mktime(date("H", $workingDate), 0, 0, date("n", $workingDate), date("j", $workingDate) + 1, date("Y", $workingDate));
+                            break;
+                        case 'month':
+                            $display = array(
+                                'month' => date("n", $workingDate),
+                                'year' => date("Y", $workingDate),
+                            );
+                            $workingDate = mktime(date("H", $workingDate), 0, 0, date("n", $workingDate) + 1, date("j", $workingDate), date("Y", $workingDate));
+                            break;
+                    }
+
+                    $label = '';
+
+                    //add it to the list in the display format we require.
+                    if ($xFieldType instanceof FieldTypeAbstract)
+                    {
+                        $label = $xFieldType->chartDisplay($display, $xParts[1]);
+                    }
+                    else if ($xFieldType == 'created' || $xFieldType == 'modified')
+                    {
+                        switch ($xParts[1]) {
+                            case 'hour':
+                                $label = $display['hour'];
+                                break;
+                            case 'day':
+                                $label = $display['day'] . '/' . $display['month'];
+                                break;
+                            case 'month':
+                                $label = date('M', $display['month']) . '-' . substr($display['year'], 2);
+                                break;
+                            case 'all':
+                                $label = $display['day'] . '/' . $display['month']. '/' . substr($display['year'], 2);
+                        }
+                    }
+
+                    $categorieData[$label] = $label;
+                }
+            }
+
+
             $seriesData = array();
 
             //go through each point in the series
@@ -258,7 +323,7 @@ class LineWidget extends Widget {
                     'data' => array(),
                 );
 
-                //are all labels in this series?
+                //are all labels provided by mongo in this series?
                 foreach($categorieData as $label => $val)
                 {
                     $found = false;
