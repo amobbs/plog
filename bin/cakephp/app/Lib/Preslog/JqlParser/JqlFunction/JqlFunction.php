@@ -75,9 +75,14 @@ class JqlFunction {
         if (substr_count($value, '"') > 0)
         {
             $value = str_replace('"', '', $value);
-            $date = strtotime($value);
         }
 
+        //if we can convert the string to a time then do it.
+        $time = strtotime($value);
+        if ($time)
+        {
+            $date = $time;
+        }
         if ($date == 0) $date = mktime(date('H'), date('i'), date('s'), date('n'), date('j'), date('y'));
 
        // $date = $this->_evaluateInterval($value, $date);
