@@ -99,7 +99,7 @@ abstract class BaseAuthenticate {
 			$conditions = $username;
 		} else {
 			$conditions = array(
-				$model . '.' . $fields['username'] => new MongoRegex("/$username/i")
+                $model . '.' . $fields['username'] => $username
 			);
 		}
 
