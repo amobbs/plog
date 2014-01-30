@@ -40,7 +40,7 @@ class DashboardsController extends AppController
      */
 
     private function listLoggedInFavouriteDashboards() {
-        if ($this->isAuthorized('dashboard-custom'))
+        if (!$this->isAuthorized('dashboard-custom'))
         {
             return array();
         }
