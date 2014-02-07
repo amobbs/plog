@@ -188,7 +188,7 @@ class BenchmarkWidget extends Widget {
                             )
                         );
 
-                        array_splice($parsedSeries, sizeOf($categorieData), 0, $insert);
+                        array_splice($parsedSeries, sizeOf($categorieData) -1, 0, $insert);
                     }
                     $workingDate = mktime(date("H", $workingDate), 0, 0, date("n", $workingDate) + 1, date("j", $workingDate), date("Y", $workingDate));
                 }
