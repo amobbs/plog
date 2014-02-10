@@ -526,7 +526,7 @@ class User extends AppModel
     {
         // Find by email
         $conditions = array(
-            'email'=>$check['email'],
+            'email'=> new MongoRegex('/' . $check['email'] . '/i'),
         );
 
         // Not this user
