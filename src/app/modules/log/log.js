@@ -280,7 +280,10 @@ angular.module( 'Preslog.log', [
             logData.remove().then(
                 function()
                 {
-                    $location.path('/');
+                    if (stateHistory.goBack() === false)
+                    {
+                        $location.path('/');
+                    }
                 }
             );
         };
