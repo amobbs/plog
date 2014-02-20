@@ -65,6 +65,8 @@
                             <i class="icon icon-white icon-ok click-wait-static"></i> Save Changes
                         </button>
                         &nbsp;
+
+
                         <div class="btn-group" ng-show="userSvc.checkPermission('admin')" ng-show="{{!log.newLog}}">
                             <a class="btn btn-info dropdown-toggle" data-toggle="dropdown" href="#">
                                 <i class="icon icon-fire"></i> Admin Actions
@@ -72,13 +74,10 @@
                             </a>
                             <ul class="dropdown-menu">
                                 <li ng-show="{{!log.newLog}}" ng-show="userSvc.checkPermission('log-delete')">
-                                    <a href="#"
-                                       ng-confirm-click="This will delete this log and make it invisible to all reports. Are you sure?"
-                                       click-wait="deleteLog()"
-                                       click-wait-bind="saveLogToggle">
-                                        <i class="icon icon-loading click-wait-loader"></i>
-                                        <i class="icon icon-ok click-wait-static"></i> Delete Log
-                                    </a>
+                                    <button class="link" ng-click="openDeleteModal()">
+                                        <i class="icon icon-ok click-wait-static"></i>
+                                        Delete Log
+                                    </button>
                                 </li>
                             </ul>
                         </div>

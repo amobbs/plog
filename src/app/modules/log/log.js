@@ -2,6 +2,7 @@
  * Preslog Log Module
  */
 angular.module( 'Preslog.log', [
+        'Preslog.log.confirmModal',
         'titleService',
         'hierarchyFields'
     ])
@@ -111,7 +112,7 @@ angular.module( 'Preslog.log', [
 /**
  * And of course we define a controller for our route.
  */
-    .controller( 'LogCtrl', function LogController( $scope, $q, $location, titleService, logData, logOptions, LogRestangular, stateHistory, userService ) {
+    .controller( 'LogCtrl', function LogController( $scope, $q, $location, $modal, titleService, logData, logOptions, LogRestangular, stateHistory, userService ) {
 
         // Set title
         titleService.setTitle( 'Create Log' );
@@ -254,6 +255,20 @@ angular.module( 'Preslog.log', [
 
             // Return a promise that the log will be saved
             return deferred.promise;
+        };
+
+        $scope.openDeleteModal = function () {
+            var modal = $modal.open({
+                templateUrl: 'modules/log/confirm/confirmDelete.tpl.html',
+                controller: 'ConfirmModalCtrl',
+                backdrop: 'static',
+                resolve: {
+                    message: function() { return $scope.message; }
+                }
+            });
+            modal.result.then(function() {
+                $scope.deleteLog();
+            });
         };
 
 
