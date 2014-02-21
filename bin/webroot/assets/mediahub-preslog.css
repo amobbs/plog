@@ -10728,7 +10728,11 @@ button.btn-half {
 
 
 
-
+button.link {
+  padding: 0!important;
+  background: none!important;
+  border: none;
+}
 
 .dateBoxPopup {
   z-index: 2000;
