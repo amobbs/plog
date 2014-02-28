@@ -131,12 +131,19 @@ class Duration extends FieldTypeAbstract
                 $units = (!empty($units) ? $units : 0);
 
                 // Output
-                $result[] = "$units$unitName";
+                $out = "$units";
+                if (strlen($units) == 1) $out = '0' . $units;
+                $result[] = $out;
             }
         }
 
+        while (sizeof($result) < 3)
+        {
+           array_unshift($result, '00');
+        }
+
         // collapse
-        $time = implode(' ', $result);
+        $time = implode(':', $result);
 
         return array($label => $time);
     }
