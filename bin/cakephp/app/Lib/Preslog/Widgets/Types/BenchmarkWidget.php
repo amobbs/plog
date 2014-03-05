@@ -314,7 +314,7 @@ class BenchmarkWidget extends Widget {
                 $min = 0;
                 $bhpmArray = $this->calculateBHPM($dates, $min);
                 $series[] = array(
-                    'name' => 'BHMP',
+                    'name' => 'BHPM',
                     'type' => 'line',
                     'color' => '#FF0000',
                     'data' => $bhpmArray,
@@ -352,7 +352,7 @@ class BenchmarkWidget extends Widget {
         $preslogSettings = Configure::read('Preslog');
         $quantities = $preslogSettings['Quantities'];
 
-        $bhpmDates = $this->getBHMPDates();
+        $bhpmDates = $this->getBHPMDates();
         $bhpmTotal = 0;
         $bhpmHours = $quantities['BHPM'];
 
@@ -372,7 +372,7 @@ class BenchmarkWidget extends Widget {
         return floor($percent * $decimalPlaces) / $decimalPlaces; //round to number of places required
     }
 
-    private function getBHMPDates()
+    private function getBHPMDates()
     {
         //find all the times when a network comes live for the affected clients
         $bhpmDates = array();
@@ -411,7 +411,7 @@ class BenchmarkWidget extends Widget {
     private function calculateBHPM($dates, &$min = 0)
     {
         //find all the times whena  network comes live for the affected clients
-        $bhpmDates = $this->getBHMPDates();
+        $bhpmDates = $this->getBHPMDates();
 
 
         $preslogSettings = Configure::read('Preslog');
