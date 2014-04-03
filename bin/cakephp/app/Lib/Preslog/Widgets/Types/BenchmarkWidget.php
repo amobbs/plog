@@ -240,6 +240,7 @@ class BenchmarkWidget extends Widget {
                 $oatYAxis['max'] = 100; //make % max be 100 and
                 $oatYAxis['endOnTick'] = false;
                 $oatYAxis['maxPadding'] = 0 ;
+                $oatYAxis['labels']['enabled'] = false;
             }
 
              //yAxis two, BHPM
