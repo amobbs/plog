@@ -234,14 +234,22 @@ class BenchmarkWidget extends Widget {
                 'min' => 0,
             );
 
+            //when bhpm is shown this makes the 2 lines (% vs hours) scale correctly or at least look correct.
+            if (isset($this->details['bhpm']) && $this->details['bhpm'])
+            {
+                $oatYAxis['max'] = 100; //make % max be 100 and
+                $oatYAxis['endOnTick'] = false;
+                $oatYAxis['maxPadding'] = 0 ;
+            }
+
              //yAxis two, BHPM
             $bhpmYAxis = array(
                 'title' => array(
                     'text' => 'BHPM (Hours)',
                 ),
-                'min' => null,
-                'max' => null,
                 'opposite' => true,
+                'gridLineWidth' => 0, //hide bhpm grid lines since they dont match the % ones. looks cluttered
+                'minorGridLineWidth' => 0,
             );
             $yAxis = array(
                 $oatYAxis,
@@ -324,9 +332,20 @@ class BenchmarkWidget extends Widget {
                     ),
                 );
 
-                //put BHPM line roughly 4/5 of the way up
-                $minThirds = $min / 5;
-                $bhpmYAxis['min'] = $min - $minThirds * 2;
+                //find the highest bhpm value and make it the max
+                $max = 0;
+                foreach($bhpmArray as $hours) {
+                    if ($max < $hours)
+                    {
+                        $max = $hours;
+                    }
+                }
+
+                $bhpmYAxis['max'] = $max;
+                $bhpmYAxis['min'] = $max / 3; //why 3? well because it math'd best and made it look good
+                $bhpmYAxis['endOnTick'] = false;
+                $bhpmYAxis['maxPadding'] = 0 ;
+
                 $yAxis[] = $bhpmYAxis;
             }
 
