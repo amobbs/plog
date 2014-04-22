@@ -511,10 +511,10 @@ class SearchController extends AppController
             foreach ($fields as $key=>$value)
             {
                 //skip create/modified by. it wasn't specifically in the spec and we have not hard coded it into the jql parser. this will remove it from the sort by drop down.
-                if ($key == 'Created By' || $key == 'Modified By')
-                {
-                    continue;
-                }
+//                if ($key == 'Created By' || $key == 'Modified By')
+//                {
+//                    continue;
+//                }
 
                 //skip attributes as these are a group of values and it does not make sense to sort based on them.
                 if ( ! $clientEntity->isAttributeLabel($key))

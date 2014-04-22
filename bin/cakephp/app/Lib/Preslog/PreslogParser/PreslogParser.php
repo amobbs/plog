@@ -255,6 +255,13 @@ class PreslogParser extends JqlParser {
             return $errors;
         }
 
+        //added quickly to solve RAPID-XXXXX
+        elseif ($field == 'created_user_id')
+        {
+            //we checkout check that it is a real client
+            return $errors;
+        }
+
         // check the field exists for at least one client
         else
         {
@@ -474,6 +481,13 @@ class PreslogParser extends JqlParser {
             );
         }
 
+        if ($fieldName == 'created_user_id')
+        {
+            return array(
+                'fields.data.created_user_id' => new MongoId($value),
+            );
+        }
+
         $fieldIds = array();
         $dataField = '';
         $isText = false;
@@ -541,9 +555,14 @@ class PreslogParser extends JqlParser {
             $fieldIds[] = new MongoId($clientFieldSettings['_id']);
 
             //created/modified/version are actually all inside loginfo, so a stupid special case for them
-            if ($fieldName == 'created' || $fieldName == 'modified' || $fieldName == 'version')
+            if ($fieldName == 'created' || $fieldName == 'modified' || $fieldName == 'version' )
             {
                 $dataField = $fieldName;
+            }
+            else if ($fieldName == 'created_user_id')
+            {
+                $dataField = $fieldName;
+                $value = new MongoId($value);
             }
             else
             {
