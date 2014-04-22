@@ -511,6 +511,7 @@ class SearchController extends AppController
             foreach ($fields as $key=>$value)
             {
                 //skip create/modified by. it wasn't specifically in the spec and we have not hard coded it into the jql parser. this will remove it from the sort by drop down.
+                //RAPID-6736 - added back in so they can view this in excel export. the hard coding into jqlParser only searches on mongo id so needs some work.
 //                if ($key == 'Created By' || $key == 'Modified By')
 //                {
 //                    continue;
