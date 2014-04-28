@@ -4,7 +4,7 @@
  */
 
 angular.module('logFields', [])
-    .directive('logFields', ['$templateCache', '$compile', '$interpolate', function ( $templateCache, $compile, $interpolate ) {
+    .directive('logFields', ['$templateCache', '$compile', '$interpolate', '$filter', function ( $templateCache, $compile, $interpolate, $filter ) {
 
 
         /**
@@ -71,6 +71,13 @@ angular.module('logFields', [])
                         'field_id':field._id,
                         'data':{}
                     };
+
+                    //set the default value for the datetime field to the current value (in RFC2822 format)
+                    if (field.type == 'datetime')
+                    {
+                        data.data.datetime = $filter('date')(new Date(), 'EEE, dd MMM yyyy HH:mm:ss Z');
+                    }
+
                     scope.logdata.push(data);
                 }
                 else
