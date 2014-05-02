@@ -58,7 +58,7 @@ Configure::write('Preslog', array(
         'username'  => "curtisd",
         'password'  => "test",
         'from'      => "MediaHub",
-        'address'   => 'https://smsgw.exetel.com.au/sendsms/api_sms.php?username=%s&password=%s&messagetype=Text&sender=%s',
+        'address'   => 'https://smsgw.exetel.com.au/sendsms/api_sms_direct.php?username=%s&password=%s&messagetype=Text&sender=%s',
     ),
 
 
@@ -66,8 +66,8 @@ Configure::write('Preslog', array(
      * Some debug vars
      */
     'Debug' => array(
-        'email' => 'dave@4mation.com.au',
-        'sms' => '0468904530',  // Don't call me.
+        'email' => 'kieran.yeates@4mation.com.au',
+        'sms' => '0404138326',  // Don't call me.
     ),
 
     /**
