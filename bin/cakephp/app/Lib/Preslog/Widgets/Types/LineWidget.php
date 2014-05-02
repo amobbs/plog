@@ -288,7 +288,10 @@ class LineWidget extends Widget {
                 }
                 else
                 {
-                    $categorieData[$pointLabel] = $pointLabel;
+                    if (isset($categorieData[$pointLabel]))
+                    {
+                        $categorieData[$pointLabel] = $pointLabel;
+                    }
                 }
 
 
