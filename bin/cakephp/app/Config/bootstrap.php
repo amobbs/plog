@@ -155,3 +155,7 @@ require_once('preslog.php');
 
 // Email config - bugfix for class loader
 require APP.'/Config/email.php';
+
+
+//log4php
+Logger::configure(APP .'/Config/config.xml');

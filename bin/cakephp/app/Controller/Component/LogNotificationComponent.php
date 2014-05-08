@@ -18,7 +18,7 @@ use Preslog\Notifications\Types\TypeAbstract;
 class LogNotificationComponent extends Component
 {
     protected $controller;
-
+    protected $log;
     /**
      * Initialize Component
      * - Prepare required models
@@ -32,6 +32,8 @@ class LogNotificationComponent extends Component
         $this->Client = ClassRegistry::init('Client');
 
         $this->controller = &$controller;
+
+        $this->log = Logger::getLogger(__CLASS__);
 
         // Parent Init
         parent::initialize($controller);
@@ -191,6 +193,7 @@ class LogNotificationComponent extends Component
 
         // Must have users
         $users = $notifyType->getRecipients();
+        $this->log->info('initial sms user count: ' . sizeOf($users));
         if (!sizeof($users))
         {
             return;
@@ -224,6 +227,7 @@ class LogNotificationComponent extends Component
         // Use debug email if in debug mode
         if (Configure::read('debug') > 0)
         {
+            $this->log->warn('debug mode is on: throw out user list and send to [Preslog.Debug.sms]');
             $list = array(Configure::read('Preslog.Debug.sms'));
         }
 
@@ -232,6 +236,8 @@ class LogNotificationComponent extends Component
         {
             return;
         }
+
+        $this->log->info('actual sms user count: ' . sizeOf($list));
 
         // Get view
         $view = new View;
@@ -253,8 +259,9 @@ class LogNotificationComponent extends Component
         );
 
         // Send SMS
-        file_get_contents($url);
+        $response = file_get_contents($url);
 
+        $this->log->info('SMS request sent: ' . $url . ' -- response: ' . $response);
         return;
     }
 
@@ -277,6 +284,7 @@ class LogNotificationComponent extends Component
         {
             return;
         }
+        $this->log->info('initial email user count: ' . sizeOf($users));
 
         // notify settings
         $settings = $notifyType->getSettings('email');
@@ -296,9 +304,12 @@ class LogNotificationComponent extends Component
             $list[ $user['email'] ] = "{$user['firstName']} {$user['lastName']}";
         }
 
+        $this->log->info('email list: ' . implode(',', $list));
+
         // Use debug email if in debug mode
         if (Configure::read('debug') > 0)
         {
+            $this->log->warn('Debug mode is on, throw out list and sending to Debug user');
             $list = array(Configure::read('Preslog.Debug.email')=>'Debug User');
         }
 
@@ -346,6 +357,7 @@ class LogNotificationComponent extends Component
         // Send the email
         $email->send();
 
+        $this->log->info('email with subject: [' . $data['subject'] . '] sent from [' . $fromEmail . '] sent to [' . implode(',', $list) . ']');
         return;
     }
 

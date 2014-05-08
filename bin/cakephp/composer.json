@@ -37,7 +37,8 @@
 		"ichikaway/Mongodb": "master",
         "zircote/swagger-php": "dev-master",
         "phpword/phpword": "*",
-		"HighchartsPHP": "master"
+		"HighchartsPHP": "master",
+        "apache/log4php": "master"
     },
     "config": {
         "vendor-dir": "Vendor/"
