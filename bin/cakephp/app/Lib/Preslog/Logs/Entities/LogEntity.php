@@ -332,7 +332,8 @@ class LogEntity
         }
 
         // Validate attributes; at least one item must be selected.
-        if (!isset($this->data['attributes']) || sizeof($this->data['attributes']) < 1)
+        if (sizeOf($this->client->attributeLookup) > 0
+            && (!isset($this->data['attributes']) || sizeof($this->data['attributes']) < 1))
         {
             $errors['attributes'][] = 'You must select at least one attribute/network.';
         }
