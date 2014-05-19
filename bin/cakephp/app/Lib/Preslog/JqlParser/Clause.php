@@ -43,7 +43,7 @@ class Clause {
 
     public function getFunctionEvaluatedForMongo() {
         //convert dates to mongo date
-        if (!is_numeric($this->_value) && strtotime($this->_value)) {
+        if (strtotime($this->_value)) {
             //mediahub have insisted on using a non existent date format D/M/Y, convert that into a real format
             if (strpos($this->_value, '/') > 0)
             {
