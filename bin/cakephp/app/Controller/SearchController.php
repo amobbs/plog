@@ -100,10 +100,12 @@ class SearchController extends AppController
                 if ($variable['type'] == 'date')
                 {
                     // Only convert if strtotime can do something useful with it
-                    $convValue = strtotime($value);
-                    $log = Logger::getLogger(__CLASS__);
-                    $log->info('value = ' . $value . '-convValue = ' .  $convValue);
-                    $value = (!$convValue ? date('r', $value) : $convValue);
+                    if (!is_numeric($value))
+                    {
+                        $log = Logger::getLogger(__CLASS__);
+                        $log->info('non numeric Date type variable found, converting to time. from [' . $value . '] to [' . strtotime($value) . ']');
+                        $value = strtotime($value);
+                    }
                 }
 
                 //remove the word variable from the start
