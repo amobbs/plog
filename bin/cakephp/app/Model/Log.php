@@ -450,8 +450,8 @@ class Log extends AppModel
             );
         }
 
-        $log->info("findByQuery criteria");
-        $log->info($criteria);
+        $log->error("findByQuery criteria");
+        $log->error($criteria);
 
         //actually do the query and return result
         $mongo = $this->getMongoDb();

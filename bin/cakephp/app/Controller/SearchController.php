@@ -63,7 +63,7 @@ class SearchController extends AppController
      */
     protected function prepareSearchCriteria()
     {
-        $log = Logger::getLogger(__CLASS__);
+        $logger = Logger::getLogger(__CLASS__);
 
         // Create empty search if not set
         $query = array();
@@ -97,20 +97,20 @@ class SearchController extends AppController
             if (isset($this->request->query[$key]))
             {
                 $value = $this->request->query[$key];
-                $log->info("variable found [$key]");
+                $logger->error("variable found [$key]");
                 // Convert to datetime
                 if ($variable['type'] == 'date')
                 {
-                    $log->info("date type variable with value [$value]");
+                    $logger->error("date type variable with value [$value]");
                     // Only convert if strtotime can do something useful with it
                     if (!is_numeric($value))
                     {
-                        $log->info('non numeric Date type variable found, converting to time. from [' . $value . '] to [' . strtotime($value) . ']');
+                        $logger->error('non numeric Date type variable found, converting to time. from [' . $value . '] to [' . strtotime($value) . ']');
                         $value = strtotime($value);
                     }
                     else
                     {
-                        $log->info("numeric date type found, timstamp [$value] string [" . date('r', $value) . "]");
+                        $logger->error("numeric date type found, timstamp [$value] string [" . date('r', $value) . "]");
                     }
 
                     $value = date('r', $value);
@@ -119,7 +119,7 @@ class SearchController extends AppController
                 //remove the word variable from the start
                 $variableName = strtolower(substr($key, 8));
                 // Save to vars list
-                $log->info("saving variable [$variableName] with value [$value]");
+                $logger->error("saving variable [$variableName] with value [$value]");
                 $search['variables'][ $variableName ] = $value;
             }
         }
