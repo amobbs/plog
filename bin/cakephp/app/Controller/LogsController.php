@@ -52,9 +52,12 @@ class LogsController extends AppController
         // Get log data from request
         $log = $this->request->data['Log'];
 
+        $logger_editing = 'NEW LOG'; //so we can tell if we are editing a log of creating a new one when we log to file
+
         //  If we have an ID, we need to validate the original log first before it can be updated
         if ( !empty($id) )
         {
+            $logger_editing = 'EDITING';
             // Try to fetch the log
             $sourceLog = $this->Log->findByHrid( $id );
 
@@ -85,6 +88,10 @@ class LogsController extends AppController
             // Not loading an existing log. Ensure the ID is cleared
             unset($log['_id']);
         }
+
+        $logger = Logger::getLogger(__CLASS__);
+        $logger->info($logger_editing . ' id = ' . $id);
+        $logger->info($log);
 
         // Validate field options
         $this->Log->set( $log );

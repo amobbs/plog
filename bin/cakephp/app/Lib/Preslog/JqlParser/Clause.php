@@ -51,7 +51,6 @@ class Clause {
                 $this->_value = $parts[2] . '-' . $parts[1] . '-' . $parts[0];
             }
 
-
             return new MongoDate(strtotime($this->_value));
         }
 
