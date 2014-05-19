@@ -112,6 +112,8 @@ class SearchController extends AppController
                     {
                         $log->info("numeric date type found, timstamp [$value] string [" . date('r', $value) . "]");
                     }
+
+                    $value = date('r', $value);
                 }
 
                 //remove the word variable from the start
