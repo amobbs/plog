@@ -63,6 +63,8 @@ class SearchController extends AppController
      */
     protected function prepareSearchCriteria()
     {
+        $log = Logger::getLogger(__CLASS__);
+
         // Create empty search if not set
         $query = array();
         if (isset($this->request->query['query']))
@@ -95,16 +97,20 @@ class SearchController extends AppController
             if (isset($this->request->query[$key]))
             {
                 $value = $this->request->query[$key];
-
+                $log->info("variable found [$key]");
                 // Convert to datetime
                 if ($variable['type'] == 'date')
                 {
+                    $log->info("date type variable with value [$value]");
                     // Only convert if strtotime can do something useful with it
                     if (!is_numeric($value))
                     {
-                        $log = Logger::getLogger(__CLASS__);
                         $log->info('non numeric Date type variable found, converting to time. from [' . $value . '] to [' . strtotime($value) . ']');
                         $value = strtotime($value);
+                    }
+                    else
+                    {
+                        $log->info("numeric date type found, timstamp [$value] string [" . date('r', $value) . "]");
                     }
                 }
 
