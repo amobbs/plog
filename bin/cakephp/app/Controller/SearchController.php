@@ -101,6 +101,8 @@ class SearchController extends AppController
                 {
                     // Only convert if strtotime can do something useful with it
                     $convValue = strtotime($value);
+                    $log = Logger::getLogger(__CLASS__);
+                    $log->info('value = ' . $value . '-convValue = ' .  $convValue);
                     $value = (!$convValue ? date('r', $value) : $convValue);
                 }
 
