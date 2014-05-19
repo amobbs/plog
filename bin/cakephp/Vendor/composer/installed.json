@@ -262,12 +262,12 @@
         "source": {
             "type": "git",
             "url": "https://github.com/zircote/swagger-php.git",
-            "reference": "8b61563c31d678df6953dc41770d0faac7452f69"
+            "reference": "6f6dd8ec5c4f1597b295bd127b2047c1c19fc1f4"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/zircote/swagger-php/zipball/8b61563c31d678df6953dc41770d0faac7452f69",
-            "reference": "8b61563c31d678df6953dc41770d0faac7452f69",
+            "url": "https://api.github.com/repos/zircote/swagger-php/zipball/6f6dd8ec5c4f1597b295bd127b2047c1c19fc1f4",
+            "reference": "6f6dd8ec5c4f1597b295bd127b2047c1c19fc1f4",
             "shasum": ""
         },
         "require": {
@@ -278,7 +278,7 @@
             "symfony/finder": "*",
             "symfony/process": "*"
         },
-        "time": "2014-03-26 07:30:50",
+        "time": "2014-05-11 09:48:47",
         "bin": [
             "bin/swagger"
         ],

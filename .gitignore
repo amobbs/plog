@@ -9,6 +9,9 @@ build/webroot/*
 //dont copy database file around
 bin/cakephp/app/config/database.php
 
+//dont copy log4php config file
+bin/cakephp/app/config/config.xml
+
 // Bin webroot
 // - track Api
 bin/cakephp/app/tmp/*
@@ -28,6 +31,7 @@ vendor/*
 !vendor/php-sql-parser
 !vendor/RedQueryBuilder
 !bin/cakephp/Vendor/HighchartsPHP
+!bin/cakephp/Vendor/apache/log4php/*
 
 // Project Files ignored
 .idea
