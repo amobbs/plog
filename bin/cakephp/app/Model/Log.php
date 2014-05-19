@@ -288,6 +288,9 @@ class Log extends AppModel
      * @return mixed
      */
     public function findByQuery($query, $clients = array(), $orderBy = '', $start = 0, $limit = 0, $orderAsc = true) {
+        $log = Logger::getLogger(__CLASS__);
+        $log->info("findByQuery [$query]");
+
         //double check that the called of this function actually wants to check against all clients. (cron jobs are not logged in but want to check all clients
         if ($clients === true)
         {

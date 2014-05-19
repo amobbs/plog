@@ -117,6 +117,7 @@ class SearchController extends AppController
                 //remove the word variable from the start
                 $variableName = strtolower(substr($key, 8));
                 // Save to vars list
+                $log->info("saving variable [$variableName] with value [$value]");
                 $search['variables'][ $variableName ] = $value;
             }
         }
