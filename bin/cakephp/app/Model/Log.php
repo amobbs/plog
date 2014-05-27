@@ -288,8 +288,8 @@ class Log extends AppModel
      * @return mixed
      */
     public function findByQuery($query, $clients = array(), $orderBy = '', $start = 0, $limit = 0, $orderAsc = true) {
-        $log = Logger::getLogger(__CLASS__);
-        $log->info("findByQuery [$query]");
+        $logger = Logger::getLogger(__CLASS__);
+        $logger->debug("findByQuery [$query]");
 
         //double check that the called of this function actually wants to check against all clients. (cron jobs are not logged in but want to check all clients
         if ($clients === true)
@@ -450,8 +450,8 @@ class Log extends AppModel
             );
         }
 
-        $log->error("findByQuery criteria");
-        $log->error($criteria);
+        $logger->debug("findByQuery criteria");
+        $logger->debug($criteria);
 
         //actually do the query and return result
         $mongo = $this->getMongoDb();
