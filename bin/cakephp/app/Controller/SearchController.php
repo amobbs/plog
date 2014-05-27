@@ -97,20 +97,20 @@ class SearchController extends AppController
             if (isset($this->request->query[$key]))
             {
                 $value = $this->request->query[$key];
-                $logger->error("variable found [$key]");
+                $logger->debug("variable found [$key]");
                 // Convert to datetime
                 if ($variable['type'] == 'date')
                 {
-                    $logger->error("date type variable with value [$value]");
+                    $logger->debug("date type variable with value [$value]");
                     // Only convert if strtotime can do something useful with it
                     if (!is_numeric($value))
                     {
-                        $logger->error('non numeric Date type variable found, converting to time. from [' . $value . '] to [' . strtotime($value) . ']');
+                        $logger->debug('non numeric Date type variable found, converting to time. from [' . $value . '] to [' . strtotime($value) . ']');
                         $value = strtotime($value);
                     }
                     else
                     {
-                        $logger->error("numeric date type found, timstamp [$value] string [" . date('r', $value) . "]");
+                        $logger->debug("numeric date type found, timstamp [$value] string [" . date('r', $value) . "]");
                     }
 
                     $value = date('r', $value);
@@ -119,7 +119,7 @@ class SearchController extends AppController
                 //remove the word variable from the start
                 $variableName = strtolower(substr($key, 8));
                 // Save to vars list
-                $logger->error("saving variable [$variableName] with value [$value]");
+                $logger->debug("saving variable [$variableName] with value [$value]");
                 $search['variables'][ $variableName ] = $value;
             }
         }
