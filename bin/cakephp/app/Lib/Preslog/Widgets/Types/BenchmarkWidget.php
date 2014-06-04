@@ -155,7 +155,7 @@ class BenchmarkWidget extends Widget {
                 $end = $this->variables['highestDate'];
 
                 $workingDate = $start;
-                while ($workingDate < $end)
+                while ($workingDate <= $end)
                 {
                     //find each point in the series that should have a value.
                     $date = date('M', $workingDate) . '-' . substr(date('Y',$workingDate), 2);

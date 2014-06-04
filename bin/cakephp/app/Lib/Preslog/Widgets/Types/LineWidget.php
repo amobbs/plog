@@ -71,22 +71,26 @@ class LineWidget extends Widget {
     public function getDisplayData() {
         $chart = new Highchart();
 
+        //setup chart type and size
         $chart->chart = array(
             'type' => $this->chartType,
             'marginRight' => 120,
             'marginBottom' => 100,
         );
 
+        //settings for phantomjs when exporting to image for word report
         $chart->exporting = array(
             'sourceWidth' => 1200,
             'sourceHeight' => 600,
         );
 
+        //title
         $chart->title = array(
             'text' => isset($this->details['title']) ? $this->details['title'] : '',
             'x' => - 20,
         );
 
+        //legend
         $chart->legend = array(
             'align' => 'right',
             'verticalAlign' => 'middle',
@@ -115,6 +119,9 @@ class LineWidget extends Widget {
             unset($chart->legend['width']);
         }
 
+        //END chart setup
+
+        //no series data, show something
         if (empty($this->series)) {
             $chart->series = array(
                 array(
@@ -134,7 +141,7 @@ class LineWidget extends Widget {
             //find the field type so we can format the display later
             $xFieldType = null;
             $xParts = explode(':', $this->details['xAxis']);
-            //get the field type so we can get the point label format
+            //get the field type so we can get the point's label format
             foreach($this->options['xAxis'] as $option) {
                 $type = $option['fieldType'];
                 if ($type instanceof FieldTypeAbstract
@@ -159,7 +166,7 @@ class LineWidget extends Widget {
 
             $yParts = explode(':', $this->details['yAxis']);
             $yFieldType = $yParts[0];
-            //get the field type so we can get the point label format
+            //get the field type so we can get the point's label format
             foreach($this->options['yAxis'] as $option) {
                 $type = $option['fieldType'];
                 if ($type instanceof FieldTypeAbstract
@@ -331,18 +338,38 @@ class LineWidget extends Widget {
                 {
                     $found = false;
                     $dataLabels = array();
+                    $name = $sd['name'];
+
+                    //find any points in the series that did not get aggregated correctly (aggregating on a select field for example has issues with matching _id's
+                    $seriesDataData = array();
                     foreach($sd['data'] as $sdData)
+                    {
+                        if (isset($seriesDataData[$sdData['x']]))
+                        {
+                            if (is_numeric($sdData['y']))
+                            {
+                                $seriesDataData[$sdData['x']]['y'] += $sdData['y'];
+                            }
+                        }
+                        else
+                        {
+                            $seriesDataData[$sdData['x']] = $sdData;
+                        }
+                    }
+                    //if the value is actually provided then parse it
+                    foreach($seriesDataData as $sdData)
                     {
                         $dataLabels = isset($sdData['dataLabels']) ? $sdData['dataLabels'] : null;
                         if ($sdData['x'] == $label)
                         {
                             $found = true;
                             unset($sdData['x']);
-                            $seriesComplete[$sd['name']]['data'][] = $sdData;
+                            $seriesComplete[$name]['data'][] = $sdData;
                             break;
                         }
                     }
 
+                    //if a label we are expecting is not here then add it in.
                     if (!$found)
                     {
                         $sc = array(
