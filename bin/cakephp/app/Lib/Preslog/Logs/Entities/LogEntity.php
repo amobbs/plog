@@ -144,6 +144,9 @@ class LogEntity
 
     /**
      * Parse the Log structure to a Field-based array of key:value pairs.
+     *
+     * Note: if you change the date format you will also need to change the date format in Dashboard.php exportReport function
+     *
      * @param   string          $type                   Type of Display (list, email, etc)
      * @param   array|null      $fieldTypeCallbacks     Callback functions per field type, for alternate processing methods
      * @return  array                                   Key/Value pair fields and values
