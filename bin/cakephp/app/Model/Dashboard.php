@@ -289,10 +289,8 @@ class Dashboard extends AppModel
         $ext = "png";
 
         // Convert spaces to underscores
-        $origBase = str_replace(" ", "_", $name);
-        // Strip all non alpha numeric characters
-        $base = preg_replace('/[^a-zA-Z0-9_-]/', "", $origBase);
-        $base = strtolower($base);
+        $origBase = md5($name . time());
+        $base = strtolower($origBase);
 
         $i=1;
         while(is_file(TMP . $base . "." . $ext)) {
