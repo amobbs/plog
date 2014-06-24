@@ -39,7 +39,10 @@ $ grunt build
 
 5.  Set up a Hosts rule for `127.0.0.1 local.preslog`
 
-5.  Restart Apache, and go to http://local.preslog in your browser.
+6.  Restart Apache, and go to http://local.preslog in your browser.
+
+7. Copy bin/cakephp/app/Config/config.dist/xml to bin/cakephp/app/Config/config.xml and update the locations you want the logs to save.
+
 
 ## Deployment Notes
 
@@ -64,7 +67,7 @@ export FIREFOX_BIN="/C/Program Files (x86)/Mozilla Firefox/firefox.exe"
 ### This project is build on:
 * angular-js
 * ng-boilerplate (http://joshdmiller.github.com/ng-boilerplate)
-* ZendFw2
+* CakePHP
 
 
 ### To install a new UI module, use Bower:
