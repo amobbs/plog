@@ -190,10 +190,6 @@ class Dashboard extends AppModel
         $sectionStyle->setMarginTop(500);
         $sectionStyle->setMarginBottom(500);
 
-
-        //used to ensure tmp image names are unqique
-        $salt = md5(date('Y-m-d h:s'));
-
         //setup any document wide formatting required
         $styleFont = array('name'=>'Tahoma', 'size'=>12);
         $tocDepth = 1;
@@ -223,8 +219,7 @@ class Dashboard extends AppModel
             //only aggregate widgets can make charts
             if ($widget->isAggregate()) {
 
-                $unique = substr(md5($widget->getName()), 0, 6);
-                $imageFilename = $salt .$unique . '.png';
+                $imageFilename = $this->getUniqueImageName($widget->getName());
                 $this->getChartImageLocal($widget->getDisplayData(), $imageFilename);
 
                 $printOptions = $widget->getPrintOptions();
@@ -259,10 +254,6 @@ class Dashboard extends AppModel
                     continue;
                 }
 
-
-
-                //todo page title
-
                 $section->addText('Primetime', array('color' => $layout['red']));
                 $section->addTextBreak();
 
@@ -291,6 +282,21 @@ class Dashboard extends AppModel
         $objWriter->save(TMP . $reportName);
 
         return TMP . $reportName;
+    }
+
+    private function getUniqueImageName($name)
+    {
+        $ext = "png";
+
+        // Convert spaces to underscores
+        $origBase = md5($name . time());
+        $base = strtolower($origBase);
+
+        $i=1;
+        while(is_file(TMP . $base . "." . $ext)) {
+            $base = $origBase . "-" . $i++;
+        }
+        return $base . "." . $ext;
     }
 
     private function addLog($log, &$section)
