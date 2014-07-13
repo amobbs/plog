@@ -246,7 +246,13 @@ angular.module( 'Preslog.dashboard', [
             variables = {};
             if ($scope.dashboard.session)
             {
-                variables = $scope.dashboard.session;
+                //when sending via restangular it seems we send the UTC string which is then converteds so all the times are off by 10ish hours.
+                //convert to the utc times we want so we get the right data.
+                variables = {
+                    start: new Date($scope.dashboard.session.start.getTime() - ($scope.dashboard.session.start.getTimezoneOffset() * 60000)).toUTCString(),
+                    end: new Date($scope.dashboard.session.end.getTime() - ($scope.dashboard.session.end.getTimezoneOffset() * 60000)).toUTCString(),
+                    period: $scope.dashboard.session.period
+                };
             }
 
             for(var id in $scope.dashboard.widgets)
