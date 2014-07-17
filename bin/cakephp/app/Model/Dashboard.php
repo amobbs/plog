@@ -463,12 +463,12 @@ class Dashboard extends AppModel
             //we don't know that field will always be called datetime or that it will even exist. but the time at which
             //the event happened is not specifically stated in the log, we only have the fields provided.
             //START ONE OF THE STUPID PARTS!
-            $time = 0;
+            $strTime = 0;
             foreach($logFields as $key => $value)
             {
                 if (strtolower(substr($key, 0, 4)) == 'date')
                 {
-                    $time = $value ;
+                    $strTime = $value ;
                     break;
                 }
             }
@@ -480,7 +480,15 @@ class Dashboard extends AppModel
                 $end = 24;
             }
 
-            $hour = date('G', strtotime($time));
+            $time = strtotime($strTime);
+            $hour = date('G', $time);
+            if (!$time) //string to time dosn't always seem to work. the date/time comes out as specified in $logEntity->toDisplay so we know the format.
+            {
+                $parts = explode(" ", $strTime);
+                $timeParts = explode(":", $parts[1]);
+                $hour = $timeParts[0];
+            }
+
             if ($hour >= $start and $hour < $end)
             {
                 $result[] = $log;
