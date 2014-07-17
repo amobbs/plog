@@ -286,15 +286,23 @@ class DashboardsController extends AppController
         return $shares;
     }
 
-    /*
-     * given a dashboard that has just come out from the database replace all the widgets with kust widget ids
+    /**
+     * given a dashboard that has just come out from the database replace all the widgets with objects instead of id's
+     *
+     * @param $dashboard
+     * @param bool $populate
+     * @param bool $populateLists
+     * @param array $variables
+     *
+     * @return mixed
+     * @throws Exception
      */
     private function _getParsedDashboard($dashboard, $populate = true, $populateLists = false, $variables = array()) {
         $widgets = array();
 
         if (isset($dashboard['widgets'])) {
 
-            //find if this has a date widget
+            //find if this has a date widget and get the start/end variables
             foreach($dashboard['widgets'] as $widget)
             {
                 if (empty($variables) && $widget['type'] == 'date' && isset($widget['details']['start']) && isset($widget['details']['end']))
@@ -923,7 +931,7 @@ class DashboardsController extends AppController
     /***
      * run any queries needed against the database to populate the data on for the widget
      * -this will parse the jql text query into a mongo $match array (via JqlParser)
-     * -find any fields in the query and get the corrosponding mongoId for each client that is available to this user.
+     * -find any fields in the query and get the corresponding mongoId for each client that is available to this user.
      * -send the $match to the correct find (aggregation or normal) and add the returned data onto the widget object
      *
      * @param $widgetObject
