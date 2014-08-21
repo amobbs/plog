@@ -301,7 +301,7 @@ class LogNotificationComponent extends Component
             }
 
             // Add to recipient list
-            $list[ $user['email'] ] = "{$user['firstName']} {$user['lastName']}";
+            $list[ $user['email'] ] = "{$user['firstName']} {$user['lastName']} <{$user['email']}>";
         }
 
         $this->logger->info('email list: ' . implode(',', $list));
@@ -345,7 +345,7 @@ class LogNotificationComponent extends Component
             }
             catch (Exception $e)
             {
-                // Do nothing with bad emails
+                $this->logger->error("Email [$toName <$toEmail>] is invalid", $e);
             }
         }
 
