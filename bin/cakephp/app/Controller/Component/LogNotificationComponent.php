@@ -169,7 +169,9 @@ class LogNotificationComponent extends Component
         // Does it pass?
         if (isset($user['notifications']['clients']['types']) &&
             isset($user['notifications']['clients']['types'][ $notifyTypeKey ]) &&
-            $user['notifications']['clients']['types'][ $notifyTypeKey ] == true )
+            $user['notifications']['clients']['types'][ $notifyTypeKey ] == true &&
+            $user['deleted'] !== true
+        )
         {
             return true;
         }
