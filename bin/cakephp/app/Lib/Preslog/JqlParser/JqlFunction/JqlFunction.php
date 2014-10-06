@@ -79,13 +79,17 @@ class JqlFunction {
 
         //if we can convert the string to a time then do it.
         $time = strtotime($value);
+
         if ($time)
         {
             $date = $time;
         }
-        if ($date == 0) $date = mktime(date('H'), date('i'), date('s'), date('n'), date('j'), date('y'));
 
-       // $date = $this->_evaluateInterval($value, $date);
+        if ($date == 0) {
+            $tempDate = new \DateTime('now', new \DateTimeZone('UTC'));
+            $date = $tempDate->getTimestamp();
+        }
+        // $date = $this->_evaluateInterval($value, $date);
         return $date;
     }
 

@@ -252,16 +252,10 @@ angular.module( 'Preslog.dashboard', [
                 var endDate = new Date($scope.dashboard.session.end);
 
                 variables = {
-                    start: new Date(startDate.getTime() - (startDate.getTimezoneOffset() * 60000)).toUTCString(),
-                    end: new Date(endDate.getTime() - (endDate.getTimezoneOffset() * 60000)).toUTCString(),
+                    start: new Date(startDate.getTime() - (startDate.getTimezoneOffset() * 60000)).toUTCString().substr(0,25),
+                    end: new Date(endDate.getTime() - (endDate.getTimezoneOffset() * 60000)).toUTCString().substr(0,25),
                     period: $scope.dashboard.session.period
                 };
-
-                //variables = {
-                //    start: new Date($scope.dashboard.session.start.getTime() - ($scope.dashboard.session.start.getTimezoneOffset() * 60000)).toUTCString(),
-                //    end: new Date($scope.dashboard.session.end.getTime() - ($scope.dashboard.session.end.getTimezoneOffset() * 60000)).toUTCString(),
-                //    period: $scope.dashboard.session.period
-                //};
             }
 
             for(var id in $scope.dashboard.widgets)
