@@ -252,8 +252,8 @@ angular.module( 'Preslog.dashboard', [
                 var endDate = new Date($scope.dashboard.session.end);
 
                 variables = {
-                    start: new Date(mb_substr(startDate.getTime() - (startDate.getTimezoneOffset() * 60000)).toUTCString(), 0, 25),
-                    end: new Date(mb_substr(endDate.getTime() - (endDate.getTimezoneOffset() * 60000)).toUTCString(), 0, 25),
+                    start: new Date(startDate.getTime() - (startDate.getTimezoneOffset() * 60000)).toUTCString().substr(0,25),
+                    end: new Date(endDate.getTime() - (endDate.getTimezoneOffset() * 60000)).toUTCString().substr(0,25),
                     period: $scope.dashboard.session.period
                 };
             }
