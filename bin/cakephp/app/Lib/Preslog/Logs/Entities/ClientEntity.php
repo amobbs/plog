@@ -328,7 +328,7 @@ class ClientEntity
         foreach( $this->fields as $field )
         {
             // Check field names
-            if ($field->isName($fieldName))
+            if ($field->isName($fieldName) && !$field->isDeleted())
             {
                 // Return the field name
                 return $field;

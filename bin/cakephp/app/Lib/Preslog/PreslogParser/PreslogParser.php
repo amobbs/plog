@@ -631,10 +631,11 @@ class PreslogParser extends JqlParser {
             $value = 'true' === strtolower($value);
         }
 
-       return array(
+        return array(
             '$and' => array(
-                array('fields.field_id' => array('$in' => $fieldIds)),
-                array('fields.data.' . $dataField => $value),
+                array('fields' => array('$elemMatch' => array('field_id' => array('$in' => $fieldIds),
+                    'data.' . $dataField => $value)),
+                )
             ),
         );
     }
