@@ -79,12 +79,11 @@ class JqlFunction {
 
         //if we can convert the string to a time then do it.
         $time = strtotime($value);
-
         if ($time)
         {
             $date = $time;
         }
-
+      
         if ($date == 0) {
             $tempDate = new \DateTime('now', new \DateTimeZone('UTC'));
             $date = $tempDate->getTimestamp();

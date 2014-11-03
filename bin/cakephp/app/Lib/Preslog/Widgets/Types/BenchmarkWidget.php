@@ -155,11 +155,18 @@ class BenchmarkWidget extends Widget {
                 $end = $this->variables['highestDate'];
 
                 $workingDate = $start;
+
+                //set up date value with correct timezone to the first day of the month
+                $dateTime = new \DateTime();
+                $dateTime->setTimezone(new \DateTimeZone('UTC'));
+                $dateTime->setDate(date('Y', $workingDate), date('n', $workingDate), date('n', 1));
+                $dateTime->setTime(0, 0, 0);
+
                 while ($workingDate <= $end)
                 {
                     //find each point in the series that should have a value.
                     $date = date('M', $workingDate) . '-' . substr(date('Y',$workingDate), 2);
-                    $key = mktime(0, 0, 0, date('n', $workingDate), 1,  date('Y',$workingDate));
+                    $key = $dateTime->getTimestamp();
                     $categorieData[$key] = $date . '<br/>0s';
 
                     $found = false;
@@ -190,20 +197,26 @@ class BenchmarkWidget extends Widget {
 
                         array_splice($parsedSeries, sizeOf($categorieData) -1, 0, $insert);
                     }
-                    $workingDate = mktime(date("H", $workingDate), 0, 0, date("n", $workingDate) + 1, date("j", $workingDate), date("Y", $workingDate));
+
+                    $dateTime->modify('+1 month');
+                    $workingDate = $dateTime->getTimestamp();
                 }
 
             }
 
             //benchmark still does not add the 0's at the end because there is not data that matches they key in the series. !!!!
             $dates = array();
+            $dateTime = new \DateTime();
+            $dateTime->setTimezone(new \DateTimeZone('UTC'));
             foreach ($parsedSeries as $point)
             {
                 //calculate last day on the month for the given date
-                $wholeDate = mktime(0, 0, 0, $point['xAxis']['month'] + 1, -1, $point['xAxis']['year']);
+                $dateTime->setDate($point['xAxis']['year'], $point['xAxis']['month'], 1);
+                $dateTime->setTime(0, 0, 0);
+                $wholeDate = $dateTime->getTimestamp();
+
                 $dates[] = $wholeDate;
-                $month = mktime(0, 0, 0, $point['xAxis']['month'], 1, 1);
-                $date = date('M', $month) . '-' . substr($point['xAxis']['year'], 2);
+                $date = date('M', $wholeDate) . '-' . substr($point['xAxis']['year'], 2);
 
                 $data = array();
                 $data['y'] = $this->asPercentageOfBHPM($point['yAxis'], $wholeDate);
@@ -211,7 +224,7 @@ class BenchmarkWidget extends Widget {
                     'enabled' => true,
                     'format' => '{y}%',
                 );
-                $key = mktime(0, 0, 0, date('n', $month), 1,  $point['xAxis']['year']);
+                $key = $wholeDate;
                 $categorieData[$key] = $date . '<br/>' . $this->_formatDuration($point['yAxis'])  ;
 
                 $oatSeries['data'][] = $data;
