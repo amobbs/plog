@@ -453,18 +453,24 @@ class LineWidget extends Widget {
 
             $data = array();
             $data['y'] = $pointValue;
+
             if ( isset($this->details['showLabels']) && $this->details['showLabels'])
             {
-                $min = (int) $pointValue;
-                $sec = round(($pointValue - (int) $pointValue) *60);
-                if ($sec < 10) {
-                    $sec = 0 . $sec;
+                if($yAggregateBy == 'minutes') {
+                    $min = (int) $pointValue;
+                    $sec = round(($pointValue - (int) $pointValue) *60);
+                    if ($sec < 10) {
+                        $sec = 0 . $sec;
+                    }
+                    $data['dataLabels'] = array(
+                        'enabled' => true,
+                        'format' => "$min:$sec",
+                    );
+                } else {
+                    $data['dataLabels'] = array(
+                        'enabled' => true,
+                    );
                 }
-
-                $data['dataLabels'] = array(
-                    'enabled' => true,
-                    'format' => "$min:$sec",
-                );
             }
             $data['x'] = $pointLabel;
 
