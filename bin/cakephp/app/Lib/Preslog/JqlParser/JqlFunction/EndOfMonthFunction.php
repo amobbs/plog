@@ -26,7 +26,7 @@ class EndOfMonthFunction extends JqlFunction {
         $tmpDate = new \DateTime('now', new \DateTimeZone('UTC'));
         $date = $tmpDate->getTimestamp();
 
-        if ($args != null || empty($args)) {
+        if ($args != null && !empty($args)) {
             $date = $this->_convertValueToTimestamp($args);
         }
 
