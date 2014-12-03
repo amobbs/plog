@@ -22,12 +22,20 @@ class EndOfDayFunction extends JqlFunction {
      * @return int|void
      */
     public function execute($args = null) {
-        $date = mktime(23, 59, 59, date('n'), date('j'), date('y'));
-        if ($args != null || empty($args)) {
+        $tmpDate = new \DateTime('now', new \DateTimeZone('UTC'));
+        $date = $tmpDate->getTimestamp();
+
+        if ($args != null && !empty($args)) {
             $date = $this->_convertValueToTimestamp($args);
         }
 
-        return mktime(23, 59, 59, date('n', $date), date('j', $date), date('y', $date));
+        //use datetime object with utc timezone
+        $dateTime = new \DateTime();
+        $dateTime->setTimezone(new \DateTimeZone('UTC'));
+        $dateTime->setDate(date('Y', $date), date('n', $date), date('j', $date));
+        $dateTime->setTime(23, 59, 59);
+
+        return $dateTime->getTimestamp();
     }
 
 
