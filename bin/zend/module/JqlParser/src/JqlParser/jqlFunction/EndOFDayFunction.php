@@ -30,7 +30,7 @@ class EndOfDayFunction extends JqlFunction {
         //use datetime object with utc timezone
         $dateTime = new \DateTime();
         $dateTime->setTimezone(new \DateTimeZone('UTC'));
-        $dateTime->setDate(date('Y', $date), date('n', $date), date('j'));
+        $dateTime->setDate(date('Y', $date), date('n', $date), date('j', $date));
         $dateTime->setTime(23, 59, 59);
 
         return $dateTime->getTimestamp();

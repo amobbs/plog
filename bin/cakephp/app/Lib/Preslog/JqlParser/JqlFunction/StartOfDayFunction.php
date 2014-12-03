@@ -33,7 +33,7 @@ class StartOfDayFunction extends JqlFunction{
         //use datetime object with utc timezone
         $dateTime = new \DateTime();
         $dateTime->setTimezone(new \DateTimeZone('UTC'));
-        $dateTime->setDate(date('Y', $date), date('n', $date), date('j'));
+        $dateTime->setDate(date('Y', $date), date('n', $date), date('j', $date));
         $dateTime->setTime(0, 0, 0);
 
         return $dateTime->getTimestamp();
