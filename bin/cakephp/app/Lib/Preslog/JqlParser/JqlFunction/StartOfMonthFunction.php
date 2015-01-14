@@ -29,13 +29,16 @@ class StartOfMonthFunction extends JqlFunction {
             $date = $this->_convertValueToTimestamp($args);
         }
 
-        //use datetime object with utc timezone
+        // Use datetime object with utc timezone
         $dateTime = new \DateTime();
         $dateTime->setTimezone(new \DateTimeZone('UTC'));
         $dateTime->setDate(date('Y', $date), date('n', $date), 1);
-        $dateTime->setTime(0, 0, 0);
 
-        return $dateTime->getTimestamp();
+        // Time in database is off by 11 hours because of timezones so to make sure we display the correct data we need to offset the time by -11 hours
+        $dateTime->setTime(14, 0, 0);
+        $dayBefore = strtotime("yesterday", $dateTime->getTimestamp());
+
+        return $dayBefore;
     }
 
 

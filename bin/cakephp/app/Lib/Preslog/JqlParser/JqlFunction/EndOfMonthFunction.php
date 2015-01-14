@@ -30,11 +30,13 @@ class EndOfMonthFunction extends JqlFunction {
             $date = $this->_convertValueToTimestamp($args);
         }
 
-        //use datetime object with utc timezone
+        // Use datetime object with utc timezone
         $dateTime = new \DateTime();
         $dateTime->setTimezone(new \DateTimeZone('UTC'));
         $dateTime->setDate(date('Y', $date), date('n', $date), date('t', $date));
-        $dateTime->setTime(23, 59, 59);
+
+        // Time in database is off by 11 hours because of timezones so to make sure we display the correct data we need to offset the time by -11 hours
+        $dateTime->setTime(12, 59, 59);
 
         return $dateTime->getTimestamp();
     }
