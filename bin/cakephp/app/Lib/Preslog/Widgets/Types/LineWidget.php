@@ -294,6 +294,13 @@ class LineWidget extends Widget {
         $values = array();
 
         $workingDate = $start;
+
+        //set up date value with correct timezone to the first day of the month
+        $dateTime = new \DateTime();
+        $dateTime->setTimezone(new \DateTimeZone('UTC'));
+        $dateTime->setDate(date('Y', $workingDate), date('n', $workingDate), date('n', 1));
+        $dateTime->setTime(0, 0, 0);
+
         while ($workingDate < $end)
         {
             //find each point in the series that should have a value.
@@ -304,21 +311,24 @@ class LineWidget extends Widget {
                     $display = array(
                         'hour' => date("H", $workingDate),
                     );
-                    $workingDate = mktime(date("H", $workingDate) + 1, 0, 0, date("n", $workingDate), date("j", $workingDate), date("Y", $workingDate));
+                    $dateTime->modify('+1 hour');
+                    $workingDate = $dateTime->getTimestamp();
                     break;
                 case 'day' :
                     $display = array(
                         'day' => date("j", $workingDate),
                         'month' => date("n", $workingDate),
                     );
-                    $workingDate = mktime(date("H", $workingDate), 0, 0, date("n", $workingDate), date("j", $workingDate) + 1, date("Y", $workingDate));
+                    $dateTime->modify('+1 day');
+                    $workingDate = $dateTime->getTimestamp();
                     break;
                 case 'month':
                     $display = array(
                         'month' => date("n", $workingDate),
                         'year' => date("Y", $workingDate),
                     );
-                    $workingDate = mktime(date("H", $workingDate), 0, 0, date("n", $workingDate) + 1, date("j", $workingDate), date("Y", $workingDate));
+                    $dateTime->modify('+1 month');
+                    $workingDate = $dateTime->getTimestamp();
                     break;
             }
 
@@ -408,7 +418,11 @@ class LineWidget extends Widget {
                         $pointLabel = $point['xAxis']['day'] . '/' . $point['xAxis']['month'];
                         break;
                     case 'month':
-                        $month = mktime(0, 0, 0, $point['xAxis']['month'], 1, 1);
+                        $dateTime = new \DateTime();
+                        $dateTime->setTimezone(new \DateTimeZone('UTC'));
+                        $dateTime->setDate(1, $point['xAxis']['month'] ,1);
+                        $dateTime->setTime(0, 0, 0);
+                        $month = $dateTime->getTimestamp();
                         $pointLabel = date('M', $month) . '-' . substr($point['xAxis']['year'], 2);
                         break;
                     case 'all':
@@ -439,11 +453,24 @@ class LineWidget extends Widget {
 
             $data = array();
             $data['y'] = $pointValue;
+
             if ( isset($this->details['showLabels']) && $this->details['showLabels'])
             {
-                $data['dataLabels'] = array(
-                    'enabled' => true,
-                );
+                if($yAggregateBy == 'minutes') {
+                    $min = (int) $pointValue;
+                    $sec = round(($pointValue - (int) $pointValue) *60);
+                    if ($sec < 10) {
+                        $sec = 0 . $sec;
+                    }
+                    $data['dataLabels'] = array(
+                        'enabled' => true,
+                        'format' => "$min:$sec",
+                    );
+                } else {
+                    $data['dataLabels'] = array(
+                        'enabled' => true,
+                    );
+                }
             }
             $data['x'] = $pointLabel;
 
