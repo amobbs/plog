@@ -36,7 +36,9 @@ class EndOfMonthFunction extends JqlFunction {
         $dateTime->setDate(date('Y', $date), date('n', $date), date('t', $date));
 
         // Time in database is off by 11 hours because of timezones so to make sure we display the correct data we need to offset the time by -11 hours
-        $dateTime->setTime(12, 59, 59);
+        $currDate = new \DateTime();
+        $offset = $currDate->getOffset() /60 /60;
+        $dateTime->setTime(23 - $offset, 59, 59);
 
         return $dateTime->getTimestamp();
     }
