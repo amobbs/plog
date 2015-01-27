@@ -518,7 +518,13 @@ class JqlParser {
             //this keyword has not been used in the group before so add it in.
             else
             {
-                $groups[$joiningKeyword] = $clauses;
+                $newGroup = array(
+                    $joiningKeyword => array(
+                        $groups,
+                        $clauses,
+                    )
+                );
+                $groups = $newGroup;
             }
         }
 
