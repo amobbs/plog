@@ -30,11 +30,15 @@ class StartOfDayFunction extends JqlFunction{
             $date = $this->_convertValueToTimestamp($args);
         }
 
-        //use datetime object with utc timezone
+        // Use datetime object with utc timezone
         $dateTime = new \DateTime();
         $dateTime->setTimezone(new \DateTimeZone('UTC'));
         $dateTime->setDate(date('Y', $date), date('n', $date), date('j', $date));
-        $dateTime->setTime(0, 0, 0);
+
+        // Time in database is off by 11 hours because of timezones so to make sure we display the correct data we need to offset the time by -11 hours
+        $currDate = new \DateTime();
+        $offset = $currDate->getOffset() /60 /60;
+        $dateTime->setTime(0 - $offset, 0, 0);
 
         return $dateTime->getTimestamp();
     }
