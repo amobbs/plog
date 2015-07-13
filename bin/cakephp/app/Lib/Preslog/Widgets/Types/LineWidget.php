@@ -549,6 +549,9 @@ class LineWidget extends Widget {
                     if ($dataLabels != null)
                     {
                         $newPointInSeries['dataLabels'] = $dataLabels;
+                        if(isset($dataLabels['format'])) {
+                            unset($newPointInSeries['dataLabels']['format']);
+                        }
                     }
                     $seriesComplete[$pointName]['data'][] = $newPointInSeries;
                 }
