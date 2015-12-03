@@ -56,7 +56,7 @@ Configure::write('Preslog', array(
      */
     'SmsService' => array(
         'username'  => "curtisd",
-        'password'  => "test",
+        'password'  => "password123",
         'from'      => "MediaHub",
         'address'   => 'https://smsgw.exetel.com.au/sendsms/api_sms_direct.php?username=%s&password=%s&messagetype=Text&sender=%s',
     ),
