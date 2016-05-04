@@ -15,7 +15,7 @@
     
     Windows: Go to {link to it here...} and install the .dll file (the version that matches your PHP version, rename it to php_mongo.dll and add the extension in php.ini)
              Create the folder C:\data\db\dump
-             Copy the backed up database files and put them into the dump folder
+             Copy the backed up database files and put them into the dump folder (instructions of how to get a backup: https://4mation.atlassian.net/wiki/display/CLIEN/Preslog)
              Navigate to the dump folder in bash and type the following:
 ```sh
 $ mongorestore -d preslog ./
@@ -27,7 +27,7 @@ $ mongorestore -d preslog ./
 
     Check that your APPLICATION_ENV var is working correctly too.
 
-1.  Install Node.js
+1a.  Install Node.js
     See notes below for extra steps if using Windows Bash.
 
 2.  Instll NodeJS modules
