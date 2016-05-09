@@ -45,7 +45,7 @@ class DATABASE_CONFIG {
         'prefix'        => '',
         'database'      => 'preslog',
         'replicaset'    => array(
-            'host'          => 'mongodb://root:root@192.168.0.52:27017',
+            'host'          => 'mongodb://localhost:27017',
             'options'       => array(
                 'connect'           => true,
                 'readPreference'    => \MongoClient::RP_PRIMARY,

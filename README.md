@@ -52,8 +52,8 @@ $ grunt build
     ServerName local.preslog
     ErrorLog "logs/preslog-error.log"
     CustomLog "logs/preslog-access.log" combined
-	SetEnv APPLICATION_ENV "local"
-    SetEnv ENVIRONMENT "local"
+	SetEnv APPLICATION_ENV "development"
+    SetEnv ENVIRONMENT "development"
 </VirtualHost>
 ```
 
