@@ -201,18 +201,33 @@ angular.module( 'Preslog.log', [
 
             $scope.serverErrorsPresent = false;
 
+            console.log($scope.logForm);
+            //check the form is valid before submitting it
+            if (!$scope.logForm.$valid) {
+                alert('form is invalid');
+            }
             // Data Fudge
             logData.Log = $scope.log;
 
             // Reset validation
             for (var f in $scope.logForm)
             {
-                if ( $scope.logForm[f].$invalid === undefined)
+                console.log('input invalid: ' + $scope.logForm[f].$invalid + ' f: ' + f);
+                if ( typeof $scope.logForm[f].$invalid == 'undefined')
                 {
                     continue;
                 }
 
-                $scope.logForm[f].$setValidity('validateServer', true);
+
+                if ($scope.logForm[f].$invalid !== false) {
+                    $scope.serverErrorsPresent = true;
+                    deferred.reject();
+                    $scope.serverErrors = [
+                        ['Time must be valid in the format of hh:mm:ss']
+                    ];
+                    return deferred.promise;
+                }
+
             }
 
             // Submit

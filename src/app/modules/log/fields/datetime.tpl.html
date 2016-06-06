@@ -22,6 +22,10 @@
         <input
                 id="field_{{options._id}}_time"
                 type="text"
+                required
+                minlength="8"
+                maxlength="8"
+                ngPattern="/[0-2][0-9]:[0-5][0-9]:[0-5][0-9]/"
                 datetime="time"
                 ng-model="log.data.datetime"
                 ng-disabled="options.readonly"
