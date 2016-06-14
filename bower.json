@@ -4,7 +4,6 @@
     "devDependencies": {
         "jquery": "~1.10.2",
         "jquery-ui": "~1.10.3",
-        "json3": "latest",
         "angular-unstable": "~1.1.5",
         "angular-mocks-unstable": "~1.1.5",
         "angular-resource-unstable": "~1.1.5",
@@ -12,16 +11,17 @@
         "angular-bootstrap": "~0.6.0",
         "angular-ui-router": "0.2.7",
         "angular-ui-utils": "~0.0.3",
-        "angular-ui-select2": "latest",
         "restangular": "~1.0.4",
-        "highcharts": "latest",
-        "angular-highcharts-directive": "master",
+        "highcharts": "~3.0.5",
         "dynatree": "~1.2.4",
         "ng-table": "https://github.com/esvit/ng-table.git#~v0.2.0",
-        "angularjs-modal-service": "master",
-        "angular-ui-sortable": "master",
+        "angular-ui-sortable": "0.0.1",
         "jquery-file-upload": "~8.8.7",
-        "jquery-cookie": "latest"
+        "angular-ui-select2": "0.0.5",
+        "angularjs-modal-service": "master",
+        "json3": "3.3.2",
+        "angular-highcharts-directive": "0.4.0",
+        "jquery-cookie": "1.4.1"
     },
     "dependencies": {}
 }
