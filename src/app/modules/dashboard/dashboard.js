@@ -178,7 +178,6 @@ angular.module( 'Preslog.dashboard', [
             source.one('widgets', widgetId)
                 .remove()
                 .then(function (result){
-                    console.log(result);
                     for(var index = 0; index < $scope.dashboard.widgets.length; index++) {
                         if ($scope.dashboard.widgets[index]._id == widgetId) {
                             $scope.dashboard.widgets.splice(index, 1);

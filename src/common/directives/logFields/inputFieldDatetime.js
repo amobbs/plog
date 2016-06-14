@@ -147,8 +147,6 @@ angular.module('inputFieldDatetime', [])
              */
             var dateFormatter = function(value)
             {
-                console.log('dater formatter');
-                console.log(value);
                 var date = new Date(value);
 
                 if (!isNaN( date.getTime()))
@@ -175,20 +173,21 @@ angular.module('inputFieldDatetime', [])
                 //we will only accept the time format if it's exactly how we want it
                 var res = /[0-2][0-9]:[0-5][0-9]:[0-5][0-9]/.test(value);
                 if (!res) {
-                    console.log(ctrl);
                     ctrl.$setValidity('time', false);
                     ctrl.$valid = false;
+                    ctrl.$clientError = 'Time must be valid in the format of hh:mm:ss';
                     return $filter('date')(date, 'EEE, dd MMM yyyy HH:mm:ss Z');
                 }
 
-                var hours = parseInt(timeParts[0]);
-                var mins = parseInt(timeParts[1]);
-                var secs = parseInt(timeParts[2]);
-                console.log('got: ' + hours + ":" + mins + ":" + secs);
+                var hours = parseInt(timeParts[0], 10);
+                var mins = parseInt(timeParts[1], 10);
+                var secs = parseInt(timeParts[2], 10);
 
                 //check they don't extend the limits, otherwise they'll change the date
                 if (hours >= 24 || mins >= 60 || secs >= 60){
                     ctrl.$setValidity('time', false);
+                    ctrl.$valid = false;
+                    ctrl.$clientError = 'Time must be valid in the format of hh:mm:ss';
                     return $filter('date')(date, 'EEE, dd MMM yyyy HH:mm:ss Z');
                 }
 
@@ -201,9 +200,9 @@ angular.module('inputFieldDatetime', [])
                 {
                     date = new Date();
                 }
-
+                ctrl.$clientError = undefined;
                 // Apply, or error
-                ctrl.$setValidity('time', !isNaN( date.getTime()));
+                ctrl.$setValidity('time', true);
                 return $filter('date')(date, 'EEE, dd MMM yyyy HH:mm:ss Z');
             };
 
@@ -228,9 +227,6 @@ angular.module('inputFieldDatetime', [])
             };
 
 
-            console.log('input field datetime');
-            console.log(attrs.datetime);
-            console.log(attrs);
             /**
              * Apply parser/formatter
              */
