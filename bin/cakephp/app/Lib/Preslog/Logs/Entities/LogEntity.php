@@ -2,6 +2,7 @@
 
 namespace Preslog\Logs\Entities;
 
+use Log;
 use Preslog\Logs\FieldTypes\FieldTypeAbstract;
 
 
@@ -377,18 +378,39 @@ class LogEntity
         // If no _id for this log, lookup the next suitable increment in the database
         if (!isset($this->data['_id']) || empty($this->data['_id']))
         {
-            // Auto-increment the logIncrement on the client, and fetch the digit
-            $db = $this->dataSource->getMongoDb();
-            $client = $db->clients->findAndModify(
-                array('_id'=>new \MongoId($this->data['client_id'])),
-                array('$inc'=>array('logIncrement'=>1)),
-                array('logIncrement'=>1),
-                array('new'=>true)
-            );
-
-            // Save the new HRID digit
-            $this->data['hrid'] = $client['logIncrement'];
+            $this->generateHrid();
         }
+
+    }
+
+    /**
+     * Used to generate the unique ID of the log
+     * @param int $count Leave blank, used for recursive count check
+     */
+    private function generateHrid($count = 0) {
+        // Auto-increment the logIncrement on the client, and fetch the digit
+        $db = $this->dataSource->getMongoDb();
+        $client = $db->clients->findAndModify(
+            array('_id'=>new \MongoId($this->data['client_id'])),
+            array('$inc'=>array('logIncrement'=>1)),
+            array('logIncrement'=>1, 'logPrefix' => 1),
+            array('new'=>true)
+        );
+
+        /* MEDODS-79 - ID is being duplicated in some occurrences, this seems to be the point of failure */
+        $newId = $client['logPrefix'] . '_#'  . $client['logIncrement'];
+        $log = new Log();
+
+        $logs = $log->findByHrid($newId);
+
+        /* we only allow it to be called recursively 5 times, otherwise something is definetly wrong */
+        if (!empty($logs) && $count < 5) {
+            /* we recursively call this function until it can generate an empty log id */
+            $this->generateHrid(++$count);
+            return;
+        }
+        // Save the new HRID digit
+        $this->data['hrid'] = $client['logIncrement'];
 
     }
 
