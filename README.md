@@ -7,7 +7,27 @@
 
 ## Quick Start
 
-1.  Install Node.js
+0.  Install MongoDB (Quick crash course can be found at https://thenewboston.com/videos.php?cat=356&video=30008)
+    Good idea to install the PHPStorm MongoDB plugin
+    Get the MongoDB binary directory into your PATH so you can run the db server from anywhere, details in the videos above.
+    
+    Note, this uses an older MongoDB PHP Extension, running this locally will take some configuration.
+    
+    Windows: Go to {link to it here...} and install the .dll file (the version that matches your PHP version, rename it to php_mongo.dll and add the extension in php.ini)
+             Create the folder C:\data\db\dump
+             Copy the backed up database files and put them into the dump folder (instructions of how to get a backup: https://4mation.atlassian.net/wiki/display/CLIEN/Preslog)
+             Navigate to the dump folder in bash and type the following:
+```sh
+$ mongorestore -d preslog ./
+```
+
+    To confirm that the DB is installed via the PHPStorm plugin under the right hand tab MongoExplorer (may need to refresh)
+
+    Lastly, in /bin/cake/app/Config/database.php under the $development array, change the host to 'mongodb://127.0.0.:27017'
+
+    Check that your APPLICATION_ENV var is working correctly too.
+
+1a.  Install Node.js
     See notes below for extra steps if using Windows Bash.
 
 2.  Instll NodeJS modules
@@ -28,12 +48,12 @@ $ grunt build
 4.  Set up the following vhost rule for Apache:
 ```
 <VirtualHost *:80>
-    DocumentRoot "YOUR_PROJECT_DIRECTORY\build"
+    DocumentRoot "YOUR_PROJECT_DIRECTORY\build\webroot"
     ServerName local.preslog
     ErrorLog "logs/preslog-error.log"
     CustomLog "logs/preslog-access.log" combined
-	SetEnv APPLICATION_ENV "local"
-    SetEnv ENVIRONMENT "local"
+	SetEnv APPLICATION_ENV "development"
+    SetEnv ENVIRONMENT "development"
 </VirtualHost>
 ```
 

@@ -200,19 +200,33 @@ angular.module( 'Preslog.log', [
             var deferred = $q.defer();
 
             $scope.serverErrorsPresent = false;
-
             // Data Fudge
             logData.Log = $scope.log;
 
             // Reset validation
             for (var f in $scope.logForm)
             {
-                if ( $scope.logForm[f].$invalid === undefined)
+                if ( typeof $scope.logForm[f].$invalid == 'undefined')
                 {
                     continue;
                 }
 
+                /**
+                 * This checks for our custom clientError variable which is for validating input on
+                 * the client side. We need to do this for the time field since once it hits server
+                 * side it is already valid.
+                 */
+                if (typeof $scope.logForm[f].$clientError !== 'undefined') {
+                    $scope.serverErrorsPresent = true;
+                    deferred.reject();
+                    $scope.serverErrors = [
+                        [$scope.logForm[f].$clientError]
+                    ];
+                    return deferred.promise;
+                }
                 $scope.logForm[f].$setValidity('validateServer', true);
+
+
             }
 
             // Submit

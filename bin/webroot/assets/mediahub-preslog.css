@@ -9304,6 +9304,12 @@ div.loading-screen .loading-block span {
   color: #000;
 }
 
+.ng-invalid {
+  color: #b94a48 !important;
+  border-color: #e9322d !important;
+  box-shadow: 0 0 6px #f8b9b7 !important;
+}
+
 .icon.icon-loading {
   background: url('img/layout/ajax-loader-button.gif') no-repeat;
 }
@@ -10769,10 +10775,11 @@ button.link {
   cursor: pointer;
 }
 
-/*! jQuery UI - v1.10.3 - 2013-05-03
+/*! jQuery UI - v1.10.4 - 2014-02-18
 * http://jqueryui.com
-* Includes: jquery.ui.core.css, jquery.ui.accordion.css, jquery.ui.autocomplete.css, jquery.ui.button.css, jquery.ui.datepicker.css, jquery.ui.dialog.css, jquery.ui.menu.css, jquery.ui.progressbar.css, jquery.ui.resizable.css, jquery.ui.selectable.css, jquery.ui.slider.css, jquery.ui.spinner.css, jquery.ui.tabs.css, jquery.ui.tooltip.css, jquery.ui.theme.css
-* Copyright 2013 jQuery Foundation and other contributors; Licensed MIT */
+* Includes: jquery.ui.core.css, jquery.ui.resizable.css, jquery.ui.selectable.css, jquery.ui.accordion.css, jquery.ui.autocomplete.css, jquery.ui.button.css, jquery.ui.datepicker.css, jquery.ui.dialog.css, jquery.ui.menu.css, jquery.ui.progressbar.css, jquery.ui.slider.css, jquery.ui.spinner.css, jquery.ui.tabs.css, jquery.ui.tooltip.css, jquery.ui.theme.css
+* Copyright 2014 jQuery Foundation and other contributors; Licensed MIT */
+
 .ui-helper-hidden {
   display: none;
 }
@@ -10845,6 +10852,91 @@ button.link {
   left: 0;
   width: 100%;
   height: 100%;
+}
+
+.ui-resizable {
+  position: relative;
+}
+
+.ui-resizable-handle {
+  position: absolute;
+  display: block;
+  font-size: 0.1px;
+}
+
+.ui-resizable-disabled .ui-resizable-handle,
+.ui-resizable-autohide .ui-resizable-handle {
+  display: none;
+}
+
+.ui-resizable-n {
+  top: -5px;
+  left: 0;
+  width: 100%;
+  height: 7px;
+  cursor: n-resize;
+}
+
+.ui-resizable-s {
+  bottom: -5px;
+  left: 0;
+  width: 100%;
+  height: 7px;
+  cursor: s-resize;
+}
+
+.ui-resizable-e {
+  top: 0;
+  right: -5px;
+  width: 7px;
+  height: 100%;
+  cursor: e-resize;
+}
+
+.ui-resizable-w {
+  top: 0;
+  left: -5px;
+  width: 7px;
+  height: 100%;
+  cursor: w-resize;
+}
+
+.ui-resizable-se {
+  right: 1px;
+  bottom: 1px;
+  width: 12px;
+  height: 12px;
+  cursor: se-resize;
+}
+
+.ui-resizable-sw {
+  bottom: -5px;
+  left: -5px;
+  width: 9px;
+  height: 9px;
+  cursor: sw-resize;
+}
+
+.ui-resizable-nw {
+  top: -5px;
+  left: -5px;
+  width: 9px;
+  height: 9px;
+  cursor: nw-resize;
+}
+
+.ui-resizable-ne {
+  top: -5px;
+  right: -5px;
+  width: 9px;
+  height: 9px;
+  cursor: ne-resize;
+}
+
+.ui-selectable-helper {
+  position: absolute;
+  z-index: 100;
+  border: 1px dotted #000000;
 }
 
 .ui-accordion .ui-accordion-header {
@@ -11061,10 +11153,6 @@ button.ui-button::-moz-focus-inner {
   font-size: 1em;
 }
 
-.ui-datepicker select.ui-datepicker-month-year {
-  width: 100%;
-}
-
 .ui-datepicker select.ui-datepicker-month,
 .ui-datepicker select.ui-datepicker-year {
   width: 49%;
@@ -11079,7 +11167,7 @@ button.ui-button::-moz-focus-inner {
 
 .ui-datepicker th {
   padding: .7em .3em;
-  font-weight: 700;
+  font-weight: bold;
   text-align: center;
   border: 0;
 }
@@ -11099,7 +11187,7 @@ button.ui-button::-moz-focus-inner {
 
 .ui-datepicker .ui-datepicker-buttonpane {
   padding: 0 .2em;
-  margin: .7em 0 0;
+  margin: .7em 0 0 0;
   background-image: none;
   border-right: 0;
   border-bottom: 0;
@@ -11109,7 +11197,7 @@ button.ui-button::-moz-focus-inner {
 .ui-datepicker .ui-datepicker-buttonpane button {
   float: right;
   width: auto;
-  padding: .2em .6em .3em;
+  padding: .2em .6em .3em .6em;
   margin: .5em .2em .4em;
   overflow: visible;
   cursor: pointer;
@@ -11207,6 +11295,7 @@ button.ui-button::-moz-focus-inner {
   top: 0;
   left: 0;
   padding: .2em;
+  overflow: hidden;
   outline: 0;
 }
 
@@ -11228,7 +11317,7 @@ button.ui-button::-moz-focus-inner {
   position: absolute;
   top: 50%;
   right: .3em;
-  width: 21px;
+  width: 20px;
   height: 20px;
   padding: 1px;
   margin: -10px 0 0 0;
@@ -11238,7 +11327,7 @@ button.ui-button::-moz-focus-inner {
   position: relative;
   padding: .5em 1em;
   overflow: auto;
-  background: 0;
+  background: none;
   border: 0;
 }
 
@@ -11247,7 +11336,7 @@ button.ui-button::-moz-focus-inner {
   margin-top: .5em;
   text-align: left;
   background-image: none;
-  border-width: 1px 0 0;
+  border-width: 1px 0 0 0;
 }
 
 .ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset {
@@ -11276,7 +11365,7 @@ button.ui-button::-moz-focus-inner {
   padding: 2px;
   margin: 0;
   list-style: none;
-  outline: 0;
+  outline: none;
 }
 
 .ui-menu .ui-menu {
@@ -11296,14 +11385,14 @@ button.ui-button::-moz-focus-inner {
   margin: 5px -2px 5px -2px;
   font-size: 0;
   line-height: 0;
-  border-width: 1px 0 0;
+  border-width: 1px 0 0 0;
 }
 
 .ui-menu .ui-menu-item a {
   display: block;
   min-height: 0;
   padding: 2px .4em;
-  font-weight: 400;
+  font-weight: normal;
   line-height: 1.5;
   text-decoration: none;
 }
@@ -11311,12 +11400,12 @@ button.ui-button::-moz-focus-inner {
 .ui-menu .ui-menu-item a.ui-state-focus,
 .ui-menu .ui-menu-item a.ui-state-active {
   margin: -1px;
-  font-weight: 400;
+  font-weight: normal;
 }
 
 .ui-menu .ui-state-disabled {
   margin: .4em 0 .2em;
-  font-weight: 400;
+  font-weight: normal;
   line-height: 1.5;
 }
 
@@ -11357,98 +11446,13 @@ button.ui-button::-moz-focus-inner {
 
 .ui-progressbar .ui-progressbar-overlay {
   height: 100%;
-  background: url(images/animated-overlay.gif);
+  background: url("images/animated-overlay.gif");
   opacity: 0.25;
   filter: alpha(opacity=25);
 }
 
 .ui-progressbar-indeterminate .ui-progressbar-value {
   background-image: none;
-}
-
-.ui-resizable {
-  position: relative;
-}
-
-.ui-resizable-handle {
-  position: absolute;
-  display: block;
-  font-size: .1px;
-}
-
-.ui-resizable-disabled .ui-resizable-handle,
-.ui-resizable-autohide .ui-resizable-handle {
-  display: none;
-}
-
-.ui-resizable-n {
-  top: -5px;
-  left: 0;
-  width: 100%;
-  height: 7px;
-  cursor: n-resize;
-}
-
-.ui-resizable-s {
-  bottom: -5px;
-  left: 0;
-  width: 100%;
-  height: 7px;
-  cursor: s-resize;
-}
-
-.ui-resizable-e {
-  top: 0;
-  right: -5px;
-  width: 7px;
-  height: 100%;
-  cursor: e-resize;
-}
-
-.ui-resizable-w {
-  top: 0;
-  left: -5px;
-  width: 7px;
-  height: 100%;
-  cursor: w-resize;
-}
-
-.ui-resizable-se {
-  right: 1px;
-  bottom: 1px;
-  width: 12px;
-  height: 12px;
-  cursor: se-resize;
-}
-
-.ui-resizable-sw {
-  bottom: -5px;
-  left: -5px;
-  width: 9px;
-  height: 9px;
-  cursor: sw-resize;
-}
-
-.ui-resizable-nw {
-  top: -5px;
-  left: -5px;
-  width: 9px;
-  height: 9px;
-  cursor: nw-resize;
-}
-
-.ui-resizable-ne {
-  top: -5px;
-  right: -5px;
-  width: 9px;
-  height: 9px;
-  cursor: ne-resize;
-}
-
-.ui-selectable-helper {
-  position: absolute;
-  z-index: 100;
-  border: 1px dotted #000000;
 }
 
 .ui-slider {
@@ -11539,8 +11543,8 @@ button.ui-button::-moz-focus-inner {
   margin-left: .4em;
   color: inherit;
   vertical-align: middle;
-  background: 0;
-  border: 0;
+  background: none;
+  border: none;
 }
 
 .ui-spinner-button {
@@ -11558,9 +11562,9 @@ button.ui-button::-moz-focus-inner {
 }
 
 .ui-spinner a.ui-spinner-button {
-  border-top: 0;
-  border-right: 0;
-  border-bottom: 0;
+  border-top: none;
+  border-right: none;
+  border-bottom: none;
 }
 
 .ui-spinner .ui-icon {
@@ -11603,7 +11607,7 @@ button.ui-button::-moz-focus-inner {
   border-bottom-width: 0;
 }
 
-.ui-tabs .ui-tabs-nav li a {
+.ui-tabs .ui-tabs-nav .ui-tabs-anchor {
   float: left;
   padding: .5em 1em;
   text-decoration: none;
@@ -11614,21 +11618,20 @@ button.ui-button::-moz-focus-inner {
   margin-bottom: -1px;
 }
 
-.ui-tabs .ui-tabs-nav li.ui-tabs-active a,
-.ui-tabs .ui-tabs-nav li.ui-state-disabled a,
-.ui-tabs .ui-tabs-nav li.ui-tabs-loading a {
+.ui-tabs .ui-tabs-nav li.ui-tabs-active .ui-tabs-anchor,
+.ui-tabs .ui-tabs-nav li.ui-state-disabled .ui-tabs-anchor,
+.ui-tabs .ui-tabs-nav li.ui-tabs-loading .ui-tabs-anchor {
   cursor: text;
 }
 
-.ui-tabs .ui-tabs-nav li a,
-.ui-tabs-collapsible .ui-tabs-nav li.ui-tabs-active a {
+.ui-tabs-collapsible .ui-tabs-nav li.ui-tabs-active .ui-tabs-anchor {
   cursor: pointer;
 }
 
 .ui-tabs .ui-tabs-panel {
   display: block;
   padding: 1em 1.4em;
-  background: 0;
+  background: none;
   border-width: 0;
 }
 
@@ -11673,7 +11676,7 @@ body .ui-tooltip {
 }
 
 .ui-widget-header {
-  font-weight: 700;
+  font-weight: bold;
   color: #222;
   background: #cccccc url(/assets/vendor/jquery-ui/themes/base/images/ui-bg_highlight-soft_75_cccccc_1x100.png) 50% 50% repeat-x;
   border: 1px solid #aaa;
@@ -11686,7 +11689,7 @@ body .ui-tooltip {
 .ui-state-default,
 .ui-widget-content .ui-state-default,
 .ui-widget-header .ui-state-default {
-  font-weight: 400;
+  font-weight: normal;
   color: #555555;
   background: #e6e6e6 url(/assets/vendor/jquery-ui/themes/base/images/ui-bg_glass_75_e6e6e6_1x400.png) 50% 50% repeat-x;
   border: 1px solid #d3d3d3;
@@ -11705,7 +11708,7 @@ body .ui-tooltip {
 .ui-state-focus,
 .ui-widget-content .ui-state-focus,
 .ui-widget-header .ui-state-focus {
-  font-weight: 400;
+  font-weight: normal;
   color: #212121;
   background: #dadada url(/assets/vendor/jquery-ui/themes/base/images/ui-bg_glass_75_dadada_1x400.png) 50% 50% repeat-x;
   border: 1px solid #999;
@@ -11714,7 +11717,11 @@ body .ui-tooltip {
 .ui-state-hover a,
 .ui-state-hover a:hover,
 .ui-state-hover a:link,
-.ui-state-hover a:visited {
+.ui-state-hover a:visited,
+.ui-state-focus a,
+.ui-state-focus a:hover,
+.ui-state-focus a:link,
+.ui-state-focus a:visited {
   color: #212121;
   text-decoration: none;
 }
@@ -11722,7 +11729,7 @@ body .ui-tooltip {
 .ui-state-active,
 .ui-widget-content .ui-state-active,
 .ui-widget-header .ui-state-active {
-  font-weight: 400;
+  font-weight: normal;
   color: #212121;
   background: #ffffff url(/assets/vendor/jquery-ui/themes/base/images/ui-bg_glass_65_ffffff_1x400.png) 50% 50% repeat-x;
   border: 1px solid #aaa;
@@ -11772,13 +11779,13 @@ body .ui-tooltip {
 .ui-priority-primary,
 .ui-widget-content .ui-priority-primary,
 .ui-widget-header .ui-priority-primary {
-  font-weight: 700;
+  font-weight: bold;
 }
 
 .ui-priority-secondary,
 .ui-widget-content .ui-priority-secondary,
 .ui-widget-header .ui-priority-secondary {
-  font-weight: 400;
+  font-weight: normal;
   opacity: .7;
   filter: alpha(opacity=70);
 }
@@ -12575,7 +12582,7 @@ body .ui-tooltip {
 }
 
 /*
-Version: 3.4.4 Timestamp: Thu Oct 24 13:23:11 PDT 2013
+Version: 3.4.8 Timestamp: Thu May  1 09:50:32 EDT 2014
 */
 
 .select2-container {
@@ -12594,7 +12601,6 @@ Version: 3.4.4 Timestamp: Thu Oct 24 13:23:11 PDT 2013
   /*
     Force border-box so that % widths fit the parent
     container without overlap because of margin/padding.
-
     More Info : http://www.quirksmode.org/css/box.html
   */
 
@@ -12623,7 +12629,7 @@ Version: 3.4.4 Timestamp: Thu Oct 24 13:23:11 PDT 2013
   background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, #eeeeee), color-stop(0.5, #ffffff));
   background-image: -webkit-linear-gradient(center bottom, #eeeeee 0%, #ffffff 50%);
   background-image: -moz-linear-gradient(center bottom, #eeeeee 0%, #ffffff 50%);
-  background-image: linear-gradient(top, #ffffff 0%, #eeeeee 50%);
+  background-image: linear-gradient(to top, #eeeeee 0%, #ffffff 50%);
   border: 1px solid #aaa;
   border-radius: 4px;
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#eeeeee', GradientType=0);
@@ -12639,7 +12645,7 @@ Version: 3.4.4 Timestamp: Thu Oct 24 13:23:11 PDT 2013
   background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, #eeeeee), color-stop(0.9, #ffffff));
   background-image: -webkit-linear-gradient(center bottom, #eeeeee 0%, #ffffff 90%);
   background-image: -moz-linear-gradient(center bottom, #eeeeee 0%, #ffffff 90%);
-  background-image: linear-gradient(top, #eeeeee 0%, #ffffff 90%);
+  background-image: linear-gradient(to bottom, #eeeeee 0%, #ffffff 90%);
   border-bottom-color: #aaa;
   border-radius: 0 0 4px 4px;
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#eeeeee', GradientType=0);
@@ -12651,6 +12657,8 @@ Version: 3.4.4 Timestamp: Thu Oct 24 13:23:11 PDT 2013
 
 .select2-container .select2-choice > .select2-chosen {
   display: block;
+  float: none;
+  width: auto;
   margin-right: 26px;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -12713,15 +12721,6 @@ Version: 3.4.4 Timestamp: Thu Oct 24 13:23:11 PDT 2013
           box-shadow: 0 4px 5px rgba(0, 0, 0, 0.15);
 }
 
-.select2-drop-auto-width {
-  width: auto;
-  border-top: 1px solid #aaa;
-}
-
-.select2-drop-auto-width .select2-search {
-  padding-top: 4px;
-}
-
 .select2-drop.select2-drop-above {
   margin-top: 1px;
   border-top: 1px solid #aaa;
@@ -12740,6 +12739,15 @@ Version: 3.4.4 Timestamp: Thu Oct 24 13:23:11 PDT 2013
   border-top: 1px solid #5897fb;
 }
 
+.select2-drop-auto-width {
+  width: auto;
+  border-top: 1px solid #aaa;
+}
+
+.select2-drop-auto-width .select2-search {
+  padding-top: 4px;
+}
+
 .select2-container .select2-choice .select2-arrow {
   position: absolute;
   top: 0;
@@ -12751,7 +12759,7 @@ Version: 3.4.4 Timestamp: Thu Oct 24 13:23:11 PDT 2013
   background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, #cccccc), color-stop(0.6, #eeeeee));
   background-image: -webkit-linear-gradient(center bottom, #cccccc 0%, #eeeeee 60%);
   background-image: -moz-linear-gradient(center bottom, #cccccc 0%, #eeeeee 60%);
-  background-image: linear-gradient(top, #cccccc 0%, #eeeeee 60%);
+  background-image: linear-gradient(to top, #cccccc 0%, #eeeeee 60%);
   border-left: 1px solid #aaa;
   border-radius: 0 4px 4px 0;
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#eeeeee', endColorstr='#cccccc', GradientType=0);
@@ -12789,7 +12797,7 @@ Version: 3.4.4 Timestamp: Thu Oct 24 13:23:11 PDT 2013
   background: url('/assets/vendor/select2/select2.png') no-repeat 100% -22px, -webkit-gradient(linear, left bottom, left top, color-stop(0.85, #ffffff), color-stop(0.99, #eeeeee));
   background: url('/assets/vendor/select2/select2.png') no-repeat 100% -22px, -webkit-linear-gradient(center bottom, #ffffff 85%, #eeeeee 99%);
   background: url('/assets/vendor/select2/select2.png') no-repeat 100% -22px, -moz-linear-gradient(center bottom, #ffffff 85%, #eeeeee 99%);
-  background: url('/assets/vendor/select2/select2.png') no-repeat 100% -22px, linear-gradient(top, #ffffff 85%, #eeeeee 99%);
+  background: url('/assets/vendor/select2/select2.png') no-repeat 100% -22px, linear-gradient(to bottom, #ffffff 85%, #eeeeee 99%) 0 0;
   border: 1px solid #aaa;
   border-radius: 0;
   outline: 0;
@@ -12806,7 +12814,7 @@ Version: 3.4.4 Timestamp: Thu Oct 24 13:23:11 PDT 2013
   background: url('/assets/vendor/select2/select2-spinner.gif') no-repeat 100%, -webkit-gradient(linear, left bottom, left top, color-stop(0.85, #ffffff), color-stop(0.99, #eeeeee));
   background: url('/assets/vendor/select2/select2-spinner.gif') no-repeat 100%, -webkit-linear-gradient(center bottom, #ffffff 85%, #eeeeee 99%);
   background: url('/assets/vendor/select2/select2-spinner.gif') no-repeat 100%, -moz-linear-gradient(center bottom, #ffffff 85%, #eeeeee 99%);
-  background: url('/assets/vendor/select2/select2-spinner.gif') no-repeat 100%, linear-gradient(top, #ffffff 85%, #eeeeee 99%);
+  background: url('/assets/vendor/select2/select2-spinner.gif') no-repeat 100%, linear-gradient(to bottom, #ffffff 85%, #eeeeee 99%) 0 0;
 }
 
 .select2-container-active .select2-choice,
@@ -12822,7 +12830,7 @@ Version: 3.4.4 Timestamp: Thu Oct 24 13:23:11 PDT 2013
   background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, #ffffff), color-stop(0.5, #eeeeee));
   background-image: -webkit-linear-gradient(center bottom, #ffffff 0%, #eeeeee 50%);
   background-image: -moz-linear-gradient(center bottom, #ffffff 0%, #eeeeee 50%);
-  background-image: linear-gradient(top, #ffffff 0%, #eeeeee 50%);
+  background-image: linear-gradient(to top, #ffffff 0%, #eeeeee 50%);
   border-bottom-color: transparent;
   border-bottom-right-radius: 0;
   border-bottom-left-radius: 0;
@@ -12836,7 +12844,7 @@ Version: 3.4.4 Timestamp: Thu Oct 24 13:23:11 PDT 2013
   background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #ffffff), color-stop(0.5, #eeeeee));
   background-image: -webkit-linear-gradient(center top, #ffffff 0%, #eeeeee 50%);
   background-image: -moz-linear-gradient(center top, #ffffff 0%, #eeeeee 50%);
-  background-image: linear-gradient(bottom, #ffffff 0%, #eeeeee 50%);
+  background-image: linear-gradient(to bottom, #ffffff 0%, #eeeeee 50%);
   border: 1px solid #5897fb;
   border-top-color: transparent;
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#eeeeee', endColorstr='#ffffff', GradientType=0);
@@ -12850,6 +12858,17 @@ Version: 3.4.4 Timestamp: Thu Oct 24 13:23:11 PDT 2013
 
 .select2-dropdown-open .select2-choice .select2-arrow b {
   background-position: -18px 1px;
+}
+
+.select2-hidden-accessible {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  border: 0;
 }
 
 /* results */
@@ -12867,34 +12886,6 @@ Version: 3.4.4 Timestamp: Thu Oct 24 13:23:11 PDT 2013
 .select2-results ul.select2-result-sub {
   padding-left: 0;
   margin: 0;
-}
-
-.select2-results ul.select2-result-sub > li .select2-result-label {
-  padding-left: 20px;
-}
-
-.select2-results ul.select2-result-sub ul.select2-result-sub > li .select2-result-label {
-  padding-left: 40px;
-}
-
-.select2-results ul.select2-result-sub ul.select2-result-sub ul.select2-result-sub > li .select2-result-label {
-  padding-left: 60px;
-}
-
-.select2-results ul.select2-result-sub ul.select2-result-sub ul.select2-result-sub ul.select2-result-sub > li .select2-result-label {
-  padding-left: 80px;
-}
-
-.select2-results ul.select2-result-sub ul.select2-result-sub ul.select2-result-sub ul.select2-result-sub ul.select2-result-sub > li .select2-result-label {
-  padding-left: 100px;
-}
-
-.select2-results ul.select2-result-sub ul.select2-result-sub ul.select2-result-sub ul.select2-result-sub ul.select2-result-sub ul.select2-result-sub > li .select2-result-label {
-  padding-left: 110px;
-}
-
-.select2-results ul.select2-result-sub ul.select2-result-sub ul.select2-result-sub ul.select2-result-sub ul.select2-result-sub ul.select2-result-sub ul.select2-result-sub > li .select2-result-label {
-  padding-left: 120px;
 }
 
 .select2-results li {
@@ -12917,6 +12908,34 @@ Version: 3.4.4 Timestamp: Thu Oct 24 13:23:11 PDT 2013
       -ms-user-select: none;
           user-select: none;
   -webkit-touch-callout: none;
+}
+
+.select2-results-dept-1 .select2-result-label {
+  padding-left: 20px;
+}
+
+.select2-results-dept-2 .select2-result-label {
+  padding-left: 40px;
+}
+
+.select2-results-dept-3 .select2-result-label {
+  padding-left: 60px;
+}
+
+.select2-results-dept-4 .select2-result-label {
+  padding-left: 80px;
+}
+
+.select2-results-dept-5 .select2-result-label {
+  padding-left: 100px;
+}
+
+.select2-results-dept-6 .select2-result-label {
+  padding-left: 110px;
+}
+
+.select2-results-dept-7 .select2-result-label {
+  padding-left: 120px;
 }
 
 .select2-results .select2-highlighted {
@@ -12942,6 +12961,7 @@ Version: 3.4.4 Timestamp: Thu Oct 24 13:23:11 PDT 2013
 .select2-results .select2-searching,
 .select2-results .select2-selection-limit {
   display: list-item;
+  padding-left: 5px;
   background: #f4f4f4;
 }
 
@@ -13008,7 +13028,7 @@ disabled look for disabled choices in the results dropdown
   background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, color-stop(1%, #eeeeee), color-stop(15%, #ffffff));
   background-image: -webkit-linear-gradient(top, #eeeeee 1%, #ffffff 15%);
   background-image: -moz-linear-gradient(top, #eeeeee 1%, #ffffff 15%);
-  background-image: linear-gradient(top, #eeeeee 1%, #ffffff 15%);
+  background-image: linear-gradient(to bottom, #eeeeee 1%, #ffffff 15%);
   border: 1px solid #aaa;
 }
 
@@ -13030,6 +13050,10 @@ disabled look for disabled choices in the results dropdown
 .select2-container-multi .select2-choices li {
   float: left;
   list-style: none;
+}
+
+html[dir="rtl"] .select2-container-multi .select2-choices li {
+  float: right;
 }
 
 .select2-container-multi .select2-choices .select2-search-field {
@@ -13070,7 +13094,7 @@ disabled look for disabled choices in the results dropdown
   background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, color-stop(20%, #f4f4f4), color-stop(50%, #f0f0f0), color-stop(52%, #e8e8e8), color-stop(100%, #eeeeee));
   background-image: -webkit-linear-gradient(top, #f4f4f4 20%, #f0f0f0 50%, #e8e8e8 52%, #eeeeee 100%);
   background-image: -moz-linear-gradient(top, #f4f4f4 20%, #f0f0f0 50%, #e8e8e8 52%, #eeeeee 100%);
-  background-image: linear-gradient(top, #f4f4f4 20%, #f0f0f0 50%, #e8e8e8 52%, #eeeeee 100%);
+  background-image: linear-gradient(to top, #f4f4f4 20%, #f0f0f0 50%, #e8e8e8 52%, #eeeeee 100%);
   border: 1px solid #aaaaaa;
   border-radius: 3px;
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#eeeeee', endColorstr='#f4f4f4', GradientType=0);
@@ -13082,6 +13106,11 @@ disabled look for disabled choices in the results dropdown
       -ms-user-select: none;
           user-select: none;
   -webkit-touch-callout: none;
+}
+
+html[dir="rtl"] .select2-container-multi .select2-choices .select2-search-choice {
+  margin-right: 5px;
+  margin-left: 0;
 }
 
 .select2-container-multi .select2-choices .select2-search-choice .select2-chosen {
@@ -13102,6 +13131,11 @@ disabled look for disabled choices in the results dropdown
   font-size: 1px;
   background: url('/assets/vendor/select2/select2.png') right top no-repeat;
   outline: none;
+}
+
+html[dir="rtl"] .select2-search-choice-close {
+  right: auto;
+  left: 3px;
 }
 
 .select2-container-multi .select2-search-choice-close {
@@ -13174,7 +13208,7 @@ disabled look for disabled choices in the results dropdown
 
 /* Retina-ize icons */
 
-@media only screen and (-webkit-min-device-pixel-ratio: 1.5), only screen and (min-resolution: 144dpi) {
+@media only screen and (-webkit-min-device-pixel-ratio: 1.5), only screen and (min-resolution: 2dppx) {
   .select2-search input,
   .select2-search-choice-close,
   .select2-container .select2-choice abbr,

@@ -118,7 +118,7 @@ angular.module('inputFieldDatetime', [])
                 // Fix the source date if not set, undefined, etc
                 if (isNaN( date.getTime()))
                 {
-                   date = new Date('0001-01-01 00:00:00');
+                    date = new Date('0001-01-01 00:00:00');
                 }
 
                 // Update data
@@ -170,46 +170,40 @@ angular.module('inputFieldDatetime', [])
                 var date = new Date( ctrl.$modelValue );
                 var timeParts = value.split(':');
 
-                if (timeParts.length == 1)
-                {
-                    timeParts.push(0);
-                    timeParts.push(0);
-                }
-                else if (timeParts.length == 2)
-                {
-                    timeParts.push(0);
+                //we will only accept the time format if it's exactly how we want it
+                var res = /[0-2][0-9]:[0-5][0-9]:[0-5][0-9]/.test(value);
+                if (!res) {
+                    ctrl.$setValidity('time', false);
+                    ctrl.$valid = false;
+                    ctrl.$clientError = 'Time must be valid in the format of hh:mm:ss';
+                    return $filter('date')(date, 'EEE, dd MMM yyyy HH:mm:ss Z');
                 }
 
-                var newDate = new Date('0001-01-01 00:00:00');
-                newDate.setHours(timeParts[0]);
-                newDate.setMinutes(timeParts[1]);
-                newDate.setSeconds(timeParts[2]);
+                var hours = parseInt(timeParts[0], 10);
+                var mins = parseInt(timeParts[1], 10);
+                var secs = parseInt(timeParts[2], 10);
+
+                //check they don't extend the limits, otherwise they'll change the date
+                if (hours >= 24 || mins >= 60 || secs >= 60){
+                    ctrl.$setValidity('time', false);
+                    ctrl.$valid = false;
+                    ctrl.$clientError = 'Time must be valid in the format of hh:mm:ss';
+                    return $filter('date')(date, 'EEE, dd MMM yyyy HH:mm:ss Z');
+                }
+
+                date.setHours(hours);
+                date.setMinutes(mins);
+                date.setSeconds(secs);
 
                 // Fix the source date if not set, undefined, etc
                 if (isNaN( date.getTime()))
                 {
                     date = new Date();
                 }
-
-                // Update data
-                newDate.setDate( date.getDate() );
-                newDate.setMonth( date.getMonth() );
-                newDate.setYear( date.getFullYear() );
-
+                ctrl.$clientError = undefined;
                 // Apply, or error
-                if (!isNaN( date.getTime()))
-                {
-                    ctrl.$setValidity('time', true);
-                    return $filter('date')(newDate, 'EEE, dd MMM yyyy HH:mm:ss Z');
-                }
-                else
-                {
-                    ctrl.$setValidity('time', false);
-                    return $filter('date')(date, 'EEE, dd MMM yyyy HH:mm:ss Z');
-                }
-
-
-
+                ctrl.$setValidity('time', true);
+                return $filter('date')(date, 'EEE, dd MMM yyyy HH:mm:ss Z');
             };
 
 
