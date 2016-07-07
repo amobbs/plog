@@ -57,15 +57,23 @@ angular.module('hierarchyFields', [])
                         cookieId: "hf",
                         onSelect: function(selected, dtnode)
                         {
-                            // On dynaTree change, pass selection back to model
-                            scope.$apply(function() {
-                                triggerSelected(dtnode.data.key, selected);
-
-                                if (dtnode.data.children && dtnode.data.children.length > 0) {
-                                    for (var i = 0; dtnode.data.children.length > i; i++) {
-                                        triggerSelected(dtnode.data.children[i].key, selected);
+                            /**
+                             * Recursive function used to iterate all nested folders and entries
+                             * @param node the parent node
+                             */
+                            var triggerChildren = function(node) {
+                                triggerSelected(node.key, selected);
+                                if (node.children && node.children.length > 0) {
+                                    for (var i = 0; node.children.length > i; i++) {
+                                        var child = node.children[i];
+                                        triggerChildren(child);
                                     }
                                 }
+                            };
+                            // On dynaTree change, pass selection back to model
+                            scope.$apply(function() {
+                                //enter recursive function
+                                triggerChildren(dtnode.data);
                             });
                         },
                         onDblClick: function(node, event)
