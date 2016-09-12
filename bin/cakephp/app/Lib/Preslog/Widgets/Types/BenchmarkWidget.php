@@ -256,7 +256,7 @@ class BenchmarkWidget extends Widget {
                 $oatYAxis['labels']['enabled'] = false;
             }
 
-             //yAxis two, BHPM
+            //yAxis two, BHPM
             $bhpmYAxis = array(
                 'title' => array(
                     'text' => 'BHPM (Hours)',
@@ -405,36 +405,48 @@ class BenchmarkWidget extends Widget {
         return floor($percent * $decimalPlaces) / $decimalPlaces; //round to number of places required
     }
 
+
+    /**
+     * We need to use a recursive function to iterate all network services
+     * @param $attr
+     * @param array $dates
+     * @return array
+     */
+    public function iterateChildren($attr, &$dates = array()) {
+        foreach ( $attr['children'] as $child )  {
+            //------------------------------------
+            //TODO: add a deleted date on to attributes and then use the deleted date to decide if it should be included
+            //------------------------------------
+            if (isset($child['deleted']) && $child['deleted']) {
+                continue;
+            }
+            //if it children, we skip it and keep going (it's a folder)
+            if ( !empty($child['children'])) {
+                $this->iterateChildren($child, $dates);
+                continue;
+            }
+            //else we add the date
+            if ( isset($child['live_date']) )
+                $dates[] = $child['live_date'];
+            else
+                $dates[] = '1970-01-01';
+        }
+        return $dates;
+    }
+
     private function getBHPMDates()
     {
         //find all the times when a network comes live for the affected clients
         $bhpmDates = array();
         foreach( $this->clients as $client )
         {
+
             foreach( $client['Client']['attributes'] as $attr)
             {
-                if ( isset($attr['network']) && $attr['network'])
+                if ( !empty($attr['network']) )
                 {
-                    foreach ( $attr['children'] as $child )
-                    {
+                    $bhpmDates = $this->iterateChildren($attr);
 
-                        //------------------------------------
-                        //TODO: add a deleted date on to attributes and then use the deleted date to decide if it should be included
-                        //------------------------------------
-                        if (isset($child['deleted']) && $child['deleted'])
-                        {
-                            continue;
-                        }
-
-                        if ( isset($child['live_date']) )
-                        {
-                            $bhpmDates[] = $child['live_date'];
-                        }
-                        else
-                        {
-                            $bhpmDates[] = '1970-01-01';
-                        }
-                    }
                 }
             }
         }
@@ -446,9 +458,8 @@ class BenchmarkWidget extends Widget {
         //find all the times whena  network comes live for the affected clients
         $bhpmDates = $this->getBHPMDates();
 
-
         $preslogSettings = Configure::read('Preslog');
-        $bhpm = $preslogSettings['Quantities']['BHPM'];
+        $bhpm = $preslogSettings['Quantities']['BHPM'];//730
         $bhpmTotal = 0;
 
         //find BHPM total before start of graph
