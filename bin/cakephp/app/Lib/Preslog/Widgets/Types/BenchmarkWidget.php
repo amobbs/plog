@@ -447,16 +447,12 @@ class BenchmarkWidget extends Widget {
                 {
                     $dates = $this->iterateChildren($attr);
                     foreach($dates as $d) {
-                        if (is_array($d)) {
-                            foreach($d as $d2) {
-                                $bhpmDates[] = $d2;
-                            }
-                        } else
-                            $bhpmDates[] = $d;
+                        $bhpmDates[] = $d;
                     }
                 }
             }
         }
+        dd($bhpmDates);
         return $bhpmDates;
     }
 
