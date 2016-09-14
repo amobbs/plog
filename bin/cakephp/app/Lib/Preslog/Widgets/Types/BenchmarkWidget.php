@@ -392,6 +392,8 @@ class BenchmarkWidget extends Widget {
         //find BHPM total before start of graph
         foreach( $bhpmDates as $bDate )
         {
+            if (is_array($bDate))
+                continue;
             if ( strtotime($bDate) < $date)
             {
                 $bhpmTotal += $bhpmHours;
@@ -426,9 +428,15 @@ class BenchmarkWidget extends Widget {
                 continue;
             }
             //else we add the date
-            if ( isset($child['live_date']) )
-                $dates[] = $child['live_date'];
-            else
+            if ( isset($child['live_date']) ) {
+                $liveDate = $child['live_date'];
+                if (is_array($liveDate))
+                    foreach($liveDate as $date) {
+                        $dates[] = $date;
+                    }
+                else
+                    $dates[] = $liveDate;
+            } else
                 $dates[] = '1970-01-01';
         }
         return $dates;
@@ -445,8 +453,9 @@ class BenchmarkWidget extends Widget {
             {
                 if ( !empty($attr['network']) )
                 {
-                    $bhpmDates = $this->iterateChildren($attr);
-
+                    foreach($this->iterateChildren($attr) as $d) {
+                        $bhpmDates[] = $d;
+                    }
                 }
             }
         }
@@ -465,6 +474,8 @@ class BenchmarkWidget extends Widget {
         //find BHPM total before start of graph
         foreach( $bhpmDates as $bDate )
         {
+            if (is_array($bDate))//this shouldn't occur
+                continue;
             if ( strtotime($bDate) < $dates[0])
             {
                 $bhpmTotal += $bhpm;
