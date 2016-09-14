@@ -445,7 +445,10 @@ class BenchmarkWidget extends Widget {
             {
                 if ( !empty($attr['network']) )
                 {
-                    $bhpmDates = $this->iterateChildren($attr);
+                    $dates = $this->iterateChildren($attr);
+                    foreach($dates as $k => $d) {
+                        $bhpmDates[] = $d;
+                    }
 
                 }
             }
