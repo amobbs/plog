@@ -452,7 +452,7 @@ class BenchmarkWidget extends Widget {
                 }
             }
         }
-        dd($bhpmDates);
+        die('<pre>' . print_r($bhpmDates, true) . '<pre>');
         return $bhpmDates;
     }
 
