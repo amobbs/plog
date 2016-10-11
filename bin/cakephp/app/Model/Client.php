@@ -532,4 +532,49 @@ class Client extends AppModel
         return $client;
     }
 
+    /**
+     * Finds all active services which are linked to this client. Does not keep the child
+     * hierachy, is a flat array.
+     * @param $client_id string
+     * @return array Network list
+     */
+    public function getActiveServices($client_id) {
+
+        $client = $this->findById($client_id);
+        $client = $client['Client'];
+
+
+        $networks = [];
+        foreach($client['attributes'] as $attr) {
+            if ($attr['name'] == 'networks') {
+                foreach($this->iterateChildren($attr) as $d) {
+                    $networks[] = $d;
+                }
+                break;
+            }
+        }
+        return $networks;
+    }
+
+    /**
+     * An internal function used to iterate over our arrays children.
+     * @param $attr
+     * @param array $networks
+     * @return array
+     */
+    private function iterateChildren($attr, &$networks = array()) {
+        foreach ( $attr['children'] as $child )  {
+            if (isset($child['deleted']) && $child['deleted']) {
+                continue;
+            }
+            //if it children, we skip it and keep going (it's a folder)
+            if ( !empty($child['children'])) {
+                $this->iterateChildren($child, $networks);
+                continue;
+            }
+            $networks[] = $child;
+        }
+        return $networks;
+    }
+
 }

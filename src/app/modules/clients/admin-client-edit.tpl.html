@@ -188,6 +188,14 @@
                         </div>
                     </div>
 
+                    <!-- Active Services -->
+                    <div class="control-group "  >
+                        <label class="control-label" for="inputDeleted">Active Services</label>
+                        <div class="controls">
+                            <p><strong ng-bind="client.stats.numServices"></strong></p>
+                        </div>
+                    </div>
+
                     <!-- Deleted - Only visible when the client has been removed -->
                     <div class="control-group alert alert-error" ng-show="{{client.deleted}}" ng-class="{error: clientForm.deleted.$invalid}">
                         <label class="control-label" for="inputDeleted">Deleted</label>
