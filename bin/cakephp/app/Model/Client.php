@@ -544,7 +544,7 @@ class Client extends AppModel
         $client = $client['Client'];
 
 
-        $networks = [];
+        $networks = array();
         foreach($client['attributes'] as $attr) {
             if ($attr['name'] == 'networks') {
                 foreach($this->iterateChildren($attr) as $d) {
