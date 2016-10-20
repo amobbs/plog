@@ -63,6 +63,10 @@ class ClientsController extends AppController
                     'client_id' => new MongoId($client['_id'])
                 )
             ));
+
+            // Get the number of services (networks)
+            $client['stats']['numServices'] = count($this->Client->getActiveServices(new MongoId($client['_id'])));
+
         }
 
         // Output
@@ -114,6 +118,9 @@ class ClientsController extends AppController
     {
         // Fetch user with all fields
         $client = $this->Client->findById( $id );
+
+        // Get the number of users
+        $client['Client']['stats']['numServices'] = count($this->Client->getActiveServices($id));
 
         // User must exist
         if (!$client)
