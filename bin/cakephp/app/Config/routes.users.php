@@ -150,6 +150,11 @@ Router::connect('/users/my-notifications',
     array('controller' => 'Users', 'action' => 'myNotificationsRead', '[method]' => 'GET')
 );
 
+Router::connect(
+    '/admin/clients/csv',
+    array('controller' => 'Clients', 'action' => 'adminListCSV', '[method]' => 'GET')
+);
+
 
 /**
  * Write My-Notifications

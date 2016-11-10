@@ -436,6 +436,82 @@ class UsersController extends AppController
         $this->set('_serialize', array_keys($return));
     }
 
+    public function adminListCSV() {
+        $users = $this->User->find('all', array(
+            'fields'=>array(
+                'firstName',
+                'lastName',
+                'role',
+                'email',
+                'client',
+            )
+        ));
+//
+
+        $out = fopen('php://output', 'w');
+
+        //put header
+        fputcsv($out, array(
+            'Name',
+            'Email',
+            'Role',
+            'Company',
+            'Notifications',
+        ));
+
+
+        foreach($users as $user) {
+            $id = $user['User']['_id'];
+            $user = $this->User->findById( $id );
+            $user = $user['User'];
+            if ($user['company'] != 'MediaHub' && $user['company'] != 'MHA') {
+                continue;
+            }
+            $row = array(
+                $user['firstName'] . ' ' . $user['lastName'],
+                $user['email'],
+                $user['role'],
+                $user['company'],
+            );
+            foreach($user['notifications']['clients'] as $clientNotif) {
+                if (empty($clientNotif['attributes']))
+                    continue;
+
+                $client = $this->Client->findById( $clientNotif['client_id'] );
+
+                $notifications = '[';
+                if ($clientNotif['methods']['email']) {
+                    $notifications .= 'email,';
+                }
+                if ($clientNotif['methods']['sms']) {
+                    $notifications .= 'sms,';
+                }
+                foreach($clientNotif['types'] as $k => $v) {
+                    $notifications .= $k . ',';
+                }
+                if (strlen($notifications) > 1) {
+                    $notifications = substr($notifications, 0, strlen($notifications)-1);
+                    $notifications = $client['Client']['shortName'] . ' ' . $notifications;
+                }
+                if (strlen($notifications) > 1) {
+                    $notifications .= ']';
+                    $row[] = $notifications;
+                }
+            }
+
+            fputcsv($out, $row);
+        }
+        header("Content-Type: text/csv");
+        header("Content-Disposition: attachment; filename=file.csv");
+// Disable caching
+        header("Cache-Control: no-cache, no-store, must-revalidate"); // HTTP 1.1
+        header("Pragma: no-cache"); // HTTP 1.0
+        header("Expires: 0"); // Proxies
+        fclose($out);
+        die;
+
+
+    }
 
     /**
      * List all users with partial details
