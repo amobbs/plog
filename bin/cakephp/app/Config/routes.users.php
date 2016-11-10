@@ -152,7 +152,7 @@ Router::connect('/users/my-notifications',
 
 Router::connect(
     '/admin/clients/csv',
-    array('controller' => 'Clients', 'action' => 'adminListCSV', '[method]' => 'GET')
+    array('controller' => 'Users', 'action' => 'adminListCSV', '[method]' => 'GET')
 );
 
 
