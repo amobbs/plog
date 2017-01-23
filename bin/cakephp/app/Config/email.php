@@ -34,10 +34,10 @@ class EmailConfig {
     public $development = array(
         'transport' => 'Smtp',
         'from' => array('preslog@mediahub.tv' => 'Mediahub Preslog'),
-        'host' => 'ssl://smtp.gmail.com',
+        'host' => '',
         'port' => 465,
         'timeout' => 30,
-        'username' => '@4mation.com.au',
+        'username' => '',
         'password' => '',
         'log' => false,
         'charset' => 'utf-8',
