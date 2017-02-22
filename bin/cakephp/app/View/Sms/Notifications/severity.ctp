@@ -29,9 +29,9 @@ $out[] = ($field ? current($field->convertToFields()) : '');
 
 
 // Date/Time
-$field = $log->getFieldByName('created');
+$field = $log->getFieldByName('datetime');
 $created = $field->convertToFields();
-$out[] = ((isset($created['Created']) && !empty($created['Created'])) ? $created['Created'] : '');
+$out[] = ((isset($created['DateTime']) && !empty($created['DateTime'])) ? $created['DateTime'] : '');
 
 
 // Duration

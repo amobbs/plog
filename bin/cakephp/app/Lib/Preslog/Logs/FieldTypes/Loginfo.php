@@ -162,6 +162,7 @@ class Loginfo extends FieldTypeAbstract
         $version = (!isset($this->data['data']['version']) ? '0' : $this->data['data']['version']);
 
         return array(
+            'DateTime' => date('d/m/Y H:i:s', strtotime($this->data['data']['datetime'])),
             'Created' => date('d/m/Y H:i:s', strtotime($this->data['data']['created'])),
             'Created By' => $cUser,
             'Modified' => date('d/m/Y H:i:s', strtotime($this->data['data']['modified'])),
