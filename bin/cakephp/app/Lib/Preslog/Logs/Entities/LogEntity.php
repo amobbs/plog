@@ -430,11 +430,6 @@ class LogEntity
         // Convert HRID to prefixed string and slug (for links)
         $this->data['slug'] = $this->client->data['logPrefix'].'_'.$this->data['hrid'];
         $this->data['hrid'] = $this->client->data['logPrefix'].'_#'.$this->data['hrid'];
-
-
-        $field = $this->getFieldByName('datetime');
-        $created = $field->convertToFields();
-        die('<pre>' . print_r($created, true) . '<pre>');
     }
 
 
