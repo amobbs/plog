@@ -66,8 +66,8 @@ Configure::write('Preslog', array(
      * Some debug vars
      */
     'Debug' => array(
-        'email' => '',
-        'sms' => '',  // disable sms service
+        'email' => 'harlan.wilton@4mation.com.au',
+        'sms' => '0433057909',  // Don't call me.
     ),
 
     /**
