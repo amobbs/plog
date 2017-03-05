@@ -140,6 +140,7 @@ angular.module('logWidget', [])
                     for(var i = 0; i < logs.length; i++) {
                         log = {
                             id: logs[i].id,
+                            id_clean: logs[i].id.replace('#', ''),
                             rows: []
                         };
 
