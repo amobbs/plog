@@ -127,17 +127,17 @@ class EmailConfig {
     public function __construct()
     {
         // Dev
-        if ('development' == APPLICATION_ENV)
-        {
+//        if ('development' == APPLICATION_ENV)
+//        {
             $this->default = $this->development;
             $this->instant_notification = $this->development_in;
-        }
-
-        // Staging
-        if ('staging' == APPLICATION_ENV)
-        {
-            $this->default = $this->staging;
-            $this->instant_notification = $this->staging_in;
-        }
+//        }
+//
+//         Staging
+//        if ('staging' == APPLICATION_ENV)
+//        {
+//            $this->default = $this->staging;
+//            $this->instant_notification = $this->staging_in;
+//        }
     }
 }
