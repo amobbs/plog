@@ -236,6 +236,7 @@ class LogNotificationComponent extends Component
         // Abort if no interested parties
         if (!sizeof($list))
         {
+            $this->logger->info('SMS is not sending since no users have these notifications selected.');
             return;
         }
 
@@ -260,11 +261,40 @@ class LogNotificationComponent extends Component
             urlencode($message)
         );
 
+        $this->logger->info('Sending SMS request sent: ' . $url);
         // Send SMS
-        $response = file_get_contents($url);
 
-        $this->logger->info('SMS request sent: ' . $url . ' -- response: ' . $response);
-        return;
+        $ch = curl_init($url);
+
+        $response = curl_exec($ch);
+        $failed = curl_errno($ch) != false;
+        $info = curl_getinfo($ch);
+        curl_close($ch);
+
+        // Response should contain an 'OK'
+        if (strpos($response, 'OK') === false) {
+            $failed = true;
+        }
+
+        // In the event it fails we send an email notification
+        if ($failed) {
+            $this->logger->error('SMS request failed to send.' . PHP_EOL . 'Response: ' . json_encode($info));
+
+            $Email = new CakeEmail();
+            $Email->config('default')
+                ->subject('SMS Has failed to send')
+                ->emailFormat('html')
+                ->to(array(
+                    'letigre@4mation.com.au',
+                    'derek.curtis@mediahub.tv'
+                ))
+                ->send($message);
+
+            return false;
+        }
+
+        $this->logger->info('SMS request sent. ' . PHP_EOL . 'Response: ' . json_encode($response));
+        return true;
     }
 
 

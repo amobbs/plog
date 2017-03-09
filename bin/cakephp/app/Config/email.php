@@ -133,11 +133,10 @@ class EmailConfig {
             $this->instant_notification = $this->development_in;
         }
 
-        // Staging
+//         Staging
         if ('staging' == APPLICATION_ENV)
         {
-            $this->default = $this->staging;
-            $this->instant_notification = $this->staging_in;
+            // Take defaults
         }
     }
 }
