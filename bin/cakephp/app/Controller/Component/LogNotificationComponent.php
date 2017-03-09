@@ -280,18 +280,15 @@ class LogNotificationComponent extends Component
         if ($failed) {
             $this->logger->error('SMS request failed to send.' . PHP_EOL . 'Response: ' . json_encode($info));
 
-            $content = $message;
             $Email = new CakeEmail();
-            $Email->config('development')
-                ->subject('\'SMS Has failed to send\' ')
-                ->template('default')
-                ->viewVars(compact('content'))
+            $Email->config('default')
+                ->subject('SMS Has failed to send')
                 ->emailFormat('html')
                 ->to(array(
                     'letigre@4mation.com.au',
                     'derek.curtis@mediahub.tv'
                 ))
-                ->send();
+                ->send($message);
 
             return false;
         }
