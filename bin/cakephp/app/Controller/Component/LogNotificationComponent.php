@@ -293,7 +293,7 @@ class LogNotificationComponent extends Component
                     'letigre@4mation.com.au',
                     'derek.curtis@mediahub.tv'
                 ))
-                ->send($message . $failed);
+                ->send($message . $errorString);
 
             return false;
         }
