@@ -265,6 +265,9 @@ class LogNotificationComponent extends Component
         // Send SMS
 
         $ch = curl_init($url);
+        // make sure we are getting the response as the return value
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 60);
 
         $response = curl_exec($ch);
         $failed = curl_errno($ch) != false;
@@ -272,13 +275,15 @@ class LogNotificationComponent extends Component
         curl_close($ch);
 
         // Response should contain an 'OK'
-        if (strpos($response, 'OK') === false) {
+        if ($response === false || strpos($response, 'OK') === false) {
             $failed = true;
         }
 
         // In the event it fails we send an email notification
         if ($failed) {
-            $this->logger->error('SMS request failed to send.' . PHP_EOL . 'Response: ' . json_encode($info));
+            $errorString =  PHP_EOL . 'Response: ' . json_encode($info) . PHP_EOL . 'Body: ' . json_encode($response);
+
+            $this->logger->error('SMS request failed to send.' . $errorString);
 
             $Email = new CakeEmail();
             $Email->config('default')
@@ -288,7 +293,7 @@ class LogNotificationComponent extends Component
                     'letigre@4mation.com.au',
                     'derek.curtis@mediahub.tv'
                 ))
-                ->send($message);
+                ->send($message . $failed);
 
             return false;
         }
