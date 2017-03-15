@@ -275,7 +275,7 @@ class LogNotificationComponent extends Component
         curl_close($ch);
 
         // Response should contain an 'OK'
-        if ($response === false || strpos($response, 'OK') === false) {
+        if ($response === false || strpos($response, 'SENT') === false) {
             $failed = true;
         }
 
