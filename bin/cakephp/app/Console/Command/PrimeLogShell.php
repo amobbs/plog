@@ -1,15 +1,98 @@
 <?php
 
+App::uses('SearchController', 'Controller');
+App::uses('PreslogAuthComponent', 'Controller/Component');
 
 use \PHPExcel;
+use Preslog\Logs\Entities\LogEntity;
 
-class ExcelTestShell extends AppShell {
+class PrimeLogShell extends AppShell {
+
+    public $uses = array('Log', 'Client', 'User');
+
+    protected function executeSearch($query)
+    {
+        $results = $this->Log->findByQuery($query,true);
+        // Error on query failure
+        if ( isset($results['ok']) && !$results['ok'] )
+        {
+            return array(
+                'query' => $query,
+                'errors' => $results['errors'],
+            );
+        }
+        // Get size of query results
+        $clients = array();
+        //loop results for client, created by users and any other info we will need to grab for display
+        foreach ($results as $k=>$result)
+        {
+            // Collate the list of clients for fetching the field format
+            $clients[] = $result['Log']['client_id'];
+        }
+
+        //list all fields that we can use to sort these logs
+        $allFieldNames = array();
+
+        //loop through the logs again and reformat them for display
+        $logs = array();
+        foreach ($results as $k=>$rawLog) {
+
+            // Fetch client entity
+            $clientModel = ClassRegistry::init('Client');
+            $clientEntity = $clientModel->getClientEntityById( $rawLog['Log']['client_id'] );
+
+            // Skip clients that don't load
+            if ( !$clientEntity )
+            {
+                continue;
+            }
+
+            // Load the log schema by the client
+            $log = new LogEntity();
+            $log->setDataSource( $this->Log->getDataSource() );
+            $log->setClientEntity($clientEntity);
+
+            // Interpret the log data to be saved
+            $log->fromArray( $rawLog['Log'] );
+
+            // Generate fields list
+            $fields = $log->toDisplay();
+
+            // New field list per log
+            $fieldList = array();
+
+            // Track all field names
+            foreach ($fields as $key=>$value)
+            {
+                if ( ! $clientEntity->isAttributeLabel($key))
+                {
+                    // Track field names
+                    $allFieldNames[$key] = true;
+                }
+
+                // Convert to arrangement the client is expecting
+                $logData = array(
+                    'title'=>$key,
+                    'value'=>$value,
+                );
+
+                // Put to field list
+                $fieldList[] = $logData;
+            }
+
+            // Put to log list
+            $logs[] = array(
+                'id' => $rawLog['Log']['hrid'],
+                'attributes'=>$fieldList
+            );
+
+        }
+
+        // Return the Results and the corresponding Client opts
+        return $logs;
+    }
 
     public function main() {
-
-        $this->loadModel('Log');
-        $this->loadModel('Client');
-        $this->loadModel('User');
 
         error_reporting(E_ALL);
         ini_set('display_errors', TRUE);
@@ -36,8 +119,10 @@ class ExcelTestShell extends AppShell {
         foreach(range('A', 'Z') as $column_id){
             if(in_array($column_id, array('G', 'H', 'I', 'J', 'K'))){
                 $sheet->getColumnDimension($column_id)->setWidth('40');
-            }else{
-                $sheet->getColumnDimension($column_id)->setAutoSize(ture);
+            } else if (in_array($column_id, array('A'))){
+                $sheet->getColumnDimension($column_id)->setWidth('20');
+            } else {
+                $sheet->getColumnDimension($column_id)->setWidth('30');
             }
 
             if(in_array($column_id, range('A', 'K'))){
@@ -129,6 +214,27 @@ class ExcelTestShell extends AppShell {
 
         $sheet->mergeCells('J1:K2');
 
+        $DateTime = new DateTime('now');
+        $yesterday = $DateTime->modify('-100 Day')->format('Y-m-d');
+
+        $logs = $this->executeSearch('created > ' . $yesterday . '', true);
+
+        $logCount = 3;
+        foreach($logs as $log){
+            $logCount ++;
+            $sheet->setCellValue('A'.$logCount, $log['attributes'][0]['value']);
+            $sheet->setCellValue('B'.$logCount, $log['attributes'][7]['value']);
+            $sheet->setCellValue('C'.$logCount, $log['attributes'][18]['value']);
+            $sheet->setCellValue('D'.$logCount, $log['attributes'][8]['value']);
+            $sheet->setCellValue('E'.$logCount, $log['attributes'][13]['value']);
+            $sheet->setCellValue('F'.$logCount, $log['attributes'][9]['value']);
+            $sheet->setCellValue('G'.$logCount, $log['attributes'][20]['value']);
+            $sheet->setCellValue('H'.$logCount, $log['attributes'][12]['value']);
+            $sheet->setCellValue('I'.$logCount, $log['attributes'][15]['value']);
+            $sheet->setCellValue('J'.$logCount, $log['attributes'][16]['value']);
+            $sheet->setCellValue('K'.$logCount, $log['attributes'][17]['value']);
+        }
+
 // Rename worksheet
         echo date('H:i:s') , " Rename worksheet" , EOL;
         $objPHPExcel->getActiveSheet()->setTitle('Simple');
@@ -162,4 +268,6 @@ class ExcelTestShell extends AppShell {
         echo date('H:i:s') , " Done writing files" , EOL;
         echo 'Files have been created in ' , getcwd() , EOL;
     }
+
+
 }
