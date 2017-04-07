@@ -275,7 +275,7 @@ class Client extends AppModel
             $client = new ClientEntity();
             $client->setFieldTypes( Configure::read('Preslog.Fields') );
             $client->setDataSource( $this->getDataSource() );
-            if(php_sapi_name() == 'cli'){
+            if(!isCli()){
                 $client->setUser( PreslogAuthComponent::getInstance()->user());
             }
             // Load as a doc
@@ -505,7 +505,7 @@ class Client extends AppModel
         // Prep client object
         $client = new ClientEntity;
         $client->setDataSource( $this->getDataSource() );
-        if(php_sapi_name() == 'cli'){
+        if(!isCli()){
             $client->setUser( PreslogAuthComponent::getInstance()->user());
         }
         $client->setFieldTypes( Configure::read('Preslog.Fields') );

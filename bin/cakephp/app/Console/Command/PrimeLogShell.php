@@ -10,7 +10,12 @@ use Preslog\Logs\Entities\LogEntity;
 class PrimeLogShell extends AppShell {
 
     public $uses = array('Log', 'Client', 'User');
-
+    CONST CLIENT_NAME = 'PRIME';
+    //ToDo: Awaiting emails form Rudra
+    CONST FROM_EMAIL = 'mohammed.fahad@4amtion.com.au';
+    CONST TO_EMAIL = 'mohammed.fahad@4amtion.com.au';
+    //ToDo: Change to 1 day before deployment
+    CONST LOG_PERIOD = '-2 Day';
     /**
      * Find logs for PRIME withing query time.
      * @param $query  - period of logs.
@@ -23,7 +28,7 @@ class PrimeLogShell extends AppShell {
         $clientObjs = $clientModel->find('all',
             array(
                 'conditions' => array(
-                    'name' => "PRIME"
+                    'name' => self::CLIENT_NAME
                 )
             ));
         $clients = array();
@@ -58,7 +63,6 @@ class PrimeLogShell extends AppShell {
         foreach ($results as $k=>$rawLog) {
 
             // Fetch client entity
-            $clientModel = ClassRegistry::init('Client');
             $clientEntity = $clientModel->getClientEntityById( $rawLog['Log']['client_id'] );
 
             // Skip clients that don't load
@@ -113,19 +117,16 @@ class PrimeLogShell extends AppShell {
     }
 
     public function main() {
-
-        date_default_timezone_set('Australia/Sydney');
         define('EOL',(PHP_SAPI == 'cli') ? PHP_EOL : '<br />');
         $objPHPExcel = new PHPExcel();
         // Set document properties
-        echo date('H:i:s') , " Set document properties" , EOL;
         $objPHPExcel->getProperties()->setCreator("Preslog")
             ->setLastModifiedBy("Preslog")
-            ->setTitle("PHPExcel")
-            ->setSubject("PHPExcel")
-            ->setDescription("Test document for PHPExcel, generated using PHP classes.")
+            ->setTitle("Logs")
+            ->setSubject("Prime Logs")
+            ->setDescription("Logs document generated for PRIME")
             ->setKeywords("office PHPExcel php")
-            ->setCategory("Test result file");
+            ->setCategory("logs");
 
         $sheet = $objPHPExcel->getActiveSheet();
 
@@ -215,11 +216,11 @@ class PrimeLogShell extends AppShell {
 
         //static cells for headers.
         $sheet->mergeCells('A1:B1');
-        $sheet->setCellValue('A1','Wednesday');
+        $sheet->setCellValue('A1',date('l'));
         $sheet->getStyle('A1')->getAlignment()->applyFromArray(
             array('horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_RIGHT)
         );
-        $sheet->setCellValue('C1', '03/22/2017');
+        $sheet->setCellValue('C1', date('d/m/Y'));
         $sheet->mergeCells('G1:I1');
         $sheet->setCellValue('G1','PRIME TELEVISION ON-AIR REPORT');
         $sheet->mergeCells('L1:T2');
@@ -249,10 +250,9 @@ class PrimeLogShell extends AppShell {
         $sheet->setCellValue('T3', 'Department Comments');
         $sheet->mergeCells('J1:K2');
 
-        //TODO: define the period the excel file will generate for.
+        //ToDo: define the period the excel file will generate for.
         $DateTime = new DateTime('now');
-        $yesterday = $DateTime->modify('-100 Day')->format('Y-m-d');
-
+        $yesterday = $DateTime->modify(self::LOG_PERIOD)->format('Y-m-d');
         $logs = $this->findPrimeLogs('created > ' . $yesterday . '', true);
         //Log count set to three since 1st 3 rows are booked for Static cell
         $logCount = 3;
@@ -262,7 +262,6 @@ class PrimeLogShell extends AppShell {
             $logCount ++;
             foreach($log['attributes'] as $attribute){
                 switch ($attribute['title']){
-
                     case 'ID':
                         $sheet->setCellValue('A'.$logCount, $attribute['value']);
                         break;
@@ -270,6 +269,23 @@ class PrimeLogShell extends AppShell {
                         $sheet->setCellValue('B'.$logCount, $attribute['value']);
                         break;
                     case 'Severity:':
+
+                        if($attribute['value'] == 'Level 1 - OUTAGE Over 10 seconds'){
+                            $sheet->getStyle('A'.$logCount.':K'.$logCount)->applyFromArray(array(
+                                'fill' => array(
+                                    'type' => PHPExcel_Style_Fill::FILL_SOLID,
+                                    'color' => array('rgb' => 'FF0000')
+                                )
+                            ));
+                        }
+                        if($attribute['value'] == 'Level 1 - CAPTION OUTAGE'){
+                            $sheet->getStyle('A'.$logCount.':K'.$logCount)->applyFromArray(array(
+                                'fill' => array(
+                                    'type' => PHPExcel_Style_Fill::FILL_SOLID,
+                                    'color' => array('rgb' => '7030A0')
+                                )
+                            ));
+                        }
                         $sheet->setCellValue('C'.$logCount, $attribute['value']);
                         break;
                     case 'Duration:':
@@ -303,33 +319,25 @@ class PrimeLogShell extends AppShell {
         $objPHPExcel->getActiveSheet()->setTitle('Logs');
         $objPHPExcel->setActiveSheetIndex(0);
 
-        // Save Excel 2007 file
-        //TODO: Waiting for Rudra to confirm the file name
-        echo date('H:i:s') , " Write to Excel2007 format" , EOL;
-        $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
-        $path = getcwd()."\\Command\\excelfile\\prime.xlsx";
-        $objWriter->save($path);
-
         // Save Excel5 file
-        //TODO: Waiting for Rudra to confirm the file name
+        //ToDo: Waiting for Rudra to confirm the file name
         $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
-        $path = getcwd()."\\Command\\excelfile\\prime.xls";
+        $path = dirname(getcwd())."\\tmp\\excelfile\\prime.xls";
         $objWriter->save($path);
 
-        //TODO: Update Email when email details are provided by Rudra
+        //ToDo: Update Email when email details are provided by Rudra
         $Email = new CakeEmail();
         $Email->config('default')
-            ->subject('Prime Logs')
+            ->subject('Prime Report '.date("d/m/Y"))
             ->template('prime-log-email')
             ->emailFormat('html')
-            ->from('mohammed.fahad@4mation.com.au')
-            ->to('mohammed.fahad@4mation.com.au')
+            ->from(self::FROM_EMAIL)
+            ->to(self::TO_EMAIL)
             ->attachments(array(
                 'prime.xls' => array(
-                    'file' =>  getcwd()."\\Command\\excelfile\\prime.xls",
+                    'file' =>  dirname(getcwd())."\\tmp\\excelfile\\prime.xls",
                     'mimetype' => 'application/vnd.ms-excel'
                 )))
             ->send();
     }
-
 }
