@@ -21,7 +21,7 @@ class PrimeLogShell extends AppShell {
      * @param $query  - period of logs.
      * @return array
      */
-    protected function findPrimeLogs($query)
+    protected function findLogs($query)
     {
         //Get only PRIME
         $clientModel = ClassRegistry::init('Client');
@@ -117,14 +117,14 @@ class PrimeLogShell extends AppShell {
     }
 
     public function main() {
-        define('EOL',(PHP_SAPI == 'cli') ? PHP_EOL : '<br />');
+        define('EOL',(isCli()) ? PHP_EOL : '<br />');
         $objPHPExcel = new PHPExcel();
         // Set document properties
         $objPHPExcel->getProperties()->setCreator("Preslog")
             ->setLastModifiedBy("Preslog")
             ->setTitle("Logs")
-            ->setSubject("Prime Logs")
-            ->setDescription("Logs document generated for PRIME")
+            ->setSubject(self::CLIENT_NAME." Logs")
+            ->setDescription("Logs document generated for ".self::CLIENT_NAME)
             ->setKeywords("office PHPExcel php")
             ->setCategory("logs");
 
@@ -222,7 +222,7 @@ class PrimeLogShell extends AppShell {
         );
         $sheet->setCellValue('C1', date('d/m/Y'));
         $sheet->mergeCells('G1:I1');
-        $sheet->setCellValue('G1','PRIME TELEVISION ON-AIR REPORT');
+        $sheet->setCellValue('G1',self::CLIENT_NAME.' TELEVISION ON-AIR REPORT');
         $sheet->mergeCells('L1:T2');
         $sheet->setCellValue('L1','ASSIGNMENTS AND NOTIFICATIONS');
         $sheet->setCellValue('G2','OFF-AIR');
@@ -252,7 +252,7 @@ class PrimeLogShell extends AppShell {
 
         $DateTime = new DateTime('now');
         $yesterday = $DateTime->modify(self::LOG_PERIOD)->format('Y-m-d');
-        $logs = $this->findPrimeLogs('created > ' . $yesterday . '', true);
+        $logs = $this->findLogs('created > ' . $yesterday . '', true);
         //Log count set to three since 1st 3 rows are booked for Static cell
         $logCount = 3;
 
@@ -321,20 +321,20 @@ class PrimeLogShell extends AppShell {
         // Save Excel5 file
         $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
         $today_date = date(self::TODAY_FORMAT);
-        $path = dirname(getcwd()).'\\tmp\\excelfile\\Prime_MediaHub_Preslog_Report_'.$today_date.'.xls';
+        $path = dirname(getcwd()).'\\tmp\\excelfile\\'.self::CLIENT_NAME.'_MediaHub_Preslog_Report_'.$today_date.'.xls';
         $objWriter->save($path);
 
         $Email = new CakeEmail();
         $Email->config('default')
-            ->subject('Prime MediaHub Preslog Report '.$today_date)
+            ->subject(self::CLIENT_NAME.' MediaHub Preslog Report '.$today_date)
             ->template('prime-log-email')
             ->emailFormat('html')
             ->viewVars(compact('today_date'))
             ->from(self::FROM_EMAIL)
             ->to(self::TO_EMAIL)
             ->attachments(array(
-                'Prime_MediaHub_Preslog_Report_'.$today_date.'.xls' => array(
-                    'file' =>  dirname(getcwd()).'\\tmp\\excelfile\\Prime_MediaHub_Preslog_Report_'.$today_date.'.xls',
+                self::CLIENT_NAME.'_MediaHub_Preslog_Report_'.$today_date.'.xls' => array(
+                    'file' =>  dirname(getcwd()).'\\tmp\\excelfile\\'.self::CLIENT_NAME.'_MediaHub_Preslog_Report_'.$today_date.'.xls',
                     'mimetype' => 'application/vnd.ms-excel'
                 )))
             ->send();
