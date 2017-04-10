@@ -14,8 +14,8 @@ class PrimeLogShell extends AppShell {
     //ToDo: Awaiting emails form Rudra
     CONST FROM_EMAIL = 'mohammed.fahad@4amtion.com.au';
     CONST TO_EMAIL = 'mohammed.fahad@4amtion.com.au';
-    //ToDo: Change to 1 day before deployment
-    CONST LOG_PERIOD = '-2 Day';
+    CONST LOG_PERIOD = '-1 Day';
+    CONST TODAY_FORMAT = 'dmY';
     /**
      * Find logs for PRIME withing query time.
      * @param $query  - period of logs.
@@ -250,7 +250,6 @@ class PrimeLogShell extends AppShell {
         $sheet->setCellValue('T3', 'Department Comments');
         $sheet->mergeCells('J1:K2');
 
-        //ToDo: define the period the excel file will generate for.
         $DateTime = new DateTime('now');
         $yesterday = $DateTime->modify(self::LOG_PERIOD)->format('Y-m-d');
         $logs = $this->findPrimeLogs('created > ' . $yesterday . '', true);
@@ -320,22 +319,22 @@ class PrimeLogShell extends AppShell {
         $objPHPExcel->setActiveSheetIndex(0);
 
         // Save Excel5 file
-        //ToDo: Waiting for Rudra to confirm the file name
         $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
-        $path = dirname(getcwd())."\\tmp\\excelfile\\prime.xls";
+        $today_date = date(self::TODAY_FORMAT);
+        $path = dirname(getcwd()).'\\tmp\\excelfile\\Prime_MediaHub_Preslog_Report_'.$today_date.'.xls';
         $objWriter->save($path);
 
-        //ToDo: Update Email when email details are provided by Rudra
         $Email = new CakeEmail();
         $Email->config('default')
-            ->subject('Prime Report '.date("d/m/Y"))
+            ->subject('Prime MediaHub Preslog Report '.$today_date)
             ->template('prime-log-email')
             ->emailFormat('html')
+            ->viewVars(compact('today_date'))
             ->from(self::FROM_EMAIL)
             ->to(self::TO_EMAIL)
             ->attachments(array(
                 'prime.xls' => array(
-                    'file' =>  dirname(getcwd())."\\tmp\\excelfile\\prime.xls",
+                    'file' =>  dirname(getcwd()).'\\tmp\\excelfile\\Prime_MediaHub_Preslog_Report_'.$today_date.'.xls',
                     'mimetype' => 'application/vnd.ms-excel'
                 )))
             ->send();
