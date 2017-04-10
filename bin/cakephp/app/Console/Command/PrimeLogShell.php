@@ -333,7 +333,7 @@ class PrimeLogShell extends AppShell {
             ->from(self::FROM_EMAIL)
             ->to(self::TO_EMAIL)
             ->attachments(array(
-                'prime.xls' => array(
+                'Prime_MediaHub_Preslog_Report_'.$today_date.'.xls' => array(
                     'file' =>  dirname(getcwd()).'\\tmp\\excelfile\\Prime_MediaHub_Preslog_Report_'.$today_date.'.xls',
                     'mimetype' => 'application/vnd.ms-excel'
                 )))
