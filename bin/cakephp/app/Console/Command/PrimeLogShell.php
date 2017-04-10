@@ -321,7 +321,7 @@ class PrimeLogShell extends AppShell {
         // Save Excel5 file
         $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
         $today_date = date(self::TODAY_FORMAT);
-        $path = dirname(getcwd()).'\\tmp\\excelfile\\'.self::CLIENT_NAME.'_MediaHub_Preslog_Report_'.$today_date.'.xls';
+        $path = dirname(getcwd()).DIRECTORY_SEPARATOR.'tmp'.DIRECTORY_SEPARATOR.'excelfile'.DIRECTORY_SEPARATOR.self::CLIENT_NAME.'_MediaHub_Preslog_Report_'.$today_date.'.xls';
         $objWriter->save($path);
 
         $Email = new CakeEmail();
@@ -334,7 +334,7 @@ class PrimeLogShell extends AppShell {
             ->to(self::TO_EMAIL)
             ->attachments(array(
                 self::CLIENT_NAME.'_MediaHub_Preslog_Report_'.$today_date.'.xls' => array(
-                    'file' =>  dirname(getcwd()).'\\tmp\\excelfile\\'.self::CLIENT_NAME.'_MediaHub_Preslog_Report_'.$today_date.'.xls',
+                    'file' =>  dirname(getcwd()).DIRECTORY_SEPARATOR.'tmp'.DIRECTORY_SEPARATOR.'excelfile'.DIRECTORY_SEPARATOR.self::CLIENT_NAME.'_MediaHub_Preslog_Report_'.$today_date.'.xls',
                     'mimetype' => 'application/vnd.ms-excel'
                 )))
             ->send();
