@@ -12,8 +12,7 @@ class PrimeLogShell extends AppShell {
     public $uses = array('Log', 'Client', 'User');
     CONST CLIENT_NAME = 'PRIME';
     //ToDo: Awaiting emails form Rudra
-    CONST FROM_EMAIL = 'seniorsups@mediahubaustralia.com.au';
-    CONST TO_EMAIL = 'mohammed.fahad@4amtion.com.au';
+    CONST TO_EMAIL = 'Derek.Curtis@mediahub.tv';
     CONST LOG_PERIOD = '-1 Day';
     CONST TODAY_FORMAT = 'dmY';
     /**
@@ -330,8 +329,8 @@ class PrimeLogShell extends AppShell {
             ->template('prime-log-email')
             ->emailFormat('html')
             ->viewVars(compact('today_date'))
-            ->from(self::FROM_EMAIL)
             ->to(self::TO_EMAIL)
+            ->cc('letigre@4mation.com.au')
             ->attachments(array(
                 self::CLIENT_NAME.'_MediaHub_Preslog_Report_'.$today_date.'.xls' => array(
                     'file' =>  dirname(getcwd()).DIRECTORY_SEPARATOR.'tmp'.DIRECTORY_SEPARATOR.'excelfile'.DIRECTORY_SEPARATOR.self::CLIENT_NAME.'_MediaHub_Preslog_Report_'.$today_date.'.xls',
