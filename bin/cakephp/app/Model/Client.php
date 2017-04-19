@@ -9,7 +9,6 @@ use Preslog\Logs\Entities\ClientEntity;
 App::uses('AppModel', 'Model');
 App::uses('Client', 'Model');
 
-
 class Client extends AppModel
 {
     public $name = "Client";
@@ -276,8 +275,9 @@ class Client extends AppModel
             $client = new ClientEntity();
             $client->setFieldTypes( Configure::read('Preslog.Fields') );
             $client->setDataSource( $this->getDataSource() );
-            $client->setUser( PreslogAuthComponent::getInstance()->user() );
-
+            if(!isCli()){
+                $client->setUser( PreslogAuthComponent::getInstance()->user());
+            }
             // Load as a doc
             $client->fromDocument($result[ $this->name ]);
 
@@ -505,7 +505,9 @@ class Client extends AppModel
         // Prep client object
         $client = new ClientEntity;
         $client->setDataSource( $this->getDataSource() );
-        $client->setUser( PreslogAuthComponent::getInstance()->user() );
+        if(!isCli()){
+            $client->setUser( PreslogAuthComponent::getInstance()->user());
+        }
         $client->setFieldTypes( Configure::read('Preslog.Fields') );
 
         // Find the client in the DB

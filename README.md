@@ -35,8 +35,9 @@ $ mongorestore -d preslog ./
 $ npm install -g grunt-cli bower karma
 $ npm install
 $ bower install
-$ grunt watch
+$ grunt -f
 ```
+grunt watch doesn't work
 
 3.  If we're still using angular-placeholders, you may need to also:
 ```sh

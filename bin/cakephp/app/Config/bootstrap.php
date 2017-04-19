@@ -159,3 +159,14 @@ require APP.'/Config/email.php';
 
 //log4php
 Logger::configure(APP .'/Config/config.xml');
+
+/**
+ * Check if the function is called from CLI (SHELL)
+ * @return boolean  return true if is called from CLI else return false
+ */
+function isCli(){
+    if(php_sapi_name() != 'cli'){
+       return false;
+    }
+    return true;
+}

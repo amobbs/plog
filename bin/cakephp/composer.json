@@ -38,7 +38,9 @@
         "zircote/swagger-php": "dev-master",
         "phpword/phpword": "*",
 		"HighchartsPHP": "master",
-        "apache/log4php": "master"
+        "apache/log4php": "master",
+        "phpoffice/phpexcel": "^1.8"
+
     },
     "config": {
         "vendor-dir": "Vendor/"
