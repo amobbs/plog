@@ -192,7 +192,7 @@ class PrimeLogShell extends AppShell {
         $sheet->getStyle('G2')->applyFromArray(array(
             'fill' => array(
                 'type' => PHPExcel_Style_Fill::FILL_SOLID,
-                'color' => array('rgb' => 'FF0000')
+                'color' => array('rgb' => 'FF8080')
             )
         ));
         $sheet->getStyle('H2')->applyFromArray(array(
@@ -208,6 +208,8 @@ class PrimeLogShell extends AppShell {
             )
         ));
 
+        //set wrap text for all rows
+        $sheet->getDefaultStyle()->getAlignment()->setWrapText(true);
         //set fixed size for 1st three rows
         foreach(range(1,3) as $row_id){
             $sheet->getRowDimension($row_id)->setRowHeight('25');
@@ -272,7 +274,7 @@ class PrimeLogShell extends AppShell {
                             $sheet->getStyle('A'.$logCount.':K'.$logCount)->applyFromArray(array(
                                 'fill' => array(
                                     'type' => PHPExcel_Style_Fill::FILL_SOLID,
-                                    'color' => array('rgb' => 'FF0000')
+                                    'color' => array('rgb' => 'FF8080')
                                 )
                             ));
                         }
