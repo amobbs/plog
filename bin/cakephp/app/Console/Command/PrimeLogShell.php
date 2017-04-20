@@ -11,7 +11,6 @@ class PrimeLogShell extends AppShell {
 
     public $uses = array('Log', 'Client', 'User');
     CONST CLIENT_NAME = 'PRIME';
-    //ToDo: Awaiting emails form Rudra
     CONST TO_EMAIL = 'PrimeDailyReport@mediahubaustralia.com.au';
     CONST LOG_PERIOD = '-1 Day';
     CONST TODAY_FORMAT = 'dmY';
