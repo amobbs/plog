@@ -277,6 +277,16 @@ class PrimeLogShell extends AppShell {
                                 )
                             ));
                         }
+
+                        if($attribute['value'] == 'Level 2 - OUTAGE Under 10 seconds'){
+                            $sheet->getStyle('A'.$logCount.':K'.$logCount)->applyFromArray(array(
+                                'fill' => array(
+                                    'type' => PHPExcel_Style_Fill::FILL_SOLID,
+                                    'color' => array('rgb' => 'FF8080')
+                                )
+                            ));
+                        }
+
                         if($attribute['value'] == 'Level 1 - CAPTION OUTAGE'){
                             $sheet->getStyle('A'.$logCount.':K'.$logCount)->applyFromArray(array(
                                 'fill' => array(
