@@ -11,8 +11,7 @@ class PrimeLogShell extends AppShell {
 
     public $uses = array('Log', 'Client', 'User');
     CONST CLIENT_NAME = 'PRIME';
-    //ToDo: Awaiting emails form Rudra
-    CONST TO_EMAIL = 'Derek.Curtis@mediahub.tv';
+    CONST TO_EMAIL = 'PrimeDailyReport@mediahubaustralia.com.au';
     CONST LOG_PERIOD = '-1 Day';
     CONST TODAY_FORMAT = 'dmY';
     /**
@@ -192,7 +191,7 @@ class PrimeLogShell extends AppShell {
         $sheet->getStyle('G2')->applyFromArray(array(
             'fill' => array(
                 'type' => PHPExcel_Style_Fill::FILL_SOLID,
-                'color' => array('rgb' => 'FF0000')
+                'color' => array('rgb' => 'FF8080')
             )
         ));
         $sheet->getStyle('H2')->applyFromArray(array(
@@ -208,6 +207,8 @@ class PrimeLogShell extends AppShell {
             )
         ));
 
+        //set wrap text for all rows
+        $sheet->getDefaultStyle()->getAlignment()->setWrapText(true);
         //set fixed size for 1st three rows
         foreach(range(1,3) as $row_id){
             $sheet->getRowDimension($row_id)->setRowHeight('25');
@@ -272,10 +273,20 @@ class PrimeLogShell extends AppShell {
                             $sheet->getStyle('A'.$logCount.':K'.$logCount)->applyFromArray(array(
                                 'fill' => array(
                                     'type' => PHPExcel_Style_Fill::FILL_SOLID,
-                                    'color' => array('rgb' => 'FF0000')
+                                    'color' => array('rgb' => 'FF8080')
                                 )
                             ));
                         }
+
+                        if($attribute['value'] == 'Level 2 - OUTAGE Under 10 seconds'){
+                            $sheet->getStyle('A'.$logCount.':K'.$logCount)->applyFromArray(array(
+                                'fill' => array(
+                                    'type' => PHPExcel_Style_Fill::FILL_SOLID,
+                                    'color' => array('rgb' => 'FF8080')
+                                )
+                            ));
+                        }
+
                         if($attribute['value'] == 'Level 1 - CAPTION OUTAGE'){
                             $sheet->getStyle('A'.$logCount.':K'.$logCount)->applyFromArray(array(
                                 'fill' => array(
