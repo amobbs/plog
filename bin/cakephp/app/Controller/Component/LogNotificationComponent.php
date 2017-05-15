@@ -274,10 +274,10 @@ class LogNotificationComponent extends Component
         );
 
         $baseURL .= '&message=%s';
-        //foreach($messages as $index => $message) {
+
         for($i=0;$i<count($messages);$i++) {
             $URL = sprintf($baseURL,
-                urlencode("Page " . ($i+1) . "/" . count($messages) . "\n" . $messages[$i])
+                urlencode(( count($messages)===1 ? '' :'Page ' . ($i+1) . '/' . count($messages) . "\n" ) . $messages[$i])
             );
 
             $this->logger->info('Sending SMS request sent: ' . $URL);
@@ -294,9 +294,11 @@ class LogNotificationComponent extends Component
             curl_close($ch);
 
             // Delay the next SMS to maintain order.
-            sleep(self::SMS_DELAY);
+            if (count($messages) > 1) {
+                sleep(self::SMS_DELAY);
+            }
 
-            // Response should contain an 'OK'
+            // Response should contain an 'Sent'
             if ($response === false || strpos($response, 'SENT') === false) {
                 $failed = true;
             }
