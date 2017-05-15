@@ -18,6 +18,7 @@ use Preslog\Notifications\Types\TypeAbstract;
 class LogNotificationComponent extends Component
 {
     const SMS_MSG_LIMIT = 500;
+    const SMS_DELAY     = 2;
 
     protected $controller;
     protected $log;
@@ -293,7 +294,7 @@ class LogNotificationComponent extends Component
             curl_close($ch);
 
             // Delay the next SMS to maintain order.
-            sleep(2);
+            sleep(self::SMS_DELAY);
 
             // Response should contain an 'OK'
             if ($response === false || strpos($response, 'SENT') === false) {
