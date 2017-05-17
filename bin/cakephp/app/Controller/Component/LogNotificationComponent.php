@@ -17,6 +17,9 @@ use Preslog\Notifications\Types\TypeAbstract;
 
 class LogNotificationComponent extends Component
 {
+    const SMS_MSG_LIMIT = 500;
+    const SMS_DELAY     = 2;
+
     protected $controller;
     protected $log;
     /**
@@ -249,53 +252,75 @@ class LogNotificationComponent extends Component
 
         // Construct API
         $smsService = Configure::read('Preslog.SmsService');
-        $url = sprintf($smsService['address'],
+
+        // Split messages into chunks of size SMS_MSG_LIMIT.
+        $messages = array();
+        if(strlen($message) <= self::SMS_MSG_LIMIT) {
+            $messages[] = $message;
+        }
+        else {
+            $messages = str_split($message,self::SMS_MSG_LIMIT);
+        }
+
+        $baseURL = sprintf($smsService['address'],
             urlencode($smsService['username']),
             urlencode($smsService['password']),
             urlencode($smsService['from']));
 
         // Append number and message
-        $url .= "&mobilenumber=%s&message=%s";
-        $url = sprintf($url,
-            implode(',', $list),
-            urlencode($message)
+        $baseURL .= "&mobilenumber=%s";
+        $baseURL = sprintf($baseURL,
+            implode(',', $list)
         );
 
-        $this->logger->info('Sending SMS request sent: ' . $url);
-        // Send SMS
+        $baseURL .= '&message=%s';
 
-        $ch = curl_init($url);
-        // make sure we are getting the response as the return value
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 60);
+        for($i=0;$i<count($messages);$i++) {
+            $URL = sprintf($baseURL,
+                urlencode(( count($messages)===1 ? '' :'Page ' . ($i+1) . '/' . count($messages) . "\n" ) . $messages[$i])
+            );
 
-        $response = curl_exec($ch);
-        $failed = curl_errno($ch) != false;
-        $info = curl_getinfo($ch);
-        curl_close($ch);
+            $this->logger->info('Sending SMS request sent: ' . $URL);
+            // Send SMS
 
-        // Response should contain an 'OK'
-        if ($response === false || strpos($response, 'SENT') === false) {
-            $failed = true;
-        }
+            $ch = curl_init($URL);
+            // make sure we are getting the response as the return value
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 60);
 
-        // In the event it fails we send an email notification
-        if ($failed) {
-            $errorString =  PHP_EOL . 'Response: ' . json_encode($info) . PHP_EOL . 'Body: ' . json_encode($response);
+            $response = curl_exec($ch);
+            $failed = curl_errno($ch) != false;
+            $info = curl_getinfo($ch);
+            curl_close($ch);
 
-            $this->logger->error('SMS request failed to send.' . $errorString);
+            // Delay the next SMS to maintain order.
+            if (count($messages) > 1) {
+                sleep(self::SMS_DELAY);
+            }
 
-            $Email = new CakeEmail();
-            $Email->config('default')
-                ->subject('SMS Has failed to send')
-                ->emailFormat('html')
-                ->to(array(
-                    'letigre@4mation.com.au',
-                    'derek.curtis@mediahub.tv'
-                ))
-                ->send($message . $errorString);
+            // Response should contain an 'Sent'
+            if ($response === false || strpos($response, 'SENT') === false) {
+                $failed = true;
+            }
 
-            return false;
+            // In the event it fails we send an email notification
+            if ($failed) {
+                $errorString =  PHP_EOL . 'Response: ' . json_encode($info) . PHP_EOL . 'Body: ' . json_encode($response);
+
+                $this->logger->error('SMS request failed to send.' . $errorString);
+
+                $Email = new CakeEmail();
+                $Email->config('default')
+                    ->subject('SMS Has failed to send')
+                    ->emailFormat('html')
+                    ->to(array(
+                        'letigre@4mation.com.au',
+                        'derek.curtis@mediahub.tv'
+                    ))
+                    ->send($message . $errorString);
+
+                return false;
+            }
         }
 
         $this->logger->info('SMS request sent. ' . PHP_EOL . 'Response: ' . json_encode($response));

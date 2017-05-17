@@ -40,3 +40,6 @@ vendor/*
 !*/empty
 
 !*/tmp/users_20130930.csv
+
+/bin/webroot/vendor/*
+/bin/cakephp/Vendor/*
