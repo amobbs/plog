@@ -13,7 +13,7 @@ class PrimeLogShell extends AppShell {
     CONST CLIENT_NAME = 'PRIME';
     CONST TO_EMAIL = 'PrimeDailyReport@mediahubaustralia.com.au';
     CONST LOG_PERIOD = '-1 Day';
-    CONST TODAY_FORMAT = 'dmY';
+
     /**
      * Find logs for PRIME withing query time.
      * @param $query  - period of logs.
@@ -251,7 +251,8 @@ class PrimeLogShell extends AppShell {
         $sheet->mergeCells('J1:K2');
 
         $DateTime = new DateTime('now');
-        $yesterday = $DateTime->modify(self::LOG_PERIOD)->format('Y-m-d');
+        $DateTime_yesterday = $DateTime->modify(self::LOG_PERIOD);
+        $yesterday = $DateTime_yesterday->format('Y-m-d H:i');
         $logs = $this->findLogs('created > ' . $yesterday . '', true);
         //Log count set to three since 1st 3 rows are booked for Static cell
         $logCount = 3;
@@ -330,20 +331,20 @@ class PrimeLogShell extends AppShell {
 
         // Save Excel5 file
         $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
-        $today_date = date(self::TODAY_FORMAT);
+        $yesterday_date = $DateTime_yesterday->format('dmY');
         $path = dirname(dirname(__DIR__)).DIRECTORY_SEPARATOR.'tmp'.DIRECTORY_SEPARATOR.'excelfile'.DIRECTORY_SEPARATOR.self::CLIENT_NAME.'_MediaHub_Preslog_Report_'.$today_date.'.xls';
         $objWriter->save($path);
 
         $Email = new CakeEmail();
         $Email->config('default')
-            ->subject(self::CLIENT_NAME.' MediaHub Preslog Report '.$today_date)
+            ->subject(self::CLIENT_NAME.' MediaHub Preslog Report '.$yesterday_date)
             ->template('prime-log-email')
             ->emailFormat('html')
-            ->viewVars(compact('today_date'))
+            ->viewVars(compact('yesterday_date'))
             ->to(self::TO_EMAIL)
             ->cc('letigre@4mation.com.au')
             ->attachments(array(
-                self::CLIENT_NAME.'_MediaHub_Preslog_Report_'.$today_date.'.xls' => array(
+                self::CLIENT_NAME.'_MediaHub_Preslog_Report_'.$yesterday_date.'.xls' => array(
                     'file' =>  dirname(dirname(__DIR__)).DIRECTORY_SEPARATOR.'tmp'.DIRECTORY_SEPARATOR.'excelfile'.DIRECTORY_SEPARATOR.self::CLIENT_NAME.'_MediaHub_Preslog_Report_'.$today_date.'.xls',
                     'mimetype' => 'application/vnd.ms-excel'
                 )))
