@@ -117,6 +117,8 @@ class PrimeLogShell extends AppShell {
     public function main() {
         define('EOL',(isCli()) ? PHP_EOL : '<br />');
         $objPHPExcel = new PHPExcel();
+        $DateTime = new DateTime('now');
+        $DateTime_yesterday = $DateTime->modify(self::LOG_PERIOD);
         // Set document properties
         $objPHPExcel->getProperties()->setCreator("Preslog")
             ->setLastModifiedBy("Preslog")
@@ -216,11 +218,11 @@ class PrimeLogShell extends AppShell {
 
         //static cells for headers.
         $sheet->mergeCells('A1:B1');
-        $sheet->setCellValue('A1',date('l'));
+        $sheet->setCellValue('A1',$DateTime_yesterday->format('l'));
         $sheet->getStyle('A1')->getAlignment()->applyFromArray(
             array('horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_RIGHT)
         );
-        $sheet->setCellValue('C1', date('d/m/Y'));
+        $sheet->setCellValue('C1', $DateTime_yesterday->format('d/m/Y'));
         $sheet->mergeCells('G1:I1');
         $sheet->setCellValue('G1',self::CLIENT_NAME.' TELEVISION ON-AIR REPORT');
         $sheet->mergeCells('L1:T2');
@@ -250,8 +252,6 @@ class PrimeLogShell extends AppShell {
         $sheet->setCellValue('T3', 'Department Comments');
         $sheet->mergeCells('J1:K2');
 
-        $DateTime = new DateTime('now');
-        $DateTime_yesterday = $DateTime->modify(self::LOG_PERIOD);
         $yesterday = $DateTime_yesterday->format('Y-m-d H:i');
         $logs = $this->findLogs('created > ' . $yesterday . '', true);
         //Log count set to three since 1st 3 rows are booked for Static cell
