@@ -100,7 +100,7 @@ class LogsController extends AppController
         $this->LogNotification->issueNotifications( $ret['Log'] );
 
         // Return success
-        $return = array('Success'=>$ret, 'data' => $log);
+	    $return = array('Success'=>$ret);
         $this->set($return);
         $this->set('_serialize', array_keys($return));
     }
