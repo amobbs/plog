@@ -14,14 +14,6 @@ class LogsController extends AppController
 
     public $components = array('LogNotification');
 
-    // TODO: DELETE ME
-    public function notificationtest( $id )
-    {
-        $log = $this->Log->findByHrid( $id );
-
-        $this->LogNotification->issueNotifications( $log );
-    }
-
 
     /**
      * Create or Update the given log
@@ -103,12 +95,12 @@ class LogsController extends AppController
         // Save
         $ret = $this->Log->save( $log );
 
-        // Notifications: Issue Email and SMS notifications relevant to this logs update.
+	    // Notifications: Issue Email and SMS notifications relevant to this logs update.
         $ret = $this->Log->find( 'first', array('conditions'=>array('_id'=>$ret['Log']['_id']) ) );
         $this->LogNotification->issueNotifications( $ret['Log'] );
 
         // Return success
-        $return = array('Success'=>$ret);
+        $return = array('Success'=>$ret, 'data' => $log);
         $this->set($return);
         $this->set('_serialize', array_keys($return));
     }
