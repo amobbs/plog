@@ -117,7 +117,7 @@ class Loginfo extends FieldTypeAbstract
      */
     public function beforeSave()
     {
-        $authObject = \PreslogAuthComponent::getInstance();
+        $authObject = class_exists('PreslogAuthComponent') ? \PreslogAuthComponent::getInstance() : false;
 
         // If no Created date, set it.
         if (!isset($this->data['data']['created']))
@@ -126,7 +126,7 @@ class Loginfo extends FieldTypeAbstract
         }
 
         // If no Created user, set it.
-        if (!isset($this->data['data']['created_user_id']))
+        if (!empty($authObject) && !isset($this->data['data']['created_user_id']))
         {
             $this->data['data']['created_user_id'] = $authObject->user('_id');
         }
@@ -135,7 +135,9 @@ class Loginfo extends FieldTypeAbstract
         $this->data['data']['modified'] = date('r', time());
 
         // Update Modified Time
-        $this->data['data']['modified_user_id'] = $authObject->user('_id');
+	    if (!empty($authObject)) {
+		    $this->data['data']['modified_user_id'] = $authObject->user( '_id' );
+	    }
 
         // Establish version if it doesn't exist
         if (!isset($this->data['data']['version']))

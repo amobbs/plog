@@ -418,15 +418,15 @@ class ClientEntity
             }
         }
 
-        // If user is not log-accountability...
-        // Accountability and Status fields will not be displayed
-        if (!$this->userModel->isAuthorized( 'log-accountability', $this->user['role'] ))
-        {
-            if ($field->isName('status') || $field->isName('accountability'))
-            {
-                $field->setFlag( FieldTypeAbstract::FLAG_HIDDEN );
-            }
-        }
+//        // If user is not log-accountability...
+//        // Accountability and Status fields will not be displayed
+//        if (!$this->userModel->isAuthorized( 'log-accountability', $this->user['role'] ))
+//        {
+//            if ($field->isName('status') || $field->isName('accountability'))
+//            {
+//                $field->setFlag( FieldTypeAbstract::FLAG_HIDDEN );
+//            }
+//        }
     }
 
     /**

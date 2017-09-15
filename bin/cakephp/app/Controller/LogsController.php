@@ -7,6 +7,7 @@ use Swagger\Annotations as SWG;
  *
  * @property    Log                         $Log
  * @property    LogNotificationComponent    $LogNotification
+ * @property    Client $Client
  */
 class LogsController extends AppController
 {
@@ -91,6 +92,8 @@ class LogsController extends AppController
         {
             $this->errorBadRequest( array('data'=>$this->Log->validationErrors, 'message'=>'Validation failed') );
         }
+
+        $this->Log->ensureClientSelectAttributes();
 
         // Save
         $ret = $this->Log->save( $log );
