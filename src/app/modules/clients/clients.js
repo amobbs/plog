@@ -183,7 +183,7 @@ angular.module( 'Preslog.clients', [
     /**
      * Admin Client Edit
      */
-    .controller( 'AdminClientEditCtrl', function AdminClientEditController( $q, $scope, titleService, clientData, clientOptions, $location, $filter, $modal ) {
+    .controller( 'AdminClientEditCtrl', function AdminClientEditController( $q, $scope, Upload, titleService, clientData, clientOptions, $location, $filter, $modal ) {
 
          // ID Pool. Increment a unique ID for field names when created, for their ID.
         var idPool = 1;
@@ -200,6 +200,7 @@ angular.module( 'Preslog.clients', [
         $scope.showDeleted = false;
         $scope.newGroup = {};
         $scope.showDeletedGroups = false;
+
 
         // Sortable options on Fields
         $scope.fieldSortableOptions = {
@@ -233,10 +234,32 @@ angular.module( 'Preslog.clients', [
             handle: '.order'
         };
 
+// upload on file select or drop
+        $scope.upload = function (file) {
+            console.log('/api/admin/clients/' + clientData.id + '/photo');
+            Upload.upload({
+                url: '/api/admin/clients/' + clientData.id + '/photo',
+                data: {file: file }
+            }).then(function (resp) {
+                console.log('Success ' + resp.config.data.file.name + 'uploaded. Response: ' + resp.data);
+            }, function (resp) {
+                console.log('Error status: ' + resp.status);
+            }, function (evt) {
+                var progressPercentage = parseInt(100.0 * evt.loaded / evt.total, 10);
+                console.log('progress: ' + progressPercentage + '% ' + evt.config.data.file.name);
+            });
+        };
+
         /**
          * Save Client
          */
         $scope.saveClient = function() {
+
+            if ($scope.clientForm.logoUrl.$valid && $scope.client.logoUrl) {
+                $scope.upload($scope.client.logoUrl);
+            }
+
+
             var deferred = $q.defer();
 
             // Fetch data from form

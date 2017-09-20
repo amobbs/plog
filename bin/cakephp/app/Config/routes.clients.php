@@ -22,8 +22,8 @@ use Swagger\Annotations as SWG;
  * )
  */
 Router::connect(
-    '/admin/clients',
-    array('controller' => 'Clients', 'action' => 'adminList', '[method]' => 'GET')
+	'/admin/clients',
+	array('controller' => 'Clients', 'action' => 'adminList', '[method]' => 'GET')
 );
 
 
@@ -42,8 +42,8 @@ Router::connect(
  * )
  */
 Router::connect(
-    '/admin/clients',
-    array('controller' => 'Clients', 'action' => 'adminEditOptions', '[method]' => 'OPTIONS')
+	'/admin/clients',
+	array('controller' => 'Clients', 'action' => 'adminEditOptions', '[method]' => 'OPTIONS')
 );
 
 
@@ -62,8 +62,8 @@ Router::connect(
  * )
  */
 Router::connect(
-    '/admin/clients',
-    array('controller' => 'Clients', 'action' => 'adminEdit', '[method]' => 'POST')
+	'/admin/clients',
+	array('controller' => 'Clients', 'action' => 'adminEdit', '[method]' => 'POST')
 );
 
 
@@ -82,9 +82,9 @@ Router::connect(
  * )
  */
 Router::connect(
-    '/admin/clients/:id',
-    array('controller' => 'Clients', 'action' => 'adminRead', '[method]' => 'GET'),
-    array('pass'=>array('id'), 'id'=>'[0-9a-z]+')
+	'/admin/clients/:id',
+	array('controller' => 'Clients', 'action' => 'adminRead', '[method]' => 'GET'),
+	array('pass'=>array('id'), 'id'=>'[0-9a-z]+')
 );
 
 
@@ -103,9 +103,9 @@ Router::connect(
  * )
  */
 Router::connect(
-    '/admin/clients/:id',
-    array('controller' => 'Clients', 'action' => 'adminEdit', '[method]' => 'POST'),
-    array('pass'=>array('id'), 'id'=>'[0-9a-z]+')
+	'/admin/clients/:id',
+	array('controller' => 'Clients', 'action' => 'adminEdit', '[method]' => 'POST'),
+	array('pass'=>array('id'), 'id'=>'[0-9a-z]+')
 );
 
 
@@ -124,9 +124,9 @@ Router::connect(
  * )
  */
 Router::connect(
-    '/admin/clients/:id',
-    array('controller' => 'Clients', 'action' => 'adminDelete', '[method]' => 'DELETE'),
-    array('pass'=>array('id'), 'id'=>'[0-9a-z]+')
+	'/admin/clients/:id',
+	array('controller' => 'Clients', 'action' => 'adminDelete', '[method]' => 'DELETE'),
+	array('pass'=>array('id'), 'id'=>'[0-9a-z]+')
 );
 
 
@@ -145,8 +145,28 @@ Router::connect(
  * )
  */
 Router::connect(
-    '/admin/clients/:id',
-    array('controller' => 'Clients', 'action' => 'adminDuplicate', '[method]' => 'COPY'),
-    array('pass'=>array('id'), 'id'=>'[0-9a-z]+')
+	'/admin/clients/:id',
+	array('controller' => 'Clients', 'action' => 'adminDuplicate', '[method]' => 'COPY'),
+	array('pass'=>array('id'), 'id'=>'[0-9a-z]+')
 );
 
+
+/**
+ * Admin.Clients.UploadImage: POST (upload an image for a client)
+ * @SWG\Resource(
+ *      resourcePath="/admin",
+ *      @SWG\Api(
+ *          path="/admin/clients",
+ *          @SWG\Operation(
+ *              @SWG\Partial("admin.clients.adminEditPhoto"),
+ *              nickname="admin.clients.adminEditPhoto",
+ *              method="POST"
+ *          )
+ *      )
+ * )
+ */http://local.preslog/admin/clients/52a66adcf3113db81a007d44/photo
+Router::connect(
+	'/admin/clients/:id/photo',
+	array('controller' => 'Clients', 'action' => 'adminEditPhoto', '[method]' => 'POST'),
+	array('pass'=>array('id'), 'id'=>'[0-9a-z]+')
+);
