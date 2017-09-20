@@ -20,6 +20,7 @@ services:
     volumes:
          - .:/home/preslog
 
+
    db:
     network_mode: "bridge"
     ports:
@@ -27,3 +28,9 @@ services:
     image: mongo:3.0
     volumes:
         - ./data:/data/db
+
+
+
+
+
+>>>>>>> 1c07086db0d1ea950b5927c3dcdc52c7c5ff6138
