@@ -85,7 +85,8 @@ module.exports = {
             'vendor/angular-highcharts-directive/src/directives/highcharts.js',
             'vendor/ng-table/ng-table.js',
             'vendor/restangular/dist/restangular.js',
-            'vendor/dynatree/dist/jquery.dynatree.min.js'
+            'vendor/dynatree/dist/jquery.dynatree.min.js',
+            'vendor/ng-file-upload/ng-file-upload.js'
         ],
 
         /**

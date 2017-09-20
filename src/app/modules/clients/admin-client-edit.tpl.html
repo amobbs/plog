@@ -98,18 +98,17 @@
                             Logo Url
                         </label>
                         <div class="controls">
-                            <input type="text"
-                                   id="inputLogoUrl"
-                                   name="logoUrl"
-                                   placeholder="Logo Url..."
-                                   ng-model="client.logoUrl"
-                                   required
-                                   tooltip-placement="right"
-                                   tooltip="The url of the client logo to be displayed in the top-left corner. Should be 120x35 pixels and look good on a black background."
-                                    />
-                            <img ng-show="client._id" src="{{ client.logoUrl }}" width="68" height="20" class="logo-preview" alt="Logo Preview" />
+
+                            <span class="btn btn-block btn-info" ngf-select ng-model="client.logoUrl" name="logoUrl" ngf-pattern="'image/*'"
+                                 tooltip-placement="right"
+                                 required
+                                 tooltip="The url of the client logo to be displayed in the top-left corner. Should be 120x35 pixels and look good on a black background."
+                            >Upload Image</span>
+
+
+                            <img ng-show="client._id" src="{{ client.logoImg }}" ngf-thumbnail="picFile" width="68" height="20" class="logo-preview" alt="Logo Preview">  <button ng-click="client.logoImg  = null" ng-show="client.logoImg">Remove</button>
                             <br/>
-                            <span class="help-inline" ng-show="clientForm.logo.$error.validateServer" ng-bind="serverErrors.logoUrl"></span>
+                            <span class="help-inline" ng-show="clientForm.logo.$error.validateServer" ng-bind="serverErrors.logoImg"></span>
                         </div>
                     </div>
 
