@@ -204,7 +204,7 @@ class ClientsController extends AppController
 
 		$projectRoot = dirname(dirname(APP));
 		$webRoot = $projectRoot . '/webroot/';
-		$uploadDir = $webRoot . '/assets/uploads/';
+		$uploadDir = $webRoot . '/uploads/';
 		if (!file_exists($uploadDir)) {
 			mkdir($uploadDir, 777, true);
 		}
@@ -220,7 +220,7 @@ class ClientsController extends AppController
 			return;
 		}
 
-		$client['Client']['logoUrl'] = '/assets/uploads/' . $uploadedFileName;
+		$client['Client']['logoUrl'] = '/uploads/' . $uploadedFileName;
 		$this->Client->set($client);
 		$ret = $this->Client->save( $client );
 
