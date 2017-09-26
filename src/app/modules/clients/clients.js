@@ -250,7 +250,6 @@ angular.module( 'Preslog.clients', [
                 url: '/api/admin/clients/' + clientData.id + '/photo',
                 data: {file: file }
             }).then(function (resp) {
-                console.log(resp);
                 $scope.client.logoUrl = $scope.client.logoImg = resp.data.Success.Client.logoUrl;
             }, function (resp) {
                 // error response
