@@ -10164,6 +10164,7 @@ textarea.query {
 #preslog_admin_clients_index table tr td.logo img {
   padding: 5px;
   background: #000;
+  object-fit: cover;
 }
 
 #admin_client_edit {
@@ -10171,8 +10172,7 @@ textarea.query {
 }
 
 #admin_client_edit img.logo-preview {
-  width: 120px;
-  height: 35px;
+  max-width: 200px;
   padding: 2px;
   background: #000;
   border: none 0px;
@@ -10201,6 +10201,14 @@ textarea.query {
 
 #peslog_log_entry .admin_cfe_group:hover {
   border: 1px dashed #aaa;
+}
+
+.blue-tooltip {
+  padding: 3px 8px;
+  margin: 0 10px;
+  color: white;
+  background-color: #49afcd;
+  border-radius: 50%;
 }
 
 /**
