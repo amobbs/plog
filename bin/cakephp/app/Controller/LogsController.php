@@ -93,8 +93,6 @@ class LogsController extends AppController
             $this->errorBadRequest( array('data'=>$this->Log->validationErrors, 'message'=>'Validation failed') );
         }
 
-        $this->Log->ensureClientSelectAttributes();
-
         // Save
         $ret = $this->Log->save( $log );
 
