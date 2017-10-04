@@ -786,4 +786,51 @@ class Log extends AppModel
         return $newMatch;
     }
 
+	/**
+	 * Attempt to fix missing fields.
+	 *
+	 * Some pre-historic logs do have have fields matching the
+	 */
+	public function ensureClientSelectAttributes() {
+
+		$hrid = $this->data[$this->name]['hrid'];
+
+		$clientOptions = $this->getOptionsByClientId($this->data[$this->name]['client_id']);
+
+		$preFields = count($this->data[ $this->name ]['fields'] );
+		$hasModified = false;
+		foreach($clientOptions['fields'] as $field) {
+			if ($field['type'] !== 'select') {
+				continue;
+			}
+			// search the logs fields to make sure there is a match
+			$found = false;
+			foreach($this->data[ $this->name ]['fields'] as $logField) {
+				if ($logField['field_id'] === $field['_id']) {
+					$found = true;
+					break;
+				}
+			}
+
+			if (!$found) {
+				$this->data[ $this->name ]['fields'][] = array(
+					'field_id' => $field['_id'],
+					'data' => array(
+						'selected' => null,
+					)
+				);
+				echo 'Updated log with missing field: ' . $field['name'] . ' ' .$field['_id'] .  "\n";
+				$hasModified = true;
+	        }
+		}
+
+
+		if ($hasModified) {
+			$saved = $this->save( $this->data[ $this->name ], false );
+
+			$fields = $saved['Log']['fields'];
+			echo 'Done saving ' . $hrid . '. From ' . $preFields . ' to ' .  count($fields) . '. ';
+		}
+	}
+
 }

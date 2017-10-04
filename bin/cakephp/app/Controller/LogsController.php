@@ -7,6 +7,7 @@ use Swagger\Annotations as SWG;
  *
  * @property    Log                         $Log
  * @property    LogNotificationComponent    $LogNotification
+ * @property    Client $Client
  */
 class LogsController extends AppController
 {

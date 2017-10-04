@@ -88,7 +88,7 @@ angular.module('logFields', [])
 
                 // Validate: Do we need to display this field?
                 // Skip if it's deleted and does not contain data.
-                if (field.deleted === true && data === undefined)
+                if (field.deleted === true && data === undefined || field.is_hidden)
                 {
                     continue;
                 }

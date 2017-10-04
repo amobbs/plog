@@ -27,6 +27,3 @@ services:
     image: mongo:3.0
     volumes:
         - ./data:/data/db
-
-
-
