@@ -234,19 +234,27 @@ angular.module( 'Preslog.clients', [
             handle: '.order'
         };
 
+        $scope.resetImage = function() {
+            $scope.client.logoImg = null;
+            $scope.client.logoUrl = null;
+        };
+
 // upload on file select or drop
         $scope.upload = function (file) {
-            console.log('/api/admin/clients/' + clientData.id + '/photo');
+
+            if (typeof file === 'undefined' || file == null) {
+                return;
+            }
+
             Upload.upload({
                 url: '/api/admin/clients/' + clientData.id + '/photo',
                 data: {file: file }
             }).then(function (resp) {
-                console.log('Success ' + resp.config.data.file.name + 'uploaded. Response: ' + resp.data);
+                $scope.client.logoUrl = $scope.client.logoImg = resp.data.Success.Client.logoUrl;
             }, function (resp) {
-                console.log('Error status: ' + resp.status);
+                // error response
             }, function (evt) {
-                var progressPercentage = parseInt(100.0 * evt.loaded / evt.total, 10);
-                console.log('progress: ' + progressPercentage + '% ' + evt.config.data.file.name);
+                // percentage response
             });
         };
 
@@ -254,11 +262,6 @@ angular.module( 'Preslog.clients', [
          * Save Client
          */
         $scope.saveClient = function() {
-
-            if ($scope.clientForm.logoUrl.$valid && $scope.client.logoUrl) {
-                $scope.upload($scope.client.logoUrl);
-            }
-
 
             var deferred = $q.defer();
 
