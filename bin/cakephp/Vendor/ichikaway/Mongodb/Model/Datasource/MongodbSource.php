@@ -213,7 +213,7 @@ class MongodbSource extends DboSource {
 
                     // Legacy: Connect for =1.2.0
                     } else if ($this->_driverVersion >= '1.2.0') {
-                        $this->connection = new Mongo($host, array("persist" => $this->config['persistent']));
+                        $this->connection = new Mongo($host);
 
                     // Legacy: Connect for <1.2.0
                     } else {
@@ -250,6 +250,7 @@ class MongodbSource extends DboSource {
                 catch(MongoConnectionException $e)
                 {
                     // Catch "No candidate server"
+	                throw new Exception($e);
                 }
 
                 // Retry required?
@@ -266,7 +267,7 @@ class MongodbSource extends DboSource {
             // Connection could not be established?
             if (!$this->connection)
             {
-                trigger_error("Could not connect to the database after {$tries} tries. Please try again.", E_USER_ERROR);
+                trigger_error("{$host} Could not connect to the database after {$tries} tries. Please try again.", E_USER_ERROR);
             }
 
             // Set slave OK

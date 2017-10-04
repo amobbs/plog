@@ -1,45 +1,50 @@
 *.sw*
 *~
 
-// Build webroot
-// - Only track API
+# Build webroot
+# - Only track API
 build/webroot/*
 !build/webroot/api
 
-//dont copy database file around
+#dont copy database file around
 bin/cakephp/app/config/database.php
 
-//dont copy log4php config file
+# dont copy log4php config file
 bin/cakephp/app/config/config.xml
 
-// Bin webroot
-// - track Api
+# Bin webroot
+# - track Api
 bin/cakephp/app/tmp/*
 !bin/webroot/api
 
-// Ignore vendor .get directories
+# Ignore vendor .get directories
 */Vendor/**/.git
 
 
-// Package Managed directories ignored
+# Package Managed directories ignored
 node_modules/
 vendor/*
 
-// packages which are static and must NOT be ignored
-// - php-sel-parser (google code)
-// - RedQueryBuilder
+# packages which are static and must NOT be ignored
+# - php-sel-parser (google code)
+# - RedQueryBuilder
 !vendor/php-sql-parser
 !vendor/RedQueryBuilder
 !bin/cakephp/Vendor/HighchartsPHP
 !bin/cakephp/Vendor/apache/log4php/*
 
-// Project Files ignored
+# Project Files ignored
 .idea
 
-// Empty files get tracked
+# Empty files get tracked
 !*/empty
 
 !*/tmp/users_20130930.csv
+
+bin/webroot/uploads/
+!bin/webroot/uploads/.gitkeep
+/data/
+
 
 /bin/webroot/vendor/*
 /bin/cakephp/Vendor/*
