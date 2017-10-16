@@ -260,7 +260,6 @@ angular.module( 'Preslog.clients', [
                 data: {file: file }
             }).then(function (resp) {
                 $scope.client.logoUrl = $scope.client.logoImg = resp.data.Success.Client.logoUrl;
-                console.log('logo updated to: ', $scope.client.logoUrl);
             });
         };
 
