@@ -199,6 +199,7 @@ angular.module( 'Preslog.clients', [
         $scope.newField = {};
         $scope.showDeleted = false;
         $scope.newGroup = {};
+        $scope.uploadImgSrc = false;
         $scope.showDeletedGroups = false;
 
 
@@ -246,15 +247,20 @@ angular.module( 'Preslog.clients', [
                 return;
             }
 
+            var fr = new FileReader();
+            fr.onload = function () {
+                $scope.uploadImgSrc = fr.result;
+            };
+            fr.readAsDataURL(file);
+
+            $scope.resetImage();
+
             Upload.upload({
                 url: '/api/admin/clients/' + clientData.id + '/photo',
                 data: {file: file }
             }).then(function (resp) {
                 $scope.client.logoUrl = $scope.client.logoImg = resp.data.Success.Client.logoUrl;
-            }, function (resp) {
-                // error response
-            }, function (evt) {
-                // percentage response
+                console.log('logo updated to: ', $scope.client.logoUrl);
             });
         };
 
