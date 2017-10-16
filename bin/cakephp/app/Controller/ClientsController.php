@@ -210,9 +210,11 @@ class ClientsController extends AppController
 		}
 
 		// delete old file if it exists
-		$existingFile = $webRoot . $client['Client']['logoUrl'];
-		if (file_exists($existingFile)) {
-			unlink($existingFile);
+		if (!empty($client['Client']['logoUrl'])) {
+			$existingFile = $webRoot . $client['Client']['logoUrl'];
+			if (file_exists($existingFile)) {
+				unlink($existingFile);
+			}
 		}
 
 		$ext = pathinfo($_FILES['file']['name'], PATHINFO_EXTENSION);
