@@ -209,9 +209,16 @@ class ClientsController extends AppController
 			mkdir($uploadDir, 777, true);
 		}
 
-		$ext = pathinfo($_FILES['file']['name'], PATHINFO_EXTENSION);
+		// delete old file if it exists
+		$existingFile = $webRoot . $client['Client']['logoUrl'];
+		if (file_exists($existingFile)) {
+			unlink($existingFile);
+		}
 
-		$uploadedFileName = $id . '.' . $ext;
+		$ext = pathinfo($_FILES['file']['name'], PATHINFO_EXTENSION);
+		// we add a unique string to each file to avoid caching of old images
+		$cacheKey = substr(md5(time()), 0, 5);
+		$uploadedFileName = $id . '-' . $cacheKey . '.' . $ext;
 
 		if (!move_uploaded_file($_FILES['file']['tmp_name'], $uploadDir . $uploadedFileName)) {
 			$return = array('Success'=> false);
