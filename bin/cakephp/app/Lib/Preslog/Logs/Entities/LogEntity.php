@@ -159,12 +159,16 @@ class LogEntity
         // Run fields through conversion/callbacks
         foreach ($this->fields as &$field)
         {
-            $settings = $field->getFieldSettings();
+            $settings = $field->getOptions();
 
             // Skip deleted fields that do not contain data
-            if ($field->isDeleted())
+            if (empty($settings))
             {
                 continue;
+            }
+
+            if ($field->isHiddenFromOptions()) {
+            	continue;
             }
 
             // If email, check the field visibility

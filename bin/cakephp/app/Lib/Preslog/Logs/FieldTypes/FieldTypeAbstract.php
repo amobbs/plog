@@ -520,11 +520,6 @@ abstract class FieldTypeAbstract
      */
     public function getOptions( $log=null )
     {
-        // If hidden - remove
-        if ( $this->isHiddenFromOptions())
-        {
-            return false;
-        }
 
         // If should be deleted and doesn't contain data in this log:
         if ($this->isDeleted() && !isset( $log['fields'][ $this->fieldSettings['_id'] ] ))
@@ -534,6 +529,7 @@ abstract class FieldTypeAbstract
 
         // Create a copy of the field options data
         $data = $this->fieldSettings;
+        $data['is_hidden'] = $this->isHiddenFromOptions();
         return $data;
     }
 }
