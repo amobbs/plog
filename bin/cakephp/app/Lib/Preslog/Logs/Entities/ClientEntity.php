@@ -418,7 +418,7 @@ class ClientEntity
             }
         }
 
-        // If user is not log-accountability...
+//        // If user is not log-accountability...
         // Accountability and Status fields will not be displayed
         if (!$this->userModel->isAuthorized( 'log-accountability', $this->user['role'] ))
         {

@@ -111,6 +111,10 @@ class Select extends FieldTypeAbstract
     {
         $errors = array();
 
+        if ($this->isHiddenFromOptions()) {
+        	return $errors;
+        }
+
         // Required? Must not be empty
         if ($this->fieldSettings['required'] == true && (!isset($this->data['data']['selected']) || empty($this->data['data']['selected'])))
         {
