@@ -9,6 +9,7 @@ return array(
     'Swagger' => array($vendorDir . '/zircote/swagger-php/library'),
     'Preslog' => array($baseDir . '/app/Lib'),
     'PHPWord' => array($vendorDir . '/phpword/phpword/Library'),
+    'PHPExcel' => array($vendorDir . '/phpoffice/phpexcel/Classes'),
     'Doctrine\\Common\\Lexer\\' => array($vendorDir . '/doctrine/lexer/lib'),
     'Doctrine\\Common\\Annotations\\' => array($vendorDir . '/doctrine/annotations/lib'),
 );
