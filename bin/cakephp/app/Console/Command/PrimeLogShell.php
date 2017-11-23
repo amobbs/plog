@@ -241,7 +241,7 @@ class PrimeLogShell extends AppShell {
 		$sheet->setCellValue('I3', 'Details of What Happened:');
 		$sheet->setCellValue('J3', 'What Action Taken:');
 		$sheet->setCellValue('K3', 'Follow Up or Resolution:');
-		$sheet->setCellValue('L3', 'TO BE RECONCILED?');
+		$sheet->setCellValue('L3', 'FOUND IN RECON');
 		$sheet->setCellValue('M3', 'Bdcst Ops');
 		$sheet->setCellValue('N3', 'Comm Media');
 		$sheet->setCellValue('O3', 'Prog / Prom');
@@ -323,7 +323,7 @@ class PrimeLogShell extends AppShell {
 					case 'Follow Up or Resolution:':
 						$sheet->setCellValue('K'.$logCount, $attribute['value']);
 						break;
-					case 'TO BE RECONCILED?':
+					case 'FOUND IN RECON':
 						$sheet->setCellValue('L'.$logCount, $attribute['value']);
 						break;
 				}
