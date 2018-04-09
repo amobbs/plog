@@ -53,7 +53,7 @@ Configure::write('auth-acl', array(
 
         'client-create-logs' => array(
 	        'name'=>'Client (Log Creator)',
-	        'permissions'=>array('guest', 'user', 'log-create', 'log-delete'),
+	        'permissions'=>array('guest', 'user', 'log-create', 'log-delete', 'single-client'),
         ),
         'guest'         => array(
             'name'=>'Guest',
