@@ -44,7 +44,7 @@
                             </li>
                         </ul>
                     </li>
-                    <li data-match-route="/logs/.*"><a ng-show="!userSvc.checkPermission('single-client')" href="/logs/" ng-click="createLog('/logs/')">Create Log</a></li>
+                    <li data-match-route="/logs/.*"><a ng-show="!userSvc.checkPermission('single-client') || userSvc.checkPermission('log-create')" href="/logs/" ng-click="createLog('/logs/')">Create Log</a></li>
                     <li data-match-route="/search/"><a href="/search/">Search</a></li>
                 </ul>
                 <ul class="nav pull-right">
