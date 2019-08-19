@@ -41,6 +41,9 @@ COPY conf/php.ini /usr/local/etc/php/
 COPY conf/vhost.conf /etc/apache2/sites-available/000-default.conf
 COPY conf/vhost.conf /etc/apache2/sites-enabled/000-default.conf
 
+#temp
+
+
 RUN echo "cd /home/preslog" >> /root/.bashrc
 
 # setup our folder
@@ -64,4 +67,4 @@ RUN service apache2 restart
 # Expore our ports
 EXPOSE 80 443
 
-CMD ["/usr/sbin/apache2ctl", "-D", "FOREGROUND"]
+CMD ["/usr/sbin/apache2", "-D", "FOREGROUND"]

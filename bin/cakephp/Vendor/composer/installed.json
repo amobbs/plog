@@ -1,45 +1,5 @@
 [
     {
-        "name": "ichikaway/Mongodb",
-        "version": "master",
-        "version_normalized": "9999999-dev",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/sabohoney/cakephp-mongodb",
-            "reference": "mongoclient"
-        },
-        "type": "library",
-        "installation-source": "source"
-    },
-    {
-        "name": "pear-pear.cakephp.org/CakePHP",
-        "version": "2.4.1",
-        "version_normalized": "2.4.1.0",
-        "dist": {
-            "type": "file",
-            "url": "http://pear.cakephp.org/get/CakePHP-2.4.1.tgz",
-            "reference": null,
-            "shasum": null
-        },
-        "require": {
-            "php": ">=5.2.8.0"
-        },
-        "replace": {
-            "pear-cakephp/cakephp": "== 2.4.1.0"
-        },
-        "type": "pear-library",
-        "installation-source": "dist",
-        "autoload": {
-            "classmap": [
-                ""
-            ]
-        },
-        "include-path": [
-            "/"
-        ],
-        "description": "CakePHP is an application development framework for PHP 5.2+"
-    },
-    {
         "name": "HighchartsPHP",
         "version": "master",
         "version_normalized": "9999999-dev",
@@ -52,100 +12,35 @@
         "installation-source": "source"
     },
     {
-        "name": "phpword/phpword",
+        "name": "apache/log4php",
         "version": "dev-master",
         "version_normalized": "9999999-dev",
         "source": {
             "type": "git",
-            "url": "https://bitbucket.org/kkula/phpword.git",
-            "reference": "4ba9cb7f65618ec6990ecefa5edc6a992db04429"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://bitbucket.org/kkula/phpword/get/4ba9cb7f65618ec6990ecefa5edc6a992db04429.zip",
-            "reference": "4ba9cb7f65618ec6990ecefa5edc6a992db04429",
-            "shasum": ""
+            "url": "https://git-wip-us.apache.org/repos/asf/logging-log4php.git",
+            "reference": "ae4116e491d46170378c39c8c861a0153a957f5b"
         },
         "require": {
-            "php": ">5.2.0"
+            "php": ">=5.2.7"
         },
-        "time": "2012-12-25T21:55:12+00:00",
+        "time": "2013-06-07T17:49:39+00:00",
         "type": "library",
         "installation-source": "source",
         "autoload": {
-            "psr-0": {
-                "PHPWord": "Library"
-            }
+            "classmap": [
+                "src/main/php/"
+            ]
         },
         "notification-url": "https://packagist.org/downloads/",
         "license": [
-            "GNU"
+            "Apache-2.0"
         ],
-        "description": "PHPWord is a library written in PHP that create word documents.",
-        "homepage": "http://phpword.codeplex.com",
+        "description": "A versatile logging framework for PHP",
+        "homepage": "http://logging.apache.org/log4php/",
         "keywords": [
-            "doc",
-            "docx",
-            "word"
-        ]
-    },
-    {
-        "name": "doctrine/lexer",
-        "version": "dev-master",
-        "version_normalized": "9999999-dev",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/doctrine/lexer.git",
-            "reference": "f12a5f74e5f4a9e3f558f3288504e121edfad891"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/doctrine/lexer/zipball/f12a5f74e5f4a9e3f558f3288504e121edfad891",
-            "reference": "f12a5f74e5f4a9e3f558f3288504e121edfad891",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.3.2"
-        },
-        "time": "2013-12-20T21:39:00+00:00",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "1.0.x-dev"
-            }
-        },
-        "installation-source": "source",
-        "autoload": {
-            "psr-0": {
-                "Doctrine\\Common\\Lexer\\": "lib/"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Guilherme Blanco",
-                "email": "guilhermeblanco@gmail.com",
-                "homepage": "http://www.instaclick.com"
-            },
-            {
-                "name": "Roman Borschel",
-                "email": "roman@code-factory.org"
-            },
-            {
-                "name": "Johannes Schmitt",
-                "email": "schmittjoh@gmail.com",
-                "homepage": "http://jmsyst.com",
-                "role": "Developer of wrapped JMSSerializerBundle"
-            }
-        ],
-        "description": "Base library for a lexer that can be used in Top-Down, Recursive Descent Parsers.",
-        "homepage": "http://www.doctrine-project.org",
-        "keywords": [
-            "lexer",
-            "parser"
+            "log",
+            "logging",
+            "php"
         ]
     },
     {
@@ -224,35 +119,202 @@
         ]
     },
     {
-        "name": "apache/log4php",
+        "name": "doctrine/lexer",
         "version": "dev-master",
         "version_normalized": "9999999-dev",
         "source": {
             "type": "git",
-            "url": "https://git-wip-us.apache.org/repos/asf/logging-log4php.git",
-            "reference": "ae4116e491d46170378c39c8c861a0153a957f5b"
+            "url": "https://github.com/doctrine/lexer.git",
+            "reference": "f12a5f74e5f4a9e3f558f3288504e121edfad891"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/doctrine/lexer/zipball/f12a5f74e5f4a9e3f558f3288504e121edfad891",
+            "reference": "f12a5f74e5f4a9e3f558f3288504e121edfad891",
+            "shasum": ""
         },
         "require": {
-            "php": ">=5.2.7"
+            "php": ">=5.3.2"
         },
-        "time": "2013-06-07T17:49:39+00:00",
+        "time": "2013-12-20T21:39:00+00:00",
         "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.0.x-dev"
+            }
+        },
         "installation-source": "source",
         "autoload": {
-            "classmap": [
-                "src/main/php/"
-            ]
+            "psr-0": {
+                "Doctrine\\Common\\Lexer\\": "lib/"
+            }
         },
         "notification-url": "https://packagist.org/downloads/",
         "license": [
-            "Apache-2.0"
+            "MIT"
         ],
-        "description": "A versatile logging framework for PHP",
-        "homepage": "http://logging.apache.org/log4php/",
+        "authors": [
+            {
+                "name": "Guilherme Blanco",
+                "email": "guilhermeblanco@gmail.com",
+                "homepage": "http://www.instaclick.com"
+            },
+            {
+                "name": "Roman Borschel",
+                "email": "roman@code-factory.org"
+            },
+            {
+                "name": "Johannes Schmitt",
+                "email": "schmittjoh@gmail.com",
+                "homepage": "http://jmsyst.com",
+                "role": "Developer of wrapped JMSSerializerBundle"
+            }
+        ],
+        "description": "Base library for a lexer that can be used in Top-Down, Recursive Descent Parsers.",
+        "homepage": "http://www.doctrine-project.org",
         "keywords": [
-            "log",
-            "logging",
-            "php"
+            "lexer",
+            "parser"
+        ]
+    },
+    {
+        "name": "ichikaway/Mongodb",
+        "version": "master",
+        "version_normalized": "9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/sabohoney/cakephp-mongodb",
+            "reference": "mongoclient"
+        },
+        "type": "library",
+        "installation-source": "source"
+    },
+    {
+        "name": "pear-pear.cakephp.org/CakePHP",
+        "version": "2.4.1",
+        "version_normalized": "2.4.1.0",
+        "dist": {
+            "type": "file",
+            "url": "http://pear.cakephp.org/get/CakePHP-2.4.1.tgz"
+        },
+        "require": {
+            "php": ">=5.2.8.0"
+        },
+        "replace": {
+            "pear-cakephp/cakephp": "== 2.4.1.0"
+        },
+        "type": "pear-library",
+        "installation-source": "dist",
+        "autoload": {
+            "classmap": [
+                ""
+            ]
+        },
+        "include-path": [
+            "/"
+        ],
+        "description": "CakePHP is an application development framework for PHP 5.2+"
+    },
+    {
+        "name": "phpoffice/phpexcel",
+        "version": "1.8.x-dev",
+        "version_normalized": "1.8.9999999.9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/PHPOffice/PHPExcel.git",
+            "reference": "185bf412339526c97a98d959c3c0ecf4b7c80016"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/PHPOffice/PHPExcel/zipball/185bf412339526c97a98d959c3c0ecf4b7c80016",
+            "reference": "185bf412339526c97a98d959c3c0ecf4b7c80016",
+            "shasum": ""
+        },
+        "require": {
+            "ext-mbstring": "*",
+            "ext-xml": "*",
+            "ext-xmlwriter": "*",
+            "php": "^5.2|^7.0"
+        },
+        "require-dev": {
+            "squizlabs/php_codesniffer": "2.*"
+        },
+        "time": "2017-03-02T00:38:00+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "PHPExcel": "Classes/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "LGPL-2.1"
+        ],
+        "authors": [
+            {
+                "name": "Maarten Balliauw",
+                "homepage": "http://blog.maartenballiauw.be"
+            },
+            {
+                "name": "Erik Tilt"
+            },
+            {
+                "name": "Franck Lefevre",
+                "homepage": "http://rootslabs.net"
+            },
+            {
+                "name": "Mark Baker",
+                "homepage": "http://markbakeruk.net"
+            }
+        ],
+        "description": "PHPExcel - OpenXML - Read, Create and Write Spreadsheet documents in PHP - Spreadsheet engine",
+        "homepage": "https://github.com/PHPOffice/PHPExcel",
+        "keywords": [
+            "OpenXML",
+            "excel",
+            "php",
+            "spreadsheet",
+            "xls",
+            "xlsx"
+        ]
+    },
+    {
+        "name": "phpword/phpword",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "https://bitbucket.org/kkula/phpword.git",
+            "reference": "4ba9cb7f65618ec6990ecefa5edc6a992db04429"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://bitbucket.org/kkula/phpword/get/4ba9cb7f65618ec6990ecefa5edc6a992db04429.zip",
+            "reference": "4ba9cb7f65618ec6990ecefa5edc6a992db04429",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">5.2.0"
+        },
+        "time": "2012-12-25T21:55:12+00:00",
+        "type": "library",
+        "installation-source": "source",
+        "autoload": {
+            "psr-0": {
+                "PHPWord": "Library"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "GNU"
+        ],
+        "description": "PHPWord is a library written in PHP that create word documents.",
+        "homepage": "http://phpword.codeplex.com",
+        "keywords": [
+            "doc",
+            "docx",
+            "word"
         ]
     },
     {
@@ -311,70 +373,6 @@
             "api",
             "json",
             "service discovery"
-        ]
-    },
-    {
-        "name": "phpoffice/phpexcel",
-        "version": "1.8.x-dev",
-        "version_normalized": "1.8.9999999.9999999-dev",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/PHPOffice/PHPExcel.git",
-            "reference": "185bf412339526c97a98d959c3c0ecf4b7c80016"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/PHPOffice/PHPExcel/zipball/185bf412339526c97a98d959c3c0ecf4b7c80016",
-            "reference": "185bf412339526c97a98d959c3c0ecf4b7c80016",
-            "shasum": ""
-        },
-        "require": {
-            "ext-mbstring": "*",
-            "ext-xml": "*",
-            "ext-xmlwriter": "*",
-            "php": "^5.2|^7.0"
-        },
-        "require-dev": {
-            "squizlabs/php_codesniffer": "2.*"
-        },
-        "time": "2017-03-02T00:38:00+00:00",
-        "type": "library",
-        "installation-source": "source",
-        "autoload": {
-            "psr-0": {
-                "PHPExcel": "Classes/"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "LGPL-2.1"
-        ],
-        "authors": [
-            {
-                "name": "Maarten Balliauw",
-                "homepage": "http://blog.maartenballiauw.be"
-            },
-            {
-                "name": "Erik Tilt"
-            },
-            {
-                "name": "Franck Lefevre",
-                "homepage": "http://rootslabs.net"
-            },
-            {
-                "name": "Mark Baker",
-                "homepage": "http://markbakeruk.net"
-            }
-        ],
-        "description": "PHPExcel - OpenXML - Read, Create and Write Spreadsheet documents in PHP - Spreadsheet engine",
-        "homepage": "https://github.com/PHPOffice/PHPExcel",
-        "keywords": [
-            "OpenXML",
-            "excel",
-            "php",
-            "spreadsheet",
-            "xls",
-            "xlsx"
         ]
     }
 ]

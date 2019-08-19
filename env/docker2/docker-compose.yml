@@ -1,0 +1,28 @@
+version: '3.3'
+
+services:
+  web:    
+    image: nginx:latest
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    links:
+      - preslog
+    volumes:
+      - ./logs/nginx:/var/log/nginx
+      - ./ngnix/site.conf:/etc/nginx/conf.d/site.conf
+      - ../../:/var/www/html
+
+  preslog:    
+    links:
+      - db_mongo 
+    build: .   
+    volumes:
+      - ../../:/var/www/html
+    environment:
+      - APPLICATION_ENV=development
+  
+  db_mongo:    
+    image: mongo:3.0
+    volumes:
+      - ../../data:/data/db
